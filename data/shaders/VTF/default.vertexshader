@@ -1,0 +1,38 @@
+#version 150
+precision highp float;
+
+uniform sampler2D vtf_map;
+
+uniform mat4 mModelViewProjection;
+uniform vec3 vCamera;
+uniform vec3 vPrimaryLight;
+uniform vec2 vTexel;
+
+in vec4 Vertex;
+in vec3 Normal;
+in vec2 TexCoord0;
+
+out vec3 vLight;
+out vec3 vView;
+out vec3 vNormal;
+
+const float heightScale = 10.0;
+
+float sampleHeight(float dx, float dy)
+{
+ return heightScale * textureLod(vtf_map, TexCoord0 + vec2(dx, dy), 0 ).x;
+}
+
+void main()
+{
+ vView  = vCamera       - Vertex.xyz;
+ vLight = vPrimaryLight - Vertex.xyz;
+
+ float fSample00 = sampleHeight(     0.0,      0.0);
+ float fSample10 = sampleHeight(     0.0, vTexel.y);
+ float fSample01 = sampleHeight(vTexel.x,      0.0);
+
+ vNormal     = normalize( vec3( fSample01 - fSample00, 0.25 * heightScale, fSample10 - fSample00) );
+
+ gl_Position = mModelViewProjection * (Vertex + vec4(0.0, fSample00, 0.0, 0.0));
+}

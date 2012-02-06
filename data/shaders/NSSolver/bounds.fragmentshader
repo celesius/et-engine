@@ -1,0 +1,15 @@
+#version 150
+precision highp float;
+
+uniform sampler2D surface_texture;
+uniform float fScale;
+
+in vec2 TexCoord;
+out vec4 FragColor;
+
+void main()
+{
+ FragColor = fScale * texture(surface_texture, TexCoord );
+
+// FragColor = vec4(1.0);
+}

@@ -1,0 +1,25 @@
+#version 140
+
+uniform mat4 mModelViewProjection;
+uniform mat4 mTransform;
+uniform vec3 vPrimaryLight;
+
+in vec4 Vertex;
+in vec3 Normal;
+
+out vec3 vNormalWS;
+out vec4 vVertexWS;
+
+void main()
+{
+ mat3 nTransform = mat3( mTransform[0].xyz, mTransform[1].xyz, mTransform[2].xyz );
+
+ vNormalWS = nTransform * Normal;
+ vVertexWS = mTransform * Vertex;
+
+// vNormalWS = refract( normalize( vVertexWS.xyz - vPrimaryLight ), vNormalWS, 0.75);
+
+ gl_Position = mModelViewProjection * vVertexWS;
+
+ vVertexWS.w = distance( vVertexWS.xyz, vPrimaryLight );
+}

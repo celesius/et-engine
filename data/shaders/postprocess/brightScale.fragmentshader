@@ -1,0 +1,10 @@
+uniform sampler2D source_image;
+uniform float scale;
+
+in vec2 TexCoord;
+out vec4 FragColor;
+
+void main()
+{
+ FragColor = scale * texture(source_image, TexCoord);
+}

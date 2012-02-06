@@ -1,0 +1,28 @@
+#version 150
+precision highp float;
+
+out vec4 FragColor;
+
+in vec3 vLight;
+in vec3 vView;
+in vec3 vNormal;
+
+#include "..\include\CookTorrance.h"
+#include "..\include\Blinn.h"
+#include "..\include\Phong.h"
+
+const vec3 wColor = vec3(0.35, 0.75, 0.9);
+const vec3 lColor = vec3(2.00, 1.00, 0.0) * 0.5;
+
+void main()
+{
+ vec3 vNormal_n = normalize(vNormal);
+ vec3 vView_n   = normalize(vView);
+ vec3 vLight_n  = normalize(vLight);
+
+ vec2 C  = Phong(vNormal_n, vLight_n, vView_n, 0.25);
+
+ vec3 vResult = (0.25 + 0.75 * C.x) * wColor + C.y * lColor;
+
+ FragColor = vec4( vResult, 1.0);
+}

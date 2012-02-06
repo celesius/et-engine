@@ -1,0 +1,35 @@
+#version 150
+precision highp float;
+
+uniform sampler2D scattering_texture;
+uniform vec2 fG;
+
+#include "planet\include\uniforms.h"
+
+out vec4 FragColor;
+
+in vec3 vViewWS;
+in vec2 vVertexS;
+
+#include "planet\include\PhaseFunction.h"
+#include "include\const.h"
+
+void main()
+{
+ vec2 TexCoord = vVertexS.yx * vec2(INV_DOUBLE_PI, INV_PI);
+ vec3 cSample  = texture(scattering_texture, TexCoord.xy).xyz;
+
+ float fCos   = dot(vViewWS, vPrimaryLight) / length(vViewWS);
+ float fCos2  = fCos * fCos;
+ float fPhase = RayleighPhase(fCos2);
+
+ vec3 vR      = fPhase * vInvWaveLength * vK.y;
+
+ float vM     = MiePhase(fCos, fCos2, fG.x, fG.y) * vK.w;
+
+ float fSampleLum = 0.5 + 0.5 * dot( cSample, LUMINANCE_VEC );
+
+ FragColor.xyz = vR * cSample / fSampleLum + vM * cSample;
+
+ FragColor.w   = 1.0;
+}

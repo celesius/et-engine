@@ -1,0 +1,40 @@
+uniform sampler2D diffuseMap;
+uniform sampler2D specularMap;
+uniform sampler2D normalMap;
+
+uniform vec4 ambientColor;
+uniform vec4 diffuseColor;
+uniform vec4 specularColor;
+uniform float roughness;
+
+in vec3 vNormalWS;
+in vec3 vViewWS;
+in vec3 vLightWS;
+in vec3 vViewTS;
+in vec3 vLightTS;
+in vec2 TexCoord;
+
+out vec4 FragColor;
+
+#include <include\Phong.h>
+
+vec2 defaultLight()
+{
+ vec3 nl = normalize(vLightWS);
+ vec3 nv = normalize(vViewWS);
+ vec3 nn = normalize(vNormalWS);
+ return Phong(nn, nl, nv, 4.0);
+}
+
+void main()
+{
+ vec4 diffuse = texture(diffuseMap, TexCoord);
+ if (dot(diffuse, diffuse) == 0.0)
+  diffuse = diffuseColor;
+ 
+ if (diffuse.w < 0.01) discard;
+
+ vec2 light = defaultLight();
+ light.x = 0.5 + 0.5 * light.x;
+ FragColor = diffuse * vec4(light.x * light.x + light.y);
+}

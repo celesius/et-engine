@@ -1,0 +1,12 @@
+Uniforms:
+
+-> uniform mat4 mModelViewProjection;
+-> uniform vec3 vCamera;
+-> uniform vec3 vPrimaryLight;
+-> uniform mat4 mLightProjectionMatrix;
+
+Attributes:
+
+-> in vec4 Vertex;
+-> in vec3 Normal;
+-> in vec2 TexCoord0;

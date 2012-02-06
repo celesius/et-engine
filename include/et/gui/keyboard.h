@@ -1,0 +1,92 @@
+#pragma once
+
+#include <et/gui/element2d.h>
+#include <et/gui/button.h>
+
+namespace et
+{
+	namespace gui
+	{
+		class Keyboard;
+
+		class KeyboardDelegate
+		{
+		public:
+			virtual void keyboardDidReturnInElement(Keyboard*, Element*) { /* virtual */ };
+		};
+
+		class Keyboard : public Element2D
+		{
+		public:
+			Keyboard(RenderContext* rc, const Font& font, TextureCache& cache);
+			~Keyboard();
+
+			void layout(const vec2& sz);
+			void addToRenderQueue(RenderContext*, GuiRenderer&);
+
+			inline bool invalid() const
+				{ return _invalid; }
+
+			inline bool visible() const
+				{ return _visible; }
+
+			void show(bool animated, Element* forElement);
+			void hide(bool animated);
+
+			void setDelegate(KeyboardDelegate* delegate);
+			void setInvalid();
+
+			bool pointerPressed(const PointerInputInfo&);
+			bool pointerMoved(const PointerInputInfo&);
+			bool pointerReleased(const PointerInputInfo&);
+			bool pointerScrolled(const PointerInputInfo&);
+
+			float topOrigin() const;
+
+		private:
+			typedef std::vector<Button::Pointer> ButtonList;
+
+			Button::Pointer createButton(ButtonList& list, const std::string& title, const Font& f, bool accented, const vec2& pivot = vec2(0.0f));
+			void genServiceButtons(const Font& font, float lastRowWidth);
+			float genPrimaryButtons(const Font& font);
+			float genExtraButtons(const Font& font);
+
+			void switchKeyboards(bool animated);
+			void setActiveButton(Button::Pointer btn, const PointerInputInfo& np);
+
+			void onButtonPressed(Button* b);
+			void onShiftPressed(Button* b);
+			void onDeletePressed(Button* b);
+			void onSpacePressed(Button* b);
+			void onReturnPressed(Button* b);
+			void onSwitchKeyboardsPressed(Button* b);
+
+			void animatorFinished(BaseAnimator*);
+
+			void onKeyPressed(unsigned char c);
+			void onKeyReleased(unsigned char c);
+			void onCharEntered(unsigned char c);
+
+			void performButtonAction(unsigned char c);
+
+		private:
+			KeyboardDelegate* _delegate;
+			Texture _texture;
+			GuiVertexList _vertices;
+			ImageDescriptor _descriptor;
+			ButtonList _primaryButtons;
+			ButtonList _extraButtons;
+			ButtonList _serviceButtons;
+			Button::Pointer _lastActiveButton;
+			Button::Pointer _pressedButton;
+			BaseAnimator* _hideAnimator;
+			Element* _capturedElement;
+			vec2 _screenSize;
+			bool _extraButtonsVisible;
+			bool _invalid;
+			bool _visible;
+			bool _shift;
+			bool _shiftLocked;
+		};
+	}
+}

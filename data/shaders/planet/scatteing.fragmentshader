@@ -1,0 +1,84 @@
+#version 150
+precision highp float;
+
+#include "planet\include\uniforms.h"
+
+out vec4 FragColor;
+in vec2 TexCoord;
+
+#include "include\const.h"
+
+#include "planet\include\anglescale.h"
+
+void main()
+{
+ const float fPolar = 0.0020765;
+
+ vec2 vAngle     = vec2(TexCoord.y, TexCoord.x) * vec2(PI, DOUBLE_PI);
+ float fSinTheta = sin(vAngle.x);
+ float fRadius   = vRadius.z * (1.0 - fPolar * fSinTheta);
+
+ vec3 vVertex;
+ vVertex.x = fSinTheta * cos(vAngle.y);
+ vVertex.y = cos(vAngle.x);
+ vVertex.z = fSinTheta * sin(vAngle.y);
+
+ float fHeight = length(vCamera);
+
+ float VdotC = dot(vVertex, vCamera / fHeight);
+
+////// FIX!
+ float fDistanceScale = 0.1;
+
+ if (VdotC < fDistanceScale) discard;
+ vVertex *= fRadius;
+
+ vec3 v3Ray = vVertex.xyz - vCamera;
+ float fFar = length(v3Ray);
+ v3Ray     /= fFar;
+
+ vec3  v3Start;
+ float fStartDepth; 
+ float fStartAngle;
+ float fStartOffset;
+
+ if (fHeight < vRadius.z)
+ {
+  v3Start      = vCamera;
+  fStartDepth  = exp(vScale.z * (vRadius.x - fHeight));
+  fStartAngle  = dot(v3Ray, vCamera) / fHeight;
+  fStartOffset = fStartDepth * scale(fStartAngle); 
+ }
+ else
+ {
+  float B = 2.0 * dot(vCamera, v3Ray);
+  float C = fHeight * fHeight - vRadius.w;
+  float fDet = max(0.0, B*B - 4.0 * C);
+  float fNear = 0.5 * (-B - sqrt(fDet));
+  fFar -= fNear;
+  v3Start       = vCamera + v3Ray * fNear;
+  fStartAngle  = dot(v3Ray, v3Start) / vRadius.z;
+  fStartDepth  = exp(-1.0 / vScale.y);
+  fStartOffset = fStartDepth * scale(fStartAngle);
+ }
+
+ float fSampleLength = fFar / fAthmoSamples;
+ float fScaledLength = fSampleLength * vScale.x;
+ vec3 v3SampleRay    = v3Ray * fSampleLength;
+ vec3 v3SamplePoint  = v3Start + v3SampleRay * 0.5;
+
+ vec3 vGather = vec3(0.0);
+ for(int i = 0; i < nAthmoSamples; i++)
+ {
+  float fHeight      = length(v3SamplePoint);
+  float fDepth       = exp(vScale.z * (vRadius.x - fHeight));
+  float fLightAngle  = dot(vPrimaryLight, v3SamplePoint) / fHeight;
+  float fCameraAngle = dot(v3Ray, v3SamplePoint) / fHeight;
+  float fScatter     = fStartOffset + fDepth * (scale(fLightAngle) - scale(fCameraAngle));
+  vec3 v3Attenuate   = exp(-fScatter * (vInvWaveLength * vK.x + vK.z));
+  vGather           += v3Attenuate * (fDepth * fScaledLength);
+  v3SamplePoint     += v3SampleRay;
+ }
+
+ FragColor = vec4( vGather, 1.0);
+}

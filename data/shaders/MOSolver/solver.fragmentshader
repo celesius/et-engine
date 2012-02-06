@@ -1,0 +1,32 @@
+uniform sampler2D prevstate_texture;
+uniform sampler2D distortion_texture;
+uniform float fViscosity;
+uniform vec2 vTexel;
+
+in vec2 TexCoord;
+out vec4 FragColor;
+
+float sampleHeight(float dx, float dy)
+{
+ return texture( prevstate_texture, TexCoord + vec2(dx, dy) ).x;
+}
+
+void main()
+{
+ vec2 vPrevious = texture(prevstate_texture,  TexCoord).xy;
+ float fDistortion = texture(distortion_texture, TexCoord).x;
+
+ float fStaticViscosity = 1.0 - fViscosity;
+
+ vPrevious.x = mix( vPrevious.x, -fDistortion, fDistortion );
+
+ float fL = sampleHeight(-vTexel.x, 0.0); 
+ float fR = sampleHeight( vTexel.x, 0.0);
+ float fT = sampleHeight(0.0,  vTexel.y);
+ float fB = sampleHeight(0.0, -vTexel.y);
+ float fLaplacian = 0.25 * (fL + fR + fT + fB) - vPrevious.x;
+
+ float fUn = (2.0 * vPrevious.x - vPrevious.y) * fStaticViscosity + fLaplacian;
+ 
+ FragColor = vec4(fUn, vPrevious.x, 0.0, 0.0);
+}
