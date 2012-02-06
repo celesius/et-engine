@@ -12,7 +12,7 @@ float et::distanceFromPointToLine(const vec3& p, const vec3& l0, const vec3& l1,
 	return v.length();
 }
 
-vec2 et::barycentricCoordinates(const vec3& p, const Triangle& t)
+vec2 et::barycentricCoordinates(const vec3& p, const triangle& t)
 {
 	vec3 v0 = t.edge31();
 	vec3 v1 = t.edge21();
@@ -26,12 +26,12 @@ vec2 et::barycentricCoordinates(const vec3& p, const Triangle& t)
 	return vec2((dot11 * dot02 - dot01 * dot12) * invDenom, (dot00 * dot12 - dot01 * dot02) * invDenom);
 }
 
-vec3 et::worldCoordinatesFromBarycentric(const vec2& b, const Triangle& t)
+vec3 et::worldCoordinatesFromBarycentric(const vec2& b, const triangle& t)
 {
 	return t.v1 * (1.0f - b.x - b.y) + t.v2 * b.y + t.v3 * b.x;
 }
 
-vec3 et::closestPointOnTriangle(const vec3& sourcePosition, const Triangle& triangle)
+vec3 et::closestPointOnTriangle(const vec3& sourcePosition, const triangle& triangle)
 {
 	vec3 edge0 = triangle[1] - triangle[0];
 	vec3 edge1 = triangle[2] - triangle[0];
@@ -166,13 +166,13 @@ vec3 et::closestPointOnTriangle(const vec3& sourcePosition, const Triangle& tria
 }
 
 
-bool et::pointInsideTriangle(const vec3& p, const Triangle& t)
+bool et::pointInsideTriangle(const vec3& p, const triangle& t)
 {
 	vec2 b = barycentricCoordinates(p, t);
 	return (b.x >= 0) && (b.y >= 0) && (b.x + b.y <= 1.0f);
 }
 
-bool et::intersect::raySphere(const Ray& r, const Sphere& s, vec3* intersection_pt)
+bool et::intersect::raySphere(const ray& r, const Sphere& s, vec3* intersection_pt)
 {
 	vec3 dv = r.origin - s.center();
 	float b = 2.0f * dot(r.direction, dv);
@@ -193,7 +193,7 @@ bool et::intersect::raySphere(const Ray& r, const Sphere& s, vec3* intersection_
 	return true;
 }
 
-bool et::intersect::rayPlane(const Ray& r, const Plane& p, vec3* intersection_pt)
+bool et::intersect::rayPlane(const ray& r, const plane& p, vec3* intersection_pt)
 {
 	float d = dot(r.direction, p.normal());
 	if (d >= 0.0f) return false;
@@ -209,10 +209,10 @@ bool et::intersect::rayPlane(const Ray& r, const Plane& p, vec3* intersection_pt
 	return true;
 }
 
-bool et::intersect::rayTriangle(const Ray& r, const Triangle& t, vec3* intersection_pt)
+bool et::intersect::rayTriangle(const ray& r, const triangle& t, vec3* intersection_pt)
 {
 	vec3 ip;
-	if (!rayPlane(r, Plane(t), &ip)) return false;
+	if (!rayPlane(r, plane(t), &ip)) return false;
 
 	if (pointInsideTriangle(ip, t))
 	{
@@ -224,7 +224,7 @@ bool et::intersect::rayTriangle(const Ray& r, const Triangle& t, vec3* intersect
 		return false;
 }
 
-bool et::intersect::segmentPlane(const Segment& s, const Plane& p, vec3* intersection_pt)
+bool et::intersect::segmentPlane(const segment& s, const plane& p, vec3* intersection_pt)
 {
 	vec3 ds = s.end - s.start;
 	float d = dot(ds, p.normal());
@@ -239,10 +239,10 @@ bool et::intersect::segmentPlane(const Segment& s, const Plane& p, vec3* interse
 	return true;
 }
 
-bool et::intersect::segmentTriangle(const Segment& s, const Triangle& t, vec3* intersection_pt)
+bool et::intersect::segmentTriangle(const segment& s, const triangle& t, vec3* intersection_pt)
 {
 	vec3 ip;
-	if (!segmentPlane(s, Plane(t), &ip)) return false;
+	if (!segmentPlane(s, plane(t), &ip)) return false;
 
 	if (pointInsideTriangle(ip, t))
 	{
@@ -254,7 +254,7 @@ bool et::intersect::segmentTriangle(const Segment& s, const Triangle& t, vec3* i
 	return false;
 }
 
-bool et::intersect::triangleTriangle(const et::Triangle& t0, const et::Triangle& t1)
+bool et::intersect::triangleTriangle(const et::triangle& t0, const et::triangle& t1)
 {
 #define ProjectOntoAxis(triangle, axis, fmin, fmax) \
 	dot1 = dot(axis, triangle.v2);					\
@@ -369,9 +369,9 @@ bool et::intersect::sphereOBB(const Sphere& s, const OBB& b)
 	return sphereBox(b.center + b.transform.transpose() * (s.center() - b.center), s.radius(), b.center, b.dimension);
 }
 
-bool et::intersect::sphereTriangle(const vec3& sphereCenter, const float sphereRadius, const Triangle& t, vec3* normal, float* penetration)
+bool et::intersect::sphereTriangle(const vec3& sphereCenter, const float sphereRadius, const triangle& t, vec3* normal, float* penetration)
 {
-	Plane p(t);
+	plane p(t);
 	if (p.distanceToPoint(sphereCenter) > sphereRadius) return false;
 
 	vec3 direction = closestPointOnTriangle(sphereCenter, t) - sphereCenter;
@@ -387,15 +387,15 @@ bool et::intersect::sphereTriangle(const vec3& sphereCenter, const float sphereR
 	return true;
 }
 
-bool et::intersect::sphereTriangle(const Sphere& s, const Triangle& t, vec3* normal, float* penetration)
+bool et::intersect::sphereTriangle(const Sphere& s, const triangle& t, vec3* normal, float* penetration)
 {
 	return sphereTriangle(s.center(), s.radius(), t, normal, penetration);
 }
 
-bool et::intersect::sphereTriangle(const Sphere& s, const vec3& sphereVelocity, const Triangle& t, vec3* normal, 
+bool et::intersect::sphereTriangle(const Sphere& s, const vec3& sphereVelocity, const triangle& t, vec3* normal, 
 	float* penetration, float* intersectionTime)
 {
-	Plane p(t);
+	plane p(t);
 	if (p.distanceToPoint(s.center()) <= s.radius())
 		 return sphereTriangle(s, t, normal, penetration);
 
@@ -413,7 +413,7 @@ bool et::intersect::sphereTriangle(const Sphere& s, const vec3& sphereVelocity, 
 	return false;
 }
 
-bool et::intersect::sphereTriangles(const Sphere& s, const Triangle* triangles, const size_t triangleCount, vec3* normal, float* penetration)
+bool et::intersect::sphereTriangles(const Sphere& s, const triangle* triangles, const size_t triangleCount, vec3* normal, float* penetration)
 {
 	for (size_t i = 0; i < triangleCount; ++i)
 	{
@@ -423,7 +423,7 @@ bool et::intersect::sphereTriangles(const Sphere& s, const Triangle* triangles, 
 	return false;
 }
 
-bool et::intersect::sphereTriangles(const Sphere& s, const vec3& sphereVelocity, const Triangle* triangles, const size_t triangleCount, 
+bool et::intersect::sphereTriangles(const Sphere& s, const vec3& sphereVelocity, const triangle* triangles, const size_t triangleCount, 
 								vec3* normal, float* penetration, float* intersectionTime)
 {
 	for (size_t i = 0; i < triangleCount; ++i)

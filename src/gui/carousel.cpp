@@ -99,13 +99,13 @@ bool CarouselItem::containPoint(const vec2&, const vec2&)
 	return false;
 }
 
-bool CarouselItem::rayIntersect(const Ray& r)
+bool CarouselItem::rayIntersect(const ray& r)
 {
 	if ((fabsf(_color.w) <= 1.0e-4) || !contentValid()) 	return false;
 
 	for (size_t t = 0; t < _vertices.size(); t += 3)
 	{
-		if (intersect::rayTriangle(r, Triangle(_vertices[t].position, _vertices[t+1].position, _vertices[t+2].position), 0))
+		if (intersect::rayTriangle(r, triangle(_vertices[t].position, _vertices[t+1].position, _vertices[t+2].position), 0))
 			return true;
 	}
 
@@ -487,12 +487,10 @@ void Carousel::update(float t)
 
 bool Carousel::performClick(const PointerInputInfo& p)
 {
-	Ray r =	camera().castRay(p.normalizedPos);
-	
 	int index = 0;
 
+	ray r =	camera().castRay(p.normalizedPos);
 	CarouselItem::Pointer item = itemForInputInfo(p, &index);
-
 	if (item.valid())
 	{
 		if (fabsf(_selectedItem - index) > minUpdateDelta)
@@ -530,7 +528,7 @@ CarouselItem::Pointer Carousel::itemForInputInfo(const PointerInputInfo& p, int*
 {
 	int aIndex = 0;
 
-	Ray r =	camera().castRay(p.normalizedPos);
+	ray r =	camera().castRay(p.normalizedPos);
 	for (CarouselItemList::iterator i = _items.begin(), e = _items.end(); i != e; ++i, ++aIndex)
 	{
 		CarouselItem::Pointer& item = *i;

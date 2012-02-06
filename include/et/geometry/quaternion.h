@@ -1,10 +1,5 @@
 #pragma once
 
-#include <et/core/constants.h>
-#include <et/geometry/vector3.h>
-#include <et/geometry/vector4.h>
-#include <et/geometry/matrix4.h>
-
 namespace et
 {
 
@@ -15,8 +10,11 @@ namespace et
 		vector3<T> vector;
 
 		Quaternion() : scalar(static_cast<T>(1)), vector(static_cast<T>(0)) { }
+
 		Quaternion(const vector3<T>& v) : scalar(static_cast<T>(0)), vector(v) { }
+
 		Quaternion(T s, T x, T y, T z) : scalar(s), vector(x, y, z) { }
+
 		Quaternion(T angle, const vector3<T>& axis)
 		{
 			T half = angle  / static_cast<T>(2);
@@ -62,22 +60,27 @@ namespace et
 			return result;
 		};
 
-		T length()
+		T length() const
 			{ return sqrt(scalar*scalar + vector.dotSelf()); }
 
-		Quaternion normalize() 
+		void normalize() 
 		{ 
 			T len = this->length();
-			return (len > 0) ? *this / length() : Quaternion<T>();
+			if (len > 0)
+			{
+				len = sqrt(len);
+				scalar /= len;
+				vector /= len;
+			}
 		}
 
-		vector3<T> transform(vector3<T> &v)
+		vector3<T> transform(const vector3<T> &v) const
 		{
 			Quaternion& thisOne = *this;
 			return (thisOne * Quaternion(v) * !thisOne).vector;
 		}
 
-		vector3<T> invtransform(vector3<T> &v)
+		vector3<T> invtransform(const vector3<T> &v) const
 		{
 			Quaternion& thisOne = *this;
 			return (!thisOne * Quaternion(v) * thisOne).vector;

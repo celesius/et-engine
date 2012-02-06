@@ -134,11 +134,10 @@ void Camera::rotate(const quaternion& q)
 	modelViewUpdated();
 }
 
-Ray Camera::castRay(const vec2& pt) const
+ray Camera::castRay(const vec2& pt) const
 {
 	vec3 pos = position();
-	vec3 p1 = _inverseMVPMatrix * vec3(pt, 1.0);
-	return Ray(pos, normalize(p1 - pos));
+	return ray(pos, normalize(_inverseMVPMatrix * vec3(pt, 1.0) - pos));
 }
 
 void Camera::modelViewUpdated()

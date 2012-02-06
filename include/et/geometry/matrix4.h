@@ -1,8 +1,5 @@
 #pragma once
 
-#include <et/geometry/vector4.h>
-#include <et/geometry/matrix3.h>
-
 namespace et
 {
 	template<typename T>
@@ -239,19 +236,10 @@ namespace et
 			const T& a31 = mat[3].y;
 			const T& a32 = mat[3].z;
 			const T& a33 = mat[3].w;
-
-			return mat[0].x * (a11 * (a22*a33 - a23*a32) +
-				a12 * (a31*a23 - a21*a33) +
-				a13 * (a21*a32 - a22*a31))+
-				mat[0].y * (a10 * (a23*a32 - a22*a33) +
-				a20 * (a12*a33 - a13*a32) +
-				a30 * (a13*a22 - a12*a23))+
-				mat[0].z * (a10 * (a21*a33 - a31*a23) +
-				a11 * (a30*a23 - a20*a33) +
-				a13 * (a20*a31 - a21*a30))+ 
-				mat[0].w * (a10 * (a22*a31 - a21*a32) +
-				a11 * (a20*a32 - a30*a22) +
-				a12 * (a21*a30 - a20*a31));
+			return mat[0].x * (a11 * (a22*a33 - a23*a32) +	a12 * (a31*a23 - a21*a33) + a13 * (a21*a32 - a22*a31))+
+					mat[0].y * (a10 * (a23*a32 - a22*a33) +	a20 * (a12*a33 - a13*a32) + a30 * (a13*a22 - a12*a23))+
+					mat[0].z * (a10 * (a21*a33 - a31*a23) +	a11 * (a30*a23 - a20*a33) +	a13 * (a20*a31 - a21*a30))+ 
+					mat[0].w * (a10 * (a22*a31 - a21*a32) +	a11 * (a20*a32 - a30*a22) +	a12 * (a21*a30 - a20*a31));
 		}
 
 		inline matrix3<T> mat3() const
@@ -350,149 +338,5 @@ namespace et
 		}
 
 	};
-
-	template <typename T>
-	inline matrix4<T> _transMatrix(T x, T y, T z)
-	{
-		matrix4<T> M;
-		M[0][0] = M[1][1] = M[2][2] = M[3][3] = T(1);
-		M[3][0] = x;
-		M[3][1] = y;
-		M[3][2] = z;
-		return M;
-	}
-
-	template <typename T>
-	inline matrix4<T> _transScaleMatrix(T tx, T ty, T tz, T sx, T sy, T sz)
-	{
-		matrix4<T> M;
-		M[0][0] = sx;
-		M[1][1] = sy;
-		M[2][2] = sz;
-		M[3][3] = T(1);
-
-		M[3][0] = tx;
-		M[3][1] = ty;
-		M[3][2] = tz;
-		return M;
-	}
-
-	template <typename T>
-	inline matrix4<T> _scaleMatrix(T x, T y, T z)
-	{
-		matrix4<T> M;
-		M[0][0] = x;
-		M[1][1] = y;
-		M[2][2] = z;
-		M[3][3] = T(1);
-		return M;
-	}
-
-	template <typename T>
-	inline matrix4<T> _rotationYXZMatrix(T x, T y, T z)
-	{
-		matrix4<T> m(static_cast<T>(1));
-
-		float sx = sin(x);
-		float cx = cos(x);
-		float sy = sin(y);
-		float cy = cos(y);
-		float sz = sin(z);
-		float cz = cos(z);
-
-		m[0][0] =  cz*cy - sz*sx*sy; m[0][1] = -cx*sz; m[0][2] = cz*sy + sz*sx*cy;
-		m[1][0] =  sz*cy + cz*sx*sy; m[1][1] =  cx*cz; m[1][2] = sz*sy - cz*sx*cy;
-		m[2][0] = -cx*sy;            m[2][1] =  sx;    m[2][2] = cx*cy;           
-
-		return m;
-	}
-
-	template <typename T>
-	inline matrix4<T> _translationRotationYXZMatrix(T tx, T ty, T tz, T rx, T ry, T rz)
-	{
-		matrix4<T> m;
-
-		float sx = sin(rx);
-		float cx = cos(rx);
-		float sy = sin(ry);
-		float cy = cos(ry);
-		float sz = sin(rz);
-		float cz = cos(rz);
-
-		m[0][0] =  cz*cy - sz*sx*sy; m[0][1] = -cx*sz; m[0][2] = cz*sy + sz*sx*cy;
-		m[1][0] =  sz*cy + cz*sx*sy; m[1][1] =  cx*cz; m[1][2] = sz*sy - cz*sx*cy;
-		m[2][0] = -cx*sy;            m[2][1] =  sx;    m[2][2] = cx*cy;           
-		m[3][0] =  tx;				 m[3][1] =  ty;    m[3][2] = tz;
-		m[3][3] = 1;
-
-		return m;
-	}
-
-	template <typename T>
-	inline matrix4<T> _rotationScaleMatrix(T rx, T ry, T rz, T scx, T scy, T scz)
-	{
-		matrix4<T> m;
-
-		float sx = sin(rx);
-		float cx = cos(rx);
-		float sy = sin(ry);
-		float cy = cos(ry);
-		float sz = sin(rz);
-		float cz = cos(rz);
-
-		m[0][0] = scx * (cz*cy - sz*sx*sy); 
-		m[0][1] = scy * (-cx*sz); 
-		m[0][2] = scz * (cz*sy + sz*sx*cy);
-
-		m[1][0] = scx * (sz*cy + cz*sx*sy);
-		m[1][1] = scy * (cx*cz); 
-		m[1][2] = scz * (sz*sy - cz*sx*cy);
-
-		m[2][0] = scx * (-cx*sy);
-		m[2][1] = scy * (sx);
-		m[2][2] = scz * (cx*cy);
-		m[3][3] = 1;
-
-		return m;
-	}
-
-	template <typename T>
-	inline matrix4<T> _transformYXZMatrix(T tx, T ty, T tz, T rx, T ry, T rz)
-	{
-		matrix4<T> m;
-
-		float sx = sin(rx);
-		float cx = cos(rx);
-		float sy = sin(ry);
-		float cy = cos(ry);
-		float sz = sin(rz);
-		float cz = cos(rz);
-
-		m[0][0] =  cz*cy - sz*sx*sy; m[0][1] = -cx*sz; m[0][2] = cz*sy + sz*sx*cy;
-		m[1][0] =  sz*cy + cz*sx*sy; m[1][1] =  cx*cz; m[1][2] = sz*sy - cz*sx*cy;
-		m[2][0] = -cx*sy;            m[2][1] =  sx;    m[2][2] = cx*cy;           
-		m[3][0] = tx;                m[3][1] =  ty;    m[3][2] = tz; 
-
-		m[3][3] = 1;
-
-		return m;
-	}
-
-	template <typename T>
-	inline matrix4<T> _orientationForNormal(const vector3<T>& n) 
-	{
-		vector3<T> up = normalize(n);
-		T theta = asin(up.y) - HALF_PI;
-		T phi = atan2(up.z, up.x) + HALF_PI;
-		T csTheta = cos(theta);
-		vector3<T> side2(csTheta * cos(phi), sin(theta), csTheta * sin(phi));
-		vector3<T> side1 = up.cross(side2);
-
-		matrix4<T> result;
-		result[0].xyz() = vector3<T>(side1.x, up.x, side2.x);
-		result[1].xyz() = vector3<T>(side1.y, up.y, side2.y);
-		result[2].xyz() = vector3<T>(side1.z, up.z, side2.z);
-		return result;
-	}
 
 }

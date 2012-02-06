@@ -5,6 +5,9 @@
 
 using namespace et;
 
+inline size_t getIndex(size_t u, size_t v, size_t u_sz, size_t v_sz)
+		{ return clamp<size_t>(u, 0, u_sz - 1) + clamp<size_t>(v, 0, v_sz - 1) * u_sz; }
+
 size_t Primitives::indexCountForRegularMesh(const vec2i& meshSize, size_t geometryType)
 {
 	if (geometryType == GL_TRIANGLES)
@@ -152,7 +155,7 @@ void Primitives::createPlane(VertexArrayRef data, const vec3& normal, const vec2
 	vec3 v10 =  size.x * o1 - size.y * o2;
 	vec3 v11 =  size.x * o1 + size.y * o2;
 
-	vec3 n = planeNormal(v00, v01, v10);
+	vec3 n = plane(triangle(v00, v01, v10)).normal();
 	vec2i dv(density.x < 2 ? 2 : density.x, density.y < 2 ? 2 : density.y);
 
 	float dx = 1.0f / static_cast<float>(dv.x - 1);
@@ -211,7 +214,7 @@ void Primitives::createPlane(VertexArrayRef data, const vec3& normal, const vec2
 				n10 = getIndex(  u,   v + 1, dv.x, dv.y);
 				p10 = pos[n10];
 			}
-			norm[n00] = planeNormal(p00, p10, p01);
+			norm[n00] = plane(triangle(p00, p10, p01)).normal();
 		}
 	}
 
@@ -316,7 +319,8 @@ void Primitives::calculateNormals(VertexArrayRef data, const IndexArrayRef& buff
 		vec3& v0 = pos[p[0]];
 		vec3& v1 = pos[p[1]];
 		vec3& v2 = pos[p[2]];
-		vec3 n = planeNormal(v0, v1, v2) * triangleSquare(v0, v1, v2);
+		triangle t(v0, v1, v2);
+		vec3 n = plane(t).normal() * t.square();
 		nrm[p[0]] += n;
 		nrm[p[1]] += n;
 		nrm[p[2]] += n;

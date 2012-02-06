@@ -47,7 +47,7 @@ namespace et
 
 			bool containPoint(const vec2&, const vec2&);
 			void buildVertexList(GuiRenderer& gr);
-			bool rayIntersect(const Ray& r);
+			bool rayIntersect(const ray& r);
 
 		private:
 			vec2 origin() const
