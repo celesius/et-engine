@@ -145,7 +145,6 @@ void Camera::modelViewUpdated()
 {
 	if (_lockUpVector)
 	{
-		_inverseModelViewMatrix = _modelViewMatrix.inverse();
 		vec3 p = position();
 		vec3 d = -direction();
 		vec3 s = normalize(d.cross(_upLocked));
