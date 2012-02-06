@@ -1,7 +1,5 @@
 #pragma once
 
-#include <et/geometry/vector3.h>
-
 namespace et
 {
 

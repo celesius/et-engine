@@ -15,28 +15,23 @@ void Sequence::start(TimerPool& tp)
 
 	_startTime = actualTime();
 	_endTime = _startTime + _duration;
-	_time = 0.0;
 }
 
 void Sequence::update(float t)
 {
-	_time = t - _startTime;
-
-	if (_time >= _endTime)
+	if (t >= _endTime)
 	{
 		cancelUpdates();
-		updated.invoke(_to);
+		updated.invoke(this, _to);
 		finished.invoke(this);
 	}
 	else
 	{
-		float normalizedTime = _time / _duration;
-
+		float normalizedTime = (t - _startTime) / _duration;
 		if (_curve == EasyIn)
 			normalizedTime = ::sqrtf(normalizedTime);
 		else if (_curve == EasyOut)
 			normalizedTime *= normalizedTime;
-
-		updated.invoke(_from + _dt * normalizedTime);
+		updated.invoke(this, _from + _dt * normalizedTime);
 	}
 }

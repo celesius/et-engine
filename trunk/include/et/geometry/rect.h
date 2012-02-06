@@ -1,7 +1,5 @@
 #pragma once
 
-#include <et/geometry/vector2.h>
-
 namespace et
 {
 	template <typename T>

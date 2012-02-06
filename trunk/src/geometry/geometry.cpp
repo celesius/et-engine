@@ -1,7 +1,32 @@
+#include <math.h>
 #include <assert.h>
 #include <et/geometry/geometry.h>
 
 using namespace et;
+
+float et::sign(float s)
+{
+	return (s == 0.0f) ? 0.0f : s / fabs(s); 
+}
+
+float et::sign_nz(float s)
+{
+	return (s < 0.0f) ? -1.0f : 1.0f; 
+}
+
+vec3 et::randVector(float sx, float sy, float sz)
+{
+	float r0 = 2.0f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 1.0f;
+	float r1 = 2.0f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 1.0f;
+	float r2 = 2.0f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 1.0f;
+	return vec3(sx * r0, sy * r1, sz * r2);
+}
+
+float et::randf(float low, float up)
+{
+	return low + (up - low) * static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+}
+
 
 quaternion et::matrixToQuaternion(const mat3& r)
 {
@@ -15,33 +40,34 @@ quaternion et::matrixToQuaternion(const mat3& r)
 	q3 = (q3 < 0.0f) ? 0.0f : sqrt(q3);
 	if ((q0 >= q1) && (q0 >= q2) && (q0 >= q3))
 	{
-	q1 *= sign_nz(r[2][1] - r[1][2]);
-	q2 *= sign_nz(r[0][2] - r[2][0]);
-	q3 *= sign_nz(r[1][0] - r[0][1]);
+		q1 *= sign_nz(r[2][1] - r[1][2]);
+		q2 *= sign_nz(r[0][2] - r[2][0]);
+		q3 *= sign_nz(r[1][0] - r[0][1]);
 	} 
 	else if ((q1 >= q0) && (q1 >= q2) && (q1 >= q3))
 	{
-	q0 *= sign_nz(r[2][1] - r[1][2]);
-	q2 *= sign_nz(r[1][0] + r[0][1]);
-	q3 *= sign_nz(r[0][2] + r[2][0]);
+		q0 *= sign_nz(r[2][1] - r[1][2]);
+		q2 *= sign_nz(r[1][0] + r[0][1]);
+		q3 *= sign_nz(r[0][2] + r[2][0]);
 	} 
 	else if ((q2 >= q0) && (q2 >= q1) && (q2 >= q3))
 	{
-	q0 *= sign_nz(r[0][2] - r[2][0]);
-	q1 *= sign_nz(r[1][0] + r[0][1]);
-	q3 *= sign_nz(r[2][1] + r[1][2]);
+		q0 *= sign_nz(r[0][2] - r[2][0]);
+		q1 *= sign_nz(r[1][0] + r[0][1]);
+		q3 *= sign_nz(r[2][1] + r[1][2]);
 	} 
 	else if ((q3 >= q0) && (q3 >= q1) && (q3 >= q2))
 	{
-	q0 *= sign_nz(r[1][0] - r[0][1]);
-	q1 *= sign_nz(r[2][0] + r[0][2]);
-	q2 *= sign_nz(r[2][1] + r[1][2]);
+		q0 *= sign_nz(r[1][0] - r[0][1]);
+		q1 *= sign_nz(r[2][0] + r[0][2]);
+		q2 *= sign_nz(r[2][1] + r[1][2]);
 	} 
 	else 
 	{
-	assert(0 && "Unable to convert matrix to quaternion");
+		assert(0 && "Unable to convert matrix to quaternion");
 	}
-	return quaternion(q0, q1, q2, q3).normalize();
+
+	return normalize(quaternion(q0, q1, q2, q3));
 }
 
 void et::decomposeMatrix(mat4 mat, vec3& translation, quaternion& rotation, vec3& scale)
@@ -85,4 +111,67 @@ vec3 et::removeMatrixScale(mat4& mat)
 	r1 /= scale.y;
 	r2 /= scale.z;
 	return scale;
+}
+
+vec3ub et::vec3fto3ubscaled(const vec3 &fv)
+{
+	return vec3ub(
+		static_cast<unsigned char>(clamp<float>(0.5f + 0.5f * fv.x, 0.0, 1.0) * 255.0f), 
+		static_cast<unsigned char>(clamp<float>(0.5f + 0.5f * fv.y, 0.0, 1.0) * 255.0f),
+		static_cast<unsigned char>(clamp<float>(0.5f + 0.5f * fv.z, 0.0, 1.0) * 255.0f));
+
+}
+
+vec3ub et::vec3fto3ublinear(const vec3& fv)
+{
+	return vec3ub(
+		static_cast<unsigned char>(clamp(fv.x * 255.0f, 0.0f, 255.0f)), 
+		static_cast<unsigned char>(clamp(fv.y * 255.0f, 0.0f, 255.0f)),
+		static_cast<unsigned char>(clamp(fv.z * 255.0f, 0.0f, 255.0f)));
+
+}
+
+vec4ub et::vec4f_to_4ub(const vec4 &fv)
+{
+	return vec4ub( (unsigned char)(clamp<float>(0.5f + 0.5f * fv.x, 0.0, 1.0) * 255), 
+		(unsigned char)(clamp<float>(0.5f + 0.5f * fv.y, 0.0, 1.0) * 255), 
+		(unsigned char)(clamp<float>(0.5f + 0.5f * fv.z, 0.0, 1.0) * 255),
+		(unsigned char)(clamp<float>(0.5f + 0.5f * fv.z, 0.0, 1.0) * 255) );
+}
+
+
+mat4 et::rotation2DMatrix(float angle)
+{	
+	float ca = cos(angle);
+	float sa = sin(angle);
+	mat4 m;
+	m[0][0] = ca; m[0][1] = -sa;
+	m[1][0] = sa; m[1][1] =  ca;
+	m[2][2] = m[3][3] = 1.0f;
+	return m;
+}
+
+mat4 et::transform2DMatrix(float a, const vec2& scale, const vec2& translate)
+{
+	float ca = cos(a);
+	float sa = sin(a);
+	mat4 m;
+	m[0][0] = ca * scale.x; m[0][1] = -sa * scale.y;
+	m[1][0] = sa * scale.x; m[1][1] =  ca * scale.y;
+	m[2][2] = 1.0f;
+	m[3][0] = translate.x;
+	m[3][1] = translate.y;
+	m[3][3] = 1.0f;
+	return m;
+}
+
+mat3 et::rotation2DMatrix3(float angle)
+{	
+	float ca = cos(angle);
+	float sa = sin(angle);
+	mat3 m;
+	m[0][0] = ca; m[0][1] = -sa;
+	m[1][0] = sa; m[1][1] =  ca;
+	m[2][2] = m[3][3] = 1.0f;
+	return m;
 }

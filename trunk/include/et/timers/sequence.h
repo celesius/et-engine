@@ -20,13 +20,12 @@ namespace et
 		void start(TimerPool& tp);
 		void update(float t);
 
-		ET_DECLARE_EVENT1(updated, float)
+		ET_DECLARE_EVENT2(updated, Sequence*, float)
 		ET_DECLARE_EVENT1(finished, Sequence*)
 
 	private:
 		float _startTime;
 		float _endTime;
-		float _time;
 		float _duration;
 		float _from;
 		float _to;

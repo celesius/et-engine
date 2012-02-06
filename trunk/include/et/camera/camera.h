@@ -64,7 +64,7 @@ namespace et
 		inline const Frustum& frustum() const
 			{ return _frustum; }
 
-		Ray castRay(const vec2& pt) const;
+		ray castRay(const vec2& pt) const;
 
 	private:
 		void modelViewUpdated();

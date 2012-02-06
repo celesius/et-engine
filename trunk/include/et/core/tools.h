@@ -26,9 +26,7 @@ namespace et
 
 	// common code
 	inline bool isWhitespaceChar(char c)
-	{
-		return (c == 32) || (c == 13) || (c == 10) || (c == 9);
-	}
+		{ return (c == 32) || (c == 13) || (c == 10) || (c == 9); }
 
 	inline void lowercase(std::string& str)
 	{
@@ -102,6 +100,26 @@ namespace et
 		return result;
 	}
 
+	template <typename T>
+	inline std::ostream& operator << (std::ostream& stream, const vector2<T>& value) 
+	{ 
+		stream << value.x << CSV_DELIMITER << value.y;
+		return stream;
+	}
+
+	template <typename T>
+	inline std::ostream& operator << (std::ostream& stream, const vector3<T>& value) 
+	{ 
+		stream << value.x << CSV_DELIMITER << value.y << CSV_DELIMITER << value.z;
+		return stream;
+	}
+
+	template <typename T>
+	inline std::ostream& operator << (std::ostream& stream, const vector4<T>& value) 
+	{ 
+		stream << value.x << CSV_DELIMITER << value.y << CSV_DELIMITER << value.z << CSV_DELIMITER << value.w;
+		return stream;
+	}
 	std::string getFilePath(const std::string& name);
 	std::string getFileName(const std::string& fullPath);
 	std::string removeUpDir(std::string name);

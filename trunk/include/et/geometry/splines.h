@@ -163,6 +163,6 @@ namespace et
 		Ce2FullyQualifiedSplineList _splines;
 	};
 
-#include <et/geometry/splines.inl.h>
+	#include <et/geometry/splines.inl.h>
 
 }

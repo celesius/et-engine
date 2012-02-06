@@ -5,7 +5,6 @@
 #include <et/core/flags.h>
 #include <et/core/transformable.h>
 #include <et/core/serialization.h>
-#include <et/geometry/geometry.h>
 #include <et/scene3d/material.h>
 
 namespace et
