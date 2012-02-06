@@ -1,0 +1,2 @@
+VS:..\common\fullscreen_scaled_tex.vertexshader
+FS:divergence.fragmentshader

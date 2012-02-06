@@ -1,0 +1,48 @@
+#version 150
+precision highp float;
+
+uniform sampler2D day_texture;
+uniform sampler2D night_texture;
+uniform sampler2D clouds_texture;
+uniform vec3 vPrimaryLight;
+
+in vec3 vNormalWS;
+in vec3 vViewWS;
+in vec3 vLightWS;
+in vec3 vRayleighColor;
+in vec3 vMieColor;
+
+out vec4 FragColor;
+
+#include "include\const.h"
+#include "include\Blinn.h"
+
+void main()
+{
+ vec3 vNormal_n = normalize(vNormalWS);
+ float LdotN    = max(0.0, dot(vPrimaryLight, vNormalWS));
+
+ vec2 TexCoord;
+ TexCoord.y = asin (vNormal_n.y) * INV_PI + 0.5;
+ TexCoord.x = 1.5 - atan2(vNormal_n.z, vNormal_n.x) * INV_DOUBLE_PI;
+
+ vec3 cColor  = vec3(1.0);
+ vec3 cClouds = vec3(0.0);
+ if ( (abs(TexCoord.y - 0.775) <= 0.002777777777777) && ( abs(TexCoord.x - 1.60277778) < 0.0014))
+ {
+  cColor = vec3(1.0, 1.0, 1.0);
+ }
+ else
+ {
+  vec3 cDayColor   = texture(day_texture,    TexCoord).xyz;
+  vec3 cNightColor = texture(night_texture,  TexCoord).xyz;
+       cClouds     = texture(clouds_texture, TexCoord).xyz;
+       cColor      = mix(cNightColor, cDayColor, LdotN * LdotN );
+ }
+
+ float fMix = cClouds.x;
+ cClouds    = cClouds * (vec3(0.10) + 0.90 * vMieColor);
+ cColor     = /*mix(cColor, cClouds, fMix) +*/ vRayleighColor + 0.25 * vMieColor;
+
+ FragColor  = vec4(cColor, 1.0);
+}

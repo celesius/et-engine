@@ -1,0 +1,128 @@
+#pragma once 
+
+#include <et/gui/element2d.h>
+#include <et/gui/font.h>
+
+namespace et
+{
+	namespace gui
+	{
+		enum ListboxState
+		{
+			ListboxState_Default,
+			ListboxState_Highlighted,
+			ListboxState_Opened,
+			ListboxState_max
+		};
+
+		class Listbox;
+
+		class ListboxPopup : public Element2D
+		{
+		public:
+			typedef IntrusivePtr<ListboxPopup> Pointer;
+
+		public:
+			ListboxPopup(Listbox* owner);
+			void setBackgroundImage(const Image& img);
+			void addToRenderQueue(RenderContext*, GuiRenderer&);
+
+			bool pointerPressed(const PointerInputInfo&);
+			bool pointerMoved(const PointerInputInfo&);
+			bool pointerReleased(const PointerInputInfo&);
+			void pointerEntered(const PointerInputInfo&);
+			void pointerLeaved(const PointerInputInfo&);
+
+			void animatorUpdated(BaseAnimator*);
+			void animatorFinished(BaseAnimator*);
+
+			void hideText();
+			void revealText();
+
+		private:
+			void buildVertices(GuiRenderer& gr);
+
+		private:
+			Listbox* _owner;
+			GuiVertexList _backgroundVertices;
+			GuiVertexList _selectionVertices;
+			GuiVertexList _textVertices;
+			FloatAnimator* _textAlphaAnimator;
+			int _selectedIndex;
+			float _textAlpha;
+			bool _pressed;
+		};
+
+		class Listbox : public Element2D
+		{
+		public:
+			typedef IntrusivePtr<Listbox> Pointer;
+
+		public:
+			Listbox(const Font& font, Element2D* parent);
+
+			void setImage(const Image& img, ListboxState state);
+			void setBackgroundImage(const Image& img);
+			void setSelectionImage(const Image& img);
+
+			void addToRenderQueue(RenderContext*, GuiRenderer&);
+
+			BaseAnimator* setFrame(const rect& r, float duration = 0.0f);
+			bool containPoint(const vec2& p, const vec2&);
+
+			bool pointerPressed(const PointerInputInfo&);
+			bool pointerMoved(const PointerInputInfo&);
+			bool pointerReleased(const PointerInputInfo&);
+			void pointerEntered(const PointerInputInfo&);
+			void pointerLeaved(const PointerInputInfo&);
+
+			void showPopup();
+			void hidePopup();
+
+			void resignFocus(Element*);
+
+			void setValues(const StringList& v);
+			void addValue(const std::string& v);
+
+			void setSelectedIndex(int value);
+
+			void setPrefix(const std::string& prefix);
+			inline const std::string& prefix() const
+				{ return _prefix; }
+
+			const StringList& values() const 
+				{ return _values; }
+
+		private:
+			void buildVertices(GuiRenderer& gr);
+			void configurePopup();
+
+			void setState(ListboxState s);
+			void onPopupAnimationFinished(Element2D*, ElementAnimatedPropery);
+
+			void popupDidOpen();
+
+			bool shouldDrawText();
+			
+		private:
+			friend class ListboxPopup;
+
+			Font _font;
+			ListboxPopup::Pointer _popup;
+			Image _images[ListboxState_max];
+			Image _background;
+			Image _selection;
+			GuiVertexList _backgroundVertices;
+			GuiVertexList _textVertices;
+			std::string _prefix;
+			StringList _values;
+			ListboxState _state;
+			vec2 _contentOffset;
+			int _selectedIndex;
+			bool _popupOpened;
+			bool _popupOpening;
+			bool _popupValid;
+			bool _mouseIn;
+		};
+	}
+}

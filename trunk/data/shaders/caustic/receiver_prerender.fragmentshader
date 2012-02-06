@@ -1,0 +1,10 @@
+#version 140
+
+out vec4 FragColor;
+
+in vec4 vVertexWS;
+
+void main()
+{
+ FragColor = vec4(vVertexWS);
+}

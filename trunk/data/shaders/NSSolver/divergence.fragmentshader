@@ -1,0 +1,18 @@
+#version 150
+precision highp float;
+
+uniform sampler2D velocity_texture;
+uniform float fTexel;
+
+in vec2 TexCoord;
+out vec4 FragColor;
+
+void main()
+{         
+ float lX = texture(velocity_texture, TexCoord - vec2(fTexel, 0.0)).x;
+ float rX = texture(velocity_texture, TexCoord + vec2(fTexel, 0.0)).x;
+ float tY = texture(velocity_texture, TexCoord + vec2(0.0, fTexel)).y;
+ float bY = texture(velocity_texture, TexCoord - vec2(0.0, fTexel)).y;
+
+ FragColor = vec4( 0.5 * (rX - lX + tY - bY) );
+}

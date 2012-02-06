@@ -1,0 +1,21 @@
+uniform sampler2D color_texture;
+
+in vec2 TexCoord;
+in vec3 vNormalWS;
+in vec3 vViewWS;
+in vec3 vLightWS;
+
+out vec4 FragColor;
+
+#include <include\CookTorrance.h>
+
+void main()
+{
+ vec3 vNormal_n = normalize(vNormalWS);
+ vec3 vView_n   = normalize(vViewWS);
+ vec3 vLight_n  = normalize(vLightWS);
+
+ vec2 C = CookTorrance(vNormal_n, vLight_n, vView_n, 0.3);
+
+ FragColor = vec4(0.25 + 0.75 * C.x);
+}

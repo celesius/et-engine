@@ -1,0 +1,39 @@
+#version 150
+precision highp float;
+
+#include "planet\include\uniforms.h"
+
+uniform vec4 vAngle;
+
+in vec2 Vertex;
+
+out vec3 vViewWS;
+out vec3 vNormalWS;
+out vec3 vRayleighColor;
+out vec3 vMieColor;
+
+#include "planet\include\anglescale.h"
+
+void main()
+{
+#include "planet\include\getplanetvertex.h"
+#include "planet\include\getray.h"
+
+ vNormalWS = normalize(vVertex.xyz);
+
+ vec3 v3Start        =  vCamera;
+ float fCamHeight    =  length(vCamera);
+ float fDepth        =  exp((vRadius.x - fCamHeight) / vScale.y);
+ float fCameraAngle  = -dot(v3Ray, vNormalWS);
+ float fLightAngle   =  dot(vPrimaryLight, vNormalWS);
+ float fCameraScale  =  scale(fCameraAngle);
+ float fLightScale   =  scale(fLightAngle);
+ float fCameraOffset =  fDepth * fCameraScale;
+ float fTemp         =  fLightScale + fCameraScale;
+ float fSamples      =  fPlanetSamples;
+
+#include "planet\include\getsamplepoint.h"
+#include "planet\include\planetintegration.h"
+
+ gl_Position = mModelViewProjection * vVertex;
+}

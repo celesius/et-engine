@@ -1,0 +1,2 @@
+VS: objects\singletransform.vertexshader
+FS: common\default.fragmentshader

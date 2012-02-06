@@ -1,0 +1,51 @@
+#version 140
+
+uniform sampler2D caustic_texture;
+
+uniform vec3 cAmbient;
+uniform vec3 cDiffuse;
+uniform vec4 cSpecular;
+uniform float shadingType;
+
+in vec2 TexCoord;
+in vec3 vNormalWS;
+in vec3 vViewWS;
+in vec3 vLightWS;
+in vec4 vProjected;
+
+out vec4 FragColor;
+
+#include "..\include\CookTorrance.h"
+#include "..\include\Blinn.h"
+#include "..\include\Phong.h"
+
+void main()
+{
+ vec2 vProjectedTC = vProjected.xy / vProjected.w;
+
+ float eps = 0.025;
+ float e2 = 1.0 - eps;
+ vec4 vCaustic = vec4(0.0);
+
+ if ( (vProjectedTC.x <= eps) || (vProjectedTC.y <= eps) || (vProjectedTC.x >= e2) || (vProjectedTC.y >= e2) || (vProjected.z <= eps) )
+  vCaustic = vec4(0.0, 0.0, 0.0, 1.0);
+ else
+  vCaustic = max(vec4(0.0), texture( caustic_texture, vProjectedTC ) - vec4(0.0) );
+
+ vec3 vC = vec3(1.0) - exp(-0.24 * vCaustic.xyz);
+
+ vec3 vNormal_n = normalize(vNormalWS);
+ vec3 vView_n   = normalize(vViewWS);
+ vec3 vLight_n  = normalize(vLightWS);
+
+ vec2 C = vec2(1.0, 0.0);
+
+ if (1.0 == shadingType)
+  C = CookTorrance(vNormal_n, vLight_n, vView_n, cSpecular.w);
+ if (2.0 == shadingType)
+  C = Blinn(vNormal_n, vLight_n, vView_n, cSpecular.w);
+ if (3.0 == shadingType)
+  C = Phong(vNormal_n, vLight_n, vView_n, cSpecular.w);
+
+ FragColor = vec4( cAmbient + cDiffuse * C.x + cSpecular.xyz * vC, 1.0 );
+}

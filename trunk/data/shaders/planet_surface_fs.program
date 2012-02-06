@@ -1,0 +1,2 @@
+VS: planet\planet_surface_from_space.vertexshader
+FS: planet\planet_surface.fragmentshader

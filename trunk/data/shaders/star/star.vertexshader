@@ -1,0 +1,26 @@
+#version 150
+precision highp float;
+
+uniform vec3  vPosition;
+uniform float fRadius;
+
+uniform mat4 mModelViewProjection;
+
+in vec2 Vertex;
+
+void main()
+{
+ float fCosTheta = cos(Vertex.x);
+ float fSinTheta = sin(Vertex.x);
+ float fCosPhi   = cos(Vertex.y);
+ float fSinPhi   = sin(Vertex.y);
+
+ vec4 vVertex;// = vec4(Vertex.x * 000.0, 0.0, Vertex.y * 1000.0, 1.0);
+
+ vVertex.x = vPosition.x + fRadius * fSinTheta * fCosPhi;
+ vVertex.y = vPosition.y + fRadius * fCosTheta;
+ vVertex.z = vPosition.z + fRadius * fSinTheta * fSinPhi;
+ vVertex.w = 1.0;
+
+ gl_Position = mModelViewProjection * vVertex;
+}

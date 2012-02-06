@@ -1,0 +1,23 @@
+#pragma once
+
+#include <et/core/containers.h>
+#include <et/geometry/geometry.h>
+
+namespace et
+{
+	enum ImageFormat 
+	{
+		ImageFormat_Bitmap,
+		ImageFormat_PNG,
+		ImageFormat_RAW
+	};
+
+	class ImageWriter
+	{
+	public:
+		static std::string extensionForImageFormat(ImageFormat fmt);
+
+		static bool writeImageToFile(const std::string& fileName, const BinaryDataStorage& data, 
+			const vec2i& size, int components, int bitsPerComponent, ImageFormat fmt);
+	};
+}
