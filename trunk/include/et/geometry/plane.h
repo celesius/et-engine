@@ -11,6 +11,9 @@ namespace et
 	public:
 		vector4<T> equation;
 
+		Plane()
+			{ }
+
 		Plane(const vector4<T>& eq) : equation(eq)
 			{ } 
 
