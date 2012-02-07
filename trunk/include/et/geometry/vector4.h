@@ -128,8 +128,4 @@ namespace et
 	inline vector4<T> operator * (T value, const vector4<T>& vec) 
 		{ return vector4<T>(vec.x * value, vec.y * value, vec.z * value, vec.w * value); }
 
-	template <typename T>
-	inline vector4<T> sqrtv(const vector4<T>& v)
-		{ return vector4<T>(::sqrt(v.x), ::sqrt(v.y), ::sqrt(v.z), ::sqrt(v.w)); }
-
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <et/geometry/matrix3.h>
+
 namespace et
 {
 	template<typename T>
