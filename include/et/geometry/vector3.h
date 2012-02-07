@@ -1,5 +1,7 @@
 #pragma once
 
+#include <et/geometry/vector2.h>
+
 namespace et 
 {
 	template <typename T>
@@ -87,7 +89,7 @@ namespace et
 			{ return x*x + y*y + z*z; }
 
 		T length() const 
-			{ return ::sqrt( dotSelf() ); }
+			{ return sqrt( dotSelf() ); }
 
 		vector3 cross(const vector3 &vec) const
 			{ return vector3(y * vec.z - z * vec.y, z * vec.x - x * vec.z, 	x * vec.y - y * vec.x ); 	}
@@ -116,9 +118,5 @@ namespace et
 	template <typename T>
 	vector3<T> operator * (T value, const vector3<T>& vec) 
 		{ return vector3<T>(vec.x * value, vec.y * value, vec.z * value); }
-
-	template <typename T>
-	vector3<T> sqrtv(const vector3<T>& v)
-		{ return vector3<T>(::sqrt(v.x), ::sqrt(v.y), ::sqrt(v.z)); }
 
 }

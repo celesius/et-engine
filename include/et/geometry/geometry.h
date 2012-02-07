@@ -118,6 +118,18 @@ namespace et
 	inline vector4<T> floorv(const vector4<T>& v)
 		{ return vector4<T>(::floor(v.x), ::floor(v.y), ::floor(v.z), ::floor(v.w)); }
 
+	template <typename T>
+	inline vector4<T> sqrtv(const vector4<T>& v)
+		{ return vector4<T>(::sqrt(v.x), ::sqrt(v.y), ::sqrt(v.z), ::sqrt(v.w)); }
+	
+	template <typename T>
+	inline vector3<T> sqrtv(const vector3<T>& v)
+		{ return vector3<T>(::sqrt(v.x), ::sqrt(v.y), ::sqrt(v.z)); }
+	
+	template <typename T>
+	inline vector2<T> sqrtv(const vector2<T>& v)
+		{ return vector2<T>(::sqrt(v.x), ::sqrt(v.y)); }
+
 	template<typename T>
 	inline T clamp(T value, T min, T max)
 		{ return (value < min) ? min : (value > max) ? max : value; }

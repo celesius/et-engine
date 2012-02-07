@@ -1,6 +1,6 @@
 #pragma once
 
-#include <et/platform/compileoptions.h>
+#include <cmath>
 
 namespace et 
 {
@@ -84,7 +84,7 @@ namespace et
 			{ return x * v.x + y * v.y; }
 
 		T length() const
-			{ return ::sqrt(dotSelf()); }
+			{ return sqrt(dotSelf()); }
 
 		T square() const
 			{ return x * y; }
@@ -101,9 +101,5 @@ namespace et
 	template <typename T>
 	vector2<T> operator * (T value, const vector2<T>& vec) 
 		{ return vector2<T>(vec.x * value, vec.y * value); }
-
-	template <typename T>
-	vector2<T> sqrtv(const vector2<T>& v)
-		{ return vector2<T>(::sqrt(v.x), ::sqrt(v.y)); }
 
 }

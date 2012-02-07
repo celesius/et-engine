@@ -11,7 +11,7 @@ namespace et
 		{
 		public:
 			typedef IntrusivePtr<CollisionMesh> Pointer;
-			typedef DataStorage<Triangle> CollisionData;
+			typedef DataStorage<triangle> CollisionData;
 
 		public:
 			CollisionMesh(const std::string& name = defaultMeshName, Element* parent = 0);

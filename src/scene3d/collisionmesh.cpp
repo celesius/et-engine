@@ -37,7 +37,7 @@ void CollisionMesh::fillCollisionData(VertexArrayRef v, IndexArrayRef ind)
 		const vec3& p0 = pos[p[0]];
 		const vec3& p1 = pos[p[1]];
 		const vec3& p2 = pos[p[2]];
-		_data.push_back(Triangle(p0, p1, p2));
+		_data.push_back(triangle(p0, p1, p2));
 
 		if (index == 0)
 		{
