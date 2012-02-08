@@ -28,8 +28,7 @@ void VertexArrayObjectData::init()
 	checkOpenGLError("glGenVertexArrays in " + name());
 
 	_rs.bindVertexArray(_vao);
-	setVertexBuffer(_vb);
-	setIndexBuffer(_ib);
+	_rs.bindBuffers(_vb, _ib, true);
 }
 
 void VertexArrayObjectData::setBuffers(VertexBuffer vb, IndexBuffer ib)
@@ -37,20 +36,19 @@ void VertexArrayObjectData::setBuffers(VertexBuffer vb, IndexBuffer ib)
 	_vb = vb;
 	_ib = ib;
 	_rs.bindVertexArray(_vao);
-	_rs.bindBuffer(_vb, true);
-	_rs.bindBuffer(_ib, true);
+	_rs.bindBuffers(_vb, _ib, true);
 }
 
 void VertexArrayObjectData::setVertexBuffer(VertexBuffer vb)
 {
 	_vb = vb;
 	_rs.bindVertexArray(_vao);
-	_rs.bindBuffer(_vb, true);
+	_rs.bindBuffers(_vb, _ib, true);
 }
 
 void VertexArrayObjectData::setIndexBuffer(IndexBuffer ib)
 {
 	_ib = ib;
 	_rs.bindVertexArray(_vao);
-	_rs.bindBuffer(_ib, true);
+	_rs.bindBuffers(_vb, _ib, true);
 }

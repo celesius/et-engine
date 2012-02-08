@@ -24,32 +24,35 @@ namespace et
 
 		void updateData(RenderContext* rc, const TextureDescription& desc);
 
-		inline int glID() const
+		int glID() const
 			{ return _glID; }
 
-		inline int internalFormat() const
+		int internalFormat() const
 			{ return _desc.internalformat; }
 
-		inline int format() const
+		int format() const
 			{ return _desc.format; }
 
-		inline int dataType() const
+		int dataType() const
 			{ return _desc.type; }
 
-		inline int target() const
+		int target() const
 			{ return _desc.target; }
 
-		inline int width() const
+		int width() const
 			{ return _desc.size.x; }
 
-		inline GLsizei height() const
+		GLsizei height() const
 			{ return _desc.size.y; }
 
-		inline const vec2i& size() const 
+		const vec2i& size() const 
 			{ return _desc.size; }
 
-		inline vec2 sizeFloat() const 
+		vec2 sizeFloat() const 
 			{ return vec2(static_cast<float>(_desc.size.x), static_cast<float>(_desc.size.y)); }
+
+		const vec2& texel() const
+			{ return _texel; }
 
 	private:
 		void generateTexture(RenderContext* rc);
