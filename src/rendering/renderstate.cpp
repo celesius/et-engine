@@ -32,7 +32,7 @@ void RenderState::setMainViewportSize(const vec2i& sz, bool force)
 
 	bool shouldSetViewport = (_boundFramebuffer == 0) || (_defaultFramebuffer.valid() && (_boundFramebuffer == _defaultFramebuffer->glID()));
 	if (shouldSetViewport)
-		glViewport(0, 0, _mainViewportSize.x, _mainViewportSize.y);
+		etViewport(0, 0, _mainViewportSize.x, _mainViewportSize.y);
 }
 
 void RenderState::setViewportSize(const vec2i& sz, bool force)
@@ -41,7 +41,7 @@ void RenderState::setViewportSize(const vec2i& sz, bool force)
 
 	_viewportSize = sz;
 	_viewportSizeFloat = vec2(static_cast<float>(sz.x), static_cast<float>(sz.y));
-	glViewport(0, 0, _viewportSize.x, _viewportSize.y);
+	etViewport(0, 0, _viewportSize.x, _viewportSize.y);
 }
 
 void RenderState::bindTexture(GLenum unit, GLuint texture, GLenum target)
@@ -135,7 +135,15 @@ void RenderState::bindVertexArray(GLuint buffer)
 
 void RenderState::bindVertexArray(const VertexArrayObject& vao)
 {
-	bindVertexArray(vao.valid() ? vao->vertexArrayObject() : 0);
+	if (vao.valid())
+	{
+		bindVertexArray(vao->vertexArrayObject());
+		bindBuffers(vao->vertexBuffer(), vao->indexBuffer());
+	}
+	else
+	{
+		bindVertexArray(0);
+	}
 }
 
 void RenderState::resetBufferBindings()

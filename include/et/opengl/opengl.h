@@ -109,6 +109,7 @@ namespace et
 
 	size_t primitiveCount(GLenum mode, GLsizei count);
 
+	void etViewport(GLint x, GLint y, GLsizei width, GLsizei height);
 	void etDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid* indices);
 	void etDrawElementsBaseVertex(GLenum mode, GLsizei count, GLenum type, const GLvoid* indices, GLint base);
 	void etBindTexture(GLenum target, GLint texture);

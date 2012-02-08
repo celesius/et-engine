@@ -285,6 +285,13 @@ namespace et
 #endif
 	}
 
+	void etViewport(GLint x, GLint y, GLsizei width, GLsizei height)
+	{
+		checkOpenGLError("begin");
+		glViewport(x, y, width, height);
+		checkOpenGLError("end");
+	}
+
 	void etUseProgram(GLuint program)
 	{
 		checkOpenGLError("begin");

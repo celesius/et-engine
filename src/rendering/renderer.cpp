@@ -26,7 +26,8 @@ Renderer::Renderer(RenderContext* rc) : _rc(rc)
 	ib->linearize();
 
 	_fullscreenQuadVao = rc->vertexBufferFactory().createVertexArrayObject("fsquad-vao");
-	_fullscreenQuadVao->setBuffers(rc->vertexBufferFactory().createVertexBuffer("fsquad-vert", vb, BufferDrawType_Static),
+	_fullscreenQuadVao->setBuffers(
+		rc->vertexBufferFactory().createVertexBuffer("fsquad-vert", vb, BufferDrawType_Static),
 		rc->vertexBufferFactory().createIndexBuffer("fsquad-ind", ib, BufferDrawType_Static));
 
 	std::string fragSource = (ogl_caps().version() == OpenGLVersion_Old) ? copy_fragment_shader_2 : copy_fragment_shader_3_4;
