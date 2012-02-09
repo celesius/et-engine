@@ -57,6 +57,7 @@ namespace et
 	std::string loadTextFile(const std::string& fileName)
 	{
 		std::ifstream file(fileName.c_str(), std::ios::in | std::ios::binary);
+		if (file.fail()) return std::string();
 
 		DataStorage<char> data(streamSize(file) + 1, 0);
 		file.read(data.data(), data.size());
