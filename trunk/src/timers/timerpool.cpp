@@ -50,7 +50,7 @@ void TimerPoolObject::detachTimedObject(TimedObject* obj)
 {
 	CriticalSectionScope lock(_lock);
 
-	QueueEntry existsAddingEntry(obj, QueueAction_Update);
+	QueueEntry existsAddingEntry(obj, QueueAction_Add);
 	TimerPoolQueue::iterator existsAddingValue = std::find(_queue.begin(), _queue.end(), existsAddingEntry);
 	if (existsAddingValue != _queue.end())
 	{

@@ -221,6 +221,8 @@ void Gui::setCurrentLayout(Layout::Pointer layout, size_t animationFlags, float 
 	{
 		if (_currentLayout.valid())
 		{
+			_currentLayout->layoutDoesntNeedKeyboard.disconnect(this);
+			_currentLayout->layoutRequiresKeyboard.disconnect(this);
 			_currentLayout->willDisappear();
 			_currentLayout->didDisappear();
 		}
@@ -230,6 +232,8 @@ void Gui::setCurrentLayout(Layout::Pointer layout, size_t animationFlags, float 
 
 		if (_currentLayout.valid())
 		{
+			_currentLayout->layoutRequiresKeyboard.connect(this, &Gui::onKeyboardNeeded);
+			_currentLayout->layoutDoesntNeedKeyboard.connect(this, &Gui::onKeyboardResigned);
 			_currentLayout->layout(_screenSize);
 			_currentLayout->willAppear();
 			_currentLayout->didAppear();
@@ -260,7 +264,10 @@ void Gui::setCurrentLayout(Layout::Pointer layout, size_t animationFlags, float 
 
 		if (_currentLayout.valid())
 		{
+			_currentLayout->layoutDoesntNeedKeyboard.disconnect(this);
+			_currentLayout->layoutRequiresKeyboard.disconnect(this);
 			_currentLayout->willDisappear();
+
 			layoutWillDisappear.invoke(_currentLayout);
 			_currentLayoutAnimator = new Vector3Animator(this, &_currentLayoutOffsetAlpha, _currentLayoutOffsetAlpha, currDst, 
 				duration, 0, mainTimerPool());
@@ -268,8 +275,11 @@ void Gui::setCurrentLayout(Layout::Pointer layout, size_t animationFlags, float 
 
 		if (_nextLayout.valid())
 		{
+			_nextLayout->layoutRequiresKeyboard.connect(this, &Gui::onKeyboardNeeded);
+			_nextLayout->layoutDoesntNeedKeyboard.connect(this, &Gui::onKeyboardResigned);
 			_nextLayout->layout(_screenSize);
 			_nextLayout->willAppear();
+
 			layoutWillAppear.invoke(_nextLayout);
 			_nextLayoutAnimator = new Vector3Animator(this, &_nextLayoutOffsetAlpha, _nextLayoutOffsetAlpha, nextDst, 
 				duration, 0, mainTimerPool());

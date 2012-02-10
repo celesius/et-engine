@@ -10,6 +10,8 @@
 #include <et/gui/imageview.h>
 #include <et/gui/label.h>
 #include <et/gui/button.h>
+#include <et/gui/listbox.h>
+#include <et/gui/textfield.h>
 
 namespace et
 {
@@ -25,7 +27,7 @@ namespace et
 			AnimationFlag_FromBottom = 0x10
 		};
 
-		class Gui : public EventReceiver, public AnimatorDelegate
+		class Gui : public Shared, public EventReceiver, public AnimatorDelegate
 		{
 		public:
 			Gui(RenderContext* rc, TextureCache& texCache);
@@ -33,19 +35,19 @@ namespace et
 			void layout(const vec2& size);
 			void render(RenderContext* rc);
 
-			inline GuiRenderer& renderer() 
+			GuiRenderer& renderer() 
 				{ return _renderer; }
 
-			inline Layout::Pointer currentLayout() const
+			Layout::Pointer currentLayout() const
 				{ return _currentLayout; }
 
-			inline Layout::Pointer currentModalLayout() const
+			Layout::Pointer currentModalLayout() const
 				{ return _currentModalLayout; }
 
-			void setCurrentLayout(Layout::Pointer layout, size_t animationFlags, float duration = 0.3f);
+			void setCurrentLayout(Layout::Pointer layout, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
 
-			void presentModalLayout(Layout::Pointer layout, size_t animationFlags, float duration = 0.3f);
-			void dismissModalLayout(size_t animationFlags, float duration = 0.3f);
+			void presentModalLayout(Layout::Pointer layout, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
+			void dismissModalLayout(size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
 
 			void setBackgroundImage(const Image& img);
 
@@ -107,5 +109,7 @@ namespace et
 			bool _switchingRegular;
 			bool _switchingModal;
 		};
+
+		typedef IntrusivePtr<Gui> GuiRef;
 	}
 }

@@ -210,6 +210,7 @@ namespace et
 		};
 
 		class Element;
+		class Layout;
 		typedef Hierarchy<Element> ElementHierarchy;
 		class Element : public ElementHierarchy, public Flags, public EventReceiver, public TimedObject, public AnimatorDelegate
 		{
@@ -324,6 +325,9 @@ namespace et
 
 			virtual void animatorFinished(BaseAnimator*) 
 				{ /* virtual */ }
+
+			virtual Layout* owner()
+				{ return parent() ? parent()->owner() : 0; }
 
 			void startUpdates();
 			TimerPool& timerPool();

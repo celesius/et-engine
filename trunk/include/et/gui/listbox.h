@@ -15,6 +15,13 @@ namespace et
 			ListboxState_max
 		};
 
+		enum ListboxPopupDirection
+		{
+			ListboxPopupDirection_Top,
+			ListboxPopupDirection_Center,
+			ListboxPopupDirection_Bottom,
+		};
+
 		class Listbox;
 
 		class ListboxPopup : public Element2D
@@ -64,6 +71,7 @@ namespace et
 			void setImage(const Image& img, ListboxState state);
 			void setBackgroundImage(const Image& img);
 			void setSelectionImage(const Image& img);
+			void setPopupDirection(ListboxPopupDirection d);
 
 			void addToRenderQueue(RenderContext*, GuiRenderer&);
 
@@ -84,14 +92,21 @@ namespace et
 			void setValues(const StringList& v);
 			void addValue(const std::string& v);
 
+			int selectedIndex() const
+				{ return _selectedIndex; }
+
 			void setSelectedIndex(int value);
 
 			void setPrefix(const std::string& prefix);
-			inline const std::string& prefix() const
+
+			const std::string& prefix() const
 				{ return _prefix; }
 
 			const StringList& values() const 
 				{ return _values; }
+
+			ET_DECLARE_EVENT1(popupOpened, Listbox*)
+			ET_DECLARE_EVENT1(popupClosed, Listbox*)
 
 		private:
 			void buildVertices(GuiRenderer& gr);
@@ -119,6 +134,7 @@ namespace et
 			ListboxState _state;
 			vec2 _contentOffset;
 			int _selectedIndex;
+			ListboxPopupDirection _direction;
 			bool _popupOpened;
 			bool _popupOpening;
 			bool _popupValid;
