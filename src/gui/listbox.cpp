@@ -1,4 +1,5 @@
 #include <et/gui/listbox.h>
+#include <et/gui/layout.h>
 #include <et/gui/guirenderer.h>
 
 using namespace et;
@@ -154,8 +155,8 @@ void ListboxPopup::pointerLeaved(const PointerInputInfo&)
  */ 
 
 Listbox::Listbox(const Font& font, Element2D* parent) : Element2D(parent), _font(font), 
-	_state(ListboxState_Default), _contentOffset(0.0f), _selectedIndex(-1), _popupOpened(false), 
-	_popupOpening(false), _popupValid(false)
+	_state(ListboxState_Default), _contentOffset(0.0f), _selectedIndex(-1), 
+	_direction(ListboxPopupDirection_Bottom), _popupOpened(false), _popupOpening(false), _popupValid(false)
 {
 	_popup = ListboxPopup::Pointer(new ListboxPopup(this));
 	_popup->elementAnimationFinished.connect(this, &Listbox::onPopupAnimationFinished);
@@ -293,7 +294,12 @@ void Listbox::showPopup()
 	rect destSize = _popup->frame();
 	rect currentSize = destSize;
 
-	destSize.top = -size().y * static_cast<float>(_values.size() / 2);
+	destSize.top = 0.0f;
+	if (_direction == ListboxPopupDirection_Center)
+		destSize.top = floorf(0.5f * size().y * (1.0f - static_cast<float>(_values.size())));
+	else if (_direction == ListboxPopupDirection_Top)
+		destSize.top = floorf(-size().y * static_cast<float>(_values.size() / 2.0f));
+
 	currentSize.top = 0.0f;
 	currentSize.height = size().y;
 
@@ -301,9 +307,13 @@ void Listbox::showPopup()
 	_popupOpening = true;
 
 	_popup->hideText();
+	_popup->setAlpha(0.0f);
 	_popup->setFrame(currentSize);
 	_popup->setFrame(destSize, popupAppearTime);
+	_popup->setAlpha(1.0f, popupAppearTime);
 	_popup->setVisible(true);
+
+	owner()->setActiveElement(this);
 }
 
 void Listbox::hidePopup()
@@ -313,6 +323,7 @@ void Listbox::hidePopup()
 	setState(_mouseIn ? ListboxState_Highlighted : ListboxState_Default);
 	_popupOpened = false;
 	_popup->setVisible(false);
+	popupClosed.invoke(this);
 }
 
 void Listbox::resignFocus(Element* e)
@@ -336,7 +347,8 @@ void Listbox::addValue(const std::string& v)
 void Listbox::configurePopup()
 {
 	vec2 ownSize = size();
-	_popup->setFrame(0.0f, 0.0f, ownSize.x, ownSize.y * static_cast<float>(_values.size()));
+	float scale = static_cast<float>(etMax(1u, _values.size()));
+	_popup->setFrame(0.0f, 0.0f, ownSize.x, ownSize.y * scale);
 	_popupValid = true;
 }
 
@@ -358,6 +370,7 @@ void Listbox::setSelectedIndex(int value)
 void Listbox::onPopupAnimationFinished(Element2D*, ElementAnimatedPropery)
 {
 	_popup->revealText();
+	popupOpened.invoke(this);
 }
 
 void Listbox::popupDidOpen()
@@ -370,4 +383,9 @@ void Listbox::setPrefix(const std::string& prefix)
 {
 	_prefix = prefix;
 	invalidateContent();
+}
+
+void Listbox::setPopupDirection(ListboxPopupDirection d)
+{
+	_direction = d;
 }

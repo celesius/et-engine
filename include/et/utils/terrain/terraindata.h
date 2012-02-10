@@ -67,7 +67,7 @@ namespace et
 	private:
 		void generateVertexData(const FloatDataStorage& hm);
 
-		Triangle triangleForXZ(const vec2i& pt, int side) const;
+		triangle triangleForXZ(const vec2i& pt, int side) const;
 
 		vec2 normalizePoint(const vec3& pt) const;
 

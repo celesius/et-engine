@@ -94,16 +94,6 @@ Keyboard::Keyboard(RenderContext* rc, const Font& font, TextureCache& cache) : E
 
 Keyboard::~Keyboard()
 {
-/*
-	for (ButtonList::iterator i = _primaryButtons.begin(), e = _primaryButtons.end(); i != e; ++i)
-		delete (*i);
-
-	for (ButtonList::iterator i = _extraButtons.begin(), e = _extraButtons.end(); i != e; ++i)
-		delete (*i);
-
-	for (ButtonList::iterator i = _serviceButtons.begin(), e = _serviceButtons.end(); i != e; ++i)
-		delete (*i);
-*/
 }
 
 void Keyboard::layout(const vec2& sz)

@@ -16,7 +16,7 @@ namespace et
 		public:
 			Layout();
 
-			inline bool valid() const
+			bool valid() const
 				{ return _valid; }
 
 			void layout(const vec2& sz);
@@ -44,6 +44,9 @@ namespace et
 
 			void setInvalid();
 			void collectTopmostElements(Element* element);
+
+			Layout* owner()
+				{ return this; }
 
 		private:
 			Element* activeElement(const PointerInputInfo& p);

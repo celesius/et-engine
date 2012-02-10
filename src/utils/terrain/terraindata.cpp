@@ -213,9 +213,9 @@ vec2 TerrainData::normalizePoint(const vec3& pt) const
 	return vec2(nx, nz);
 }
 
-Triangle TerrainData::triangleForXZ(const vec2i& pt0, int side) const
+triangle TerrainData::triangleForXZ(const vec2i& pt0, int side) const
 {
-	Triangle t;
+	triangle t;
 
 	t.v1 = positionAtXZ(pt0);
 
@@ -264,10 +264,10 @@ TerrainContact TerrainData::contactForSphere(const Sphere& s) const
 	{
 		for (int x = leftTopIndex.x; x <= rightBottomIndex.x; ++x)
 		{
-			Triangle t1 = triangleForXZ(vec2i(x, y), 0);
-			Triangle t2 = triangleForXZ(vec2i(x, y), 1);
-			vec3 projCtoP1 = Plane(t1).projectionOfPoint(s.center());
-			vec3 projCtoP2 = Plane(t2).projectionOfPoint(s.center());
+			triangle t1 = triangleForXZ(vec2i(x, y), 0);
+			triangle t2 = triangleForXZ(vec2i(x, y), 1);
+			vec3 projCtoP1 = plane(t1).projectionOfPoint(s.center());
+			vec3 projCtoP2 = plane(t2).projectionOfPoint(s.center());
 			float d1 = (projCtoP1 - s.center()).dotSelf();
 			float d2 = (projCtoP1 - s.center()).dotSelf();
 
@@ -312,14 +312,14 @@ void TerrainData::gatherContactsForSphere(const Sphere& s, TerrainDataDelegate* 
 	{
 		for (int x = leftTopIndex.x; x <= rightBottomIndex.x; ++x)
 		{
-			Triangle t1 = triangleForXZ(vec2i(x, y), 0);
-			vec3 projCtoP1 = Plane(t1).projectionOfPoint(s.center());
+			triangle t1 = triangleForXZ(vec2i(x, y), 0);
+			vec3 projCtoP1 = plane(t1).projectionOfPoint(s.center());
 			float d1 = (projCtoP1 - s.center()).dotSelf();
 			if ((d1 <= squareRadius) && (pointInsideTriangle(projCtoP1, t1)))
 				contactDelegate->terrainDataDidFindContact(TerrainContact(projCtoP1, normalize(t1.normal()), true));
 
-			Triangle t2 = triangleForXZ(vec2i(x, y), 1);
-			vec3 projCtoP2 = Plane(t2).projectionOfPoint(s.center());
+			triangle t2 = triangleForXZ(vec2i(x, y), 1);
+			vec3 projCtoP2 = plane(t2).projectionOfPoint(s.center());
 			float d2 = (projCtoP1 - s.center()).dotSelf();
 			if ((d2 <= squareRadius) && (pointInsideTriangle(projCtoP2, t2)))
 				contactDelegate->terrainDataDidFindContact(TerrainContact(projCtoP2, normalize(t2.normal()), true));

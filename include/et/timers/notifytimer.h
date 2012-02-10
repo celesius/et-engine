@@ -10,7 +10,7 @@ namespace et
 	public:
 		enum RepeatCountFlag
 		{
-			Repeat_Forever = -1,
+			RepeatForever = -1,
 			DontRepear = 0
 		};
 

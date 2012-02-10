@@ -8,7 +8,7 @@ const short caretChar = '|';
 const short securedChar = '*';
 
 TextField::TextField(const Image& background, const std::string& text, const Font& font, Element* parent) : 
-	Element2D(parent), _font(font), _background(background), _text(text), _caretVisible(false)
+	Element2D(parent), _font(font), _background(background), _text(text), _secured(false), _caretVisible(false)
 {
 	setFlag(ElementFlag_RequiresKeyboard);
 	_caretBlinkTimer.expired.connect(this, &TextField::onCreateBlinkTimerExpired);
@@ -89,7 +89,7 @@ void TextField::setSecured(bool s)
 
 void TextField::setFocus()
 {
-	_caretBlinkTimer.start(timerPool(), 0.5f, NotifyTimer::Repeat_Forever);
+	_caretBlinkTimer.start(timerPool(), 0.5f, NotifyTimer::RepeatForever);
 	_caretVisible = true;
 	invalidateContent();
 }

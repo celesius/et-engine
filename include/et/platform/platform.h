@@ -4,12 +4,12 @@
 	#include <TargetConditionals.h>
 #endif
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(_WIN32) || defined(_WIN64)
 
 	#define ET_PLATFORM_WIN				1
 	#define CurrentPlatform				Platform_Windows
 
-	#if defined(WIN64)
+	#if defined(_WIN64)
 		#define ET_PLATFORM_WIN32		0
 		#define ET_PLATFORM_WIN64		1
 		#define ET_PLATFORM				ET_PLATFORM_WIN64
@@ -61,6 +61,6 @@ namespace et
 	};
 
 inline bool platformHasHardwareKeyboard()
-	{ return CurrentPlatform == Platform_Windows; }
+	{ return false; }// CurrentPlatform == Platform_Windows; }
 
 }
