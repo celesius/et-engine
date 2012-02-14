@@ -23,6 +23,8 @@ namespace et
 	void createDirectory(const std::string& name);
 	void findFiles(const std::string& folder, const std::string& mask, bool recursive, StringList& list);
 	void findSubfolders(const std::string& folder, bool recursive, StringList& list);
+	std::string selectFile(const StringList& mask);
+	std::string selectFile(const std::string& description, const std::string& ext);
 
 	// common code
 	inline bool isWhitespaceChar(char c)

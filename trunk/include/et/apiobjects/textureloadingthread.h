@@ -3,8 +3,8 @@
 #include <string>
 #include <queue>
 #include <et/threading/thread.h>
-#include <et/apiobjects/texture.h>
 #include <et/threading/criticalsection.h>
+#include <et/apiobjects/texture.h>
 
 namespace et
 {

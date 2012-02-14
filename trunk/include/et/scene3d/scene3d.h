@@ -3,6 +3,7 @@
 #include <et/scene3d/element.h>
 #include <et/scene3d/storage.h>
 #include <et/scene3d/mesh.h>
+#include <et/scene3d/cameraelement.h>
 
 namespace et
 {
