@@ -347,7 +347,7 @@ void Listbox::addValue(const std::string& v)
 void Listbox::configurePopup()
 {
 	vec2 ownSize = size();
-	float scale = static_cast<float>(etMax(1u, _values.size()));
+	float scale = static_cast<float>(etMax(1ul, _values.size()));
 	_popup->setFrame(0.0f, 0.0f, ownSize.x, ownSize.y * scale);
 	_popupValid = true;
 }

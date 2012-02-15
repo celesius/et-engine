@@ -70,7 +70,7 @@ void RenderContext::init()
 #endif
 	
 	_fpsTimer.expired.connect(this, &RenderContext::onFPSTimerExpired);
-	_fpsTimer.start(mainTimerPool(), 1.0f, NotifyTimer::Repeat_Forever);
+	_fpsTimer.start(mainTimerPool(), 1.0f, NotifyTimer::RepeatForever);
 }
 
 size_t RenderContext::renderingContextHandle()
