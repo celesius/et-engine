@@ -33,13 +33,9 @@ DictionaryValueRef Reader::load(const std::string& filename)
 
 	std::ifstream file(foundFile.c_str(), std::ios::binary);
 	if (file.fail()) return result;
-	std::cout << "Reading plist: " << foundFile << std::endl;
-
 	BinaryDataStorage buffer(streamSize(file) + 1, 0);
 	file.read(buffer.binary(), buffer.size() - 1);
 	parseBuffer(buffer, static_cast<DictionaryValue*>(result.ptr()));
-
-	std::cout << "Done: " << foundFile << std::endl;
 	return result;
 }
 

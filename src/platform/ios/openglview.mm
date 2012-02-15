@@ -116,13 +116,11 @@ using namespace et;
 	glBindRenderbuffer(GL_RENDERBUFFER, _defaultFramebuffer->colorRenderbuffer());
 	checkOpenGLError("glBindRenderbuffer -> color");
 	
-	BOOL done = [_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:glLayer];
-	if (done)
+	if ([_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:glLayer])
+	{
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _defaultFramebuffer->colorRenderbuffer());
-	else 
-		NSLog(@"renderbufferStorage: fromDrawable: failed");
-
-	checkOpenGLError("[_context renderbufferStorage:...");
+		checkOpenGLError("glFramebufferRenderbuffer(...");
+	}
 	
 	int w = 0;
 	int h = 0;

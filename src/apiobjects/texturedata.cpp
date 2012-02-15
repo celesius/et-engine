@@ -45,8 +45,6 @@ void TextureData::setWrap(RenderContext* rc, TextureWrap s, TextureWrap t, Textu
 #if (!ET_OPENGLES)
 	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_R, textureWrapValue(r));
 	checkOpenGLError("glTexParameteri<WRAP_R> " + name()); 
-#else
-	std::cout << "glTexParameteri(..., GL_TEXTURE_WRAP_R, " << r << ") call in OpenGLES" << std::endl;
 #endif	
 }
 

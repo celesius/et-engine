@@ -159,7 +159,7 @@ bool FramebufferData::check()
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
 	if (status != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << FramebufferStatusToString(status) + " for " + name();
+		std::cout << FramebufferStatusToString(status) + " for " + name() << std::endl;
 
 	return (status == GL_FRAMEBUFFER_COMPLETE);
 }

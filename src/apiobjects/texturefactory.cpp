@@ -93,13 +93,14 @@ Texture TextureFactory::genNoiseTexture(const vec2i& size, bool norm, const std:
 
 	TextureDescription desc;
 	desc.data = BinaryDataStorage(size.square() * 4);
-	memcpy(desc.data.raw(), randata.raw(), randata.dataSize());
-
 	desc.target = GL_TEXTURE_2D;
 	desc.format = GL_RGBA;
 	desc.internalformat = GL_RGBA;
 	desc.type = GL_UNSIGNED_BYTE;
 	desc.size = size;
+	desc.mipMapCount = 1;
+	desc.layersCount = 1;
+	memcpy(desc.data.raw(), randata.raw(), randata.dataSize());
 
 	return Texture(new TextureData(_rc, desc, id, false));
 }
