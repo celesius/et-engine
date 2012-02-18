@@ -121,7 +121,7 @@ inline bool textureNameSort(const TextureAtlasWriter::ImageItem& i1, const Textu
 void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* textureNamePattern)
 {
 	std::string path = addTrailingSlash(getFilePath(fileName));
-	std::ofstream descFile(fileName);
+	std::ofstream descFile(fileName.c_str());
 
 	int textureIndex = 0;
 	for (TextureAtlasItemList::iterator i = _items.begin(), e = _items.end(); i != e; ++i, ++textureIndex)

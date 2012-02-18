@@ -1,14 +1,13 @@
 #include <et/opengl/opengl.h>
 #include <et/device/rendercontext.h>
 #include <et/app/application.h>
-#include <et/input/input.h>
 #include <et/rendering/renderer.h>
 #include <et/opengl/openglcaps.h>
 #include <et/platform/ios/openglviewcontroller.h>
 
 using namespace et;
 
-class et::RenderContextPrivate : public Input::PointerInputSource
+class et::RenderContextPrivate
 {
 public:
 	RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params);
