@@ -54,7 +54,7 @@ namespace et
 		const T* ptr() const
 			{ return _data; }
 
-		inline bool isNull() const
+		inline bool invalid() const
 			{ return !valid(); }
 
 		T* operator -> () 
@@ -160,7 +160,7 @@ namespace et
 		const T* ptr() const
 			{ return valid() ? _data : 0; }
 
-		inline bool isNull() const
+		inline bool invalid() const
 			{ return !valid(); }
 
 		T* operator -> () 

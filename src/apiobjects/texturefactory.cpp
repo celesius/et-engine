@@ -22,7 +22,7 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
 	CriticalSectionScope lock(_csTextureLoading);
 
 	Texture texture = cache.findTexture(file);
-	if (texture.isNull())
+	if (texture.invalid())
 	{
 		bool calledFromAnotherThread = Threading::currentThread() != threading().mainThread();
 
