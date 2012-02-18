@@ -336,7 +336,7 @@ int Carousel::selectedItem() const
 
 bool Carousel::pointerPressed(const PointerInputInfo& p)
 {
-	if ((_alpha < 1.0e-4) || (_dragOnlyItems && itemForInputInfo(p, 0).isNull())) return false;
+	if ((_alpha < 1.0e-4) || (_dragOnlyItems && itemForInputInfo(p, 0).invalid())) return false;
 
 	if (p.type == PointerType_General)
 	{
@@ -360,7 +360,7 @@ bool Carousel::pointerPressed(const PointerInputInfo& p)
 
 bool Carousel::pointerMoved(const PointerInputInfo& p)
 {
-	if (!_dragging && _dragOnlyItems && itemForInputInfo(p, 0).isNull()) return false;
+	if (!_dragging && _dragOnlyItems && itemForInputInfo(p, 0).invalid()) return false;
 
 	if ((p.type == PointerType_General))
 	{
@@ -397,7 +397,7 @@ bool Carousel::pointerMoved(const PointerInputInfo& p)
 
 bool Carousel::pointerReleased(const PointerInputInfo& p)
 {
-	if (!_dragging && _dragOnlyItems && itemForInputInfo(p, 0).isNull()) return false;
+	if (!_dragging && _dragOnlyItems && itemForInputInfo(p, 0).invalid()) return false;
 
 	bool processed = _dragging;
 	if (p.type == PointerType_General)

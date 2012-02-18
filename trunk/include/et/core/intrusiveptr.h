@@ -56,7 +56,7 @@ namespace et
 		inline const T* ptr() const 
 			{ return _data; }
 
-		inline bool isNull() const
+		inline bool invalid() const
 			{ return _data == 0; }
 
 		inline bool valid() const 
