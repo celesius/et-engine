@@ -1,26 +1,8 @@
 #import <QuartzCore/QuartzCore.h>
 #import <et/app/application.h>
+#import <et/app/applicationnotifier.h>
 #import <et/platform/ios/applicationdelegate.h>
 #import <et/platform/ios/openglviewcontroller.h>
-
-namespace et
-{
-	class ApplicationNotifier
-	{
-	public:
-		void notifyLoaded()
-			{ application().loaded(); }
-		
-		void notifyIdle()
-			{ application().idle(); }
-		
-		void notifyDeactivated()
-			{ application().setActive(false); }
-		
-		void notifyActivated()
-			{ application().setActive(true); }
-	};
-}
 
 using namespace et;
 
