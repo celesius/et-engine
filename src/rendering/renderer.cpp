@@ -48,7 +48,7 @@ Renderer::~Renderer()
 
 void Renderer::clear(bool color, bool depth)
 {
-	GLbitfield mask = (color * GL_COLOR_BUFFER_BIT) | (depth * GL_DEPTH_BUFFER_BIT);
+	GLbitfield mask = (color * GL_COLOR_BUFFER_BIT) + (depth * GL_DEPTH_BUFFER_BIT);
 
 	if (mask)
 		glClear(mask);
@@ -61,7 +61,7 @@ void Renderer::setClearColor(const vec4& color)
 
 void Renderer::fullscreenPass()
 {
-	IndexBuffer& ib = _fullscreenQuadVao->indexBuffer();
+	const IndexBuffer& ib = _fullscreenQuadVao->indexBuffer();
 
 	_rc->renderState().bindVertexArray(_fullscreenQuadVao);
 	drawElements(ib, 0, ib->size());

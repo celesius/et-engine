@@ -55,13 +55,13 @@ namespace et
 		 * Viewport
 		 */
 		const vec2i& mainViewportSize() const
-			{ return _mainViewportSize; }
+			{ return _currentState.mainViewportSize; }
 		const vec2i& viewportSize() const
-			{ return _viewportSize; }
+			{ return _currentState.viewportSize; }
 		const vec2& mainViewportSizeFloat() const
-			{ return _mainViewportSizeFloat; }
+			{ return _currentState.mainViewportSizeFloat; }
 		const vec2& viewportSizeFloat() const
-			{ return _viewportSizeFloat; }
+			{ return _currentState.viewportSizeFloat; }
 		void setMainViewportSize(const vec2i& sz, bool force = false);
 		void setViewportSize(const vec2i& sz, bool force = false);
 
@@ -106,19 +106,19 @@ namespace et
 		 * State
 		 */
 		bool blendEnabled() const
-			{ return _blendEnabled; }
+			{ return _currentState.blendEnabled; }
 
 		BlendState blendState() const
-			{ return _lastBlend; }
+			{ return _currentState.lastBlend; }
 
 		bool depthTestEnabled() const 
-			{ return _depthTestEnabled; }
+			{ return _currentState.depthTestEnabled; }
 
 		bool depthMaskEnabled() const 
-			{ return _depthMaskEnabled; }
+			{ return _currentState.depthMaskEnabled; }
 
 		bool wireframeRendering() const 
-			{ return _wireframe; }
+			{ return _currentState.wireframe; }
 
 		void setBlend(bool enable, BlendState blend = Blend_Current);
 		void setCulling(CullState cull);
@@ -137,34 +137,43 @@ namespace et
 		void vertexBufferDeleted(GLuint buffer);
 		void indexBufferDeleted(GLuint buffer);
 		void frameBufferDeleted(GLuint buffer);
+		
+	private:
+		
+		struct State
+		{
+			StaticDataStorage<GLuint, MAX_TEXTURE_UNITS> boundTextures;
+			StaticDataStorage<GLuint, Usage_MAX> enabledVertexAttributes;
+			
+			GLenum lastTextureUnit;
+			GLenum boundFramebuffer; 
+			GLenum boundArrayBuffer;
+			GLenum boundElementArrayBuffer;
+			GLuint boundVertexArrayObject;
+			GLuint boundProgram;
+			
+			vec2i mainViewportSize;
+			vec2i viewportSize;
+			vec2 mainViewportSizeFloat;
+			vec2 viewportSizeFloat;
+			
+			bool blendEnabled;
+			bool depthTestEnabled;
+			bool depthMaskEnabled;
+			bool polygonOffsetFillEnabled;
+			bool wireframe;
+			BlendState lastBlend;
+			CullState lastCull;
+			DepthFunc lastDepthFunc;		
+			
+			State();
+		};
 
 	private:
 		RenderContext* _rc;
 		Framebuffer _defaultFramebuffer;
-		
-		StaticDataStorage<GLuint, MAX_TEXTURE_UNITS> _boundTextures;
-		StaticDataStorage<GLuint, Usage_MAX> _enabledVertexAttributes;
-
-		GLenum _lastTextureUnit;
-		GLenum _boundFramebuffer; 
-		GLenum _boundArrayBuffer;
-		GLenum _boundElementArrayBuffer;
-		GLuint _boundVertexArrayObject;
-		GLuint _boundProgram;
-
-		vec2i _mainViewportSize;
-		vec2i _viewportSize;
-		vec2 _mainViewportSizeFloat;
-		vec2 _viewportSizeFloat;
-
-		bool _blendEnabled;
-		bool _depthTestEnabled;
-		bool _depthMaskEnabled;
-		bool _polygonOffsetFillEnabled;
-		bool _wireframe;
-		BlendState _lastBlend;
-		CullState _lastCull;
-		DepthFunc _lastDepthFunc;
+	
+		State _currentState;
 	};
 
 }
