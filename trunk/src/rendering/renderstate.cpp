@@ -8,14 +8,18 @@
 
 using namespace et;
 
-RenderState::RenderState() : 
-	_lastTextureUnit(0), _boundFramebuffer(0), _boundArrayBuffer(0),
-	_boundElementArrayBuffer(0), _boundVertexArrayObject(0), _boundProgram(0), 
-	_blendEnabled(false), _depthTestEnabled(false), _depthMaskEnabled(true), _polygonOffsetFillEnabled(false),
-	_wireframe(false), _lastBlend(Blend_Disabled), _lastCull(CullState_None), _lastDepthFunc(DepthFunc_Less)
+RenderState::State::State() : 
+	lastTextureUnit(0), boundFramebuffer(0), boundArrayBuffer(0), boundElementArrayBuffer(0), boundVertexArrayObject(0), 
+	boundProgram(0), blendEnabled(false), depthTestEnabled(false), depthMaskEnabled(true), polygonOffsetFillEnabled(false),
+	wireframe(false), lastBlend(Blend_Disabled), lastCull(CullState_None), lastDepthFunc(DepthFunc_Less)
 {
-	_boundTextures.fill(0);
-	_enabledVertexAttributes.fill(0);
+	boundTextures.fill(0);
+	enabledVertexAttributes.fill(0);
+}
+
+RenderState::RenderState()
+{
+	
 }
 
 void RenderState::setRenderContext(RenderContext* rc)
@@ -25,36 +29,36 @@ void RenderState::setRenderContext(RenderContext* rc)
 
 void RenderState::setMainViewportSize(const vec2i& sz, bool force)
 {
-	if (!force && (sz.x == _mainViewportSize.x) && (sz.y == _mainViewportSize.y)) return;
+	if (!force && (sz.x == _currentState.mainViewportSize.x) && (sz.y == _currentState.mainViewportSize.y)) return;
 
-	_mainViewportSize = sz;
-	_mainViewportSizeFloat = vec2(static_cast<float>(sz.x), static_cast<float>(sz.y));
+	_currentState.mainViewportSize = sz;
+	_currentState.mainViewportSizeFloat = vec2(static_cast<float>(sz.x), static_cast<float>(sz.y));
 
-	bool shouldSetViewport = (_boundFramebuffer == 0) || (_defaultFramebuffer.valid() && (_boundFramebuffer == _defaultFramebuffer->glID()));
+	bool shouldSetViewport = (_currentState.boundFramebuffer == 0) || (_defaultFramebuffer.valid() && (_currentState.boundFramebuffer == _defaultFramebuffer->glID()));
 	if (shouldSetViewport)
-		etViewport(0, 0, _mainViewportSize.x, _mainViewportSize.y);
+		etViewport(0, 0, _currentState.mainViewportSize.x, _currentState.mainViewportSize.y);
 }
 
 void RenderState::setViewportSize(const vec2i& sz, bool force)
 {
-	if (!force && (sz.x == _viewportSize.x) && (sz.y == _viewportSize.y)) return;
+	if (!force && (sz.x == _currentState.viewportSize.x) && (sz.y == _currentState.viewportSize.y)) return;
 
-	_viewportSize = sz;
-	_viewportSizeFloat = vec2(static_cast<float>(sz.x), static_cast<float>(sz.y));
-	etViewport(0, 0, _viewportSize.x, _viewportSize.y);
+	_currentState.viewportSize = sz;
+	_currentState.viewportSizeFloat = vec2(static_cast<float>(sz.x), static_cast<float>(sz.y));
+	etViewport(0, 0, _currentState.viewportSize.x, _currentState.viewportSize.y);
 }
 
 void RenderState::bindTexture(GLenum unit, GLuint texture, GLenum target)
 {
-	if (unit != _lastTextureUnit)
+	if (unit != _currentState.lastTextureUnit)
 	{
-		_lastTextureUnit = unit;
-		glActiveTexture(GL_TEXTURE0 + _lastTextureUnit);
+		_currentState.lastTextureUnit = unit;
+		glActiveTexture(GL_TEXTURE0 + _currentState.lastTextureUnit);
 	}
 
-	if (_boundTextures[unit] != texture)
+	if (_currentState.boundTextures[unit] != texture)
 	{
-		_boundTextures[unit] = texture;
+		_currentState.boundTextures[unit] = texture;
 		etBindTexture(target, texture);
 	}
 
@@ -62,23 +66,23 @@ void RenderState::bindTexture(GLenum unit, GLuint texture, GLenum target)
 
 void RenderState::bindProgram(GLuint program, bool force)
 {
-	if (force || (program != _boundProgram))
+	if (force || (program != _currentState.boundProgram))
 	{ 
-		_boundProgram = program;
+		_currentState.boundProgram = program;
 		etUseProgram(program);
 	}
 }
 
 void RenderState::bindBuffer(GLenum target, GLuint buffer, bool force)
 { 
-	if ((target == GL_ARRAY_BUFFER) && (force || (_boundArrayBuffer != buffer)))
+	if ((target == GL_ARRAY_BUFFER) && (force || (_currentState.boundArrayBuffer != buffer)))
 	{
-		_boundArrayBuffer = buffer;
+		_currentState.boundArrayBuffer = buffer;
 		etBindBuffer(target, buffer);
 	} 
-	else if ((target == GL_ELEMENT_ARRAY_BUFFER) && (force || (_boundElementArrayBuffer != buffer)))
+	else if ((target == GL_ELEMENT_ARRAY_BUFFER) && (force || (_currentState.boundElementArrayBuffer != buffer)))
 	{ 
-		_boundElementArrayBuffer = buffer;
+		_currentState.boundElementArrayBuffer = buffer;
 		etBindBuffer(target, buffer);
 	} 
 	else if ((target != GL_ARRAY_BUFFER) && (target != GL_ELEMENT_ARRAY_BUFFER))
@@ -126,9 +130,9 @@ void RenderState::bindBuffers(const VertexBuffer& vb, const IndexBuffer& ib, boo
 
 void RenderState::bindVertexArray(GLuint buffer)
 {
-	if (_boundVertexArrayObject != buffer)
+	if (_currentState.boundVertexArrayObject != buffer)
 	{ 
-		_boundVertexArrayObject = buffer;
+		_currentState.boundVertexArrayObject = buffer;
 		etBindVertexArray(buffer);
 	}
 }
@@ -163,9 +167,9 @@ void RenderState::bindTexture(GLenum unit, const Texture& texture)
 
 void RenderState::bindFramebuffer(GLuint framebuffer, GLenum target)
 {
-	if (_boundFramebuffer != framebuffer)
+	if (_currentState.boundFramebuffer != framebuffer)
 	{
-		_boundFramebuffer = framebuffer;
+		_currentState.boundFramebuffer = framebuffer;
 		etBindFramebuffer(target, framebuffer);
 	}
 }
@@ -180,7 +184,7 @@ void RenderState::bindFramebuffer(const Framebuffer& fbo)
 	else 
 	{
 		bindFramebuffer(0);
-		setViewportSize(_mainViewportSize);
+		setViewportSize(_currentState.mainViewportSize);
 	}
 }
 
@@ -203,18 +207,18 @@ void RenderState::bindDefaultFramebuffer(GLenum)
 
 void RenderState::setDepthMask(bool enable)
 {
-	if (_depthMaskEnabled != enable)
+	if (_currentState.depthMaskEnabled != enable)
 	{
-		_depthMaskEnabled = enable;
+		_currentState.depthMaskEnabled = enable;
 		glDepthMask(enable);
 	}
 }
 
 void RenderState::setDepthTest(bool enable)
 {
-	if (enable != _depthTestEnabled)
+	if (enable != _currentState.depthTestEnabled)
 	{
-		_depthTestEnabled = enable;
+		_currentState.depthTestEnabled = enable;
 
 		if (enable)
 			glEnable(GL_DEPTH_TEST);
@@ -225,10 +229,10 @@ void RenderState::setDepthTest(bool enable)
 
 void RenderState::setDepthFunc(DepthFunc func)
 {
-	if (func == _lastDepthFunc) return;
+	if (func == _currentState.lastDepthFunc) return;
 
-	_lastDepthFunc = func;
-	switch (_lastDepthFunc)
+	_currentState.lastDepthFunc = func;
+	switch (_currentState.lastDepthFunc)
 	{
 	case DepthFunc_Always:
 		{
@@ -258,18 +262,18 @@ void RenderState::setDepthFunc(DepthFunc func)
 
 void RenderState::setBlend(bool enable, BlendState blend)
 {
-	if (_blendEnabled != enable)
+	if (_currentState.blendEnabled != enable)
 	{
-		_blendEnabled = enable;
+		_currentState.blendEnabled = enable;
 		if (enable)
 			glEnable(GL_BLEND);
 		else
 			glDisable(GL_BLEND);
 	}
 
-	if ((blend != Blend_Current) && (_lastBlend != blend))
+	if ((blend != Blend_Current) && (_currentState.lastBlend != blend))
 	{
-		_lastBlend = blend;
+		_currentState.lastBlend = blend;
 		switch (blend)
 		{  
 		case Blend_Disabled: 
@@ -309,39 +313,37 @@ void RenderState::setBlend(bool enable, BlendState blend)
 
 void RenderState::vertexArrayDeleted(GLuint buffer)
 {
-	if (_boundVertexArrayObject == buffer)
+	if (_currentState.boundVertexArrayObject == buffer)
 		bindVertexArray(0);
 }
 
 void RenderState::vertexBufferDeleted(GLuint buffer)
 {
-	if (_boundArrayBuffer == buffer)
+	if (_currentState.boundArrayBuffer == buffer)
 		bindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void RenderState::indexBufferDeleted(GLuint buffer)
 {
-	if (_boundElementArrayBuffer == buffer)
+	if (_currentState.boundElementArrayBuffer == buffer)
 		bindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void RenderState::programDeleted(GLuint program)
 {
-	if (_boundProgram == program)
+	if (_currentState.boundProgram == program)
 		bindProgram(0, true);
 }
 
 void RenderState::textureDeleted(GLuint texture)
 {
-	if (_boundTextures[_lastTextureUnit] == texture)
-		bindTexture(_lastTextureUnit, 0, GL_TEXTURE_2D);
+	if (_currentState.boundTextures[_currentState.lastTextureUnit] == texture)
+		bindTexture(_currentState.lastTextureUnit, 0, GL_TEXTURE_2D);
 
 	for (GLuint i = 0; i < MAX_TEXTURE_UNITS; ++i) 
 	{
-		if (_boundTextures[i] == texture)
-		{
-			_boundTextures[i] = 0;
-		}
+		if (_currentState.boundTextures[i] == texture)
+			_currentState.boundTextures[i] = 0;
 	}
 }
 
@@ -350,7 +352,7 @@ void RenderState::frameBufferDeleted(GLuint buffer)
 	if (_defaultFramebuffer.valid() && (_defaultFramebuffer->glID() == buffer))
 		_defaultFramebuffer = Framebuffer();
 	
-	if (_boundFramebuffer == buffer)
+	if (_currentState.boundFramebuffer == buffer)
 		bindDefaultFramebuffer();
 }
 
@@ -358,21 +360,18 @@ void RenderState::setVertexAttribEnabled(GLuint attrib, bool enabled, bool force
 {
 	if (enabled)
 	{
-		if (!_enabledVertexAttributes[attrib] || force)
+		if (!_currentState.enabledVertexAttributes[attrib] || force)
 		{
-			_enabledVertexAttributes[attrib] = enabled;
+			_currentState.enabledVertexAttributes[attrib] = enabled;
 			glEnableVertexAttribArray(attrib);
 			checkOpenGLError("glEnableVertexAttribArray(" + intToStr(attrib) + ")");
 		}
 	}
-	else
+	else if (_currentState.enabledVertexAttributes[attrib] || force)
 	{
-		if (_enabledVertexAttributes[attrib] || force)
-		{
-			_enabledVertexAttributes[attrib] = false;
-			glDisableVertexAttribArray(attrib);
-			checkOpenGLError("glDisableVertexAttribArray(" + intToStr(attrib) + ")");
-		}
+		_currentState.enabledVertexAttributes[attrib] = false;
+		glDisableVertexAttribArray(attrib);
+		checkOpenGLError("glDisableVertexAttribArray(" + intToStr(attrib) + ")");
 	}
 }
 
@@ -385,7 +384,7 @@ void RenderState::setVertexAttribPointer(const VertexElement& e, size_t baseInde
 
 void RenderState::setCulling(CullState cull)
 {
-	if (_lastCull == cull) return;
+	if (_currentState.lastCull == cull) return;
 
 	switch (cull)
 	{
@@ -396,7 +395,7 @@ void RenderState::setCulling(CullState cull)
 		}
 	case CullState_Back:
 		{
-			if (_lastCull == CullState_None)
+			if (_currentState.lastCull == CullState_None)
 				glEnable(GL_CULL_FACE);
 
 			glCullFace(GL_BACK);
@@ -404,7 +403,7 @@ void RenderState::setCulling(CullState cull)
 		}
 	case CullState_Front:
 		{
-			if (_lastCull == CullState_None)
+			if (_currentState.lastCull == CullState_None)
 				glEnable(GL_CULL_FACE);
 
 			glCullFace(GL_FRONT);
@@ -415,14 +414,14 @@ void RenderState::setCulling(CullState cull)
 		return; // error occured
 	};
 
-	_lastCull = cull;
+	_currentState.lastCull = cull;
 }
 
 void RenderState::setPolygonOffsetFill(bool enabled, float factor, float units)
 {
-	if (_polygonOffsetFillEnabled != enabled)
+	if (_currentState.polygonOffsetFillEnabled != enabled)
 	{
-		_polygonOffsetFillEnabled = enabled;
+		_currentState.polygonOffsetFillEnabled = enabled;
 		if (enabled)
 			glEnable(GL_POLYGON_OFFSET_FILL);
 		else
@@ -434,10 +433,10 @@ void RenderState::setPolygonOffsetFill(bool enabled, float factor, float units)
 
 void RenderState::setWireframeRendering(bool wire)
 {
-	if (_wireframe != wire)
+	if (_currentState.wireframe != wire)
 	{
 #if (!ET_OPENGLES)
-		_wireframe = wire;
+		_currentState.wireframe = wire;
 		glPolygonMode(GL_FRONT_AND_BACK, wire ? GL_LINE : GL_FILL);
 #endif
 	}
@@ -456,12 +455,13 @@ void RenderState::reset()
 	bindFramebuffer(0);
 	bindProgram(0, true);
 	setVertexAttributes(VertexDeclaration(), true);
-	resetBufferBindings();
-/*	
-	for (size_t i = 0; i < _boundTextures.size(); ++i)
-		_boundTextures[i] = 0;
+	bindVertexArray(0);
+	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	bindBuffer(GL_ARRAY_BUFFER, 0);
 	
-	for (size_t i = 0; i < _enabledVertexAttributes.size(); ++i)
-		_enabledVertexAttributes[i] = 0;
-*/ 
+	for (size_t i = 0; i < MAX_TEXTURE_UNITS; ++i)
+		bindTexture(i, GL_TEXTURE_2D, 0);
+	
+	for (size_t i = 0; i < Usage_MAX; ++i)
+		setVertexAttribEnabled(i, false);
 }

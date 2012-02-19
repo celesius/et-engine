@@ -26,28 +26,46 @@ namespace et
 	template <typename T, size_t count>
 	struct StaticDataStorage : private Container
 	{
-		StaticDataStorage() { }
-		StaticDataStorage(int initialize) { memset(data, initialize, sizeof(data)); }
+		StaticDataStorage() 
+			{ }
+		
+		StaticDataStorage(int initialize) 
+			{ memset(data, initialize, sizeof(data)); }
 
 		T data[count];
 
-		virtual inline void fill(int value)
-		{ memset(data, value, dataSize()); }
+		virtual void fill(int value)
+			{ memset(data, value, dataSize()); }
 
-		inline T& operator [](int i) { return data[i]; }
-		inline const T& operator [](int i) const { return data[i]; }
+		T& operator [](int i)
+			{ return data[i]; }
+		
+		const T& operator [](int i) const
+			{ return data[i]; }
 
-		inline T* ptr() { return data; }
+		T* ptr()
+			{ return data; }
 
-		void* raw() { return data; }
-		const void* raw() const { return data; };
+		void* raw()
+			{ return data; }
+		
+		const void* raw() const
+			{ return data; };
 
-		char* binary() { return (char*)data; }
-		const char* binary() const { return (char*)data; }
+		char* binary()
+			{ return (char*)data; }
+		
+		const char* binary() const
+			{ return (char*)data; }
 
-		const size_t size() const { return count; }
-		const size_t dataSize() const { return count * sizeof(T); }
-		const size_t typeSize() const { return sizeof(T); }
+		const size_t size() const
+			{ return count; }
+		
+		const size_t dataSize() const 
+			{ return count * sizeof(T); }
+		
+		const size_t typeSize() const
+			{ return sizeof(T); }
 	};
 
 	template <typename T>

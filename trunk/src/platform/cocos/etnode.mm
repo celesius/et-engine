@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+#include <ccGLState.h>
 #include <et/platform/cocos/etnode.h>
 
 #include <et/app/application.h>
@@ -27,36 +28,35 @@ using namespace et;
 	self = [super init];
 	if (self)
 	{
-		application().run(0, 0);
-		
-		_notifier = new ApplicationNotifier();
-		_notifier->notifyLoaded();
+//		_notifier = new ApplicationNotifier();
+//		application().run(0, 0);
+//		ccGLInvalidateStateCache();
 	}
 	return self;
 }
 
 - (void)dealloc
 {
-	application().quit();
-	delete _notifier;
+//	application().quit();
+//	delete _notifier;
 	[super dealloc];
 }
 
 - (void)onEnter
 {
 	[super onEnter];
-	_notifier->notifyActivated();
+//	_notifier->notifyActivated();
 }
 
 - (void)onExit
 {
-	[super onEnter];
-	_notifier->notifyDeactivated();
+	[super onExit];
+//	_notifier->notifyDeactivated();
 }
 
 - (void)visit
 {
-	_notifier->notifyIdle();
+//	_notifier->notifyIdle();
 }
 
 @end
