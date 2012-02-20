@@ -80,6 +80,7 @@ namespace et
 		RenderState();
 		void setRenderContext(RenderContext* rc);
 		void reset();
+		void applyState(const State& s);
 
 		/*
 		 * Viewport

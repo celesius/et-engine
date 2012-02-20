@@ -460,10 +460,30 @@ void RenderState::reset()
 	bindBuffer(GL_ARRAY_BUFFER, 0);
 	
 	for (size_t i = 0; i < MAX_TEXTURE_UNITS; ++i)
-		bindTexture(i, GL_TEXTURE_2D, 0);
+		bindTexture(i, 0, GL_TEXTURE_2D);
 	
 	for (size_t i = 0; i < Usage_MAX; ++i)
 		setVertexAttribEnabled(i, false);
+}
+
+void RenderState::applyState(const RenderState::State& s)
+{
+	setBlend(s.blendEnabled, s.lastBlend);
+	setDepthFunc(s.lastDepthFunc);
+	setDepthMask(s.depthMaskEnabled);
+	setDepthTest(s.depthTestEnabled);
+	setPolygonOffsetFill(s.polygonOffsetFillEnabled);
+	setWireframeRendering(s.wireframe);
+	setCulling(s.lastCull);
+	bindFramebuffer(s.boundFramebuffer);
+	bindProgram(s.boundProgram, true);
+	bindVertexArray(s.boundVertexArrayObject);
+	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, s.boundElementArrayBuffer);
+	bindBuffer(GL_ARRAY_BUFFER, s.boundArrayBuffer);
+	for (size_t i = 0; i < MAX_TEXTURE_UNITS; ++i)
+		bindTexture(i, s.boundTextures[i], GL_TEXTURE_2D);
+	for (size_t i = 0; i < Usage_MAX; ++i)
+		setVertexAttribEnabled(s.enabledVertexAttributes[i], false);
 }
 
 RenderState::State RenderState::currentState()
