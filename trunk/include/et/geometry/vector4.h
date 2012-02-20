@@ -39,7 +39,10 @@ namespace et
 		vector4(T _x, T _y, T _z, T _w) : x(_x), y(_y), z(_z), w(_w)
 			{ }
 
-		T* data()
+		T* raw()
+			{ return c; }
+
+		const T* raw() const
 			{ return c; }
 
 		const T* data() const 

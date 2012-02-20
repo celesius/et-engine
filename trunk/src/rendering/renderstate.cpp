@@ -9,7 +9,7 @@
 using namespace et;
 
 RenderState::State::State() : 
-	lastTextureUnit(0), boundFramebuffer(0), boundArrayBuffer(0), boundElementArrayBuffer(0), boundVertexArrayObject(0), 
+	activeTextureUnit(0), boundFramebuffer(0), boundArrayBuffer(0), boundElementArrayBuffer(0), boundVertexArrayObject(0), 
 	boundProgram(0), blendEnabled(false), depthTestEnabled(false), depthMaskEnabled(true), polygonOffsetFillEnabled(false),
 	wireframe(false), lastBlend(Blend_Disabled), lastCull(CullState_None), lastDepthFunc(DepthFunc_Less)
 {
@@ -50,10 +50,10 @@ void RenderState::setViewportSize(const vec2i& sz, bool force)
 
 void RenderState::bindTexture(GLenum unit, GLuint texture, GLenum target)
 {
-	if (unit != _currentState.lastTextureUnit)
+	if (unit != _currentState.activeTextureUnit)
 	{
-		_currentState.lastTextureUnit = unit;
-		glActiveTexture(GL_TEXTURE0 + _currentState.lastTextureUnit);
+		_currentState.activeTextureUnit = unit;
+		glActiveTexture(GL_TEXTURE0 + _currentState.activeTextureUnit);
 	}
 
 	if (_currentState.boundTextures[unit] != texture)
@@ -337,8 +337,8 @@ void RenderState::programDeleted(GLuint program)
 
 void RenderState::textureDeleted(GLuint texture)
 {
-	if (_currentState.boundTextures[_currentState.lastTextureUnit] == texture)
-		bindTexture(_currentState.lastTextureUnit, 0, GL_TEXTURE_2D);
+	if (_currentState.boundTextures[_currentState.activeTextureUnit] == texture)
+		bindTexture(_currentState.activeTextureUnit, 0, GL_TEXTURE_2D);
 
 	for (GLuint i = 0; i < MAX_TEXTURE_UNITS; ++i) 
 	{
@@ -464,4 +464,79 @@ void RenderState::reset()
 	
 	for (size_t i = 0; i < Usage_MAX; ++i)
 		setVertexAttribEnabled(i, false);
+}
+
+RenderState::State RenderState::currentState()
+{
+	State s;
+
+	for (size_t i = 0; i < Usage_MAX; ++i)
+	{
+		int enabled = 0;
+		glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+		s.enabledVertexAttributes[i] = (enabled > 0);
+	}
+
+	GLint value = 0;
+	glGetIntegerv(GL_ACTIVE_TEXTURE, &value);
+	s.activeTextureUnit = value - GL_TEXTURE0;
+
+	value = 0;
+	glGetIntegerv(GL_TEXTURE_BINDING_2D, &value);
+	s.boundTextures[s.activeTextureUnit] = value;
+
+	value = 0;
+	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &value);
+	s.boundArrayBuffer = value;
+
+	value = 0;
+	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &value);
+	s.boundElementArrayBuffer = value;
+
+	value = 0;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &value);
+	s.boundFramebuffer = value;
+
+	value = 0;
+	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &value);
+	s.boundVertexArrayObject = value;
+
+	value = 0;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &value);
+	s.boundProgram = value;
+
+	s.blendEnabled = glIsEnabled(GL_BLEND) != 0;
+	s.depthTestEnabled = glIsEnabled(GL_DEPTH_TEST) != 0;
+	s.polygonOffsetFillEnabled = glIsEnabled(GL_POLYGON_OFFSET_FILL) != 0;
+
+	unsigned char bValue = 0;
+	glGetBooleanv(GL_DEPTH_WRITEMASK, &bValue);
+	s.depthMaskEnabled = bValue > 0;
+
+	value = 0;
+	glGetIntegerv(GL_CULL_FACE_MODE, &value);
+	s.lastCull = CullState_None;
+	if (value == GL_FRONT)
+		s.lastCull = CullState_Front;
+	else if (value == GL_BACK)
+		s.lastCull = CullState_Back;
+
+	bValue = 0;
+	glGetBooleanv(GL_CULL_FACE, &bValue);
+	if (!bValue)
+		s.lastCull = CullState_None;
+
+	vec4i vp;
+	glGetIntegerv(GL_VIEWPORT, vp.raw());
+	s.viewportSize = vec2i(vp.z, vp.w);
+	s.viewportSizeFloat = vec2(static_cast<float>(s.viewportSize.x), static_cast<float>(s.viewportSize.y));
+	s.mainViewportSize = s.viewportSize;
+	s.mainViewportSizeFloat = s.viewportSizeFloat;
+
+	// TODO: get this from state, too lazy now.
+	s.wireframe = false;
+	s.lastBlend = Blend_Default;
+	s.lastDepthFunc = DepthFunc_Less;
+
+	return s;
 }
