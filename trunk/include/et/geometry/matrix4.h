@@ -83,46 +83,46 @@ namespace et
 			return *this;
 		}
 		
-		inline const T* data() const
+		const T* data() const
 		{ return mat[0].data(); }  
 
-		inline const void* raw() const
+		const void* raw() const
 		{ return mat[0].raw(); }  
 
-		inline const char* binary() const
+		const char* binary() const
 		{ return mat[0].binary(); }  
 
-		inline char* binary()
+		char* binary()
 		{ return mat[0].binary(); }  
 
-		inline T& operator ()(int i)
-		{ return *(mat[0].data() + i); }
+		T& operator ()(int i) 
+			{ return *(mat[0].data() + i); }
+		
+		const T& operator ()(int i) const 
+			{ return *(mat[0].data() + i); }
 
-		inline const T& operator ()(int i) const 
-		{ return *(mat[0].data() + i); }
-
-		inline vector4<T>& operator [](int i)
+		vector4<T>& operator [](int i)
 		{ return mat[i];}
 
-		inline const vector4<T>& operator [](int i) const
+		const vector4<T>& operator [](int i) const
 		{ return mat[i];}
 
-		inline vector4<T> column(int c) const
+		vector4<T> column(int c) const
 		{ return vector4<T>( mat[0][c], mat[1][c], mat[2][c], mat[3][c]); }
 
-		inline matrix4 operator * (T s) const
+		matrix4 operator * (T s) const
 		{ return matrix4<T>(mat[0] * s, mat[1] * s, mat[2] * s, mat[3] * s); }
 
-		inline matrix4 operator / (T s) const
+		matrix4 operator / (T s) const
 		{ return matrix4<T>(mat[0] / s, mat[1] / s, mat[2] / s, mat[3] / s); }
 
-		inline matrix4 operator + (const matrix4& m) const
+		matrix4 operator + (const matrix4& m) const
 		{ return matrix4(mat[0] + m.mat[0], mat[1] + m.mat[1], mat[2] + m.mat[2], mat[3] + m.mat[3]); }
 
-		inline matrix4 operator - (const matrix4& m) const
+		matrix4 operator - (const matrix4& m) const
 		{ return matrix4(mat[0] - m.mat[0], mat[1] - m.mat[1], mat[2] - m.mat[2], mat[3] - m.mat[3]); }
 
-		inline matrix4& operator /= (T m)
+		matrix4& operator /= (T m)
 		{
 			mat[0] /= m;
 			mat[1] /= m;
@@ -131,7 +131,7 @@ namespace et
 			return *this;
 		}
 
-		inline vector3<T> operator * (const vector3<T>& v) const
+		vector3<T> operator * (const vector3<T>& v) const
 		{
 			vector3<T> r;
 			r.x = mat[0][0] * v.x + mat[1][0] * v.y + mat[2][0] * v.z + mat[3][0];
@@ -141,7 +141,7 @@ namespace et
 			return (w*w > 0) ? r / w : r;
 		}
 
-		inline vector4<T> operator * (const vector4<T>& v) const
+		vector4<T> operator * (const vector4<T>& v) const
 		{
 			return vector4<T>(
 				mat[0][0] * v.x + mat[1][0] * v.y + mat[2][0] * v.z + mat[3][0] * v.w,
@@ -150,7 +150,7 @@ namespace et
 				mat[0][3] * v.x + mat[1][3] * v.y + mat[2][3] * v.z + mat[3][3] * v.w );
 		}
 
-		inline matrix4& operator += (const matrix4& m)
+		matrix4& operator += (const matrix4& m)
 		{
 			mat[0] += m.mat[0];
 			mat[1] += m.mat[1];
@@ -159,7 +159,7 @@ namespace et
 			return *this;
 		}
 
-		inline matrix4& operator -= (const matrix4& m)
+		matrix4& operator -= (const matrix4& m)
 		{
 			mat[0] -= m.mat[0];
 			mat[1] -= m.mat[1];
@@ -168,7 +168,7 @@ namespace et
 			return *this;
 		}
 
-		inline matrix4& operator *= (const matrix4& m)
+		matrix4& operator *= (const matrix4& m)
 		{
 			vector4<T> r0, r1, r2, r3;
 
@@ -197,7 +197,7 @@ namespace et
 			return *this;
 		}
 
-		inline matrix4 operator * (const matrix4& m) const
+		matrix4 operator * (const matrix4& m) const
 		{
 			vector4<T> r0, r1, r2, r3;
 
@@ -224,7 +224,7 @@ namespace et
 			return matrix4<T>(r0, r1, r2, r3);  
 		}
 
-		inline T determinant() const
+		T determinant() const
 		{
 			const T& a10 = mat[1].x;
 			const T& a11 = mat[1].y;
@@ -244,12 +244,12 @@ namespace et
 					mat[0].w * (a10 * (a22*a31 - a21*a32) +	a11 * (a20*a32 - a30*a22) +	a12 * (a21*a30 - a20*a31));
 		}
 
-		inline matrix3<T> mat3() const
+		matrix3<T> mat3() const
 		{
 			return matrix3<T>(mat[0].xyz(), mat[1].xyz(), mat[2].xyz());
 		}
 
-		inline matrix3<T> subMatrix(int r, int c) const
+		matrix3<T> subMatrix(int r, int c) const
 		{
 			matrix3<T> m;
 
@@ -269,7 +269,7 @@ namespace et
 			return m;
 		}
 
-		inline matrix4<T> adjugateMatrix() const
+		matrix4<T> adjugateMatrix() const
 		{
 			matrix4<T> m;
 
@@ -293,7 +293,7 @@ namespace et
 			return m;
 		}
 
-		inline vector3<T> rotationMultiply(const vector3<T>& v) const
+		vector3<T> rotationMultiply(const vector3<T>& v) const
 		{
 			return vector3<T>(
 				mat[0][0] * v.x + mat[1][0] * v.y + mat[2][0] * v.z, 
@@ -301,13 +301,13 @@ namespace et
 				mat[0][2] * v.x + mat[1][2] * v.y + mat[2][2] * v.z);
 		}
 
-		inline matrix4<T> inverse() const
+		matrix4<T> inverse() const
 		{
 			T det = determinant();
 			return (det * det > 0) ? adjugateMatrix() / det : matrix4<T>(0);
 		}
 
-		inline bool isModelViewMatrix()
+		bool isModelViewMatrix()
 		{
 			vector3<T>c1 = vector3<T>(mat[0][0], mat[1][0], mat[2][0]);
 			vector3<T>c2 = vector3<T>(mat[0][1], mat[1][1], mat[2][1]);
@@ -324,7 +324,7 @@ namespace et
 			return (l1 == one) && (l2 = one) && (l3 = one) && (l4 = 0) && (c1dotc2 == 0) && (c1dotc3 == 0) && (c2dotc3 == 0);
 		}
 
-		inline matrix4 scaleWithPreservedPosition(const vector3<T>& p)
+		matrix4 scaleWithPreservedPosition(const vector3<T>& p)
 		{
 			vector4<T> r1 = vector4<T>(mat[0].xyz() * p, mat[0].w);
 			vector4<T> r2 = vector4<T>(mat[1].xyz() * p, mat[1].w);
@@ -332,7 +332,7 @@ namespace et
 			return matrix4(r1, r2, r3, mat[3]);
 		}
 
-		inline matrix4 rotateWithPreservedPosition(const vector3<T>& a)
+		matrix4 rotateWithPreservedPosition(const vector3<T>& a)
 		{
 			matrix4 r = (*this) * _rotationYXZMatrix(a.x, a.y, a.z);
 			r[3] = mat[3];

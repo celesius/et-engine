@@ -60,8 +60,14 @@ using namespace et;
 - (void)draw
 {
 	RenderState::State state = RenderState::currentState();
+	
 	_notifier->notifyIdle();
 	_notifier->accessRenderContext()->renderState().applyState(state);
+}
+
+- (et::RenderContext*)renderContext
+{
+	return _notifier->accessRenderContext();
 }
 
 @end

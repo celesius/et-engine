@@ -9,9 +9,10 @@
 #pragma once
 
 #import <cocos2d.h>
+#import <et/device/rendercontext.h>
 
 @interface etNode : CCNode
-{
-}
+
+- (et::RenderContext*)renderContext;
 
 @end
