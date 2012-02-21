@@ -21,6 +21,9 @@ namespace et
 		
 		void notifyResize(const et::vec2i& sz)
 			{ application().renderContext()->resized(sz); }
+		
+		RenderContext* accessRenderContext()
+			{ return application().renderContext(); }
 	};
 	
 }

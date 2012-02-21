@@ -475,6 +475,7 @@ void RenderState::applyState(const RenderState::State& s)
 	setPolygonOffsetFill(s.polygonOffsetFillEnabled);
 	setWireframeRendering(s.wireframe);
 	setCulling(s.lastCull);
+	setViewportSize(s.viewportSize);
 	bindFramebuffer(s.boundFramebuffer);
 	bindProgram(s.boundProgram, true);
 	bindVertexArray(s.boundVertexArrayObject);
@@ -488,6 +489,7 @@ void RenderState::applyState(const RenderState::State& s)
 
 RenderState::State RenderState::currentState()
 {
+	checkOpenGLError("currentState() - begin");
 	State s;
 
 	for (size_t i = 0; i < Usage_MAX; ++i)
@@ -500,10 +502,15 @@ RenderState::State RenderState::currentState()
 	GLint value = 0;
 	glGetIntegerv(GL_ACTIVE_TEXTURE, &value);
 	s.activeTextureUnit = value - GL_TEXTURE0;
-
-	value = 0;
-	glGetIntegerv(GL_TEXTURE_BINDING_2D, &value);
-	s.boundTextures[s.activeTextureUnit] = value;
+	
+	for (size_t i = 0; i < MAX_TEXTURE_UNITS; ++i)
+	{
+		value = 0;
+		glActiveTexture(GL_TEXTURE0 + i);
+		glGetIntegerv(GL_TEXTURE_BINDING_2D, &value);
+		s.boundTextures[s.activeTextureUnit] = value;
+	}
+	glActiveTexture(GL_TEXTURE0 + s.activeTextureUnit);
 
 	value = 0;
 	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &value);
@@ -558,5 +565,7 @@ RenderState::State RenderState::currentState()
 	s.lastBlend = Blend_Default;
 	s.lastDepthFunc = DepthFunc_Less;
 
+	checkOpenGLError("currentState() - end");
+	
 	return s;
 }

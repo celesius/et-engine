@@ -55,6 +55,8 @@ namespace et
 	
 	#define GL_TEXTURE_MAX_LEVEL					GL_TEXTURE_MAX_LEVEL_APPLE
 	#define GL_TEXTURE_1D							0
+	
+	#define GL_VERTEX_ARRAY_BINDING					GL_VERTEX_ARRAY_BINDING_OES
 
 #endif
 

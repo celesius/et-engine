@@ -28,35 +28,40 @@ using namespace et;
 	self = [super init];
 	if (self)
 	{
-//		_notifier = new ApplicationNotifier();
-//		application().run(0, 0);
-//		ccGLInvalidateStateCache();
+		RenderState::State state = RenderState::currentState();
+		
+		application().run(0, 0);
+		
+		_notifier = new ApplicationNotifier();
+		_notifier->accessRenderContext()->renderState().applyState(state);
 	}
 	return self;
 }
 
 - (void)dealloc
 {
-//	application().quit();
-//	delete _notifier;
+	application().quit();
+	delete _notifier;
 	[super dealloc];
 }
 
 - (void)onEnter
 {
 	[super onEnter];
-//	_notifier->notifyActivated();
+	_notifier->notifyActivated();
 }
 
 - (void)onExit
 {
 	[super onExit];
-//	_notifier->notifyDeactivated();
+	_notifier->notifyDeactivated();
 }
 
-- (void)visit
+- (void)draw
 {
-//	_notifier->notifyIdle();
+	RenderState::State state = RenderState::currentState();
+	_notifier->notifyIdle();
+	_notifier->accessRenderContext()->renderState().applyState(state);
 }
 
 @end
