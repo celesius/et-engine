@@ -492,6 +492,7 @@ RenderState::State RenderState::currentState()
 	checkOpenGLError("currentState() - begin");
 	State s;
 
+	GLint value = 0;
 	for (size_t i = 0; i < Usage_MAX; ++i)
 	{
 		int enabled = 0;
@@ -499,7 +500,7 @@ RenderState::State RenderState::currentState()
 		s.enabledVertexAttributes[i] = (enabled > 0);
 	}
 
-	GLint value = 0;
+	value = 0;
 	glGetIntegerv(GL_ACTIVE_TEXTURE, &value);
 	s.activeTextureUnit = value - GL_TEXTURE0;
 	
@@ -508,7 +509,7 @@ RenderState::State RenderState::currentState()
 		value = 0;
 		glActiveTexture(GL_TEXTURE0 + i);
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &value);
-		s.boundTextures[s.activeTextureUnit] = value;
+		s.boundTextures[i] = value;
 	}
 	glActiveTexture(GL_TEXTURE0 + s.activeTextureUnit);
 
