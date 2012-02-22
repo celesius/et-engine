@@ -133,6 +133,18 @@ FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const Fr
 		check();
 }
 
+FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, GLuint fboId, const std::string& aName) : APIObjectData(aName), 
+	_isCubemapBuffer(false), _id(fboId), _numTargets(0), _colorRenderbuffer(0), _depthRenderbuffer(0), _rc(rc), _textureFactory(tf)
+{
+	if (!glIsFramebuffer(fboId)) return;
+	
+	rc->renderState().bindFramebuffer(fboId);
+	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &_size.x);
+	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &_size.y);
+	
+	
+}
+
 FramebufferData::~FramebufferData()
 {
 	if (_colorRenderbuffer && glIsRenderbuffer(_colorRenderbuffer))

@@ -85,6 +85,7 @@ namespace et
 	private:
 		friend class FramebufferFactory;
 		FramebufferData(RenderContext* rc, TextureFactory* tf, const FramebufferDescription& desc, const std::string& name);
+		FramebufferData(RenderContext* rc, TextureFactory* tf, GLuint fboId, const std::string& name);
 
 		void createColorRenderbuffer(GLenum internalFormat);
 		void createDepthRenderbuffer(GLenum internalFormat);

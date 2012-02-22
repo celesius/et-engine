@@ -28,10 +28,18 @@ using namespace et;
 	self = [super init];
 	if (self)
 	{
+		CCGLView* view = (CCGLView*)[[CCDirector sharedDirector] view];
+		id<CCESRenderer> renderer = [view valueForKey:@"renderer_"];
+		GLuint value = [renderer defaultFrameBuffer];
+		
 		RenderState::State state = RenderState::currentState();
 		
 		application().run(0, 0);
-		
+
+		Framebuffer defaultFramebuffer = [self renderContext]->framebufferFactory().createFramebufferWrapper(value);
+		_notifier->accessRenderContext()->renderState().setDefaultFramebuffer(defaultFramebuffer);
+
+		_notifier->accessRenderContext()->renderState().applyState(state);
 		_notifier = new ApplicationNotifier();
 		_notifier->accessRenderContext()->renderState().applyState(state);
 	}
@@ -61,6 +69,7 @@ using namespace et;
 {
 	RenderState::State state = RenderState::currentState();
 	
+	_notifier->accessRenderContext()->renderState().applyState(state);
 	_notifier->notifyIdle();
 	_notifier->accessRenderContext()->renderState().applyState(state);
 }
