@@ -39,7 +39,6 @@ AppEnvironment::AppEnvironment() : _appPath(et::applicationPath()), _dataFolder(
 	addSearchPath(_appPath + "../engine/data/textures/" );
 	addSearchPath(_appPath + "../engine/data/models/" );
 	addSearchPath(_appPath + "../engine/data/ui/" );
-
 	addSearchPath(_appPath + "../../engine/data/" );
 	addSearchPath(_appPath + "../../engine/data/shaders/" );
 	addSearchPath(_appPath + "../../engine/data/textures/" );
