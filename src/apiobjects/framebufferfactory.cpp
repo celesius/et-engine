@@ -36,3 +36,8 @@ Framebuffer FramebufferFactory::createCubemapFramebuffer(size_t size, const std:
 	desc.numColorRenderTargets = 1;
 	return Framebuffer(new FramebufferData(_rc, _tf, desc, id));
 }
+
+Framebuffer FramebufferFactory::createFramebufferWrapper(GLuint fbo, const std::string& id)
+{
+	return Framebuffer(new FramebufferData(_rc, _tf, fbo, id));
+}

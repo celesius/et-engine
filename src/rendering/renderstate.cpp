@@ -559,11 +559,20 @@ RenderState::State RenderState::currentState()
 	s.viewportSizeFloat = vec2(static_cast<float>(s.viewportSize.x), static_cast<float>(s.viewportSize.y));
 	s.mainViewportSize = s.viewportSize;
 	s.mainViewportSizeFloat = s.viewportSizeFloat;
+	
+	value = 0;
+	glGetIntegerv(GL_DEPTH_FUNC, &value);
+	s.lastDepthFunc = DepthFunc_Less;
+	if (value == GL_LEQUAL)
+		s.lastDepthFunc = DepthFunc_LessOrEqual;
+	else if (value == GL_EQUAL)
+		s.lastDepthFunc = DepthFunc_Equal;
+	else if (value == GL_ALWAYS)
+		s.lastDepthFunc = DepthFunc_Always;
 
 	// TODO: get this from state, too lazy now.
 	s.wireframe = false;
 	s.lastBlend = Blend_Default;
-	s.lastDepthFunc = DepthFunc_Less;
 
 	checkOpenGLError("currentState() - end");
 	
