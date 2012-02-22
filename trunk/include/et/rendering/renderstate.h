@@ -64,6 +64,9 @@ namespace et
 			vec2 mainViewportSizeFloat;
 			vec2 viewportSizeFloat;
 			
+			float polygonOffsetFactor;
+			float polygonOffsetUnits;
+			
 			bool blendEnabled;
 			bool depthTestEnabled;
 			bool depthMaskEnabled;
