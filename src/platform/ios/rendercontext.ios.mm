@@ -43,10 +43,11 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 	_framebufferFactory = new FramebufferFactory(this, _textureFactory);
 	_vertexBufferFactory = new VertexBufferFactory(_renderState);
 	
-	CGSize screenSize = [UIScreen mainScreen].bounds.size;
+	CGSize screenSize = [[[[[UIApplication sharedApplication] keyWindow] rootViewController] view] bounds].size;
 	float screenScale = [[UIScreen mainScreen] scale];
-	int w = static_cast<int>(screenSize.width * screenScale);
-	int h = static_cast<int>(screenSize.height * screenScale);
+	
+	int w = static_cast<int>(screenScale * screenSize.width);
+	int h = static_cast<int>(screenScale * screenSize.height);
 	
 	vec2i sz(w, h);
 	_screenScaleFactor = (w - 1) / (3 * _params.baseContextSize.x / 2) + 1;

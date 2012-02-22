@@ -10,8 +10,9 @@ using namespace et;
 
 RenderState::State::State() : 
 	activeTextureUnit(0), boundFramebuffer(0), boundArrayBuffer(0), boundElementArrayBuffer(0), boundVertexArrayObject(0), 
-	boundProgram(0), blendEnabled(false), depthTestEnabled(false), depthMaskEnabled(true), polygonOffsetFillEnabled(false),
-	wireframe(false), lastBlend(Blend_Disabled), lastCull(CullState_None), lastDepthFunc(DepthFunc_Less)
+	boundProgram(0), polygonOffsetFactor(0.0f), polygonOffsetUnits(0.0f), blendEnabled(false), depthTestEnabled(false),
+	depthMaskEnabled(true), polygonOffsetFillEnabled(false), wireframe(false), lastBlend(Blend_Disabled), 
+	lastCull(CullState_None), lastDepthFunc(DepthFunc_Less)
 {
 	boundTextures.fill(0);
 	enabledVertexAttributes.fill(0);
@@ -428,6 +429,8 @@ void RenderState::setPolygonOffsetFill(bool enabled, float factor, float units)
 			glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 
+	_currentState.polygonOffsetFactor = factor;
+	_currentState.polygonOffsetUnits = units;
 	glPolygonOffset(factor, units);
 }
 
@@ -472,7 +475,7 @@ void RenderState::applyState(const RenderState::State& s)
 	setDepthFunc(s.lastDepthFunc);
 	setDepthMask(s.depthMaskEnabled);
 	setDepthTest(s.depthTestEnabled);
-	setPolygonOffsetFill(s.polygonOffsetFillEnabled);
+	setPolygonOffsetFill(s.polygonOffsetFillEnabled, s.polygonOffsetFactor, s.polygonOffsetUnits);
 	setWireframeRendering(s.wireframe);
 	setCulling(s.lastCull);
 	setViewportSize(s.viewportSize);
@@ -536,7 +539,10 @@ RenderState::State RenderState::currentState()
 	s.blendEnabled = glIsEnabled(GL_BLEND) != 0;
 	s.depthTestEnabled = glIsEnabled(GL_DEPTH_TEST) != 0;
 	s.polygonOffsetFillEnabled = glIsEnabled(GL_POLYGON_OFFSET_FILL) != 0;
-
+	
+	glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &s.polygonOffsetFactor);
+	glGetFloatv(GL_POLYGON_OFFSET_UNITS, &s.polygonOffsetUnits);
+	
 	unsigned char bValue = 0;
 	glGetBooleanv(GL_DEPTH_WRITEMASK, &bValue);
 	s.depthMaskEnabled = bValue > 0;

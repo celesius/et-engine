@@ -37,6 +37,7 @@ using namespace et;
 		application().run(0, 0);
 
 		Framebuffer defaultFramebuffer = [self renderContext]->framebufferFactory().createFramebufferWrapper(value);
+//		defaultFramebuffer->forceSize(state.mainViewportSize.x, state.mainViewportSize.y);
 		_notifier->accessRenderContext()->renderState().setDefaultFramebuffer(defaultFramebuffer);
 
 		_notifier->accessRenderContext()->renderState().applyState(state);

@@ -40,7 +40,7 @@ namespace et
 								const vec2i& windowPos = vec2i(0, 0), 
 								const vec2i& windowSize = vec2i(480, 320),
 								const vec2i& openGLMaxVer = vec2i(2, 0), 
-								const vec2i& baseScrSize = vec2i(512, 512),
+								const vec2i& baseScrSize = vec2i(480, 320),
 								bool forwardContext = false, 
 								bool coreProfile = false,
 								bool vSync = true,
@@ -54,7 +54,7 @@ namespace et
 								const vec2i& openGLMaxVer = vec2i(4, 2),
 								const vec2i& baseScrSize = vec2i(512, 512),
 								bool forwardContext = true, 
-									bool coreProfile = true,
+								bool coreProfile = true,
 								bool vSync = false,
 								bool landscapeOrientation = true,
 								bool portraitOrientation = false
