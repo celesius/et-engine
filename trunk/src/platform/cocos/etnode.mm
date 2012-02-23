@@ -8,8 +8,6 @@
 
 #include <ccGLState.h>
 #include <et/platform/cocos/etnode.h>
-
-#include <et/app/application.h>
 #include <et/app/applicationnotifier.h>
 
 using namespace et;
@@ -28,28 +26,13 @@ using namespace et;
 	self = [super init];
 	if (self)
 	{
-		CCGLView* view = (CCGLView*)[[CCDirector sharedDirector] view];
-		id<CCESRenderer> renderer = [view valueForKey:@"renderer_"];
-		GLuint value = [renderer defaultFrameBuffer];
-		
-		RenderState::State state = RenderState::currentState();
-		
-		application().run(0, 0);
-
-		Framebuffer defaultFramebuffer = [self renderContext]->framebufferFactory().createFramebufferWrapper(value);
-//		defaultFramebuffer->forceSize(state.mainViewportSize.x, state.mainViewportSize.y);
-		_notifier->accessRenderContext()->renderState().setDefaultFramebuffer(defaultFramebuffer);
-
-		_notifier->accessRenderContext()->renderState().applyState(state);
 		_notifier = new ApplicationNotifier();
-		_notifier->accessRenderContext()->renderState().applyState(state);
 	}
 	return self;
 }
 
 - (void)dealloc
 {
-	application().quit();
 	delete _notifier;
 	[super dealloc];
 }
@@ -78,6 +61,11 @@ using namespace et;
 - (et::RenderContext*)renderContext
 {
 	return _notifier->accessRenderContext();
+}
+
+- (et::IApplicationDelegate*)applicationDelegate
+{
+	return application().delegate();
 }
 
 @end
