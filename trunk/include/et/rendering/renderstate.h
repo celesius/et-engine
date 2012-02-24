@@ -80,7 +80,6 @@ namespace et
 		};
 
 	public: 
-		RenderState();
 		void setRenderContext(RenderContext* rc);
 		void reset();
 		void applyState(const State& s);
@@ -110,6 +109,7 @@ namespace et
 		/*
 		 * Textures
 		 */
+		void setActiveTextureUnit(GLenum unit, bool force = false);
 		void bindTexture(GLenum unit, GLuint texture, GLenum target);
 		void bindTexture(GLenum unit, const Texture& texture);
 
@@ -179,10 +179,28 @@ namespace et
 		static State currentState();
 
 	private:
+		friend class RenderContext;
+		
+		RenderState() : _rc(0) { }
+		RenderState(const RenderState&) : _rc(0) { }
+		RenderState& operator = (const RenderState&) { return *this; }
+		
+	private:
 		RenderContext* _rc;
 		Framebuffer _defaultFramebuffer;
 	
 		State _currentState;
+	};
+	
+	class PreservedRenderStateScope
+	{
+	public:
+		PreservedRenderStateScope(RenderState& rs, bool shouldApplyBefore);
+		~PreservedRenderStateScope();
+		
+	private:
+		RenderState& _rs;
+		RenderState::State _state;
 	};
 
 }

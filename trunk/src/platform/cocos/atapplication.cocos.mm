@@ -7,6 +7,7 @@
 //
 
 #include <cocos2d.h>
+
 #include <et/app/applicationnotifier.h>
 #include <et/platform/cocos/etapplication.cocos.h>
 
@@ -55,20 +56,17 @@ static etApplication* _sharedInstance = nil;
 {
 	NSAssert(_loaded == NO, @"Method [etApplication loaded] should be called once.");
 	
-	_loaded = YES;
-	RenderState::State state = RenderState::currentState();
 	CCGLView* view = (CCGLView*)[[CCDirector sharedDirector] view];
 	NSAssert(view, @"Cocos OpenGL view should be initialized before running embedded application.");
 	
-	GLuint defaultFramebufferId = [[view valueForKey:@"renderer_"] defaultFrameBuffer];
+	RenderState::State state = RenderState::currentState();
 	
 	application().run(0, 0);
-	_notifier->accessRenderContext()->renderState().applyState(state);
-	
-	Framebuffer defaultFramebuffer = [self renderContext]->framebufferFactory().createFramebufferWrapper(defaultFramebufferId);
-	_notifier->accessRenderContext()->renderState().setDefaultFramebuffer(defaultFramebuffer);
+	_notifier->accessRenderContext()->renderState().setDefaultFramebuffer(
+		[self renderContext]->framebufferFactory().createFramebufferWrapper([[view valueForKey:@"renderer_"] defaultFrameBuffer]));
 	
 	_notifier->accessRenderContext()->renderState().applyState(state);
+	_loaded = YES;
 }
 
 - (void)dealloc

@@ -18,14 +18,22 @@ RenderState::State::State() :
 	enabledVertexAttributes.fill(0);
 }
 
-RenderState::RenderState()
+PreservedRenderStateScope::PreservedRenderStateScope(RenderState& rs, bool shouldApplyBefore) : 
+	_rs(rs), _state(RenderState::currentState())
 {
-	
+	if (shouldApplyBefore)
+		_rs.applyState(_state);
+}
+
+PreservedRenderStateScope::~PreservedRenderStateScope()
+{
+	_rs.applyState(_state);
 }
 
 void RenderState::setRenderContext(RenderContext* rc)
 {
 	_rc = rc;
+	_currentState = RenderState::currentState();
 }
 
 void RenderState::setMainViewportSize(const vec2i& sz, bool force)
@@ -49,14 +57,18 @@ void RenderState::setViewportSize(const vec2i& sz, bool force)
 	etViewport(0, 0, _currentState.viewportSize.x, _currentState.viewportSize.y);
 }
 
-void RenderState::bindTexture(GLenum unit, GLuint texture, GLenum target)
+void RenderState::setActiveTextureUnit(GLenum unit, bool force)
 {
-	if (unit != _currentState.activeTextureUnit)
+	if ((unit != _currentState.activeTextureUnit) || force)
 	{
 		_currentState.activeTextureUnit = unit;
 		glActiveTexture(GL_TEXTURE0 + _currentState.activeTextureUnit);
 	}
+}
 
+void RenderState::bindTexture(GLenum unit, GLuint texture, GLenum target)
+{
+	setActiveTextureUnit(unit, false);
 	if (_currentState.boundTextures[unit] != texture)
 	{
 		_currentState.boundTextures[unit] = texture;
@@ -482,12 +494,16 @@ void RenderState::applyState(const RenderState::State& s)
 	bindFramebuffer(s.boundFramebuffer);
 	bindProgram(s.boundProgram, true);
 	bindVertexArray(s.boundVertexArrayObject);
-	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, s.boundElementArrayBuffer);
-	bindBuffer(GL_ARRAY_BUFFER, s.boundArrayBuffer);
+	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, s.boundElementArrayBuffer, true);
+	bindBuffer(GL_ARRAY_BUFFER, s.boundArrayBuffer, true);
+	
 	for (size_t i = 0; i < MAX_TEXTURE_UNITS; ++i)
 		bindTexture(i, s.boundTextures[i], GL_TEXTURE_2D);
+	
 	for (size_t i = 0; i < Usage_MAX; ++i)
-		setVertexAttribEnabled(s.enabledVertexAttributes[i], false);
+		setVertexAttribEnabled(i, s.enabledVertexAttributes[i], false);
+	
+	setActiveTextureUnit(s.activeTextureUnit);
 }
 
 RenderState::State RenderState::currentState()
