@@ -54,7 +54,7 @@ static etApplication* _sharedInstance = nil;
 
 - (void)loaded
 {
-	NSAssert(_loaded == NO, @"Method [etApplication loaded] should be called once.");
+	NSAssert(_loaded == NO, @"Method [etApplication loaded] should be called only once.");
 	
 	CCGLView* view = (CCGLView*)[[CCDirector sharedDirector] view];
 	NSAssert(view, @"Cocos OpenGL view should be initialized before running embedded application.");
