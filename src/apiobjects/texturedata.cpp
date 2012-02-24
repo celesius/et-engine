@@ -23,11 +23,7 @@ TextureData::~TextureData()
 	if (_glID != 0)
 	{
 		if (glIsTexture(_glID))
-		{
-			std::cout << "Texture deleted: " << _desc.source << std::endl;
 			glDeleteTextures(1, &_glID);
-		}
-
 		_glID = 0;
 	}
 }
