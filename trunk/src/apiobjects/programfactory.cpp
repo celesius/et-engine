@@ -8,10 +8,45 @@ using namespace et;
 ProgramFactory::ProgramFactory(RenderContext* rc) : APIObjectFactory(rc)
 {
 #if (ET_OPENGLES)	
-	_versionHeader = "// #version " + ogl_caps().glslVersion() + "\n";
+	_commonHeader = 
+		"#define etLowp		lowp\n"
+		"#define etMediump	mediump\n"
+		"#define etHighp	highp\n";
 #else
-	_versionHeader = "#version " + ogl_caps().glslVersion() + "\n";
+	_commonHeader = 
+		"#version " + ogl_caps().glslVersion() + "\n"
+		"#define etLowp\n"
+		"#define etMediump\n"
+		"#define etHighp\n";
 #endif
+
+	if (ogl_caps().version() == OpenGLVersion_Old)
+	{
+		_fragShaderHeader = 
+			"#define etTexture2D	texture2D\n"
+			"#define etFragmentIn	varying\n"
+			"#define etFragmentOut	gl_FragColor\n"
+			;
+
+		_vertShaderHeader = 
+			"#define etVertexIn		attribute\n"
+			"#define etVertexOut	varying\n"
+			;
+	}
+	else
+	{
+		_fragShaderHeader = 
+			"#define etTexture2D	texture\n"
+			"#define etFragmentIn	in\n"
+			"#define etFragmentOut	FragColor\n"
+			"out vec4 FragColor;\n"
+			;
+
+		_vertShaderHeader = 
+			"#define etVertexIn		in\n"
+			"#define etVertexOut	out\n"
+			;
+	}
 }
 
 Program ProgramFactory::loadProgram(const std::string& file, const ProgramDefinesList& defines)
@@ -137,11 +172,15 @@ Program ProgramFactory::genProgram(const std::string& vertexshader, const std::s
 	return genProgram(vs, gs, fs, defines, workFolder, id);
 }
 
-void ProgramFactory::parseSourceCode(ShaderType, std::string& source, const ProgramDefinesList& defines, const std::string& workFolder)
+void ProgramFactory::parseSourceCode(ShaderType type, std::string& source, const ProgramDefinesList& defines, const std::string& workFolder)
 {
 	if ((source.length() == 0) || (source == ProgramData::emptyShaderSource)) return;
 
-	std::string header = _versionHeader;
+	std::string header = _commonHeader;
+	if (type == ShaderType_Vertex)
+		header += _vertShaderHeader;
+	else if (type == ShaderType_Fragment)
+		header += _fragShaderHeader;
 	
 	for (ProgramDefinesList::const_iterator i = defines.begin(), e = defines.end(); i != e; ++i)
 		header += "\n#define " + *i;
@@ -149,9 +188,8 @@ void ProgramFactory::parseSourceCode(ShaderType, std::string& source, const Prog
 	source = header + "\n" + source;
 
 	std::string::size_type ip = source.find("#include");
-	
+
 	bool hasIncludes = ip != std::string::npos;
-	
 	while (hasIncludes)
 	{
 		while (ip != std::string::npos)
@@ -197,49 +235,6 @@ void ProgramFactory::parseSourceCode(ShaderType, std::string& source, const Prog
 		hasIncludes = ip != std::string::npos;
 	}
 	
-/*	
-	while ((ip = source.find("#in")) != std::string::npos)
-	{
-		std::string before = source.substr(0, ip);
-		source.erase(0, before.size() + 3);
-		std::string after = source;
-		
-		if (ogl_caps().version() == OpenGLVersion_Old)
-		{
-			if (type == ShaderType_Vertex)
-				source = before + "attribute" + after;
-			else 
-				source = before + "varying" + after;
-		}
-		else 
-		{
-			source = before + "in" + after;
-		}
-	}
-
-	while ((ip = source.find("#out")) != std::string::npos)
-	{
-		std::string before = source.substr(0, ip);
-		source.erase(0, before.size() + 4);
-		std::string after = source;
-		
-		if (ogl_caps().version() == OpenGLVersion_Old)
-		{
-			if (type == ShaderType_Vertex)
-			{
-				source = before + "varying" + after;
-			}
-			else 
-			{
-				source = before + after;
-			}
-		}
-		else 
-		{
-			source = before + "out" + after;
-		}
-	}	
-*/	
 }
 
 void et::parseDefinesString(std::string defines, ProgramDefinesList storage, std::string separators)

@@ -32,8 +32,11 @@ namespace et
 			const std::string& id = "");
 
 		void parseSourceCode(ShaderType type, std::string& code, const ProgramDefinesList& defines, const std::string& workFolder = ".");
+
 	private:
-		std::string _versionHeader;
+		std::string _commonHeader;
+		std::string _fragShaderHeader;
+		std::string _vertShaderHeader;
 	};
 
 	ProgramDefinesList parseDefinesString(std::string defines, std::string separators = ",; \t");

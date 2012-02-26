@@ -197,6 +197,10 @@ namespace et
 	public:
 		PreservedRenderStateScope(RenderState& rs, bool shouldApplyBefore);
 		~PreservedRenderStateScope();
+
+	private:
+		PreservedRenderStateScope& operator = (const PreservedRenderStateScope&)
+			{ return *this; }
 		
 	private:
 		RenderState& _rs;

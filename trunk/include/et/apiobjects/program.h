@@ -10,10 +10,10 @@ namespace et
 	{
 	private:
 		friend class ProgramFactory;
-		inline Program(ProgramData* data) : IntrusivePtr<ProgramData>(data) { }
+		Program(ProgramData* data) : IntrusivePtr<ProgramData>(data) { }
 
 	public:
-		inline Program() : IntrusivePtr<ProgramData>(0) { }
+		Program() : IntrusivePtr<ProgramData>(0) { }
 
 	};
 
