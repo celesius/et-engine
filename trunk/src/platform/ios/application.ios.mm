@@ -1,11 +1,13 @@
 #include <iostream>
 
+#include <et/core/tools.h>
 #include <et/app/application.h>
 #include <et/opengl/opengl.h>
-#include <et/core/tools.h>
 #include <et/platform/ios/applicationdelegate.h>
 
-#if !defined(ET_EMBEDDED_APPLICATION)
+#if defined(ET_EMBEDDED_APPLICATION)
+	#include <et/opengl/openglcaps.h>
+#else
 	#include <et/platform/ios/openglviewcontroller.h>
 #endif
 
@@ -46,6 +48,10 @@ void Application::loaded()
 {
 	RenderContextParameters params;
 	delegate()->setRenderContextParameters(params);
+
+#if defined(ET_EMBEDDED_APPLICATION)
+	ogl_caps().checkCaps();
+#endif
 	
 	_renderContext = new RenderContext(params, this);
 	_renderingContextHandle = _renderContext->renderingContextHandle();
