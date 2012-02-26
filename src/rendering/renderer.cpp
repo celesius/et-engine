@@ -5,12 +5,9 @@
 
 using namespace et;
 
-extern const std::string fullscreen_vertex_shader_3_4; 
-extern const std::string scaled_copy_vertex_shader_3_4;
-extern const std::string copy_fragment_shader_3_4;
-extern const std::string fullscreen_vertex_shader_2; 
-extern const std::string scaled_copy_vertex_shader_2;
-extern const std::string copy_fragment_shader_2;
+extern const std::string fullscreen_vertex_shader; 
+extern const std::string scaled_copy_vertex_shader;
+extern const std::string copy_fragment_shader;
 
 Renderer::Renderer(RenderContext* rc) : _rc(rc)
 {
@@ -31,14 +28,12 @@ Renderer::Renderer(RenderContext* rc) : _rc(rc)
 		rc->vertexBufferFactory().createVertexBuffer("fsquad-vert", vb, BufferDrawType_Static),
 		rc->vertexBufferFactory().createIndexBuffer("fsquad-ind", ib, BufferDrawType_Static));
 
-	std::string fragSource = (ogl_caps().version() == OpenGLVersion_Old) ? copy_fragment_shader_2 : copy_fragment_shader_3_4;
-	std::string fsVertSource = (ogl_caps().version() == OpenGLVersion_Old) ? fullscreen_vertex_shader_2 : fullscreen_vertex_shader_3_4;
-	std::string scaledVertSource = (ogl_caps().version() == OpenGLVersion_Old) ? scaled_copy_vertex_shader_2 : scaled_copy_vertex_shader_3_4;
-
-	_fullscreenProgram = rc->programFactory().genProgram(fsVertSource, "", fragSource, ProgramDefinesList(), ".", "__fullscreeen__program__");
+	_fullscreenProgram = rc->programFactory().genProgram(fullscreen_vertex_shader, "", copy_fragment_shader,
+		ProgramDefinesList(), ".", "__fullscreeen__program__");
 	_fullscreenProgram->setUniform("color_texture", 0);
 
-	_scaledProgram = rc->programFactory().genProgram(scaledVertSource, "", fragSource, ProgramDefinesList(), ".", "__scaled__program__");
+	_scaledProgram = rc->programFactory().genProgram(scaled_copy_vertex_shader, "", copy_fragment_shader,
+		ProgramDefinesList(), ".", "__scaled__program__");
 	_scaledProgram->setUniform("color_texture", 0);
 	_scaledProgram_PSUniform = _scaledProgram->getUniformLocation("PositionScale");
 }
@@ -131,63 +126,30 @@ void Renderer::drawElementsBaseIndex(const VertexArrayObject& vao, int base, siz
 * Default shaders
 */
 
-const std::string fullscreen_vertex_shader_3_4 = 
-	"in vec2 Vertex;"
-	"out vec2 TexCoord;"
+const std::string fullscreen_vertex_shader = 
+	"etVertexIn vec2 Vertex;"
+	"etVertexOut vec2 TexCoord;"
 	"void main()"
 	"{"
 	"TexCoord = vec2(0.5) + 0.5 * Vertex.xy;"
 	"gl_Position = vec4(Vertex.xy, 0.0, 1.0);"
 	"}";
 
-const std::string scaled_copy_vertex_shader_3_4 = 
-	"uniform highp vec4 PositionScale;"
-	"in vec2 Vertex;"
-	"out vec2 TexCoord;"
+const std::string scaled_copy_vertex_shader = 
+	"uniform vec4 PositionScale;"
+	"etVertexIn vec2 Vertex;"
+	"etVertexOut vec2 TexCoord;"
 	"void main()"
 	"{"
 	"TexCoord = vec2(0.5) + 0.5 * Vertex.xy;"
 	"gl_Position = vec4(PositionScale.xy + TexCoord * PositionScale.zw, 0.0, 1.0);"
 	"}";
 
-const std::string copy_fragment_shader_3_4 = 
+const std::string copy_fragment_shader = 
 	"uniform sampler2D color_texture;"
-	"uniform highp vec4 cColor;"
-	"in vec2 TexCoord;"
-	"out vec4 FragColor;"
+	"uniform etLowp vec4 cColor;"
+	"etFragmentIn etHighp vec2 TexCoord;"
 	"void main()"
 	"{"
-	" FragColor = texture(color_texture, TexCoord) * cColor;"
-	"}";
-
-/*
-* OpenGL 2 (OpenGL ES) shaders
-*/
-
-const std::string fullscreen_vertex_shader_2 = 
-	"attribute "ET_HIGH_PRECISION" vec2 Vertex;"
-	"varying "ET_HIGH_PRECISION" vec2 TexCoord;"
-	"void main()"
-	"{"
-	"TexCoord = vec2(0.5) + 0.5 * Vertex.xy;"
-	"gl_Position = vec4(Vertex.xy, 0.0, 1.0);"
-	"}";
-
-const std::string scaled_copy_vertex_shader_2 = 
-	"uniform "ET_HIGH_PRECISION" vec4 PositionScale;"
-	"attribute "ET_HIGH_PRECISION" vec2 Vertex;"
-	"varying "ET_HIGH_PRECISION" vec2 TexCoord;"
-	"void main()"
-	"{"
-	"TexCoord = vec2(0.5) + 0.5 * Vertex.xy;"
-	"gl_Position = vec4(PositionScale.xy + TexCoord * PositionScale.zw, 0.0, 1.0);"
-	"}";
-
-const std::string copy_fragment_shader_2 = 
-	"uniform sampler2D color_texture;"
-	"uniform "ET_LOW_PRECISION" vec4 cColor;"
-	"varying "ET_HIGH_PRECISION" vec2 TexCoord;"
-	"void main()"
-	"{"
-	" gl_FragColor = texture2D(color_texture, TexCoord) * cColor;"
+	" etFragmentOut = etTexture2D(color_texture, TexCoord) * cColor;"
 	"}";
