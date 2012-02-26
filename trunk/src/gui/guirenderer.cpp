@@ -6,18 +6,15 @@ using namespace et::gui;
 
 const size_t BlockSize = 1024;
 
-extern std::string gui_vertex_src_2;
-extern std::string gui_frag_src_2;
-extern std::string gui_vertex_src_3_4;
-extern std::string gui_frag_src_3_4;
+extern std::string gui_vertex_src;
+extern std::string gui_frag_src;
 
 GuiRenderer::GuiRenderer(RenderContext* rc) : _customAlpha(1.0f)
 {
 	bool gl2 = ogl_caps().version() == OpenGLVersion_Old;
 	
-	_guiProgram = rc->programFactory().genProgram(gl2 ? gui_vertex_src_2 : gui_vertex_src_3_4, std::string(),
-												  gl2 ? gui_frag_src_2 : gui_frag_src_3_4, ProgramDefinesList(), 
-												  std::string(), "shader-gui");
+	_guiProgram = rc->programFactory().genProgram(gui_vertex_src, std::string(), gui_frag_src,
+		ProgramDefinesList(),  std::string(), "shader-gui");
 
 	_guiDefaultTransformUniform = _guiProgram->getUniformLocation("mDefaultTransform");
 	_guiCustomOffsetUniform = _guiProgram->getUniformLocation("vCustomOffset");
@@ -396,17 +393,17 @@ void GuiRenderer::createImageVertices(GuiVertexList& vertices, const Texture& te
 	}
 }
 
-std::string gui_vertex_src_3_4 = 
+std::string gui_vertex_src = 
 	"uniform mat4 mDefaultTransform;"
 	"uniform vec2 vCustomOffset;"
 	"uniform float customAlpha;"
-	"in vec3 Vertex;"
-	"in vec4 TexCoord0;"
-	"in vec4 Color;"
-	"out vec2 vTexCoord;"
-	"out float textureMask;"
-	"out vec4 additiveColor;"
-	"out vec4 vColor;"
+	"etVertexIn vec3 Vertex;"
+	"etVertexIn vec4 TexCoord0;"
+	"etVertexIn vec4 Color;"
+	"etVertexOut vec2 vTexCoord;"
+	"etVertexOut float textureMask;"
+	"etVertexOut vec4 additiveColor;"
+	"etVertexOut vec4 vColor;"
 	"void main()"
 	"{"
 	" vColor = Color;"
@@ -418,55 +415,15 @@ std::string gui_vertex_src_3_4 =
 	" gl_Position = vTransformed + vec4(vTransformed.w * vCustomOffset, 0.0, 0.0);"
 	"}";
 
-std::string gui_frag_src_3_4 = 
+std::string gui_frag_src = 
 	"uniform sampler2D layer0_texture;"
 	"uniform sampler2D layer1_texture;"
-	"in vec2 vTexCoord;"
-	"in float textureMask;"
-	"in vec4 additiveColor;"
-	"in vec4 vColor;"
-	"out vec4 FragColor;"
+	"etFragmentIn etMediump vec2 vTexCoord;"
+	"etFragmentIn etLowp float textureMask;"
+	"etFragmentIn etLowp vec4 additiveColor;"
+	"etFragmentIn etLowp vec4 vColor;"
 	"void main()"
 	"{"
-	" vec4 textureColor = mix(texture(layer0_texture, vTexCoord), texture(layer1_texture, vTexCoord), textureMask);"
-	" FragColor = vColor * textureColor + additiveColor;"
-	"}";
-
-/*
- * OpenGL 2 (OpenGL ES)
- */
-
-std::string gui_vertex_src_2 = 
-	"uniform mat4 mDefaultTransform;"
-	"uniform "ET_LOW_PRECISION" vec2 vCustomOffset;"
-	"uniform "ET_LOW_PRECISION" float customAlpha;"
-	"attribute "ET_HIGH_PRECISION" vec3 Vertex;"
-	"attribute "ET_MEDIUM_PRECISION" vec4 TexCoord0;"
-	"attribute "ET_LOW_PRECISION" vec4 Color;"
-	"varying "ET_MEDIUM_PRECISION" vec2 vTexCoord;"
-	"varying "ET_LOW_PRECISION" float textureMask;"
-	"varying "ET_LOW_PRECISION" vec4 additiveColor;"
-	"varying "ET_LOW_PRECISION" vec4 vColor;"
-	"void main()"
-	"{"
-	" vColor = Color;"
-	" vColor.w *= customAlpha;"
-	" vTexCoord = TexCoord0.xy;"
-	" textureMask = TexCoord0.z;"
-	" additiveColor = vColor * TexCoord0.w;"
-	ET_HIGH_PRECISION" vec4 vTransformed = mDefaultTransform * vec4(Vertex, 1.0);"
-	" gl_Position = vTransformed + vec4(vTransformed.w * vCustomOffset, 0.0, 0.0);"
-	"}";
-
-std::string gui_frag_src_2 = 
-	"uniform sampler2D layer0_texture;"
-	"uniform sampler2D layer1_texture;"
-	"varying "ET_MEDIUM_PRECISION" vec2 vTexCoord;"
-	"varying "ET_LOW_PRECISION" float textureMask;"
-	"varying "ET_LOW_PRECISION" vec4 additiveColor;"
-	"varying "ET_LOW_PRECISION" vec4 vColor;"
-	"void main()"
-	"{"
-	ET_LOW_PRECISION" vec4 textureColor = mix(texture2D(layer0_texture, vTexCoord), texture2D(layer1_texture, vTexCoord), textureMask);"
-	" gl_FragColor = vColor * textureColor + additiveColor;"
+	" etLowp vec4 textureColor = mix(etTexture2D(layer0_texture, vTexCoord), etTexture2D(layer1_texture, vTexCoord), textureMask);"
+	" etFragmentOut = vColor * textureColor + additiveColor;"
 	"}";

@@ -60,16 +60,6 @@ namespace et
 
 #endif
 
-#if (ET_OPENGLES)
-	#define ET_HIGH_PRECISION		"highp"
-	#define ET_MEDIUM_PRECISION		"mediump"
-	#define ET_LOW_PRECISION		"lowp"
-#else
-	#define ET_HIGH_PRECISION		
-	#define ET_MEDIUM_PRECISION		
-	#define ET_LOW_PRECISION		
-#endif
-
 	enum BufferDrawType
 	{
 		BufferDrawType_Static,

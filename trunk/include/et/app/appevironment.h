@@ -25,10 +25,10 @@ namespace et
 		std::string findFolder(const std::string& name) const;
 		std::string resolveScalableFileName(const std::string& name, size_t scale) const;
 
-		inline void addSearchPath(const std::string& path)
+		void addSearchPath(const std::string& path)
 			{ _searchPath.push_back(addTrailingSlash(path)); }
 
-		inline void addRelativeSearchPath(const std::string& path)
+		void addRelativeSearchPath(const std::string& path)
 			{ _searchPath.push_back(addTrailingSlash(_appPath + path)); }
 
 	private:
