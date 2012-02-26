@@ -26,6 +26,9 @@ namespace et
 
 			CameraElement* duplicate();
 
+			void serialize(std::ostream& stream);
+			void deserialize(std::istream& stream, ElementFactory* factory);
+
 		private:
 			Camera _camera;
 		};

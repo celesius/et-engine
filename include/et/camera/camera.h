@@ -13,12 +13,12 @@ namespace et
 		void perspectiveProjection(float fov, float aspect, float zNear, float zFar);
 		void orthogonalProjection(float left, float right, float top, float bottom, float zNear, float zFar);
 
-		inline const vec3 position() const
+		const vec3 position() const
 			{ return _inverseModelViewMatrix[3].xyz(); }
 
 		void setPosition(const vec3& pos);
 
-		inline const quaternion orientation() const
+		const quaternion orientation() const
 			{ return matrixToQuaternion(_modelViewMatrix.mat3()); }
 
 		void setOrientation(const vec3& pos);
@@ -26,22 +26,22 @@ namespace et
 		vec3 direction() const;
 		void setDirection(const vec3& d);
 
-		inline const mat4& modelViewMatrix() const 
+		const mat4& modelViewMatrix() const 
 			{ return _modelViewMatrix; }
 
-		inline const mat4& projectionMatrix() const 
+		const mat4& projectionMatrix() const 
 			{ return _projectionMatrix; }
 
-		inline const mat4& modelViewProjectionMatrix() const
+		const mat4& modelViewProjectionMatrix() const
 			{ return _mvpMatrix; }
 
-		inline const mat4& inverseModelViewMatrix() const 
+		const mat4& inverseModelViewMatrix() const 
 			{ return _inverseModelViewMatrix; }
 
-		inline const mat4& inverseProjectionMatrix() const
+		const mat4& inverseProjectionMatrix() const
 			{ return _inverseProjectionMatrix; }
 
-		inline const mat4& inverseModelViewProjectionMatrix() const
+		const mat4& inverseModelViewProjectionMatrix() const
 			{ return _inverseMVPMatrix; }
 
 		vec3 up() const;
@@ -61,7 +61,13 @@ namespace et
 		void lockUpVector(const vec3& u);
 		void unlockUpVector();
 
-		inline const Frustum& frustum() const
+		bool upVectorLocked() const
+			{ return _lockUpVector; }
+
+		const vec3& lockedUpVector() const 
+			{ return _upLocked; }
+
+		const Frustum& frustum() const
 			{ return _frustum; }
 
 		ray castRay(const vec2& pt) const;
@@ -74,13 +80,13 @@ namespace et
 	private:
 		mat4 _modelViewMatrix;
 		mat4 _projectionMatrix;
-		mat4 _mvpMatrix;
 
+		mat4 _mvpMatrix;
 		mat4 _inverseModelViewMatrix;
 		mat4 _inverseProjectionMatrix;
 		mat4 _inverseMVPMatrix;
-
 		Frustum _frustum;
+
 		vec3 _upLocked;
 		bool _lockUpVector;
 	};

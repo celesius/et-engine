@@ -459,26 +459,7 @@ void RenderState::setWireframeRendering(bool wire)
 
 void RenderState::reset()
 {
-	setBlend(false, Blend_Disabled);
-	setDepthFunc(DepthFunc_Less);
-	setDepthMask(true);
-	setDepthTest(false);
-	setPolygonOffsetFill(false);
-	setWireframeRendering(false);
-	setCulling(CullState_None);
-	bindTexture(0, 0, GL_TEXTURE_2D);
-	bindFramebuffer(0);
-	bindProgram(0, true);
-	setVertexAttributes(VertexDeclaration(), true);
-	bindVertexArray(0);
-	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	bindBuffer(GL_ARRAY_BUFFER, 0);
-	
-	for (size_t i = 0; i < MAX_TEXTURE_UNITS; ++i)
-		bindTexture(i, 0, GL_TEXTURE_2D);
-	
-	for (size_t i = 0; i < Usage_MAX; ++i)
-		setVertexAttribEnabled(i, false);
+	applyState(RenderState::State());
 }
 
 void RenderState::applyState(const RenderState::State& s)
@@ -595,7 +576,7 @@ RenderState::State RenderState::currentState()
 
 	// TODO: get this from state, too lazy now.
 	s.wireframe = false;
-	s.lastBlend = Blend_Default;
+	s.lastBlend = s.blendEnabled ? Blend_Default : Blend_Disabled;
 
 	checkOpenGLError("currentState() - end");
 	
