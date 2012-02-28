@@ -220,8 +220,19 @@ bool et::intersect::rayTriangle(const ray& r, const triangle& t, vec3* intersect
 			*intersection_pt = ip;
 		return true;
 	}
-	else 
-		return false;
+
+	return false;
+}
+
+bool et::intersect::rayTriangles(const ray& r, const triangle* triangles, const size_t triangleCount, vec3* intersection_pt)
+{
+	for (size_t i = 0; i < triangleCount; ++i)
+	{
+		if (rayTriangle(r, triangles[i], intersection_pt))
+			return true;
+	}
+
+	return false;
 }
 
 bool et::intersect::segmentPlane(const segment& s, const plane& p, vec3* intersection_pt)

@@ -332,13 +332,6 @@ namespace et
 			return matrix4(r1, r2, r3, mat[3]);
 		}
 
-		matrix4 rotateWithPreservedPosition(const vector3<T>& a)
-		{
-			matrix4 r = (*this) * _rotationYXZMatrix(a.x, a.y, a.z);
-			r[3] = mat[3];
-			return r;
-		}
-
 	};
 
 }
