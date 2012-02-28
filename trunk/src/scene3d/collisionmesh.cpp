@@ -31,7 +31,9 @@ void CollisionMesh::fillCollisionData(VertexArrayRef v, IndexArrayRef ind)
 	vec3 minOffset;
 	vec3 maxOffset;
 	float distance = 0.0f;
-	for (IndexArray::PrimitiveIterator i = ind->primitive(startIndex()) , e = ind->primitive(startIndex() + numIndexes()); i != e; ++i)
+	size_t iStart = startIndex() / 3;
+	size_t iEnd = iStart + numIndexes() / 3;
+	for (IndexArray::PrimitiveIterator i = ind->primitive(iStart) , e = ind->primitive(iEnd); i != e; ++i)
 	{
 		IndexArray::Primitive& p = *i;
 		const vec3& p0 = pos[p[0]];

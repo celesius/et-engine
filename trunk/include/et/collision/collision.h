@@ -26,9 +26,11 @@ namespace et
 		bool sphereTriangles(const Sphere& s, const vec3& sphereVelocity, const triangle* triangles, const size_t triangleCount, vec3* normal,
 			float* penetration, float* intersectionTime);
 
+		bool rayTriangle(const ray& r, const triangle& t, vec3* intersection_pt);
+		bool rayTriangles(const ray& r, const triangle* triangles, const size_t triangleCount, vec3* intersection_pt);
+
 		bool raySphere(const ray& r, const Sphere& s, vec3* intersection_pt);
 		bool rayPlane(const ray& r, const plane& p, vec3* intersection_pt);
-		bool rayTriangle(const ray& r, const triangle& t, vec3* intersection_pt);
 
 		bool segmentPlane(const segment& s, const plane& p, vec3* intersection_pt);
 		bool segmentTriangle(const segment& s, const triangle& t, vec3* intersection_pt);
