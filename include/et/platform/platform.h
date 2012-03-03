@@ -61,6 +61,6 @@ namespace et
 	};
 
 inline bool platformHasHardwareKeyboard()
-	{ return false; }// CurrentPlatform == Platform_Windows; }
+	{ return CurrentPlatform == Platform_Windows; }
 
 }
