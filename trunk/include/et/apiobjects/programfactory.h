@@ -40,6 +40,6 @@ namespace et
 	};
 
 	ProgramDefinesList parseDefinesString(std::string defines, std::string separators = ",; \t");
-	void parseDefinesString(std::string defines, ProgramDefinesList storage, std::string separators = ",; \t");
+	void parseDefinesString(std::string defines, ProgramDefinesList& storage, std::string separators = ",; \t");
 
 }

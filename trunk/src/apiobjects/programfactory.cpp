@@ -237,7 +237,7 @@ void ProgramFactory::parseSourceCode(ShaderType type, std::string& source, const
 	
 }
 
-void et::parseDefinesString(std::string defines, ProgramDefinesList storage, std::string separators)
+void et::parseDefinesString(std::string defines, ProgramDefinesList& storage, std::string separators)
 {
 	if (separators.length() == 0)
 		separators = ",; \t";
