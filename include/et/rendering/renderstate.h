@@ -150,6 +150,9 @@ namespace et
 
 		bool depthMaskEnabled() const 
 			{ return _currentState.depthMaskEnabled; }
+		
+		DepthFunc depthFunc() const
+			{ return _currentState.lastDepthFunc; }
 
 		bool wireframeRendering() const 
 			{ return _currentState.wireframe; }
