@@ -118,7 +118,7 @@ bool FBXLoaderPrivate::import(const std::string& filename)
 			importer->GetLastErrorID() == KFbxIO::eFILE_VERSION_NOT_SUPPORTED_ANYMORE)
 		{
 			printf("FBX version number for this FBX SDK is %d.%d.%d\n", lSDKMajor, lSDKMinor, lSDKRevision);
-			printf("FBX version number for file %s is %d.%d.%d\n\n", filename, lFileMajor, lFileMinor, lFileRevision);
+			printf("FBX version number for file %s is %d.%d.%d\n\n", filename.c_str(), lFileMajor, lFileMinor, lFileRevision);
 		}
 		importer->Destroy();
 		return false;
@@ -601,12 +601,40 @@ StringList FBXLoaderPrivate::loadNodeProperties(KFbxNode* node)
 	while (prop.IsValid())
 	{
 		if (prop.GetFlag(KFbxProperty::eUSER) && (prop.GetPropertyDataType().GetType() == eSTRING))
-			result.push_back(KFbxGet<KString>(prop).Buffer());
+		{
+			KString str = KFbxGet<KString>(prop);
+			size_t len = str.GetLen();
+			size_t i = 0;
+
+			BinaryDataStorage line(len);
+			line.fill(0);
+
+			for (i = 0; i < len; ++i)
+			{
+				char c = str[i];
+				if ((c == 0x0a) || (c == 0x0d))
+				{
+					if (line.currentIndex())
+						result.push_back(line.binary());
+
+					line.setOffset(0);
+					line.fill(0);
+				}
+				else
+				{
+					line.push_back(c);
+				}
+			}
+
+			if (line.currentIndex())
+				result.push_back(line.binary());
+		}
+
 		prop = node->GetNextProperty(prop);
 	};
 
 	for (StringList::iterator i = result.begin(), e = result.end(); i != e; ++i)
-		std::cout << *i << std::endl;
+		lowercase(*i);
 
 	return result;
 }

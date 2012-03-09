@@ -112,3 +112,16 @@ MaterialData::MaterialData(std::istream& stream, RenderContext* rc, TextureCache
 {
 	deserialize(stream, rc, cache);
 }
+
+MaterialData* MaterialData::clone() const
+{
+	MaterialData* m = new MaterialData();
+	m->_intParameters = _intParameters;
+	m->_floatParameters = _floatParameters;
+	m->_vectorParameters = _vectorParameters;
+	m->_textureParameters = _textureParameters;
+	m->_stringParameters = _stringParameters;
+	m->_blend = _blend;
+	m->_depthMask = _depthMask;
+	return m;
+}

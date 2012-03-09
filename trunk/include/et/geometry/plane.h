@@ -20,7 +20,7 @@ namespace et
 		Plane(const vector3<T>& normal, float distance) : equation(normal, distance)
 			{ }
 
-		Plane(const Triangle<T>& t) : equation(t.normal(), 0.0)
+		Plane(const Triangle<T>& t) : equation(t.normalizedNormal(), 0.0)
 			{ equation.w = dot(equation.xyz(), t.v1); }
 
 		const vector3<T>& normal() const 
