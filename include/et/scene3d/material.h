@@ -40,57 +40,59 @@ namespace et
 		void setName(const std::string& name)
 			{ APIObjectData::setName(name); }
 
-		inline int& getInt(const std::string& param) 
+		int& getInt(const std::string& param) 
 			{ return _intParameters[param]; }
 
-		inline float& getFloat(const std::string& param) 
+		float& getFloat(const std::string& param) 
 			{ return _floatParameters[param]; }
 
 		inline vec4& getVec4(const std::string& param) 
 			{ return _vectorParameters[param]; }
 
-		inline bool hasTexture(const std::string& param)
+		bool hasTexture(const std::string& param)
 			{ return _textureParameters.find(param) != _textureParameters.end(); }
 
-		inline Texture& getTexture(const std::string& param)
+		Texture& getTexture(const std::string& param)
 			{ return _textureParameters[param]; }
 
-		inline std::string& getString(const std::string& param)
+		std::string& getString(const std::string& param)
 			{ return _stringParameters[param]; }
 
-		inline const Texture& getTexture(const std::string& param) const 
+		const Texture& getTexture(const std::string& param) const 
 			{ return _textureParameters.find(param)->second; }
 
-		inline void setInt(const std::string& param, int value)
+		void setInt(const std::string& param, int value)
 			{ _intParameters[param] = value; };
 
-		inline void setFloat(const std::string& param, float value)
+		void setFloat(const std::string& param, float value)
 			{ _floatParameters[param] = value; };
 
-		inline void setVec4(const std::string& param, const vec4& value)
+		void setVec4(const std::string& param, const vec4& value)
 			{ _vectorParameters[param] = value; };
 
-		inline void setTexture(const std::string& param, const Texture& value)
+		void setTexture(const std::string& param, const Texture& value)
 			{ _textureParameters[param] = value; };
 
-		inline void setString(const std::string& param, const std::string& value)
+		void setString(const std::string& param, const std::string& value)
 			{ _stringParameters[param] = value; };
 
-		inline BlendState blendState() const
+		BlendState blendState() const
 			{ return _blend; }
 
-		inline void setBlendState(BlendState b) 
+		void setBlendState(BlendState b) 
 			{ _blend = b; }
 
-		inline bool depthWriteEnabled() const
+		bool depthWriteEnabled() const
 			{ return _depthMask; }
 
-		inline void setDepthWriteEnabled(bool d) 
+		void setDepthWriteEnabled(bool d) 
 			{ _depthMask = d; }
 
 		void serialize(std::ostream& stream) const;
 		void deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache);
 		
+		MaterialData* clone() const;
+
 	private:
 		IntParameters _intParameters;
 		FloatParameters _floatParameters;

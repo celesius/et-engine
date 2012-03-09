@@ -21,11 +21,11 @@ namespace et
 		vector3<T> edge31() const
 			{ return v3 - v1; }
 
-		vector3<T> normalizedNormal() const
-			{ return normalize(cross(edge21(), edge31())); }
-
 		vector3<T> normal() const
 			{ return cross(edge21(), edge31()); }
+
+		vector3<T> normalizedNormal() const
+			{ return normalize(normal()); }
 
 		const vector3<T>& operator[](int i) const
 		{

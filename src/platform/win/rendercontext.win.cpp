@@ -706,16 +706,14 @@ LRESULT CALLBACK mainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			vec2 pt(static_cast<float>(p.x), static_cast<float>(p.y));
 			vec2 normPt(2.0f * pt.x / viewportSize.x - 1.0f, 1.0f - 2.0f * pt.y / viewportSize.y);
 
-			handler->pointerMoved(PointerInputInfo(PointerType_None, pt, normPt, 0, PointerType_None, t));
-
 			if (wParam & MK_LBUTTON)
 				handler->pointerMoved(PointerInputInfo(PointerType_General, pt, normPt, 0, PointerType_General, t));
-
-			if (wParam & MK_RBUTTON)
+			else if (wParam & MK_RBUTTON)
 				handler->pointerMoved(PointerInputInfo(PointerType_RightButton, pt, normPt, 0, PointerType_RightButton, t));
-
-			if (wParam & MK_MBUTTON)
+			else if (wParam & MK_MBUTTON)
 				handler->pointerMoved(PointerInputInfo(PointerType_MiddleButton, pt, normPt, 0, PointerType_MiddleButton, t));
+			else
+				handler->pointerMoved(PointerInputInfo(PointerType_None, pt, normPt, 0, PointerType_None, t));
 
 			return 0;
 		}
