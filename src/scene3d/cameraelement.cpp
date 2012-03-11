@@ -11,16 +11,19 @@ CameraElement::CameraElement(const std::string& name, Element* parent) : Element
 CameraElement* CameraElement::duplicate()
 {
 	CameraElement* result = new CameraElement(name(), parent());
-	result->_camera = _camera;
+	result->setModelViewMatrix(modelViewMatrix());
+	result->setProjectionMatrix(projectionMatrix());
+	if (upVectorLocked())
+		result->lockUpVector(lockedUpVector());
 	return result;
 }
 
 void CameraElement::serialize(std::ostream& stream)
 {
-	serializeMatrix(stream, _camera.modelViewMatrix());
-	serializeMatrix(stream, _camera.projectionMatrix());
-	serializeInt(stream, _camera.upVectorLocked());
-	serializeVector(stream, _camera.lockedUpVector());
+	serializeMatrix(stream, modelViewMatrix());
+	serializeMatrix(stream, projectionMatrix());
+	serializeInt(stream, upVectorLocked());
+	serializeVector(stream, lockedUpVector());
 
 	serializeGeneralParameters(stream);
 	serializeChildren(stream);

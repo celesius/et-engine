@@ -72,6 +72,11 @@ namespace et
 
 		ray castRay(const vec2& pt) const;
 
+		void setModelViewMatrix(const mat4& m)
+			{ _modelViewMatrix = m; modelViewUpdated(); }
+		void setProjectionMatrix(const mat4& m)
+			{ _projectionMatrix = m; projectionUpdated(); }
+
 	private:
 		void modelViewUpdated();
 		void projectionUpdated();

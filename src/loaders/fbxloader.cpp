@@ -257,11 +257,15 @@ void FBXLoaderPrivate::loadNode(KFbxNode* node, s3d::Element::Pointer parent)
 	const KFbxMatrix& fbxTransform = node->EvaluateLocalTransform();
 	mat4 transform;
 	for (int v = 0; v < 4; ++v)
+	{
 		for (int u = 0; u < 4; ++u)
 			transform[v][u] = static_cast<float>(fbxTransform.Get(v, u));
+	}
 
 	createdElement->setTransform(transform);
 	createdElement->setName(node->GetName());
+	for (StringList::const_iterator i = props.begin(), e = props.end(); i != e; ++i)
+		createdElement->addPropertyString(*i);
 
 	int lChildCount = node->GetChildCount();
 	for (int lChildIndex = 0; lChildIndex < lChildCount; ++lChildIndex)
@@ -344,7 +348,9 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(KFbxMesh* mesh, s3d::Element::Poin
 	bool collision = false;
 	for (StringList::const_iterator i = params.begin(), e = params.end(); i != e; ++i)
 	{
-		const std::string& p = *i;
+		std::string p = *i;
+		lowercase(p);
+
 		if (p == s_collisionMeshProperty)
 		{
 			collision = true;
@@ -632,9 +638,6 @@ StringList FBXLoaderPrivate::loadNodeProperties(KFbxNode* node)
 
 		prop = node->GetNextProperty(prop);
 	};
-
-	for (StringList::iterator i = result.begin(), e = result.end(); i != e; ++i)
-		lowercase(*i);
 
 	return result;
 }
