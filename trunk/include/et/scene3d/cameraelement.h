@@ -7,7 +7,7 @@ namespace et
 {
 	namespace s3d
 	{
-		class CameraElement : public Element
+		class CameraElement : public Element, public Camera
 		{
 		public:
 			typedef IntrusivePtr<CameraElement> Pointer;
@@ -15,22 +15,18 @@ namespace et
 		public:
 			CameraElement(const std::string& name, Element* parent);
 
-			Camera& camera()
-				{ return _camera; }
-
-			const Camera& camera() const
-				{ return _camera; }
-
 			ElementType type() const 
 				{ return ElementType_Camera; }
 
 			CameraElement* duplicate();
 
+			Camera& camera()
+				{ return *this; }
+			const Camera& camera() const
+				{ return *this; }
+
 			void serialize(std::ostream& stream);
 			void deserialize(std::istream& stream, ElementFactory* factory);
-
-		private:
-			Camera _camera;
 		};
 	}
 }

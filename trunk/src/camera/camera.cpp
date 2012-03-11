@@ -142,6 +142,7 @@ ray Camera::castRay(const vec2& pt) const
 
 void Camera::modelViewUpdated()
 {
+	_inverseModelViewMatrix = _modelViewMatrix.inverse();
 	if (_lockUpVector)
 	{
 		vec3 p = position();
@@ -153,9 +154,9 @@ void Camera::modelViewUpdated()
 		_modelViewMatrix[1] = vec4(s.y, u.y, -d.y, 0.0);
 		_modelViewMatrix[2] = vec4(s.z, u.z, -d.z, 0.0);
 		_modelViewMatrix[3] = vec4(e.x, e.y,  e.z, 1.0);
-	}
+		_inverseModelViewMatrix = _modelViewMatrix.inverse();
 
-	_inverseModelViewMatrix = _modelViewMatrix.inverse();
+	}
 	updateMVP();
 }
 

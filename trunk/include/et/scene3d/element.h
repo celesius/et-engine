@@ -72,6 +72,15 @@ namespace et
 			
 			void clear();
 
+			const StringList& properties() const
+				{ return _properites; }
+
+			StringList& properties()
+				{ return _properites; }
+
+			void addPropertyString(const std::string& s)
+				{ _properites.push_back(s); }
+
 		protected:
 			void serializeGeneralParameters(std::ostream& stream);
 			void serializeChildren(std::ostream& stream);
@@ -85,6 +94,7 @@ namespace et
 
 		private:
 			std::string _name;
+			StringList _properites;
 			mat4 _cachedFinalTransform;
 			bool _active;
 		};
