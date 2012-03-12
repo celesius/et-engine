@@ -173,3 +173,8 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 	cache.manageTexture(t);
 	return t;
 }
+
+Texture TextureFactory::createTextureWrapper(GLuint texture, const vec2i& size, const std::string& name)
+{
+	return Texture(new TextureData(_rc, texture, size, name));
+}

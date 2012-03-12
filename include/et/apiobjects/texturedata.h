@@ -12,8 +12,13 @@ namespace et
 
 	class TextureData : public APIObjectData
 	{
-	public:
+	private:
+		friend class TextureFactory;
+		
 		TextureData(RenderContext* rc, const TextureDescription& desc, const std::string& id, bool deferred);
+		TextureData(RenderContext* rc, GLuint texture, const vec2i& size, const std::string& name);
+		
+	public:
 		~TextureData();
 
 		void setWrap(RenderContext* rc, TextureWrap s, TextureWrap t, TextureWrap r = TextureWrap_ClampToEdge);
@@ -62,6 +67,7 @@ namespace et
 		GLuint _glID;
 		TextureDescription _desc;
 		vec2 _texel;
+		bool _own;
 	};
 
 }

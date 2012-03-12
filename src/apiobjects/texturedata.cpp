@@ -9,7 +9,7 @@ using namespace et;
 static const int defaultBindingUnit = 8;
 
 TextureData::TextureData(RenderContext* rc, const TextureDescription& desc, const std::string& id, bool deferred) : 
-	APIObjectData(id), _glID(0), _desc(desc)
+	APIObjectData(id), _glID(0), _desc(desc), _own(true)
 {
 	if (!deferred)
 	{
@@ -18,14 +18,26 @@ TextureData::TextureData(RenderContext* rc, const TextureDescription& desc, cons
 	}
 }
 
+TextureData::TextureData(RenderContext* rc, GLuint texture, const vec2i& size, const std::string& name) : 
+	APIObjectData(name), _glID(texture), _own(false)
+{
+	if (!glIsTexture(texture))
+	{
+		_glID = 0;
+		return;
+	}
+	
+	_desc.target = GL_TEXTURE_2D;
+	_desc.size = size;
+	_desc.mipMapCount = 1;
+	_texel.x = 1.0f / static_cast<float>(size.x);
+	_texel.y = 1.0f / static_cast<float>(size.y);
+}
+
 TextureData::~TextureData()
 {
-	if (_glID != 0)
-	{
-		if (glIsTexture(_glID))
-			glDeleteTextures(1, &_glID);
-		_glID = 0;
-	}
+	if (_own && (_glID != 0) && glIsTexture(_glID))
+		glDeleteTextures(1, &_glID);
 }
 
 void TextureData::setWrap(RenderContext* rc, TextureWrap s, TextureWrap t, TextureWrap r)
