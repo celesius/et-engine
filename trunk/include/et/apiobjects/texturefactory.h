@@ -21,6 +21,8 @@ namespace et
 		Texture genTexture(const TextureDescription& desc);
 		Texture genTexture(GLenum target, GLint internalformat, const vec2i& size, GLenum format, GLenum type, 
 			const BinaryDataStorage& data, const std::string& id = "");
+		
+		Texture createTextureWrapper(GLuint texture, const vec2i& size, const std::string& name = "");
 
 		void textureLoadingThreadDidLoadTextureData(TextureLoadingRequest* request);
 		ET_DECLARE_EVENT1(textureDidLoad, Texture)
