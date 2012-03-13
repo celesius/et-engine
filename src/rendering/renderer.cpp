@@ -9,6 +9,8 @@ extern const std::string fullscreen_vertex_shader;
 extern const std::string scaled_copy_vertex_shader;
 extern const std::string copy_fragment_shader;
 
+const size_t defaultTextureUnit = 0;
+
 Renderer::Renderer(RenderContext* rc) : _rc(rc)
 {
 	checkOpenGLError("Renderer::Renderer");
@@ -30,11 +32,11 @@ Renderer::Renderer(RenderContext* rc) : _rc(rc)
 
 	_fullscreenProgram = rc->programFactory().genProgram(fullscreen_vertex_shader, "", copy_fragment_shader,
 		ProgramDefinesList(), ".", "__fullscreeen__program__");
-	_fullscreenProgram->setUniform("color_texture", 0);
+	_fullscreenProgram->setUniform("color_texture", defaultTextureUnit);
 
 	_scaledProgram = rc->programFactory().genProgram(scaled_copy_vertex_shader, "", copy_fragment_shader,
 		ProgramDefinesList(), ".", "__scaled__program__");
-	_scaledProgram->setUniform("color_texture", 0);
+	_scaledProgram->setUniform("color_texture", defaultTextureUnit);
 	_scaledProgram_PSUniform = _scaledProgram->getUniformLocation("PositionScale");
 }
 
@@ -64,7 +66,7 @@ void Renderer::fullscreenPass()
 
 void Renderer::renderFullscreenTexture(const Texture& texture)
 {
-	_rc->renderState().bindTexture(0, texture);
+	_rc->renderState().bindTexture(defaultTextureUnit, texture);
 	_rc->renderState().bindProgram(_fullscreenProgram);
 	_fullscreenProgram->setUniform("cColor", vec4(1.0f));
 	fullscreenPass();
@@ -72,7 +74,7 @@ void Renderer::renderFullscreenTexture(const Texture& texture)
 
 void Renderer::renderTexture(const Texture& texture, const vec2& position, const vec2& size)
 {
-	_rc->renderState().bindTexture(0, texture);
+	_rc->renderState().bindTexture(defaultTextureUnit, texture);
 	_rc->renderState().bindProgram(_scaledProgram);
 	_scaledProgram->setUniform(_scaledProgram_PSUniform, GL_FLOAT_VEC4, vec4(position.x, position.y - size.y, size.x, size.y) );
 	_scaledProgram->setUniform("cColor", vec4(1.0f));
