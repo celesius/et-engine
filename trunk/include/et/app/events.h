@@ -36,15 +36,18 @@ namespace et
 	class EventConnectionBase
 	{
 	public:
-		EventConnectionBase() : _removed(false) { }
-		
-		inline bool removed() const
+		EventConnectionBase() : 
+		  _removed(false) { }
+
+		virtual ~EventConnectionBase() { }
+
+		bool removed() const
 			{ return _removed; }
 
-		inline void remove()
+		void remove()
 			{ _removed = true; }
 
-		inline void setRemoved(bool value)
+		void setRemoved(bool value)
 			{ _removed = value; }
 
 		virtual EventReceiver* receiver() = 0;
@@ -138,10 +141,10 @@ namespace et
 		EventReceiver* receiver()
 			{ return _receiver; }
 
-		inline void invoke(ArgType arg) 
+		void invoke(ArgType arg) 
 			{ (_receiver->*_receiverMethod)(arg); }
 
-		inline void invokeInMainRunLoop(ArgType arg, float delay)
+		void invokeInMainRunLoop(ArgType arg, float delay)
 		{
 			Invocation1 i;
 			i.setTarget<ReceiverType, ArgType>(_receiver, _receiverMethod, arg);
@@ -203,7 +206,7 @@ namespace et
 		EventReceiver* receiver()
 			{ return _receiver; }
 
-		inline void invoke(Arg1Type a1, Arg2Type a2) 
+		void invoke(Arg1Type a1, Arg2Type a2) 
 			{ (_receiver->*_receiverMethod)(a1, a2); }
 
 	private:
