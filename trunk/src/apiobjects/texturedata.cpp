@@ -18,7 +18,7 @@ TextureData::TextureData(RenderContext* rc, const TextureDescription& desc, cons
 	}
 }
 
-TextureData::TextureData(RenderContext* rc, GLuint texture, const vec2i& size, const std::string& name) : 
+TextureData::TextureData(RenderContext*, GLuint texture, const vec2i& size, const std::string& name) : 
 	APIObjectData(name), _glID(texture), _own(false)
 {
 	if (!glIsTexture(texture))
