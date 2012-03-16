@@ -9,7 +9,7 @@ extern const std::string fullscreen_vertex_shader;
 extern const std::string scaled_copy_vertex_shader;
 extern const std::string copy_fragment_shader;
 
-const size_t defaultTextureUnit = 0;
+const size_t defaultTextureUnit = 6;
 
 Renderer::Renderer(RenderContext* rc) : _rc(rc)
 {
