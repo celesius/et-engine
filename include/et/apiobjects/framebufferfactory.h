@@ -18,7 +18,7 @@ namespace et
 
 		Framebuffer createCubemapFramebuffer(size_t size, const std::string& id = "",
 			GLint colorInternalformat = GL_RGBA, GLenum colorFormat = GL_RGBA, GLenum colorType = GL_UNSIGNED_BYTE, 
-			GLint depthInternalformat = GL_DEPTH_COMPONENT, GLenum depthFormat = GL_DEPTH_COMPONENT, GLenum depthType = GL_UNSIGNED_BYTE);
+			GLint depthInternalformat = GL_DEPTH_COMPONENT, GLenum depthFormat = GL_DEPTH_COMPONENT, GLenum depthType = GL_UNSIGNED_INT);
 		
 		Framebuffer createFramebufferWrapper(GLuint fbo, const std::string& id = "");
 
