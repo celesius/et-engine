@@ -14,25 +14,25 @@ namespace et
 
 		void fitToSize(size_t size);
 
-		inline char* data()
+		char* data()
 			{ return _data.binary(); }
 
-		inline const char* data() const
+		const char* data() const
 			{ return _data.binary(); }
 
-		inline const size_t size() const
+		const size_t size() const
 			{ return _data.size(); }
 
-		inline const size_t dataSize() const
+		const size_t dataSize() const
 			{ return _data.dataSize(); }
 
-		inline const size_t typeSize() const
+		const size_t typeSize() const
 			{ return vertexAttributeTypeSize(_type); }
 
-		inline VertexAttributeUsage usage() const
+		VertexAttributeUsage usage() const
 			{ return _usage; }
 
-		inline VertexAttributeType type() const
+		VertexAttributeType type() const
 			{ return _type; }
 
 		void serialize(std::ostream& stream);
@@ -58,7 +58,7 @@ namespace et
 			{ }
 
 		template <typename T>
-		inline RawDataAcessor<T> accessData(size_t elementOffset) 
+		RawDataAcessor<T> accessData(size_t elementOffset) 
 		{
 			return valid() ? 
 				RawDataAcessor<T>(ptr()->data(), ptr()->dataSize(), ptr()->typeSize(), elementOffset * ptr()->typeSize()) : 

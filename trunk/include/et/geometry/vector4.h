@@ -30,10 +30,13 @@ namespace et
 		vector4(const vector2<T>& v1, const vector2<T>& v2) : x(v1.x), y (v1.y), z(v2.x), w(v2.y)
 			{ }
 
-		vector4(vector3<T> v3, T _w) : x(v3.x), y(v3.y), z(v3.z), w(_w)
+		vector4(const vector2<T>& v2, T _z, T _w) : x(v2.x), y(v2.y), z(_z), w(_w)
 			{ }
 
-		explicit vector4(vector3<T> v3) : x(v3.x), y(v3.y), z(v3.z), w(0)
+		vector4(const vector3<T>& v3, T _w) : x(v3.x), y(v3.y), z(v3.z), w(_w)
+			{ }
+
+		explicit vector4(const vector3<T>& v3) : x(v3.x), y(v3.y), z(v3.z), w(0)
 			{ }
 
 		vector4(T _x, T _y, T _z, T _w) : x(_x), y(_y), z(_z), w(_w)
