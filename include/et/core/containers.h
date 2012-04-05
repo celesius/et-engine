@@ -124,22 +124,22 @@ namespace et
 			_data = new_data;
 		}
 
-		virtual inline void fill(int value) 
+		virtual void fill(int value) 
 			{ memset(_data, value, _dataSize); }
 
-		inline void operator ++() {++_index;}
-		inline T& current() {return _data[_index];}
-		inline T* current_ptr() {return &_data[_index];}
-		inline const size_t currentIndex() const { return _index; }
+		void operator ++() {++_index;}
+		T& current() {return _data[_index];}
+		T* current_ptr() {return &_data[_index];}
+		const size_t currentIndex() const { return _index; }
 
-		inline const size_t size() const {return _size;}
-		inline const size_t dataSize() const {return _dataSize;}
-		inline const size_t typeSize() const { return sizeof(T); }
+		const size_t size() const {return _size;}
+		const size_t dataSize() const {return _dataSize;}
+		const size_t typeSize() const { return sizeof(T); }
 
-		inline T* data() { return _data; }
-		inline const T* data() const { return _data; }
+		T* data() { return _data; }
+		const T* data() const { return _data; }
 
-		inline T* extract()
+		T* extract()
 		{
 			T* value = _data;
 			_data = 0;
@@ -149,51 +149,51 @@ namespace et
 			return value;
 		}
 
-		inline T* element_ptr(size_t i)
+		T* element_ptr(size_t i)
 			{ return &_data[i]; }
 
-		inline const T* element_ptr(size_t i) const 
+		const T* element_ptr(size_t i) const 
 			{ return &_data[i]; }
 
-		inline T& operator [](size_t i)
+		T& operator [](size_t i)
 			{ return _data[i]; }
 
-		inline const T& operator [](size_t i) const 
+		const T& operator [](size_t i) const 
 			{ return _data[i]; } 
 
-		inline void* raw() 
+		void* raw() 
 			{ return static_cast<void*>(_data); }
 
-		inline const void* raw() const
+		const void* raw() const
 			{ return static_cast<const void*>(_data); }
 
-		inline char* binary()
+		char* binary()
 			{ return (char*)(_data); }
 
-		inline const char* binary() const
+		const char* binary() const
 			{ return (const char*)(_data); }
 
-		inline void fitToSize(size_t size)
+		void fitToSize(size_t size)
 		{
 			size_t need_size = _index + size;
 			if (need_size > _size)
 				resize(need_size);
 		}
 
-		inline void push_back(const T& value)
+		void push_back(const T& value)
 		{
 			fitToSize(1);
 			_data[_index] = value;
 			++_index;
 		}
 
-		inline void offset(size_t o) 
+		void offset(size_t o) 
 			{ _index += o; }
 
-		inline void setOffset(size_t o) 
+		void setOffset(size_t o) 
 			{ _index = o; }
 
-		inline DataStorage& operator = (const DataStorage& buf)
+		DataStorage& operator = (const DataStorage& buf)
 		{
 			_index = buf._index;
 			resize(buf.size());
@@ -229,7 +229,7 @@ namespace et
 			_size = _dataSize / _stride;
 		}
 
-		inline T& operator[] (size_t i) 
+		T& operator[] (size_t i) 
 		{ 
 			return *(reinterpret_cast<T*>(_data + i * _stride + _offset));
 		}
@@ -247,7 +247,7 @@ namespace et
 		const size_t dataSize() const { return _dataSize; }
 		const size_t typeSize() const { return TypeSize; }
 
-		inline bool valid() const { return _data != 0; }
+		bool valid() const { return _data != 0; }
 
 		RawDataAcessor& operator = (const RawDataAcessor& r)
 		{
