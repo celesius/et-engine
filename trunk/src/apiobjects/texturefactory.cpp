@@ -19,6 +19,8 @@ TextureFactory::~TextureFactory()
 
 Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache, bool async, TextureLoaderDelegate* delegate)
 {
+	if (file.length() == 0) return Texture();
+
 	CriticalSectionScope lock(_csTextureLoading);
 
 	Texture texture = cache.findTexture(file);
