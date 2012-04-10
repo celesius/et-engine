@@ -11,19 +11,19 @@ namespace et
 	class IApplicationDelegate : virtual public EventReceiver
 	{
 	public:
-		virtual ~IApplicationDelegate() {};
+		virtual ~IApplicationDelegate() { }
 
-		virtual void setRenderContextParameters(RenderContextParameters&) {};
-		virtual void applicationDidLoad(RenderContext*) {};
-		virtual void applicationWillTerminate() {};
+		virtual void setRenderContextParameters(et::RenderContextParameters&) { }
+		virtual void applicationDidLoad(et::RenderContext*) { }
+		virtual void applicationWillTerminate() { }
 
-		virtual void applicationWillResizeContext(const vec2i&) {}
+		virtual void applicationWillResizeContext(const et::vec2i&) { }
 
 		virtual void applicationWillActivate() { }
 		virtual void applicationWillDeactivate() { }
 
-		virtual void render(RenderContext*) {};
-		virtual void idle(float) {};
+		virtual void render(et::RenderContext*) { }
+		virtual void idle(float) { }
 	};
 
 	class ApplicationNotifier;
