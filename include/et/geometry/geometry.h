@@ -1,5 +1,5 @@
-#include <cstdlib>
-#include <cmath>
+#include <stdlib.h>
+#include <math.h>
 #include <et/geometry/vector4.h>
 #include <et/geometry/matrix3.h>
 #include <et/geometry/matrix4.h>

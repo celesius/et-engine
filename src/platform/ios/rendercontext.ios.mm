@@ -36,6 +36,8 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 		application().quit(1);
 		return;
 	}
+    
+    ogl_caps().checkCaps();
 
 	_renderState.setRenderContext(this);
 	_programFactory = new ProgramFactory(this);
@@ -62,7 +64,6 @@ RenderContext::~RenderContext()
 
 void RenderContext::init()
 {
-	ogl_caps().checkCaps();
 	_renderer = new Renderer(this);
 	
 #if !defined(ET_EMBEDDED_APPLICATION)	
