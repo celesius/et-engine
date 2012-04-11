@@ -62,8 +62,14 @@ std::string TextureLoader::resolveScalableFileName(const std::string& fileName, 
 	{
 		std::string name = application().environment().resolveScalableFileName(fileName, screenScale);
 		found = fileExists(name);
+		if (!found)
+        {
+            name = application().environment().resolveScalableFileName(getFileName(fileName), screenScale);
+            found = fileExists(name);
+        }
+        
 		if (found)
-			result = name;
+            result = name;
 	}
 
 	if (!found)

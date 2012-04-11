@@ -32,10 +32,21 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 		}
 	}
 
-#if (!ET_OPENGLES)
 	bool hasAlpha = header.ddspf.dwFlags & DDS_ALPHA_PIXELS;
+    (void)hasAlpha;
+    
 	switch (header.ddspf.dwFourCC)
 	{
+        case 0:
+        {
+            desc.channels = header.ddspf.dwRGBBitCount / 8;
+            desc.bitsPerPixel = header.ddspf.dwRGBBitCount;
+            desc.format = desc.channels == 3 ? GL_RGB : GL_RGBA;
+            desc.internalformat = desc.format;
+            desc.type = GL_UNSIGNED_BYTE;
+            break;
+        }
+            
 	case 34:
 		{
 			desc.channels = 2;
@@ -55,7 +66,8 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 			desc.type = GL_UNSIGNED_SHORT;
 			break;   
 		}
-
+            
+#if defined(GL_R16F)
 	case 111: 
 		{
 			desc.channels = 1;
@@ -65,7 +77,9 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 			desc.type = GL_HALF_FLOAT;
 			break;   
 		}
-
+#endif
+            
+#if defined(GL_RG16F) 
 	case 112:
 		{
 			desc.channels = 2;
@@ -75,7 +89,9 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 			desc.type = GL_HALF_FLOAT;
 			break;   
 		}
-
+#endif
+            
+#if defined(GL_R32F)
 	case 114:
 		{
 			desc.channels = 1;
@@ -85,7 +101,9 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 			desc.type = GL_FLOAT;
 			break;   
 		}
-
+#endif
+            
+#if defined (GL_RG32F)
 	case 115:
 		{
 			desc.channels = 2;
@@ -95,7 +113,7 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 			desc.type = GL_FLOAT;
 			break;   
 		}		 
-
+#endif
 	case 113:
 		{
 			desc.channels = 4;
@@ -116,6 +134,7 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 			break;   
 		}
 
+#if defined(GL_COMPRESSED_RGB_S3TC_DXT1_EXT) 
 	case FOURCC_DXT1:
 		{
 			desc.compressed = true;
@@ -126,7 +145,9 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 			desc.type = GL_UNSIGNED_BYTE;
 			break;
 		}
-
+#endif
+            
+#if defined(GL_COMPRESSED_RGBA_S3TC_DXT3_EXT)
 	case FOURCC_DXT3:
 		{
 			desc.compressed = true;
@@ -137,7 +158,9 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 			desc.type = GL_UNSIGNED_BYTE;
 			break;
 		}
-
+#endif
+            
+#if defined(GL_COMPRESSED_RGBA_S3TC_DXT5_EXT) 
 	case FOURCC_DXT5:
 		{
 			desc.compressed = true;
@@ -148,7 +171,9 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 			desc.type = GL_UNSIGNED_BYTE;
 			break;
 		}
-
+#endif
+            
+#if defined(GL_COMPRESSED_RG_RGTC2)
 	case FOURCC_ATI2:
 		{
 			desc.compressed = true;
@@ -159,15 +184,16 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 			desc.type = GL_UNSIGNED_BYTE;
 			break;
 		}
+#endif
+            
 	default: 
 		{
 			char fourcc_str[5] = { };
 			memcpy(fourcc_str, &header.ddspf.dwFourCC, 4);
-			std::cout << "Unresolved FOURCC: " << header.ddspf.dwFourCC << ", text: " << fourcc_str << std::endl;
+			std::cout << "Unsupported FOURCC: " << header.ddspf.dwFourCC << ", text: " << fourcc_str << std::endl;
 			return;
 		}
 	};
-#endif
 }
 
 void DDSLoader::loadFromStream(std::istream& source, TextureDescription& desc)
