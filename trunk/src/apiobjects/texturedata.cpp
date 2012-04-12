@@ -6,7 +6,7 @@
 
 using namespace et;
 
-static const int defaultBindingUnit = 8;
+static const int defaultBindingUnit = 7;
 
 TextureData::TextureData(RenderContext* rc, const TextureDescription& desc, const std::string& id, bool deferred) : 
 	APIObjectData(id), _glID(0), _desc(desc), _own(true)
@@ -105,6 +105,9 @@ void TextureData::build(RenderContext* rc)
 	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc.target);
 	checkOpenGLError("TextureData::buildTexture2D -> etBindTexture" + name());
 
+	glTexParameteri(_desc.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) for " + name());
+	
 	if (_desc.mipMapCount > 1)
 	{
 		glTexParameteri(_desc.target, GL_TEXTURE_MAX_LEVEL, _desc.mipMapCount - 1);
@@ -117,14 +120,13 @@ void TextureData::build(RenderContext* rc)
 		checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) for " + name());
 	} 
 
-	glTexParameteri(_desc.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) for " + name());
-
 	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT) for " + name());
+	
 	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT) for " + name());
-#if (!ET_OPENGLES)
+	
+#if defined(GL_TEXTURE_WRAP_R)
 	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_R, GL_REPEAT);
 	checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT) for " + name());
 #endif

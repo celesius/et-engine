@@ -1,8 +1,6 @@
 #include <et/platform/platform.h>
 
-#if !defined(ET_PLATFORM_WIN)
-	#error FBXLoader requiers Windows environment
-#endif
+#if defined(ET_PLATFORM_WIN)
 
 #include <iostream>
 #include <assert.h>
@@ -665,3 +663,5 @@ s3d::ElementContainer::Pointer FBXLoader::load(RenderContext* rc, TextureCache& 
 	mainRunLoop()->addTask(new DeletionTask<FBXLoaderPrivate>(loader));
 	return result;
 }
+
+#endif
