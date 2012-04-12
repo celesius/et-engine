@@ -46,14 +46,16 @@ namespace et
 
 	public:
 		std::string source;
+		
 		BinaryDataStorage data;
-
 		vec2i size;
+		
 		int target;
 		int internalformat;
 		int format;
 		int type;
 		int compressed;
+		
 		size_t bitsPerPixel;
 		size_t channels;
 		size_t mipMapCount;

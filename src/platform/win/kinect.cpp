@@ -1,8 +1,6 @@
 #include <et/platform/platform.h>
 
-#ifndef ET_PLATFORM_WIN
-#error Kinect require Windows environment
-#endif
+#if defined(ET_PLATFORM_WIN)
 
 #include <iostream>
 #include <Windows.h>
@@ -316,3 +314,5 @@ void KinectPrivate::parseDepthData(KinectDepthData data, const vec2i& dimensions
 			_kinect->_delegate->kinectDidLosePlayer(2);
 	}
 }
+
+#endif
