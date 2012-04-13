@@ -22,7 +22,7 @@ namespace et
 		~TextureData();
 
 		void setWrap(RenderContext* rc, TextureWrap s, TextureWrap t, TextureWrap r = TextureWrap_ClampToEdge);
-		void setFiltration(RenderContext* rc, GLenum min_f, GLenum mag_f);
+		void setFiltration(RenderContext* rc, TextureFiltration minFiltration, TextureFiltration magFiltration);
 		void compareRefToTexture(RenderContext* rc, bool enable, GLenum compareFunc = GL_LEQUAL);
 
 		vec2 getTexCoord(const vec2& ivec, TextureOrigin origin = TextureOrigin_TopLeft) const;
@@ -66,6 +66,8 @@ namespace et
 	private:
 		GLuint _glID;
 		TextureDescription _desc;
+		vector3<TextureWrap> _wrap;
+		vector2<TextureFiltration> _filtration;
 		vec2 _texel;
 		bool _own;
 	};

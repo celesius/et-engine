@@ -68,6 +68,7 @@ Texture TextureFactory::genCubeTexture(GLint internalformat, GLsizei size, GLenu
 	desc.type = type;
 	desc.size = vec2i(size);
 	desc.layersCount = 6;
+	desc.mipMapCount = 1;
 
 	return Texture(new TextureData(_rc, desc, id, false));
 }

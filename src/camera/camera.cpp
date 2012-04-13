@@ -184,3 +184,24 @@ void Camera::unlockUpVector()
 {
 	_lockUpVector = true;
 }
+
+
+CubemapProjectionMatrixArray et::cubemapMatrixProjectionArray(const mat4& proj, const vec3& point)
+{
+	CubemapProjectionMatrixArray result;
+
+	const vec4& rX = proj[0]; 
+	const vec4& rY = proj[1];
+	const vec4& rZ = proj[2];
+	const vec4& rW = proj[3];
+
+	mat4 translation = translationMatrix(-point);
+	result[0] = translation * mat4( -rZ, -rY, -rX, rW );
+	result[1] = translation * mat4(  rZ, -rY,  rX, rW );
+	result[2] = translation * mat4(  rX, -rZ,  rY, rW );
+	result[3] = translation * mat4(  rX,  rZ, -rY, rW );
+	result[4] = translation * mat4(  rX, -rY, -rZ, rW );
+	result[5] = translation * mat4( -rX, -rY,  rZ, rW );
+
+	return result;
+}
