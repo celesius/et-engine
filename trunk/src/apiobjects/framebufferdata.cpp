@@ -183,12 +183,25 @@ bool FramebufferData::addRenderTarget(const Texture& rt)
 	_rc->renderState().bindFramebuffer(_id);
 
 #if (ET_OPENGLES)
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _numTargets, GL_TEXTURE_2D, rt->glID(), 0);
+    if (rt->target() == GL_TEXTURE_2D)
+    {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _numTargets, GL_TEXTURE_2D, rt->glID(), 0);
+        checkOpenGLError("Framebuffer::addRenderTarget -> glFramebufferTexture(..., GL_COLOR_ATTACHMENT0 " + name());
+    }
+    else if (rt->target() == GL_TEXTURE_CUBE_MAP)
+    {
+        for (size_t i = 0; i < 6; ++i)
+        {
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _numTargets, 
+                                   GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, rt->glID(), 0);
+        }
+        checkOpenGLError("Framebuffer::addRenderTarget -> glFramebufferTexture(..., GL_COLOR_ATTACHMENT0 " + name());
+    }
 #else	
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _numTargets, rt->glID(), 0);
+	checkOpenGLError("Framebuffer::addRenderTarget -> glFramebufferTexture(..., GL_COLOR_ATTACHMENT0 " + name());
 #endif	
 
-	checkOpenGLError("Framebuffer::addRenderTarget -> glFramebufferTexture(..., GL_COLOR_ATTACHMENT0 " + name());
 
 	_renderTargets[_numTargets++] = rt;
 
@@ -287,11 +300,15 @@ bool FramebufferData::setCurrentCubemapFace(size_t faceIndex)
 {
 	if (!_isCubemapBuffer) return false;
 
-	GLenum target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex;
-
 	_rc->renderState().bindFramebuffer(_id);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, target, _depthBuffer->glID(), 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, _renderTargets[0]->glID(), 0);
+    
+	GLenum target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex;
+   
+    if (_depthBuffer.valid())
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, target, _depthBuffer->glID(), 0);
+    
+    if (_renderTargets[0].valid())
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, _renderTargets[0]->glID(), 0);
 
 	return check(); 
 }

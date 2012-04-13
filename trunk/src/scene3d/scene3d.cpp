@@ -58,8 +58,12 @@ void Scene3d::serialize(std::ostream& stream)
 
 void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory)
 {
-	if (stream.fail()) return;
-
+	if (stream.fail()) 
+    {
+        std::cout << "Unable to deserialize scene from stream" << std::endl;
+        return;
+    }
+    
 	ChunkId readChunk = { };
 	deserializeChunk(stream, readChunk);
 	if (!chunkEqualTo(readChunk, HeaderScene)) return;
@@ -188,7 +192,7 @@ void Scene3d::serialize(const std::string& filename)
 
 void Scene3d::deserialize(const std::string& filename, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory)
 {
-	std::ifstream file(filename.c_str(), std::ios::binary | std::ios::out);
+	std::ifstream file(filename.c_str(), std::ios::binary | std::ios::in);
 	deserialize(file, rc, tc, factory);
 }
 
