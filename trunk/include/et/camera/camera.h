@@ -96,4 +96,6 @@ namespace et
 		bool _lockUpVector;
 	};
 
+	typedef StaticDataStorage<mat4, 6> CubemapProjectionMatrixArray;
+	CubemapProjectionMatrixArray cubemapMatrixProjectionArray(const mat4& proj, const vec3& point);
 }

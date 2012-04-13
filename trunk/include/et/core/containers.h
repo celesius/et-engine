@@ -34,7 +34,7 @@ namespace et
 
 		T data[count];
 
-		virtual void fill(int value)
+		void fill(int value)
 			{ memset(data, value, dataSize()); }
 
 		T& operator [](int i)
@@ -94,12 +94,12 @@ namespace et
 			memcpy(_data, copy.data(), copy.dataSize());
 		}
 
-		virtual ~DataStorage()
+		~DataStorage()
 		{ 
 			resize(0); 
 		}
 
-		virtual void resize(size_t size)
+		void resize(size_t size)
 		{
 			if (_size == size) return;
 
@@ -124,7 +124,7 @@ namespace et
 			_data = new_data;
 		}
 
-		virtual void fill(int value) 
+		void fill(int value) 
 			{ memset(_data, value, _dataSize); }
 
 		void operator ++() {++_index;}

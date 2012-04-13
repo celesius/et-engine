@@ -42,28 +42,35 @@ TextureData::~TextureData()
 
 void TextureData::setWrap(RenderContext* rc, TextureWrap s, TextureWrap t, TextureWrap r)
 {
+	_wrap = vector3<TextureWrap>(s, t, r);
+
 	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc.target);
 
-	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_S, textureWrapValue(s)); 
+	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_S, textureWrapValue(_wrap.x)); 
 	checkOpenGLError("glTexParameteri<WRAP_S> " + name()); 
-
-	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_T, textureWrapValue(t));
+	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_T, textureWrapValue(_wrap.y));
 	checkOpenGLError("glTexParameteri<WRAP_T> " + name()); 
-
-#if (!ET_OPENGLES)
-	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_R, textureWrapValue(r));
+#if defined(GL_TEXTURE_WRAP_R)
+	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_R, textureWrapValue(_wrap.z));
 	checkOpenGLError("glTexParameteri<WRAP_R> " + name()); 
 #endif	
 }
 
-void TextureData::setFiltration(RenderContext* rc, GLenum min_f, GLenum mag_f)
+void TextureData::setFiltration(RenderContext* rc, TextureFiltration minFiltration, TextureFiltration magFiltration)
 {
 	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc.target);
 
-	glTexParameteri(_desc.target, GL_TEXTURE_MIN_FILTER, min_f); 
-	checkOpenGLError("glTexParameteri<GL_TEXTURE_MIN_FILTER> " + name()); 
+	_filtration = vector2<TextureFiltration>(minFiltration, magFiltration);
 
-	glTexParameteri(_desc.target, GL_TEXTURE_MAG_FILTER, mag_f); 
+	if ((_desc.mipMapCount < 2) && (minFiltration > TextureFiltration_Linear))
+		_filtration.x = TextureFiltration_Linear;
+
+	if (magFiltration > TextureFiltration_Linear)
+		_filtration.y = TextureFiltration_Linear;
+
+	glTexParameteri(_desc.target, GL_TEXTURE_MIN_FILTER, textureFiltrationValue(_filtration.x)); 
+	checkOpenGLError("glTexParameteri<GL_TEXTURE_MIN_FILTER> " + name()); 
+	glTexParameteri(_desc.target, GL_TEXTURE_MAG_FILTER, textureFiltrationValue(_filtration.y)); 
 	checkOpenGLError("glTexParameteri<GL_TEXTURE_MAG_FILTER> " + name()); 
 }
 
@@ -100,36 +107,25 @@ void TextureData::build(RenderContext* rc)
 {
 	checkOpenGLError("TextureData::buildTexture2D " + name());
 	if ((_desc.size.square() == 0) || (_desc.internalformat == 0) || (_desc.type == 0)) return;
+
 	_texel = vec2( 1.0f / static_cast<float>(_desc.size.x), 1.0f / static_cast<float>(_desc.size.y) );
+	_filtration.x = (_desc.mipMapCount > 1) ? TextureFiltration_LinearMipMapLinear : TextureFiltration_Linear;
+	_filtration.y = TextureFiltration_Linear;
 
 	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc.target);
 	checkOpenGLError("TextureData::buildTexture2D -> etBindTexture" + name());
 
 	glTexParameteri(_desc.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) for " + name());
-	
+
+	setFiltration(rc, _filtration.x, _filtration.y);
+	setWrap(rc, _wrap.x, _wrap.y, _wrap.z);
+
 	if (_desc.mipMapCount > 1)
 	{
 		glTexParameteri(_desc.target, GL_TEXTURE_MAX_LEVEL, _desc.mipMapCount - 1);
-		glTexParameteri(_desc.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR) for " + name());
+		checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(_desc.target, GL_TEXTURE_MAX_LEVEL, _desc.mipMapCount - 1) for " + name());
 	} 
-	else
-	{
-		glTexParameteri(_desc.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) for " + name());
-	} 
-
-	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT) for " + name());
-	
-	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT) for " + name());
-	
-#if defined(GL_TEXTURE_WRAP_R)
-	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_R, GL_REPEAT);
-	checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT) for " + name());
-#endif
 
 	if (_desc.target == GL_TEXTURE_1D)
 	{

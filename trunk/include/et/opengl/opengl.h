@@ -74,6 +74,17 @@ namespace et
 		TextureWrap_max
 	};
 
+	enum TextureFiltration
+	{
+		TextureFiltration_Nearest,
+		TextureFiltration_Linear,
+		TextureFiltration_NearestMipMapNearest,
+		TextureFiltration_LinearMipMapNearest,
+		TextureFiltration_NearestMipMapLinear,
+		TextureFiltration_LinearMipMapLinear,
+		TextureFiltration_max
+	};
+
 	struct OpenGLCounters
 	{
 		static size_t primitiveCounter;
@@ -123,5 +134,6 @@ namespace et
 		GLint border, GLenum format, GLenum type, const GLvoid * pixels);
 
 	int textureWrapValue(TextureWrap w);
+	int textureFiltrationValue(TextureFiltration f);
 
 }

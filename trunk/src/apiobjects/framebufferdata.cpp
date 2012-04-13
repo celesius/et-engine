@@ -60,7 +60,7 @@ FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const Fr
 	_colorRenderbuffer(0), _depthRenderbuffer(0),
 	_rc(rc), _textureFactory(tf)
 {
-	checkOpenGLError("Framebuffer::Framebuffer" + name());
+	checkOpenGLError("Framebuffer::Framebuffer " + name());
 
 	glGenFramebuffers(1, &_id);
 	checkOpenGLError("Framebuffer::Framebuffer -> glGenFramebuffers");
@@ -283,11 +283,11 @@ void FramebufferData::setDrawBuffersCount(int count)
 #endif	
 }
 
-bool FramebufferData::setCurrentCubemapFace(GLenum face)
+bool FramebufferData::setCurrentCubemapFace(size_t faceIndex)
 {
 	if (!_isCubemapBuffer) return false;
 
-	GLenum target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + face;
+	GLenum target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex;
 
 	_rc->renderState().bindFramebuffer(_id);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, target, _depthBuffer->glID(), 0);

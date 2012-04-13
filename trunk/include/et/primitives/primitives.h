@@ -17,7 +17,8 @@ namespace et
 		static IndexType buildTrianglesIndexes(IndexArrayRef buffer, const vec2i& dim, IndexType vertexOffset, size_t indexOffset);
 		static IndexType buildTriangleStripIndexes(IndexArrayRef buffer, const vec2i& dim, IndexType vertexOffset, size_t indexOffset);
 
-		static void createSphere(VertexArrayRef data, float radius, const vec2i& density, const vec3& center = vec3(0.0f));
+		static void createSphere(VertexArrayRef data, float radius, const vec2i& density, const vec3& center = vec3(0.0f), 
+								const vec2& hemiSphere = vec2(1.0f));
 		static void createCylinder(VertexArrayRef data, float radius, float height, const vec2i& density, const vec3& center = vec3(0.0f));
 
 		static void createPlane(VertexArrayRef data, const vec3& normal, const vec2& size, const vec2i& density, 

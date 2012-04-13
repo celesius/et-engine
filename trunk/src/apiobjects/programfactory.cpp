@@ -24,6 +24,7 @@ ProgramFactory::ProgramFactory(RenderContext* rc) : APIObjectFactory(rc)
 	{
 		_fragShaderHeader = 
 			"#define etTexture2D	texture2D\n"
+			"#define etTextureCube	textureCube\n"
 			"#define etFragmentIn	varying\n"
 			"#define etFragmentOut	gl_FragColor\n"
 			;
@@ -37,6 +38,7 @@ ProgramFactory::ProgramFactory(RenderContext* rc) : APIObjectFactory(rc)
 	{
 		_fragShaderHeader = 
 			"#define etTexture2D	texture\n"
+			"#define etTextureCube	texture\n"
 			"#define etFragmentIn	in\n"
 			"#define etFragmentOut	FragColor\n"
 			"out vec4 FragColor;\n"

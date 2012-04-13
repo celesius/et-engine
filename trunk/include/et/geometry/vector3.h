@@ -13,12 +13,12 @@ namespace et
 			T c[3];
 		};
 
-		vector3() : x(0), y(0), z(0) { }
+		vector3() : x(static_cast<T>(0)), y(static_cast<T>(0)), z(static_cast<T>(0)) { }
 		vector3(const vector3& m) : x(m.x), y(m.y), z(m.z) { }
 		vector3(vector3&& m) : x(m.x), y(m.y), z(m.z) { }
 		
 		explicit vector3(T val) : x(val), y(val), z(val) { }
-		vector3(T i_x, T i_y) : x(i_x), y(i_y), z(0) { }
+		vector3(T i_x, T i_y) : x(i_x), y(i_y), z(static_cast<T>(0)) { }
 		vector3(T i_x, T i_y, T i_z) : x(i_x), y(i_y), z(i_z) { }
 		vector3(vector2<T>i_xy, T i_z) : x(i_xy.x), y(i_xy.y), z(i_z) { }
 

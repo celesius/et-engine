@@ -320,9 +320,27 @@ namespace et
 		{
 		case TextureWrap_ClampToEdge:
 			return GL_CLAMP_TO_EDGE;
-
 		default:
 			return GL_REPEAT;
+		}
+	}
+
+	int textureFiltrationValue(TextureFiltration f)
+	{
+		switch (f)
+		{
+		case TextureFiltration_Linear:
+			return GL_LINEAR;
+		case TextureFiltration_NearestMipMapNearest:
+			return GL_NEAREST_MIPMAP_NEAREST;
+		case TextureFiltration_NearestMipMapLinear:
+			return GL_NEAREST_MIPMAP_LINEAR;
+		case TextureFiltration_LinearMipMapNearest:
+			return GL_LINEAR_MIPMAP_NEAREST;
+		case TextureFiltration_LinearMipMapLinear:
+			return GL_LINEAR_MIPMAP_LINEAR;
+		default:
+			return GL_NEAREST;
 		}
 	}
 

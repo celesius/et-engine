@@ -36,7 +36,7 @@ void Primitives::createPhotonMap(DataStorage<vec2>& buffer, const vec2i& density
 			buffer.push_back(vec2(j * texel.x, i * texel.y) + dxdy);
 }
 
-void Primitives::createSphere(VertexArrayRef data, float radius, const vec2i& density, const vec3& center)
+void Primitives::createSphere(VertexArrayRef data, float radius, const vec2i& density, const vec3& center, const vec2& hemiSphere)
 { 
 	size_t lastIndex = data->size();
 	data->increase(density.square());
@@ -52,11 +52,11 @@ void Primitives::createSphere(VertexArrayRef data, float radius, const vec2i& de
 	bool hasNorm = norm.valid();
 	bool hasTex = tex.valid();
 
-	float dPhi = DOUBLE_PI / (density.x - 1.0f);
-	float dTheta = PI / (density.y - 1.0f);
+	float dPhi = hemiSphere.x * DOUBLE_PI / (density.x - 1.0f);
+	float dTheta = -hemiSphere.y * PI / (density.y - 1.0f);
 
 	int counter = 0;
-	float theta = -PI / 2.0f;
+	float theta = HALF_PI;
 	for (int i = 0; i < density.y; ++i)
 	{
 		float phi = 0;

@@ -58,7 +58,7 @@ namespace et
 		bool setCurrentRenderTarget(const Texture& texture);
 		bool setCurrentRenderTarget(GLenum rt);
 
-		bool setCurrentCubemapFace(GLenum face);
+		bool setCurrentCubemapFace(size_t faceIndex);
 
 		void setDrawBuffersCount(int c);
 
