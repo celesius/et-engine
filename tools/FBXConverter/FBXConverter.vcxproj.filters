@@ -354,6 +354,9 @@
     <ClCompile Include="..\..\src\camera\frustum.cpp">
       <Filter>Engine\source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\scene3d\cameraelement.cpp">
+      <Filter>Engine\source\scene3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\converter.h">

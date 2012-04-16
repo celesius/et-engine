@@ -153,6 +153,7 @@
     <ClCompile Include="..\..\src\rendering\rendering.cpp" />
     <ClCompile Include="..\..\src\rendering\renderstate.cpp" />
     <ClCompile Include="..\..\src\resources\textureloader.cpp" />
+    <ClCompile Include="..\..\src\scene3d\cameraelement.cpp" />
     <ClCompile Include="..\..\src\scene3d\collisionmesh.cpp" />
     <ClCompile Include="..\..\src\scene3d\element.cpp" />
     <ClCompile Include="..\..\src\scene3d\material.cpp" />
