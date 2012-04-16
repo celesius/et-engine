@@ -13,8 +13,8 @@ namespace et
 
 	public:
 		ET_DECLARE_PROPERTY(float, scrollZoomScale, setScrollZoomScale)
-		ET_DECLARE_PROPERTY(float, doubleClickThreshold, setÂoubleClickThreshold)
-		ET_DECLARE_PROPERTY(float, holdThreshold, setÐoldThreshold)
+		ET_DECLARE_PROPERTY(float, doubleClickThreshold, setDoubleClickThreshold)
+		ET_DECLARE_PROPERTY(float, holdThreshold, setHoldThreshold)
 
 	public:
 		ET_DECLARE_EVENT1(zoom, float)
@@ -45,7 +45,8 @@ namespace et
 			PointersInputDelta(const PointerInputInfo& c, const PointerInputInfo& p) : 
 				current(c), previous(p) { }
 		};
+        typedef std::map<size_t, PointersInputDelta> PointersInputDeltaMap;
 
-		std::map<size_t, PointersInputDelta> _pointers;
+		PointersInputDeltaMap _pointers;
 	};
 }
