@@ -9,7 +9,26 @@ GesturesRecognizer::GesturesRecognizer() : _scrollZoomScale(0.1f), _doubleClickT
 
 void GesturesRecognizer::handlePointersMovement()
 {
-
+    if (_pointers.size() == 2)
+    {
+        vec2 currentPositions[2];
+        vec2 previousPositions[2];
+        size_t index = 0;
+        for (PointersInputDeltaMap::iterator i = _pointers.begin(), e = _pointers.end(); i != e; ++i, ++index)
+        {
+            currentPositions[index] = i->second.current.normalizedPos;
+            previousPositions[index] = i->second.previous.normalizedPos;
+        }
+        
+        float currentDistance = (currentPositions[0] - currentPositions[1]).length();
+        float previousDistance = (previousPositions[0] - previousPositions[1]).length();
+        float dz = currentDistance / previousDistance;
+        zoom.invoke(dz);
+    }
+    else 
+    {
+        
+    }
 }
 
 void GesturesRecognizer::onPointerPressed(et::PointerInputInfo pi)
