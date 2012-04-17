@@ -249,4 +249,32 @@ using namespace et;
 	}
 }
 
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	(void)event;
+	float scale = self.contentScaleFactor;
+	CGSize ownSize = self.bounds.size;
+	ownSize.width *= scale;
+	ownSize.height *= scale;
+	
+	for (UITouch* touch in touches)
+	{
+		CGPoint touchPoint = [touch locationInView:self];
+		touchPoint.x *= scale;
+		touchPoint.y *= scale;
+		
+		PointerInputInfo pt;
+		pt.id = [touch hash];
+		pt.pos = vec2(touchPoint.x, touchPoint.y);
+		pt.scroll = 0;
+		pt.timestamp = touch.timestamp;
+		pt.type = PointerType_General;
+		
+		float nx = 2.0f * pt.pos.x / ownSize.width - 1.0f;
+		float ny = 1.0f - 2.0f * pt.pos.y / ownSize.height;
+		pt.normalizedPos = vec2(nx, ny);
+		_inputSource.pointerCancelled(pt);
+	}
+}
+
 @end

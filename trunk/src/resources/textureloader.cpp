@@ -32,10 +32,10 @@ const StringList& TextureLoader::preferredExtensions()
 	return extensions;
 }
 
-std::string TextureLoader::resolveScalableFileName(const std::string& fileName, size_t screenScale, std::string* ext, bool silent)
+std::string TextureLoader::resolveScalableFileName(const std::string& fileName, size_t screenScale, std::string* extPtr, bool silent)
 {
-	if (ext)
-		*ext = std::string();
+	if (extPtr)
+		*extPtr = std::string();
 
 	std::string result = fileName;
 	size_t lastDotPos = fileName.find_last_of('.');
@@ -45,7 +45,6 @@ std::string TextureLoader::resolveScalableFileName(const std::string& fileName, 
 	if ((lastDotPos == std::string::npos) || (lastDotPos < fileName.length() - 4))
 	{
 		const StringList& ext = TextureLoader::preferredExtensions();
-
 		for (StringList::const_iterator i = ext.begin(), e = ext.end(); i != e; ++i)
 		{
 			std::string name = application().environment().resolveScalableFileName(fileName + (*i), screenScale);
@@ -56,7 +55,25 @@ std::string TextureLoader::resolveScalableFileName(const std::string& fileName, 
 				break;
 			}
 		}
-
+        
+        if (!found)
+        {
+            std::string extractedFileName = getFileName(fileName);
+            if (extractedFileName != fileName)
+            {
+                for (StringList::const_iterator i = ext.begin(), e = ext.end(); i != e; ++i)
+                {
+                    std::string name = application().environment().resolveScalableFileName(extractedFileName + (*i), screenScale);
+                    if (fileExists(name))
+                    {  
+                        result = name;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+        }
+        
 	}
 	else 
 	{
@@ -67,20 +84,25 @@ std::string TextureLoader::resolveScalableFileName(const std::string& fileName, 
             name = application().environment().resolveScalableFileName(getFileName(fileName), screenScale);
             found = fileExists(name);
         }
+        if (!found)
+        {
+            name = resolveScalableFileName(removeFileExt(fileName), screenScale, extPtr, silent);
+            found = fileExists(name);
+        }
         
-		if (found)
+        if (found)
             result = name;
-	}
-
+    }	
+    
 	if (!found)
 	{
 		if (!silent)
 			std::cout << "Unable to resolve file name for: " << fileName << std::endl;
 	}
-	else if (ext)
+	else if (extPtr)
 	{
-		*ext = result.substr(result.rfind('.'));
-		lowercase(*ext);
+		*extPtr = result.substr(result.rfind('.'));
+		lowercase(*extPtr);
 	}
 
 	return result;

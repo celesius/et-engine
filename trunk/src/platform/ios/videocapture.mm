@@ -22,6 +22,8 @@ namespace et
 		~VideoCapturePrivate();
 		
 		void handleSampleBuffer(CMSampleBufferRef);
+        void run();
+        void stop();
 		
 	private:
 		VideoCapture* _owner;
@@ -54,6 +56,12 @@ VideoCapture::VideoCapture()
 VideoCapture::~VideoCapture()
 	{ delete _private; }
 
+void VideoCapture::run()
+    { _private->run(); }
+
+void VideoCapture::stop()
+    { _private->stop(); }
+
 VideoCapturePrivate::VideoCapturePrivate(VideoCapture* owner) : _owner(owner)
 {
 	_proxy = [[VideoCaptureProxy alloc] initWithVideoCapturePrivate:this];
@@ -64,7 +72,7 @@ VideoCapturePrivate::VideoCapturePrivate(VideoCapture* owner) : _owner(owner)
 	NSArray* devices = [AVCaptureDevice devices];
 	
 	NSError* error = nil;
-	AVCaptureDeviceInput* _input = [AVCaptureDeviceInput deviceInputWithDevice:[devices objectAtIndex:1] error:&error];
+	AVCaptureDeviceInput* _input = [AVCaptureDeviceInput deviceInputWithDevice:[devices objectAtIndex:0] error:&error];
 	if (_input)
 		[_session addInput:_input];
 	
@@ -83,9 +91,9 @@ VideoCapturePrivate::VideoCapturePrivate(VideoCapture* owner) : _owner(owner)
 
 VideoCapturePrivate::~VideoCapturePrivate()
 {
-	[_session stopRunning];
+    stop();
+    
 	[_session release];
-	
 	[_proxy release];
 }
 
@@ -104,4 +112,14 @@ void VideoCapturePrivate::handleSampleBuffer(CMSampleBufferRef sampleBuffer)
 	_owner->frameCaptured.invokeInMainRunLoop(f);
 	
 	CVPixelBufferUnlockBaseAddress(imageBuffer, 0);	
+}
+
+void VideoCapturePrivate::run()
+{
+	[_session startRunning];
+}
+
+void VideoCapturePrivate::stop()
+{
+	[_session stopRunning];
 }

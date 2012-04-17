@@ -64,6 +64,12 @@ void GesturesRecognizer::onPointerReleased(et::PointerInputInfo pi)
 	released.invoke();
 }
 
+void GesturesRecognizer::onPointerCancelled(et::PointerInputInfo pi)
+{
+	_pointers.erase(pi.id);
+	cancelled.invoke();
+}
+
 void GesturesRecognizer::onPointerScrolled(et::PointerInputInfo i)
 {
 	std::cout << i.scroll << std::endl;

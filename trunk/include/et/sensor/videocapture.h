@@ -26,6 +26,9 @@ namespace et
 	public:
 		VideoCapture();
 		~VideoCapture();
+        
+        void run();
+        void stop();
 		
 		ET_DECLARE_EVENT1(frameCaptured, VideoFrame);
 		
