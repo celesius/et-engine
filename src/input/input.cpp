@@ -30,34 +30,41 @@ void Input::pushPointerInputAction(const PointerInputInfo& info, InputAction act
 {
 	switch (action)
 	{
-	case InputAction_PointerPressed:
+        case InputAction_PointerPressed:
 		{
 			addPointerInfo(info);
 			pointerPressed.invokeInMainRunLoop(info);
 			break;
 		}
-
-	case InputAction_PointerMoved:
+            
+        case InputAction_PointerMoved:
 		{
 			pointerMoved.invokeInMainRunLoop(info);
 			updatePointerInfo(info);
 			break;
 		}
-
-	case InputAction_PointerReleased:
+            
+        case InputAction_PointerReleased:
 		{
 			pointerReleased.invokeInMainRunLoop(info);
 			removePointerInfo(info);
 			break;
 		}
-
-	case InputAction_PointerScrolled:
+            
+        case InputAction_PointerCancelled:
+		{
+			pointerCancelled.invokeInMainRunLoop(info);
+			removePointerInfo(info);
+			break;
+		}
+            
+        case InputAction_PointerScrolled:
 		{
 			pointerScrolled.invokeInMainRunLoop(info);
 			break;
 		}
-
-	default: { }
+            
+        default: { }
 	}
 }
 
@@ -68,7 +75,7 @@ bool Input::isPointerPressed(PointerType type) const
 		if (i->type == type)
 			return true;
 	}
-
+    
 	return false;
 }
 
@@ -118,6 +125,7 @@ InputHandler::~InputHandler()
 	input().pointerPressed.disconnect(this);
 	input().pointerMoved.disconnect(this);
 	input().pointerReleased.disconnect(this);
+	input().pointerCancelled.disconnect(this);
 	input().pointerScrolled.disconnect(this);
 }
 
@@ -129,5 +137,6 @@ void InputHandler::connectInputEvents()
 	input().pointerPressed.connect(this, &InputHandler::onPointerPressed);
 	input().pointerMoved.connect(this, &InputHandler::onPointerMoved);
 	input().pointerReleased.connect(this, &InputHandler::onPointerReleased);
+	input().pointerCancelled.connect(this, &InputHandler::onPointerCancelled);
 	input().pointerScrolled.connect(this, &InputHandler::onPointerScrolled);
 }

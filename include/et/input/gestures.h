@@ -24,11 +24,13 @@ namespace et
 		ET_DECLARE_EVENT0(doubleClick)
 		ET_DECLARE_EVENT0(hold)
 		ET_DECLARE_EVENT0(released)
+		ET_DECLARE_EVENT0(cancelled)
 
 	private:
 		void onPointerPressed(et::PointerInputInfo);
 		void onPointerMoved(et::PointerInputInfo);
 		void onPointerReleased(et::PointerInputInfo);
+        void onPointerCancelled(et::PointerInputInfo);
 		void onPointerScrolled(et::PointerInputInfo);
 
 		void handlePointersMovement();

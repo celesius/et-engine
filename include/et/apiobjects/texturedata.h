@@ -28,6 +28,7 @@ namespace et
 		vec2 getTexCoord(const vec2& ivec, TextureOrigin origin = TextureOrigin_TopLeft) const;
 
 		void updateData(RenderContext* rc, const TextureDescription& desc);
+		void updateDataDirectly(RenderContext* rc, const vec2i& size, char* data, size_t dataSize);
 
 		int glID() const
 			{ return _glID; }
@@ -62,6 +63,7 @@ namespace et
 	private:
 		void generateTexture(RenderContext* rc);
 		void build(RenderContext* rc);
+        void buildData(char* ptr, size_t dataSize);
 		
 	private:
 		GLuint _glID;

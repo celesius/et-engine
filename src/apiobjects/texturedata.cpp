@@ -103,6 +103,54 @@ void TextureData::generateTexture(RenderContext*)
 	checkOpenGLError("TextureData::generateTexture " + name());
 }
 
+void TextureData::buildData(char* dataPtr, size_t dataSize)
+{
+	if (_desc.target == GL_TEXTURE_1D)
+	{
+		if (_desc.compressed && dataSize)
+			etCompressedTexImage1D(_desc.target, 0, _desc.internalformat, _desc.size.x, 0, dataSize, dataPtr); 
+		else
+			etTexImage1D(_desc.target, 0, _desc.internalformat, _desc.size.x, 0, _desc.format, _desc.type, dataPtr); 
+        
+	}
+	else if (_desc.target == GL_TEXTURE_2D)
+	{
+		for (size_t level = 0; level < _desc.mipMapCount; ++level)
+		{
+			vec2i mipSize = _desc.sizeForMipLevel(level);
+			size_t dataSize = _desc.dataSizeForMipLevel(level);
+			size_t offset = _desc.dataOffsetForMipLevel(level);
+			char* ptr = (dataSize > 0) ? &dataPtr[offset] : 0;
+			if (_desc.compressed && ptr)
+				etCompressedTexImage2D(_desc.target, level, _desc.internalformat, mipSize.x, mipSize.y, 0, dataSize, ptr); 
+			else
+				etTexImage2D(_desc.target, level, _desc.internalformat, mipSize.x, mipSize.y, 0, _desc.format, _desc.type, ptr);
+		}
+	}
+	else if (_desc.target == GL_TEXTURE_CUBE_MAP)
+	{
+		size_t target = GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+		for (size_t layer = 0; layer < _desc.layersCount; ++layer, ++target)
+		{
+			for (size_t level = 0; level < _desc.mipMapCount; ++level)
+			{
+				vec2i mipSize = _desc.sizeForMipLevel(level);
+				size_t dataSize = _desc.dataSizeForMipLevel(level);
+				size_t offset = _desc.dataOffsetForMipLevel(level, layer);
+				char* ptr = (offset < dataSize) ? &dataPtr[offset] : 0;
+				if (_desc.compressed && ptr)
+					etCompressedTexImage2D(target, level, _desc.internalformat, mipSize.x, mipSize.y, 0, dataSize, ptr); 
+				else
+					etTexImage2D(target, level, _desc.internalformat, mipSize.x, mipSize.y, 0, _desc.format, _desc.type, ptr);
+			}
+		}
+	}
+	else
+	{
+		std::cout << "Unsupported texture target specified: glTexTargetToString(_target)" << std::endl;
+	}
+}
+
 void TextureData::build(RenderContext* rc)
 {
 	checkOpenGLError("TextureData::buildTexture2D " + name());
@@ -127,51 +175,7 @@ void TextureData::build(RenderContext* rc)
 		checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(_desc.target, GL_TEXTURE_MAX_LEVEL, _desc.mipMapCount - 1) for " + name());
 	} 
 
-	if (_desc.target == GL_TEXTURE_1D)
-	{
-		if (_desc.compressed && _desc.data.size())
-			etCompressedTexImage1D(_desc.target, 0, _desc.internalformat, _desc.size.x, 0, _desc.data.size(), _desc.data.binary()); 
-		else
-			etTexImage1D(_desc.target, 0, _desc.internalformat, _desc.size.x, 0, _desc.format, _desc.type, _desc.data.binary()); 
-
-	}
-	else if (_desc.target == GL_TEXTURE_2D)
-	{
-		for (size_t level = 0; level < _desc.mipMapCount; ++level)
-		{
-			vec2i mipSize = _desc.sizeForMipLevel(level);
-			size_t dataSize = _desc.dataSizeForMipLevel(level);
-			size_t offset = _desc.dataOffsetForMipLevel(level);
-			void* ptr = (_desc.data.size() > 0) ? _desc.data.element_ptr(offset) : 0;
-			if (_desc.compressed && ptr)
-				etCompressedTexImage2D(_desc.target, level, _desc.internalformat, mipSize.x, mipSize.y, 0, dataSize, ptr); 
-			else
-				etTexImage2D(_desc.target, level, _desc.internalformat, mipSize.x, mipSize.y, 0, _desc.format, _desc.type, ptr);
-		}
-	}
-	else if (_desc.target == GL_TEXTURE_CUBE_MAP)
-	{
-		size_t target = GL_TEXTURE_CUBE_MAP_POSITIVE_X;
-		for (size_t layer = 0; layer < _desc.layersCount; ++layer, ++target)
-		{
-			for (size_t level = 0; level < _desc.mipMapCount; ++level)
-			{
-				vec2i mipSize = _desc.sizeForMipLevel(level);
-				size_t dataSize = _desc.dataSizeForMipLevel(level);
-				size_t offset = _desc.dataOffsetForMipLevel(level, layer);
-				void* ptr = (offset < _desc.data.size()) ? _desc.data.element_ptr(offset) : 0;
-				if (_desc.compressed && ptr)
-					etCompressedTexImage2D(target, level, _desc.internalformat, mipSize.x, mipSize.y, 0, dataSize, ptr); 
-				else
-					etTexImage2D(target, level, _desc.internalformat, mipSize.x, mipSize.y, 0, _desc.format, _desc.type, ptr);
-			}
-		}
-	}
-	else
-	{
-		std::cout << "Unsupported texture target specified: glTexTargetToString(_target)" << std::endl;
-	}
-
+    buildData(_desc.data.binary(), _desc.data.dataSize());
 	_desc.data.resize(0);
 }
 
@@ -189,4 +193,14 @@ void TextureData::updateData(RenderContext* rc, const TextureDescription& desc)
 
 	_desc = desc;
 	build(rc);
+}
+
+void TextureData::updateDataDirectly(RenderContext* rc, const vec2i& size, char* data, size_t dataSize)
+{
+	if (_glID == 0)
+		generateTexture(rc);
+
+    _desc.size = size;
+    rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc.target);
+	buildData(data, dataSize);
 }

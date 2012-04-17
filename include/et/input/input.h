@@ -17,6 +17,7 @@ namespace et
 		InputAction_PointerPressed,
 		InputAction_PointerMoved,
 		InputAction_PointerReleased,
+        InputAction_PointerCancelled,
 		InputAction_PointerScrolled
 	};
 
@@ -90,6 +91,7 @@ namespace et
 		ET_DECLARE_EVENT1(pointerPressed, PointerInputInfo)
 		ET_DECLARE_EVENT1(pointerMoved, PointerInputInfo)
 		ET_DECLARE_EVENT1(pointerReleased, PointerInputInfo)
+		ET_DECLARE_EVENT1(pointerCancelled, PointerInputInfo)
 		ET_DECLARE_EVENT1(pointerScrolled, PointerInputInfo)
 
 	private:
@@ -138,6 +140,9 @@ namespace et
 		virtual void pointerReleased(const PointerInputInfo& info)
 			{ Input::instance().pushPointerInputAction(info, InputAction_PointerReleased); }
 
+		virtual void pointerCancelled(const PointerInputInfo& info)
+            { Input::instance().pushPointerInputAction(info, InputAction_PointerCancelled); }
+        
 		virtual void pointerScrolled(const PointerInputInfo& info)
 			{ Input::instance().pushPointerInputAction(info, InputAction_PointerScrolled); }
 	};
@@ -154,6 +159,7 @@ namespace et
 		virtual void onPointerPressed(et::PointerInputInfo) { }
 		virtual void onPointerMoved(et::PointerInputInfo) { }
 		virtual void onPointerReleased(et::PointerInputInfo) { }
+		virtual void onPointerCancelled(et::PointerInputInfo) { }
 		virtual void onPointerScrolled(et::PointerInputInfo) { }
 		virtual void onKeyPressed(unsigned char) { }
 		virtual void onCharEnterer(unsigned char) { }
