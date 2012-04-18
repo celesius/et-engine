@@ -79,7 +79,7 @@ VideoCapturePrivate::VideoCapturePrivate(VideoCapture* owner) : _owner(owner)
 	AVCaptureVideoDataOutput* _output = [[AVCaptureVideoDataOutput alloc] init];
 	_output.videoSettings = [NSDictionary dictionaryWithObjectsAndKeys:
 							 [NSNumber numberWithInt:kCVPixelFormatType_32BGRA], kCVPixelBufferPixelFormatTypeKey,
-							 [NSNumber numberWithBool:YES], kCVPixelBufferOpenGLCompatibilityKey, nil];
+							 [NSNumber numberWithBool:NO], kCVPixelBufferOpenGLCompatibilityKey, nil];
 	
 	dispatch_queue_t queue = dispatch_queue_create("dispatch-queue", nil);
 	[_output setSampleBufferDelegate:_proxy queue:queue];
