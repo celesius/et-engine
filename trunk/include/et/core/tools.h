@@ -106,21 +106,21 @@ namespace et
 	template <typename T>
 	inline std::ostream& operator << (std::ostream& stream, const vector2<T>& value) 
 	{ 
-		stream << value.x << CSV_DELIMITER << value.y;
+		stream << value.x << ET_CSV_DELIMITER << value.y;
 		return stream;
 	}
 
 	template <typename T>
 	inline std::ostream& operator << (std::ostream& stream, const vector3<T>& value) 
 	{ 
-		stream << value.x << CSV_DELIMITER << value.y << CSV_DELIMITER << value.z;
+		stream << value.x << ET_CSV_DELIMITER << value.y << ET_CSV_DELIMITER << value.z;
 		return stream;
 	}
 
 	template <typename T>
 	inline std::ostream& operator << (std::ostream& stream, const vector4<T>& value) 
 	{ 
-		stream << value.x << CSV_DELIMITER << value.y << CSV_DELIMITER << value.z << CSV_DELIMITER << value.w;
+		stream << value.x << ET_CSV_DELIMITER << value.y << ET_CSV_DELIMITER << value.z << ET_CSV_DELIMITER << value.w;
 		return stream;
 	}
 	std::string getFilePath(const std::string& name);
