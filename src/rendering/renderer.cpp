@@ -6,6 +6,7 @@
 using namespace et;
 
 extern const std::string fullscreen_vertex_shader; 
+extern const std::string fullscreen_scaled_vertex_shader;
 extern const std::string scaled_copy_vertex_shader;
 extern const std::string copy_fragment_shader;
 
@@ -30,12 +31,17 @@ Renderer::Renderer(RenderContext* rc) : _rc(rc)
 		rc->vertexBufferFactory().createVertexBuffer("fsquad-vert", vb, BufferDrawType_Static),
 		rc->vertexBufferFactory().createIndexBuffer("fsquad-ind", ib, BufferDrawType_Static));
 
-	_fullscreenProgram = rc->programFactory().genProgram(fullscreen_vertex_shader, "", copy_fragment_shader,
+	_fullscreenProgram = rc->programFactory().genProgram(fullscreen_vertex_shader, std::string(), copy_fragment_shader,
 		ProgramDefinesList(), ".", "__fullscreeen__program__");
 	_fullscreenProgram->setUniform("color_texture", defaultTextureUnit);
 
-	_scaledProgram = rc->programFactory().genProgram(scaled_copy_vertex_shader, "", copy_fragment_shader,
-		ProgramDefinesList(), ".", "__scaled__program__");
+	_fullscreenScaledProgram = rc->programFactory().genProgram(fullscreen_scaled_vertex_shader, std::string(), copy_fragment_shader,
+		ProgramDefinesList(), ".", "__fullscreeen_scaled_program__");
+	_fullscreenScaledProgram->setUniform("color_texture", defaultTextureUnit);
+	_fullScreenScaledProgram_PSUniform = _fullscreenScaledProgram->getUniformLocation("vScale");
+
+	_scaledProgram = rc->programFactory().genProgram(scaled_copy_vertex_shader, std::string(), copy_fragment_shader,
+		ProgramDefinesList(), ".", "__scaled_program__");
 	_scaledProgram->setUniform("color_texture", defaultTextureUnit);
 	_scaledProgram_PSUniform = _scaledProgram->getUniformLocation("PositionScale");
 }
@@ -68,7 +74,14 @@ void Renderer::renderFullscreenTexture(const Texture& texture)
 {
 	_rc->renderState().bindTexture(defaultTextureUnit, texture);
 	_rc->renderState().bindProgram(_fullscreenProgram);
-	_fullscreenProgram->setUniform("cColor", vec4(1.0f));
+	fullscreenPass();
+}
+
+void Renderer::renderFullscreenTexture(const Texture& texture, const vec2& scale)
+{
+	_rc->renderState().bindTexture(defaultTextureUnit, texture);
+	_rc->renderState().bindProgram(_fullscreenScaledProgram);
+	_scaledProgram->setUniform(_fullScreenScaledProgram_PSUniform, GL_FLOAT_VEC2, scale);
 	fullscreenPass();
 }
 
@@ -76,8 +89,7 @@ void Renderer::renderTexture(const Texture& texture, const vec2& position, const
 {
 	_rc->renderState().bindTexture(defaultTextureUnit, texture);
 	_rc->renderState().bindProgram(_scaledProgram);
-	_scaledProgram->setUniform(_scaledProgram_PSUniform, GL_FLOAT_VEC4, vec4(position.x, position.y - size.y, size.x, size.y) );
-	_scaledProgram->setUniform("cColor", vec4(1.0f));
+	_scaledProgram->setUniform(_scaledProgram_PSUniform, GL_FLOAT_VEC4, vec4(position, size));
 	fullscreenPass();
 }
 
@@ -133,8 +145,18 @@ const std::string fullscreen_vertex_shader =
 	"etVertexOut vec2 TexCoord;"
 	"void main()"
 	"{"
-	"TexCoord = vec2(0.5) + 0.5 * Vertex.xy;"
-	"gl_Position = vec4(Vertex.xy, 0.0, 1.0);"
+	"TexCoord = vec2(0.5) + 0.5 * Vertex;"
+	"gl_Position = vec4(Vertex, 0.0, 1.0);"
+	"}";
+
+const std::string fullscreen_scaled_vertex_shader = 
+	"uniform vec2 vScale;"
+	"etVertexIn vec2 Vertex;"
+	"etVertexOut vec2 TexCoord;"
+	"void main()"
+	"{"
+	"TexCoord = vec2(0.5) + 0.5 * Vertex;"
+	"gl_Position = vec4(vScale * Vertex, 0.0, 1.0);"
 	"}";
 
 const std::string scaled_copy_vertex_shader = 
@@ -143,15 +165,14 @@ const std::string scaled_copy_vertex_shader =
 	"etVertexOut vec2 TexCoord;"
 	"void main()"
 	"{"
-	"TexCoord = vec2(0.5) + 0.5 * Vertex.xy;"
+	"TexCoord = vec2(0.5) + 0.5 * Vertex;"
 	"gl_Position = vec4(PositionScale.xy + TexCoord * PositionScale.zw, 0.0, 1.0);"
 	"}";
 
 const std::string copy_fragment_shader = 
 	"uniform sampler2D color_texture;"
-	"uniform etLowp vec4 cColor;"
 	"etFragmentIn etHighp vec2 TexCoord;"
 	"void main()"
 	"{"
-	" etFragmentOut = etTexture2D(color_texture, TexCoord) * cColor;"
+	" etFragmentOut = etTexture2D(color_texture, TexCoord);"
 	"}";

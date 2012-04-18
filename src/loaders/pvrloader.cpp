@@ -32,40 +32,40 @@ namespace et
 {
     struct PVRHeader2
     {
-        uint32_t dwHeaderSize;		/* size of the structure */
-        uint32_t dwHeight;			/* height of surface to be created */
-        uint32_t dwWidth;			/* width of input surface */
-        uint32_t dwMipMapCount;		/* number of MIP-map levels requested */
-        uint32_t dwpfFlags;			/* pixel format flags */
-        uint32_t dwDataSize;		/* Size of the compress data */
-        uint32_t dwBitCount;		/* number of bits per pixel */
-        uint32_t dwRBitMask;		/* mask for red bit */
-        uint32_t dwGBitMask;		/* mask for green bits */
-        uint32_t dwBBitMask;		/* mask for blue bits */
-        uint32_t dwAlphaBitMask;	/* mask for alpha channel */
-        uint32_t dwPVR;				/* should be 'P' 'V' 'R' '!' */
-        uint32_t dwNumSurfs;		/* number of slices for volume textures or skyboxes */
+        unsigned int dwHeaderSize;		/* size of the structure */
+        unsigned int dwHeight;			/* height of surface to be created */
+        unsigned int dwWidth;			/* width of input surface */
+        unsigned int dwMipMapCount;		/* number of MIP-map levels requested */
+        unsigned int dwpfFlags;			/* pixel format flags */
+        unsigned int dwDataSize;		/* Size of the compress data */
+        unsigned int dwBitCount;		/* number of bits per pixel */
+        unsigned int dwRBitMask;		/* mask for red bit */
+        unsigned int dwGBitMask;		/* mask for green bits */
+        unsigned int dwBBitMask;		/* mask for blue bits */
+        unsigned int dwAlphaBitMask;	/* mask for alpha channel */
+        unsigned int dwPVR;				/* should be 'P' 'V' 'R' '!' */
+        unsigned int dwNumSurfs;		/* number of slices for volume textures or skyboxes */
     };
     
     struct PVRHeader3
     {
-        uint32_t version;			
-        uint32_t flags;		  
+        unsigned int version;			
+        unsigned int flags;		  
         uint64_t pixelFormat;		
-        uint32_t colourSpace;		
-        uint32_t channelType;		
-        uint32_t height;		 
-        uint32_t width;		  
-        uint32_t depth;		  
-        uint32_t numSurfaces;		
-        uint32_t numFaces;	   
-        uint32_t numMipmaps;	 
-        uint32_t metaDataSize;   
+        unsigned int colourSpace;		
+        unsigned int channelType;		
+        unsigned int height;		 
+        unsigned int width;		  
+        unsigned int depth;		  
+        unsigned int numSurfaces;		
+        unsigned int numFaces;	   
+        unsigned int numMipmaps;	 
+        unsigned int metaDataSize;   
     };	
 }
 
-const uint32_t PVRFormatMask = 0xff;
-const uint32_t PVRHeaderV3Version = 0x03525650;
+const unsigned int PVRFormatMask = 0xff;
+const unsigned int PVRHeaderV3Version = 0x03525650;
 
 void PVRLoader::loadInfoFromV2Header(const PVRHeader2& header, TextureDescription& desc)
 {
