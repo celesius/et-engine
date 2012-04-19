@@ -1,6 +1,7 @@
 #pragma once
 
 #include <math.h>
+#include <et/platform/compileoptions.h>
 
 namespace et 
 {
