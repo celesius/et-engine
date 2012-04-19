@@ -56,6 +56,8 @@ Texture TextureFactory::genTexture(GLenum target, GLint internalformat, const ve
 	desc.size = size;
 	desc.mipMapCount = 1;
 	desc.layersCount = 1;
+    // TODO: fix to actual values
+    desc.bitsPerPixel = format == GL_RGBA ? 32 : 24;
 	return Texture(new TextureData(_rc, desc, id, false));
 }
 
