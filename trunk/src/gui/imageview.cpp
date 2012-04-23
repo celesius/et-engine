@@ -33,6 +33,10 @@ void ImageView::addToRenderQueue(RenderContext* rc, GuiRenderer& g)
 void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 {
 	_vertices.setOffset(0);
+	
+	if (_backgroundColor.w > 0.0f)
+		g.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor, finalTransform(), GuiRenderLayer_Layer1);
+	
 	if (!_texture.valid()) return;
 
 	mat4 transform = finalTransform();
@@ -128,5 +132,11 @@ void ImageView::setImage(const Image& img)
 {
 	_texture = img.texture;
 	_descriptor = img.descriptor;
+	invalidateContent();
+}
+
+void ImageView::setBackgroundColor(const vec4& color)
+{
+	_backgroundColor = color;
 	invalidateContent();
 }

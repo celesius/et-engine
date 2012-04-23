@@ -1,9 +1,7 @@
 #include <sstream>
 #include <et/app/application.h>
-#include <et/utils/textureatlas.h>
-#include <et/utils/imagewriter.h>
-#include <et/utils/imageoperations.h>
 #include <et/resources/textureloader.h>
+#include <et/gui/textureatlas.h>
 
 using namespace et;
 using namespace et::gui;
