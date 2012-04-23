@@ -11,8 +11,6 @@ extern std::string gui_frag_src;
 
 GuiRenderer::GuiRenderer(RenderContext* rc) : _customAlpha(1.0f)
 {
-	bool gl2 = ogl_caps().version() == OpenGLVersion_Old;
-	
 	_guiProgram = rc->programFactory().genProgram(gui_vertex_src, std::string(), gui_frag_src,
 		ProgramDefinesList(),  std::string(), "shader-gui");
 
