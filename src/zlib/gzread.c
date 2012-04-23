@@ -68,8 +68,7 @@ local int gz_avail(state)
 }
 
 /* Get next byte from input, or -1 if end or error. */
-#define NEXT() ((strm->avail_in == 0 && gz_avail(state) == -1) ? -1 : \
-                (strm->avail_in == 0 ? -1 : (strm->avail_in--, *(strm->next_in)++)))
+#define NEXT() ((strm->avail_in == 0 && gz_avail(state) == -1) ? -1 : (strm->avail_in == 0 ? -1 : (strm->avail_in--, *(strm->next_in)++)))
 
 /* Get a four-byte little-endian integer and return 0 on success and the value
    in *ret.  Otherwise -1 is returned and *ret is not modified. */
@@ -170,12 +169,12 @@ local int gz_head(state)
                 gz_error(state, Z_DATA_ERROR, "unknown header flags set");
                 return -1;
             }
-            NEXT();                 /* modification time */
-            NEXT();
-            NEXT();
-            NEXT();
-            NEXT();                 /* extra flags */
-            NEXT();                 /* operating system */
+            (void)NEXT();                 /* modification time */
+            (void)NEXT();
+            (void)NEXT();
+            (void)NEXT();
+            (void)NEXT();                 /* extra flags */
+            (void)NEXT();                 /* operating system */
             if (flags & 4) {        /* extra field */
                 len = (unsigned)NEXT();
                 len += (unsigned)NEXT() << 8;
@@ -190,8 +189,8 @@ local int gz_head(state)
                 while (NEXT() > 0)
                     ;
             if (flags & 2) {        /* header crc */
-                NEXT();
-                NEXT();
+                (void)NEXT();
+                (void)NEXT();
             }
             /* an unexpected end of file is not checked for here -- it will be
                noticed on the first request for uncompressed data */

@@ -38,9 +38,7 @@ namespace et
 	}
 
 	inline int strToInt(const std::string& value)
-	{
-		return atoi(value.c_str());
-	}
+		{ return atoi(value.c_str()); }
 
 	template <typename i_type>
 	inline std::string intToStr(i_type value);
@@ -79,6 +77,9 @@ namespace et
 
 		return static_cast<size_t>(endPos);
 	}
+	
+	inline bool isPowerOfTwo(int value)
+		{ return (value & (value - 1)) == 0; }
 
 	inline size_t roundToHighestPowerOfTow(size_t x)
 	{
