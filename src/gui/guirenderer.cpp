@@ -391,6 +391,23 @@ void GuiRenderer::createImageVertices(GuiVertexList& vertices, const Texture& te
 	}
 }
 
+void GuiRenderer::createColorVertices(GuiVertexList& vertices, const rect& p, const vec4& color, 
+									  const mat4& transform, GuiRenderLayer layer)
+{
+	vec2 topLeft = p.origin();
+	vec2 topRight = topLeft + vec2(p.width, 0.0f);
+	vec2 bottomLeft = topLeft + vec2(0.0f, p.height);
+	vec2 bottomRight = bottomLeft + vec2(p.width, 0.0f);
+	
+	vec2 mask(layer == GuiRenderLayer_Layer0 ? 0.0f : 1.0f, 1.0f);
+	
+	buildQuad(vertices, 
+			  GuiVertex(transform * topLeft, vec4(vec2(0.0f), mask), color ), 
+			  GuiVertex(transform * topRight, vec4(vec2(0.0f), mask), color ),
+			  GuiVertex(transform * bottomLeft, vec4(vec2(0.0f), mask), color ),
+			  GuiVertex(transform * bottomRight, vec4(vec2(0.0f), mask), color ) );	
+}
+
 std::string gui_vertex_src = 
 	"uniform mat4 mDefaultTransform;"
 	"uniform vec2 vCustomOffset;"

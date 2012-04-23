@@ -29,19 +29,23 @@ namespace et
 
 			void addToRenderQueue(RenderContext*, GuiRenderer&);
 
-			inline const Texture& texture() const 
+			const Texture& texture() const 
 				{ return _texture; }
 
-			inline Texture& texture() 
+			Texture& texture() 
 				{ return _texture; }
 
-			inline const ImageDescriptor& imageDescriptor() const
+			const ImageDescriptor& imageDescriptor() const
 				{ return _descriptor; }
 
+			const vec4& backgroundColor() const
+				{ return _backgroundColor; }
+			
 			void setImageDescriptor(const ImageDescriptor& d);
 			void setContentMode(ImageView::ContentMode cm);
 			void setTexture(const Texture& t, bool updateDescriptor);
 			void setImage(const Image& img);
+			void setBackgroundColor(const vec4& color);
 
 		private:
 			void buildVertices(RenderContext*, GuiRenderer&);
@@ -51,6 +55,7 @@ namespace et
 			GuiVertexList _vertices;
 			ImageDescriptor _descriptor;
 			ImageView::ContentMode _contentMode;
+			vec4 _backgroundColor;
 		};
 
 		typedef std::vector<ImageView::Pointer> ImageViewList;

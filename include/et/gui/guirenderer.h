@@ -21,7 +21,7 @@ namespace et
 			void render(RenderContext* rc);
 			void endRender(RenderContext* rc);
 
-			inline const Camera& camera3d() const 
+			const Camera& camera3d() const 
 				{ return _guiCamera; }
 
 			size_t addVertices(const GuiVertexList& vertices, const Texture& texture, 
@@ -35,13 +35,16 @@ namespace et
 			void createImageVertices(GuiVertexList& vertices, const Texture& tex, const ImageDescriptor& desc, 
 				const rect& p, const vec4& color, const mat4& transform, GuiRenderLayer layer);
 
+			void createColorVertices(GuiVertexList& vertices, const rect& p, const vec4& color, const mat4& transform, 
+									 GuiRenderLayer layer);
+			
 			void buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, const GuiVertex& topRight,
 							const GuiVertex& bottomLeft, const GuiVertex& bottomRight);
 			
-			inline void setCustomOffset(const vec2& offset)
+			void setCustomOffset(const vec2& offset)
 				{ _customOffset = 2.0f * offset; }
 
-			inline void setCustomAlpha(float alpha)
+			void setCustomAlpha(float alpha)
 				{ _customAlpha = alpha; }
 
 		private:

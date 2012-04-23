@@ -78,7 +78,7 @@ Keyboard::Keyboard(RenderContext* rc, const Font& font, TextureCache& cache) : E
 	_descriptor(vec2(0.0f), vec2(128.0f), ContentOffset(6.0f)), _lastActiveButton(0), _pressedButton(0), _capturedElement(0),
 	_extraButtonsVisible(false), _visible(false), _shift(false), _shiftLocked(false)
 {
-	_texture = rc->textureFactory().loadTexture("gui/keyboard", cache);
+	_texture = rc->textureFactory().loadTexture("ui/keyboard", cache);
 	
 	setPivotPoint(vec2(0.5f, 0.0f));
 	layout(rc->size());
