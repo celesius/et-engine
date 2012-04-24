@@ -60,8 +60,9 @@ using namespace et;
 				   
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
-	return (UIInterfaceOrientationIsLandscape(toInterfaceOrientation) && _params.supportLandscapeOrientation) ||
-			((toInterfaceOrientation == UIInterfaceOrientationPortrait) && _params.supportPortraitOrientation);
+	BOOL handleLandscape = _params.supportLandscapeOrientation && UIInterfaceOrientationIsLandscape(toInterfaceOrientation);
+	BOOL handlePortrait = _params.supportPortraitOrientation && (toInterfaceOrientation == UIInterfaceOrientationPortrait);
+	return handlePortrait || handleLandscape;
 }
 
 - (void)beginRender
