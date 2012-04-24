@@ -1,9 +1,7 @@
-#include <et/app/application.h>
 #include <et/device/rendercontext.h>
 #include <et/threading/threading.h>
 #include <et/apiobjects/texturefactory.h>
 #include <et/resources/textureloader.h>
-#include <et/apiobjects/texturedata.h>
 
 using namespace et;
 
@@ -22,14 +20,15 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
 	if (file.length() == 0) return Texture();
 
 	CriticalSectionScope lock(_csTextureLoading);
-
-	Texture texture = cache.findTexture(file);
+    
+    Texture texture = cache.findTexture(file);
 	if (texture.invalid())
 	{
 		bool calledFromAnotherThread = Threading::currentThread() != threading().mainThread();
 
 		size_t screenScale = _rc->screenScaleFactor();
-		TextureDescription desc = async ? TextureLoader::loadDescription(file, screenScale, !calledFromAnotherThread) : 
+		TextureDescription desc = async ? 
+            TextureLoader::loadDescription(file, screenScale, false) : // !calledFromAnotherThread) : 
 			TextureLoader::load(file, screenScale);
 
 		texture = Texture(new TextureData(_rc, desc, file, calledFromAnotherThread));
@@ -40,7 +39,7 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
 		else if (calledFromAnotherThread)
 			std::cout << "ERROR: Unable to load texture synchronously from secondary thread." << std::endl;
 	}
-
+   
 	return texture;
 }
 
