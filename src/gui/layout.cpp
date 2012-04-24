@@ -156,7 +156,6 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 			_capturedElement->dragFinished.invoke(_capturedElement, ElementDragInfo(currentPos, _dragInitialPosition, p.normalizedPos));
 			_dragging = false;
 			_capturedElement = 0;
-			processed = true;
 		}
 		else if (processed) 
 		{

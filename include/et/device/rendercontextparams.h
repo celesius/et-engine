@@ -45,7 +45,7 @@ namespace et
 								bool coreProfile = false,
 								bool vSync = true,
 								bool landscapeOrientation = true,
-								bool portraitOrientation = false
+								bool portraitOrientation = true
 #else 
 								WindowStyle ws = WindowStyle_FixedWithCaption, 
 								MultisamplingQuality ms = MultisamplingQuality_Best,
