@@ -195,10 +195,10 @@ void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescri
 		vec4 charColor = desc.color * color;
 
 		buildQuad(vertices,
-			GuiVertex(transform * topLeft, vec4(topLeftUV, mask), charColor),
-			GuiVertex(transform * topRight, vec4(topRightUV, mask), charColor),
-			GuiVertex(transform * bottomLeft, vec4(bottomLeftUV, mask), charColor),
-			GuiVertex(transform * bottomRight, vec4(bottomRightUV, mask), charColor));
+			GuiVertex(floorv(transform * topLeft), vec4(topLeftUV, mask), charColor),
+			GuiVertex(floorv(transform * topRight), vec4(topRightUV, mask), charColor),
+			GuiVertex(floorv(transform * bottomLeft), vec4(bottomLeftUV, mask), charColor),
+			GuiVertex(floorv(transform * bottomRight), vec4(bottomRightUV, mask), charColor));
 
 		origin += vec2(desc.size.x, 0);
 	}
