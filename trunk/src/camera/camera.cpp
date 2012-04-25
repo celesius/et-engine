@@ -57,6 +57,20 @@ void Camera::orthogonalProjection(float left, float right, float top, float bott
 	projectionUpdated();
 }
 
+void Camera::windowProjection(const vec2& windowSize)
+{
+	_projectionMatrix = IDENTITY_MATRIX;
+	
+	_projectionMatrix[0][0] = 1.0f;
+	_projectionMatrix[1][1] = 1.0f;
+	
+	_projectionMatrix[3][0] = 0.0f;
+	_projectionMatrix[3][1] = 0.0f;
+	_projectionMatrix[3][2] = 0.0f;
+	
+	projectionUpdated();
+}
+
 void Camera::setPosition(const vec3& p)
 {
 	_modelViewMatrix[3] = vec4(-_modelViewMatrix.rotationMultiply(p), _modelViewMatrix[3][3]);
