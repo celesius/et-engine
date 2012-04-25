@@ -10,13 +10,13 @@ namespace et
 	public: 
 		AppEnvironment();
 
-		inline const std::string& applicationPath() const
+		const std::string& applicationPath() const
 			{ return _appPath; }
 
-		inline const std::string& applicationInputDataFolder() const
+		const std::string& applicationInputDataFolder() const
 			{ return _dataFolder; }
 		
-		inline const std::string& applicationDocumentsFolder() const
+		const std::string& applicationDocumentsFolder() const
 			{ return _documentsFolder; }
 
 		bool expandFileName(std::string& name) const;
