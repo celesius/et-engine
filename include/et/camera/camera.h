@@ -10,8 +10,10 @@ namespace et
 		Camera();
 
 		void lookAt(const vec3& pos, const vec3& point = vec3(0.0f), const vec3& up = vec3(0.0f, 1.0f, 0.0f));
+		
 		void perspectiveProjection(float fov, float aspect, float zNear, float zFar);
 		void orthogonalProjection(float left, float right, float top, float bottom, float zNear, float zFar);
+		void windowProjection(const vec2& windowSize);
 
 		const vec3 position() const
 			{ return _inverseModelViewMatrix[3].xyz(); }
