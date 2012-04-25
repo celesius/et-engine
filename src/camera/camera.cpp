@@ -61,11 +61,11 @@ void Camera::windowProjection(const vec2& windowSize)
 {
 	_projectionMatrix = IDENTITY_MATRIX;
 	
-	_projectionMatrix[0][0] = 1.0f;
-	_projectionMatrix[1][1] = 1.0f;
+	_projectionMatrix[0][0] = 2.0f / windowSize.x;
+	_projectionMatrix[1][1] = -2.0f / windowSize.y;
 	
-	_projectionMatrix[3][0] = 0.0f;
-	_projectionMatrix[3][1] = 0.0f;
+	_projectionMatrix[3][0] = -1.0;
+	_projectionMatrix[3][1] = 1.0f;
 	_projectionMatrix[3][2] = 0.0f;
 	
 	projectionUpdated();
