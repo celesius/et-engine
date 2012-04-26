@@ -230,9 +230,6 @@ namespace et
 	inline vector3<T> reflect(const vector3<T>& v, const vector3<T>& n)
 		{ return v - static_cast<T>(2) * dot(v, n) * n; }
 
-	inline vec2 operator * (const mat4& m, const vec2& v)
-		{ return vec2(m[0][0] * v.x + m[1][0] * v.y + m[3][0], m[0][1] * v.x + m[1][1] * v.y + m[3][1] ); }
-
 	template <typename T>
 	Triangle<T> operator * (const matrix3<T>& m, const Triangle<T>& t)
 		{ return Triangle<T>(m * t.v1, m * t.v2, m * t.v3); }
@@ -367,6 +364,23 @@ namespace et
 
 		return m;
 	}
+	
+	template <typename T>
+	inline matrix4<T> orientationForNormal(const vector3<T>& n) 
+	{
+		vector3<T> up = normalize(n);
+		T theta = asin(up.y) - static_cast<T>(1.570796326795);
+		T phi = atan2(up.z, up.x) + static_cast<T>(1.570796326795);
+		T csTheta = cos(theta);
+		vector3<T> side2(csTheta * cos(phi), sin(theta), csTheta * sin(phi));
+		vector3<T> side1 = up.cross(side2);
+		
+		matrix4<T> result;
+		result[0].xyz() = vector3<T>(side1.x, up.x, side2.x);
+		result[1].xyz() = vector3<T>(side1.y, up.y, side2.y);
+		result[2].xyz() = vector3<T>(side1.z, up.z, side2.z);
+		return result;
+	}	
 
 	inline mat4 translationMatrix(const vec3& v)
 		{ return translationMatrix<float>(v.x, v.y, v.z); }
@@ -389,23 +403,12 @@ namespace et
 	inline mat4 transformYXZMatrix(vec3 translate, vec3 rotate) 
 		{ return transformYXZMatrix<float>(translate.x, translate.y, translate.z, rotate.x, rotate.y, rotate.z); }
 
-	template <typename T>
-	inline matrix4<T> orientationForNormal(const vector3<T>& n) 
-	{
-		vector3<T> up = normalize(n);
-		T theta = asin(up.y) - static_cast<T>(1.570796326795);
-		T phi = atan2(up.z, up.x) + static_cast<T>(1.570796326795);
-		T csTheta = cos(theta);
-		vector3<T> side2(csTheta * cos(phi), sin(theta), csTheta * sin(phi));
-		vector3<T> side1 = up.cross(side2);
+	inline vec2 operator * (const mat4& m, const vec2& v)
+		{ return vec2(m[0][0] * v.x + m[1][0] * v.y + m[3][0], m[0][1] * v.x + m[1][1] * v.y + m[3][1] ); }
 
-		matrix4<T> result;
-		result[0].xyz() = vector3<T>(side1.x, up.x, side2.x);
-		result[1].xyz() = vector3<T>(side1.y, up.y, side2.y);
-		result[2].xyz() = vector3<T>(side1.z, up.z, side2.z);
-		return result;
-	}
-
+	inline vec2i operator * (const mat4i& m, const vec2i& v)
+		{ return vec2i(m[0][0] * v.x + m[1][0] * v.y + m[3][0], m[0][1] * v.x + m[1][1] * v.y + m[3][1]); }
+	
 	quaternion matrixToQuaternion(const mat3& m);
 	void decomposeMatrix(mat4 mat, vec3& translation, quaternion& rotation, vec3& scale);
 	vec3 removeMatrixScale(mat3& m);
