@@ -64,16 +64,25 @@ namespace et
 
 	template<typename T>
 	inline vector2<T> absv(const vector2<T>& value) 
-		{ return vector2<T>(::abs(value.x), ::abs(value.y)); }
+		{ return vector2<T>(::fabs(value.x), ::fabs(value.y)); }
 
 	template<typename T>
 	inline vector3<T> absv(const vector3<T>& value) 
-		{ return vector3<T>(::abs(value.x), ::abs(value.y), ::abs(value.z)); }
+		{ return vector3<T>(::fabs(value.x), ::fabs(value.y), ::fabs(value.z)); }
 
 	template<typename T>
 	inline vector4<T> absv(const vector4<T>& value) 
-		{ return vector4<T>(::abs(value.x), ::abs(value.y), ::abs(value.z), ::abs(value.w)); }
+		{ return vector4<T>(::fabs(value.x), ::fabs(value.y), ::fabs(value.z), ::fabs(value.w)); }
 
+	inline vector2<int> absv(const vector2<int>& value) 
+		{ return vector2<int>(::abs(value.x), ::abs(value.y)); }
+	
+	inline vector3<int> absv(const vector3<int>& value) 
+		{ return vector3<int>(::abs(value.x), ::abs(value.y), ::abs(value.z)); }
+	
+	inline vector4<int> absv(const vector4<int>& value) 
+		{ return vector4<int>(::abs(value.x), ::abs(value.y), ::abs(value.z), ::abs(value.w)); }
+	
 	template <typename T>
 	inline T etMin(const T& v1, const T& v2)
 		{ return (v1 < v2) ? v1 : v2; }
