@@ -39,6 +39,12 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
 		else if (calledFromAnotherThread)
 			std::cout << "ERROR: Unable to load texture synchronously from secondary thread." << std::endl;
 	}
+	else if (async && delegate)
+	{
+		Invocation1 i;
+		i.setTarget(delegate, &TextureLoaderDelegate::textureDidLoad, texture);
+		i.invokeInMainRunLoop();
+	}
    
 	return texture;
 }
