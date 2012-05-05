@@ -66,13 +66,14 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 
 	switch (desc.channels)
 	{
+#if defined(GL_R)			
 	case 1: 
 		{
 			desc.internalformat = (bpp == 16) ? GL_R16 : GL_R;
 			desc.format = GL_R;
 			break;
 		};
-
+#endif
 	case 2: 
 		{
 			desc.internalformat = (bpp == 16) ? GL_RG16 : GL_RG;

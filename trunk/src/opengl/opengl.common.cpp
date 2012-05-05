@@ -110,31 +110,43 @@ namespace et
 		case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
 			return "GL_TEXTURE_CUBE_MAP_NEGATIVE_Z";
 
-#if (!ET_OPENGLES)
 		case GL_TEXTURE_1D: 
 			return "GL_TEXTURE_1D";
-
+				
+#if defined(GL_TEXTURE_3D)
 		case GL_TEXTURE_3D: 
 			return "GL_TEXTURE_3D";
-
+#endif
+				
+#if defined(GL_TEXTURE_2D_ARRAY)
 		case GL_TEXTURE_2D_ARRAY: 
 			return "GL_TEXTURE_2D_ARRAY";
-
+#endif	
+				
+#if defined(GL_TEXTURE_CUBE_MAP_ARRAY)
 		case GL_TEXTURE_CUBE_MAP_ARRAY: 
 			return "GL_TEXTURE_CUBE_MAP_ARRAY";
-
+#endif
+				
+#if defined(GL_TEXTURE_RECTANGLE)
 		case GL_TEXTURE_RECTANGLE: 
 			return "GL_TEXTURE_RECTANGLE";
+#endif	
 
+#if defined(GL_TEXTURE_2D_MULTISAMPLE)
 		case GL_TEXTURE_2D_MULTISAMPLE: 
 			return "TEXTURE_2D_MULTISAMPLE";
+#endif	
 
+#if defined(GL_TEXTURE_2D_MULTISAMPLE_ARRAY)
 		case GL_TEXTURE_2D_MULTISAMPLE_ARRAY:
 			return "TEXTURE_2D_MULTISAMPLE_ARRAY";
+#endif	
 
+#if defined(GL_TEXTURE_BUFFER)
 		case GL_TEXTURE_BUFFER: 
 			return "TEXTURE_BUFFER_ARB";
-#endif				
+#endif	
 		default: 
 			return "Unknown texture target " + intToStr(target);
 		}
@@ -155,27 +167,39 @@ namespace et
 
 		case GL_BGRA: return "GL_BGRA";
 		case GL_RGB5_A1: return "GL_RGB5_A1";
+				
+#if defined (GL_LUMINANCE)				
 		case GL_LUMINANCE: return "GL_LUMINANCE";
+#endif			
+				
+#if defined (GL_LUMINANCE_ALPHA)				
 		case GL_LUMINANCE_ALPHA: return "GL_LUMINANCE_ALPHA";
-
+#endif
+				
 		case GL_RGB: return "GL_RGB";
 		case GL_RGBA: return "GL_RGBA";
 
+#if defined(GL_INTENSITY)				
+			case GL_INTENSITY: return "GL_INTENSITY";
+			case GL_INTENSITY8: return "GL_INTENSITY8";
+			case GL_INTENSITY16: return "GL_INTENSITY16";
+			case GL_LUMINANCE8: return "GL_LUMINANCE8";
+			case GL_LUMINANCE16: return "GL_LUMINANCE16";
+#endif				
+				
 #if (!ET_OPENGLES)
 		case GL_RGB8: return "GL_RGB8";
 		case GL_RGBA4: return "GL_RGBA4";
 		case GL_RGBA8: return "GL_RGBA8";
+				
 		case GL_RGB16F: return "GL_RGB16F";
 		case GL_RGBA16F: return "GL_RGBA16F";
 		case GL_RGBA32F: return "GL_RGBA32F";
 		case GL_RGB32F: return "GL_RGB32F";
+				
 		case GL_RGB4: return "GL_RGB4";
-		case GL_INTENSITY: return "GL_INTENSITY";
-		case GL_INTENSITY8: return "GL_INTENSITY8";
-		case GL_INTENSITY16: return "GL_INTENSITY16";
-		case GL_LUMINANCE8: return "GL_LUMINANCE8";
-		case GL_LUMINANCE16: return "GL_LUMINANCE16";
 		case GL_R11F_G11F_B10F: return "GL_R11F_G11F_B10F_EXT";
+				
 		case GL_COMPRESSED_RGB_S3TC_DXT1_EXT: return "GL_COMPRESSED_RGB_S3TC_DXT1_EXT";
 		case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT: return "GL_COMPRESSED_RGBA_S3TC_DXT1_EXT";
 		case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT: return "GL_COMPRESSED_RGBA_S3TC_DXT3_EXT";

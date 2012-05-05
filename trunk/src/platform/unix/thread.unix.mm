@@ -35,13 +35,7 @@ void* ThreadPrivate::threadProc(void* context)
 {
 	Thread* thread = static_cast<Thread*>(context);
 	thread->_private->threadId = reinterpret_cast<ThreadId>(pthread_self());
-	
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	
 	int result = thread->main();
-	
-	[pool drain];
-	
 	thread->terminate(result);
 	return reinterpret_cast<void*>(result);
 }

@@ -10,15 +10,26 @@ namespace et
 #if ET_PLATFORM_WIN
 
 	#include <et/opengl/gl.win.h> 
-	#define MAX_TEXTURE_UNITS		16
-
+	
+	#define ET_OPENGLES								0
 	#define GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG		0
 	#define GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG		0
 	#define GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG		0
 	#define GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG		0
+	#define MAX_TEXTURE_UNITS						8
+	
+#elif ET_PLATFORM_MAC
+	
+	#include <OpenGL/gl3.h>
+	#include <OpenGL/gl3ext.h>
 
 	#define ET_OPENGLES								0
-
+	#define GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG		0
+	#define GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG		0
+	#define GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG		0
+	#define GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG		0
+	#define MAX_TEXTURE_UNITS						8
+	
 #elif ET_PLATFORM_IOS
 
 	#include <OpenGLES/ES2/gl.h>

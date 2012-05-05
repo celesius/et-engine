@@ -143,7 +143,7 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 
 	GLuint GeometryShader = 0;
 
-#if (!ET_OPENGLES)
+#if defined(GL_GEOMETRY_SHADER)
 	if ((geom_source.length() > 0) && (geom_source != ProgramData::emptyShaderSource)) 
 	{
 		GeometryShader = glCreateShader(GL_GEOMETRY_SHADER);

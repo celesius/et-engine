@@ -315,7 +315,7 @@ void Primitives::calculateNormals(VertexArrayRef data, const IndexArrayRef& buff
 	RawDataAcessor<vec3> nrm = nrmChunk.accessData<vec3>(0);
 	for (IndexArray::PrimitiveIterator i = buffer->primitive(first), e = buffer->primitive(last); i != e; ++i)
 	{
-		IndexArray::Primitive& p = (*i);
+		const IndexArray::Primitive& p = (*i);
 		vec3& v0 = pos[p[0]];
 		vec3& v1 = pos[p[1]];
 		vec3& v2 = pos[p[2]];
@@ -328,7 +328,7 @@ void Primitives::calculateNormals(VertexArrayRef data, const IndexArrayRef& buff
 
 	for (IndexArray::PrimitiveIterator i = buffer->primitive(first), e = buffer->primitive(last); i != e; ++i)
 	{
-		IndexArray::Primitive& p = (*i);
+		const IndexArray::Primitive& p = (*i);
 		for (size_t k = 0; k < 3; ++k)
 			nrm[p[k]].normalize();
 	}
@@ -349,17 +349,18 @@ void Primitives::calculateTangents(VertexArrayRef data, const IndexArrayRef& buf
 		return;
 	}
 
-	size_t len = last - first;
-	DataStorage<vec3> tan1(len);
-	DataStorage<vec3> tan2(len);
+	DataStorage<vec3> tan1(data->size());
+	DataStorage<vec3> tan2(data->size());
 
 	RawDataAcessor<vec3> pos = posChunk.accessData<vec3>(0);
 	RawDataAcessor<vec3> nrm = nrmChunk.accessData<vec3>(0);
 	RawDataAcessor<vec3> tan = tanChunk.accessData<vec3>(0);
 	RawDataAcessor<vec2> uv = uvChunk.accessData<vec2>(0);
+	
 	for (IndexArray::PrimitiveIterator i = buffer->primitive(first), e = buffer->primitive(last); i != e; ++i)
 	{
 		IndexArray::Primitive& p = (*i);
+		
 		vec3& v1 = pos[p[0]];
 		vec3& v2 = pos[p[1]];
 		vec3& v3 = pos[p[2]];
@@ -382,20 +383,24 @@ void Primitives::calculateTangents(VertexArrayRef data, const IndexArrayRef& buf
 		vec3 sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
 		vec3 tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r); 
 
-		tan1[p[0] - first] += sdir; 
-		tan1[p[1] - first] += sdir; 
-		tan1[p[2] - first] += sdir;
-		tan2[p[0] - first] += tdir; 
-		tan2[p[1] - first] += tdir; 
-		tan2[p[2] - first] += tdir; 
+		tan1[p[0]] += sdir; 
+		tan1[p[1]] += sdir; 
+		tan1[p[2]] += sdir;
+		tan2[p[0]] += tdir; 
+		tan2[p[1]] += tdir; 
+		tan2[p[2]] += tdir; 
 	} 
 
-	for (size_t i = first; i < last; ++i)
+	for (IndexArray::PrimitiveIterator i = buffer->primitive(first), e = buffer->primitive(last); i != e; ++i)
 	{
-		vec3& n = nrm[i];
-		vec3& t = tan1[i - first]; 
-		float value = dot(cross(n, t), tan2[i - first]);
-		tan[i] = normalize(t - n * dot(n, t)) * sign(value);
+		const IndexArray::Primitive& p = (*i);
+		for (size_t k = 0; k < 3; ++k)
+		{
+			vec3& n = nrm[p[k]];
+			vec3& t = tan1[p[k]]; 
+			float value = dot(cross(n, t), tan2[p[k]]);
+			tan[p[k]] = normalize(t - n * dot(n, t)) * sign(value);
+		}
 	}
 }
 
@@ -410,7 +415,7 @@ void Primitives::smoothTangents(VertexArrayRef data, const IndexArrayRef&, size_
 	}
 
 	size_t len = last - first;
-	DataStorage<vec3> tanSmooth(len);
+	DataStorage<vec3> tanSmooth(data->size());
 	RawDataAcessor<vec3> pos = posChunk.accessData<vec3>(first);
 	RawDataAcessor<vec3> tan = tanChunk.accessData<vec3>(first);
 	for (size_t p = 0; p < len; ++p)

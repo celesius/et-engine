@@ -26,7 +26,7 @@ namespace et
 		friend class TimedObjectDeletionTask;
 
 		virtual ~TimedObject();
-		virtual void startUpdates(TimerPoolObject* timerPool);
+		virtual void startUpdates(TimerPoolObject* timerPool = 0);
 		virtual void update(float) {  }
 
 		float actualTime();

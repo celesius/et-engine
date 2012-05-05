@@ -19,7 +19,7 @@ namespace et
 	public:
 		OpenGLCapabilites() : _version(OpenGLVersion_unknown),
 			_mipmap_generation(false), _shaders(false), _vertex_attrib_arrays(false), _vertex_buffers(false),
-			_swap_interval(false), _drawelements_basevertex(false) { }
+			_drawelements_basevertex(false) { }
 		
 		bool supportMipMapGeneration() const
 			{ return _mipmap_generation; }
@@ -32,9 +32,6 @@ namespace et
 		
 		bool supportVertexBuffers() const 
 			{ return _vertex_buffers; }
-		
-		bool supportSwapInterval() const
-			{ return _swap_interval; }
 		
 		bool supportDrawElemensBaseVertex() const 
 			{ return _drawelements_basevertex; }
@@ -71,10 +68,8 @@ namespace et
 			std::cout << "OpenGL version: " << ver << ", GLSL version: " << _glslVersion << std::endl;
 
 #if (ET_OPENGLES)
-			_swap_interval = false;
 			_drawelements_basevertex = false;
 #else	   
-			_swap_interval = wglSwapIntervalEXT != 0;
 			_drawelements_basevertex = glDrawElementsBaseVertex != 0;
 #endif	   
 			_mipmap_generation = glGenerateMipmap != 0;
@@ -90,9 +85,7 @@ namespace et
 		bool _shaders;
 		bool _vertex_attrib_arrays;
 		bool _vertex_buffers;
-		bool _swap_interval;
 		bool _drawelements_basevertex;
-		
 	};
 	
 	inline OpenGLCapabilites& ogl_caps() { return OpenGLCapabilites::instance(); }

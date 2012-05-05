@@ -24,6 +24,9 @@ const StringList& TextureLoader::preferredExtensions()
 #elif ET_PLATFORM_IOS
 		extensions.push_back(".pvr");
 		extensions.push_back(".png");
+#elif ET_PLATFORM_MAC
+		extensions.push_back(".dds");
+		extensions.push_back(".png");
 #else
 	#error Please, define preferred extensions list for current platform.
 #endif
