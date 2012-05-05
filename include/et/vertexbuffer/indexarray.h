@@ -50,6 +50,7 @@ namespace et
 		void push_back(IndexType value);
 
 		size_t actualSize() const;
+		size_t primitivesCount() const;
 		void setActualSize(size_t value);
 
 		void resizeToFit(size_t count);

@@ -59,7 +59,7 @@ void Element::startUpdates(TimerPoolObject* timerPool)
 
 void Element::startUpdates()
 {
-	TimedObject::startUpdates(mainTimerPool().ptr());
+	TimedObject::startUpdates();
 }
 
 TimerPool& Element::timerPool()

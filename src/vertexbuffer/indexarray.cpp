@@ -97,6 +97,29 @@ size_t IndexArray::actualSize() const
 	return _actualSize;
 }
 
+size_t IndexArray::primitivesCount() const
+{
+	switch (_contentType)
+	{
+		case IndexArrayContentType_Points:
+			return _actualSize;
+			
+		case IndexArrayContentType_Lines:
+			return _actualSize / 2;
+			
+		case IndexArrayContentType_Triangles:
+			return _actualSize / 3;
+			
+		case IndexArrayContentType_TriangleStrips:
+			return _actualSize - 2;
+			
+		default:
+			break;
+	}
+	
+	return 0;
+}
+
 void IndexArray::resizeToFit(size_t count)
 {
 	_data.fitToSize(count * _format);
@@ -132,24 +155,24 @@ IndexArray::PrimitiveIterator IndexArray::primitive(size_t index) const
 	size_t primitiveIndex = 0;
 	switch (_contentType)
 	{
-	case IndexArrayContentType_Lines:
+		case IndexArrayContentType_Lines:
 		{
 			primitiveIndex = 2 * index;
 			break;
 		}
-	case IndexArrayContentType_Triangles:
+		case IndexArrayContentType_Triangles:
 		{
 			primitiveIndex = 3 * index;
 			break;
 		}
-	case IndexArrayContentType_TriangleStrips:
+		case IndexArrayContentType_TriangleStrips:
 		{
 			primitiveIndex = index == 0 ? 0 : (2 + index);
 			break;
 		}
-
-	default:
-		primitiveIndex = index;
+			
+		default:
+			primitiveIndex = index;
 	}
 
 	return IndexArray::PrimitiveIterator(this, primitiveIndex > capacity() ? capacity() : primitiveIndex);

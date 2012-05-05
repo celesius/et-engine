@@ -1,5 +1,6 @@
 #pragma once
 
+#include <assert.h>
 #include <et/platform/platform.h>
 
 namespace et
@@ -127,17 +128,32 @@ namespace et
 		void fill(int value) 
 			{ memset(_data, value, _dataSize); }
 
-		void operator ++() {++_index;}
-		T& current() {return _data[_index];}
-		T* current_ptr() {return &_data[_index];}
-		const size_t currentIndex() const { return _index; }
+		void operator ++()
+			{ ++_index; }
+		
+		T& current()
+			{ return _data[_index]; }
+		
+		T* current_ptr()
+			{ return &_data[_index]; }
+		
+		const size_t currentIndex() const
+			{ return _index; }
 
-		const size_t size() const {return _size;}
-		const size_t dataSize() const {return _dataSize;}
-		const size_t typeSize() const { return sizeof(T); }
+		const size_t size() const
+			{ return _size; }
+		
+		const size_t dataSize() const
+			{ return _dataSize; }
+		
+		const size_t typeSize() const
+			{ return sizeof(T); }
 
-		T* data() { return _data; }
-		const T* data() const { return _data; }
+		T* data()
+			{ return _data; }
+		
+		const T* data() const
+			{ return _data; }
 
 		T* extract()
 		{
@@ -156,10 +172,10 @@ namespace et
 			{ return &_data[i]; }
 
 		T& operator [](size_t i)
-			{ return _data[i]; }
+			{ assert(i < _size); return _data[i]; }
 
 		const T& operator [](size_t i) const 
-			{ return _data[i]; } 
+			{ assert(i < _size); return _data[i]; } 
 
 		void* raw() 
 			{ return static_cast<void*>(_data); }
