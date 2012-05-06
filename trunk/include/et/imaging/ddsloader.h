@@ -16,4 +16,5 @@ namespace et
 		static void loadInfoFromFile(const std::string& path, TextureDescription& desc);
 	};
 
+	#include <et/imaging/ddsloader.const.h>	
 }
