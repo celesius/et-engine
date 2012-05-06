@@ -8,7 +8,7 @@
 #include <cocos2d.h>
 
 #include <et/app/applicationnotifier.h>
-#include <et/platform/cocos/etapplication.cocos.h>
+#include <et/platform-cocos/etapplication.cocos.h>
 
 using namespace et;
 
