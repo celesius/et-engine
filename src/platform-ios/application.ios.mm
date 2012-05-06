@@ -44,10 +44,17 @@ IApplicationDelegate* Application::delegate()
 int Application::run(int argc, char* argv[])
 {
 #if defined(ET_EMBEDDED_APPLICATION)
+    
 	loaded();
 	return 0;
+    
 #else	
-	return UIApplicationMain(argc, argv, nil, NSStringFromClass([etApplicationDelegate class]));
+    
+    @autoreleasepool 
+    {
+        return UIApplicationMain(argc, argv, nil, NSStringFromClass([etApplicationDelegate class]));
+    }
+    
 #endif	
 }
 

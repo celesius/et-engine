@@ -35,8 +35,33 @@ float et::queryTime()
 
 std::string et::applicationPath()
 {
-	NSString* bundlePath = [NSString stringWithFormat:@"%@/", [[NSBundle mainBundle] bundlePath]];
-	return [bundlePath cStringUsingEncoding:NSASCIIStringEncoding];
+    char result[256] = { };
+    
+    CFURLRef bUrl = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+    CFURLGetFileSystemRepresentation(bUrl, true, reinterpret_cast<UInt8*>(result), 256);
+    CFRelease(bUrl);
+    
+    size_t i = 0;
+    while ((
+            i < 256) && result[++i]) { };
+    result[i] = '/';
+    
+    return std::string(result);
+}
+
+std::string et::applicationDataFolder()
+{
+    char result[256] = { };
+    
+	CFURLRef bUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
+    CFURLGetFileSystemRepresentation(bUrl, true, reinterpret_cast<UInt8*>(result), 256);
+    CFRelease(bUrl);
+    
+    size_t i = 0;
+    while ((i < 256) && result[++i]) { };
+    result[i] = '/';
+    
+	return std::string(result);
 }
 
 std::string et::normalizeFilePath(string s)
@@ -72,28 +97,14 @@ bool et::folderExists(const std::string& name)
 	return isDir;
 }
 
-std::string et::applicationDataFolder()
-{
-	CFBundleRef bundle = CFBundleGetMainBundle();
-	CFURLRef resUrl = CFBundleCopyResourcesDirectoryURL(bundle);
-	
-	CFStringRef resUrlStr = CFURLGetString(resUrl);
-	size_t strSize = CFStringGetLength(resUrlStr) + 1;
-	
-	char* data = new char[strSize];
-	CFStringGetCString(resUrlStr, data, strSize, kCFStringEncodingASCII);
-	std::string resPath = std::string(data);
-	delete [] data;
-    
-	CFRelease(resUrl);
-	return resPath;
-}
-
 std::string et::applicationDocumentsFolder()
 {
-	NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-	NSString* folder = [[paths objectAtIndex:0] stringByAppendingString:@"/"];
-	return std::string([folder cStringUsingEncoding:NSASCIIStringEncoding]);
+    @autoreleasepool 
+    {
+        NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString* folder = [[paths objectAtIndex:0] stringByAppendingString:@"/"];
+        return std::string([folder cStringUsingEncoding:NSASCIIStringEncoding]);
+    }
 }
 
 void et::createDirectory(const std::string& name)
