@@ -52,15 +52,22 @@ std::string et::normalizeFilePath(string s)
 
 bool et::fileExists(const std::string& name)
 {
-	return [[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithCString:name.c_str() encoding:NSASCIIStringEncoding]];
+    BOOL exists = false;
+    
+    NSString* path = [[NSString alloc] initWithCString:name.c_str() encoding:NSASCIIStringEncoding];
+    exists = [[NSFileManager defaultManager] fileExistsAtPath:path];
+    [path release];
+    
+	return exists;
 }
 
 bool et::folderExists(const std::string& name)
 {
 	BOOL isDir = false;
 	
-	[[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithCString:name.c_str() encoding:NSASCIIStringEncoding]
-										 isDirectory:&isDir];
+    NSString* path = [[NSString alloc] initWithCString:name.c_str() encoding:NSASCIIStringEncoding];
+	[[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir];
+    [path release];
 	
 	return isDir;
 }
@@ -75,12 +82,10 @@ std::string et::applicationDataFolder()
 	
 	char* data = new char[strSize];
 	CFStringGetCString(resUrlStr, data, strSize, kCFStringEncodingASCII);
-	
 	std::string resPath = std::string(data);
-	
 	delete [] data;
+    
 	CFRelease(resUrl);
-
 	return resPath;
 }
 
