@@ -10,12 +10,12 @@
 #include <et/core/tools.h>
 #include <et/app/application.h>
 #include <et/opengl/opengl.h>
-#include <et/platform/ios/applicationdelegate.h>
+#include <et/platform-ios/applicationdelegate.h>
 
 #if defined(ET_EMBEDDED_APPLICATION)
 	#include <et/opengl/openglcaps.h>
 #else
-	#include <et/platform/ios/openglviewcontroller.h>
+	#include <et/platform-ios/openglviewcontroller.h>
 #endif
 
 using namespace et;

@@ -8,8 +8,8 @@
 #import <QuartzCore/QuartzCore.h>
 #import <et/app/application.h>
 #import <et/app/applicationnotifier.h>
-#import <et/platform/ios/applicationdelegate.h>
-#import <et/platform/ios/openglviewcontroller.h>
+#import <et/platform-ios/applicationdelegate.h>
+#import <et/platform-ios/openglviewcontroller.h>
 
 using namespace et;
 

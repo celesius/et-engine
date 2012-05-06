@@ -5,7 +5,7 @@
  *
  */
 
-#include <et/device/rendercontext.h>
+#include <et/rendering/rendercontext.h>
 #include <et/rendering/renderstate.h>
 #include <et/vertexbuffer/vertexdeclaration.h>
 #include <et/apiobjects/program.h>

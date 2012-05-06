@@ -9,8 +9,8 @@
 
 #import <UIKit/UIKit.h>
 #import <OpenGLES/EAGL.h>
-#import <et/device/rendercontextparams.h>
-#import <et/platform/ios/openglview.h>
+#import <et/rendering/rendercontextparams.h>
+#import <et/platform-ios/openglview.h>
 
 @interface etOpenGLViewController : UIViewController
 {

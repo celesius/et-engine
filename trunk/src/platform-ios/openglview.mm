@@ -6,8 +6,8 @@
  */
 
 #import <QuartzCore/QuartzCore.h>
-#import <et/platform/ios/openglview.h>
-#import <et/device/rendercontext.h>
+#import <et/platform-ios/openglview.h>
+#import <et/rendering/rendercontext.h>
 
 class et::RenderContextNotifier
 {

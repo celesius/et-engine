@@ -9,7 +9,7 @@
 #include <et/opengl/openglcaps.h>
 #include <et/app/application.h>
 #include <et/apiobjects/texture.h>
-#include <et/device/rendercontext.h>
+#include <et/rendering/rendercontext.h>
 
 using namespace et;
 

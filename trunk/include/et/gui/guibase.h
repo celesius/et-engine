@@ -14,7 +14,7 @@
 #include <et/app/events.h>
 #include <et/timers/animator.h>
 #include <et/input/input.h>
-#include <et/device/rendercontext.h>
+#include <et/rendering/rendercontext.h>
 
 namespace et
 {

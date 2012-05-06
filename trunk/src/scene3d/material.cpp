@@ -5,6 +5,7 @@
  *
  */
 
+#include <et/rendering/rendercontext.h>
 #include <et/scene3d/material.h>
 #include <et/core/serialization.h>
 

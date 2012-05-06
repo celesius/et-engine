@@ -23,6 +23,9 @@ namespace et
 	class VideoCapturePrivate;
 	class VideoCapture : public EventReceiver
 	{
+    public:
+        static bool available();
+        
 	public:
 		VideoCapture();
 		~VideoCapture();

@@ -7,7 +7,7 @@
 
 #include <et/app/application.h>
 #include <et/opengl/openglcaps.h>
-#include <et/device/rendercontext.h>
+#include <et/rendering/rendercontext.h>
 #include <et/apiobjects/programfactory.h>
 
 using namespace et;

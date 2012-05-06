@@ -9,9 +9,9 @@
 
 #include <list>
 #include <map>
-#include <et/rendering/renderstate.h>
+
 #include <et/apiobjects/texture.h>
-#include <et/device/rendercontext.h>
+#include <et/rendering/renderstate.h>
 
 namespace et
 {
