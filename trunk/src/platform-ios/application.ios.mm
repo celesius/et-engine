@@ -70,17 +70,20 @@ void Application::loaded()
 	[mainWindow makeKeyAndVisible];
 #endif
 	
-	delegate()->applicationDidLoad(_renderContext);
-	enterRunLoop();
+    Invocation i;
+    i.setTarget(this, &Application::enterRunLoop);
+    i.invokeInMainRunLoop();
+    
+#if !defined(ET_EMBEDDED_APPLICATION)
+	etApplicationDelegate* d = (etApplicationDelegate*)[[UIApplication sharedApplication] delegate];
+	[d beginUpdates];
+#endif	
 }
 
 void Application::enterRunLoop()
 {
 	_running = true;
-#if !defined(ET_EMBEDDED_APPLICATION)
-	etApplicationDelegate* d = (etApplicationDelegate*)[[UIApplication sharedApplication] delegate];
-	[d beginUpdates];
-#endif	
+	delegate()->applicationDidLoad(_renderContext);
 }
 
 void Application::quit(int exitCode)
