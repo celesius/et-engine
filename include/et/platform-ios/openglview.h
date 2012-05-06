@@ -1,8 +1,14 @@
-#import <UIKit/UIKit.h>
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2012 by Sergey Reznik
+ * Please, do not modify contents without approval.
+ *
+ */
+#pragma once
 
+#import <UIKit/UIKit.h>
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
-
 #import <et/apiobjects/framebuffer.h>
 #import <et/input/input.h>
 

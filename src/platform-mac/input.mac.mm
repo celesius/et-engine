@@ -1,10 +1,9 @@
-//
-//  input.mac.mm
-//  macosx
-//
-//  Created by Sergey Reznik on 5/5/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2012 by Sergey Reznik
+ * Please, do not modify contents without approval.
+ *
+ */
 
 #include <ApplicationServices/ApplicationServices.h>
 #include <et/input/input.h>

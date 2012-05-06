@@ -1,10 +1,9 @@
-//
-//  etnode.h
-//  pictorial2
-//
-//  Created by Sergey Reznik on 2/19/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2012 by Sergey Reznik
+ * Please, do not modify contents without approval.
+ *
+ */
 
 #pragma once
 
