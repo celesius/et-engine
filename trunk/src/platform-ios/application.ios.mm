@@ -63,18 +63,20 @@ void Application::loaded()
 	_runLoop->update(_lastQueuedTime);
 	
 	_renderContext->init();
-	
-#if !defined(ET_EMBEDDED_APPLICATION)
+    
+#if defined(ET_EMBEDDED_APPLICATION)
+    
+    enterRunLoop();
+    
+#else    
 	UIWindow* mainWindow = [[[UIApplication sharedApplication] delegate] window];
 	[mainWindow setRootViewController:(etOpenGLViewController*)_renderingContextHandle];
 	[mainWindow makeKeyAndVisible];
-#endif
-	
+    
     Invocation i;
     i.setTarget(this, &Application::enterRunLoop);
     i.invokeInMainRunLoop();
     
-#if !defined(ET_EMBEDDED_APPLICATION)
 	etApplicationDelegate* d = (etApplicationDelegate*)[[UIApplication sharedApplication] delegate];
 	[d beginUpdates];
 #endif	
