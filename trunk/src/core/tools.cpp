@@ -54,10 +54,12 @@ namespace et
 
 	std::string floatToStr(float v, int precission)
 	{ 
-		char buffer[32] = { };
 		char format[16] = { };
 		sprintf(format, "%%.%df", precission);
+        
+		char buffer[256] = { };
 		sprintf(buffer, format, v);
+        
 		return std::string(buffer);
 	}
 

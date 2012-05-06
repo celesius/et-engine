@@ -7,9 +7,8 @@
 
 #pragma once
 
-#include <et/device/rendercontext.h>
+#include <et/rendering/rendercontext.h>
 #include <et/input/input.h>
-
 #include <et/gui/guirenderer.h>
 #include <et/gui/layout.h>
 #include <et/gui/fullscreenelement.h>

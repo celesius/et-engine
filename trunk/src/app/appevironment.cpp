@@ -14,7 +14,10 @@ AppEnvironment::AppEnvironment() : _appPath(et::applicationPath()), _dataFolder(
 	_documentsFolder(et::applicationDocumentsFolder())
 {
 	addSearchPath(_appPath);
-	addSearchPath(_appPath + "../");
+	addSearchPath(_dataFolder);
+    
+    addSearchPath(_appPath + "../");
+	addSearchPath(_dataFolder + "../");
 
 	addSearchPath(_appPath + "shaders/" );
 	addSearchPath(_appPath + "models/" );

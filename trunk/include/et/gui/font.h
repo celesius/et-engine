@@ -9,7 +9,7 @@
 
 #include <string>
 #include <et/core/intrusiveptr.h>
-#include <et/device/rendercontext.h>
+#include <et/rendering/rendercontext.h>
 #include <et/apiobjects/texture.h>
 #include <et/gui/fontbase.h>
 
