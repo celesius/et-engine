@@ -1,3 +1,10 @@
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2012 by Sergey Reznik
+ * Please, do not modify contents without approval.
+ *
+ */
+
 #include <et/imaging/textureatlaswriter.h>
 #include <et/imaging/imagewriter.h>
 #include <et/imaging/pngloader.h>

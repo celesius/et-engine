@@ -1,3 +1,10 @@
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2012 by Sergey Reznik
+ * Please, do not modify contents without approval.
+ *
+ */
+
 #include <et/device/rendercontext.h>
 #include <et/threading/threading.h>
 #include <et/apiobjects/texturefactory.h>

@@ -1,3 +1,12 @@
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2012 by Sergey Reznik
+ * Please, do not modify contents without approval.
+ *
+ */
+
+#pragma once
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -5,8 +14,6 @@
 #include <et/core/constants.h>
 #include <et/platform/compileoptions.h>
 #include <et/geometry/geometry.h>
-
-#pragma once
 
 namespace et
 {

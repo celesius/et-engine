@@ -1,9 +1,9 @@
-//
-//  videocapture.h
-//
-//  Created by Sergey Reznik on 4/12/12.
-//  Copyright (c) 2012 Cheetek. All rights reserved.
-//
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2012 by Sergey Reznik
+ * Please, do not modify contents without approval.
+ *
+ */
 
 #pragma once
 

@@ -1,3 +1,12 @@
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2012 by Sergey Reznik
+ * Please, do not modify contents without approval.
+ *
+ */
+
+#pragma once
+
 #include <stdlib.h>
 #include <math.h>
 #include <et/geometry/vector4.h>
@@ -10,8 +19,6 @@
 #include <et/geometry/plane.h>
 #include <et/geometry/quaternion.h>
 #include <et/geometry/parallelepiped.h>
-
-#pragma once
 
 namespace et
 {
