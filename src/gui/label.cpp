@@ -36,11 +36,16 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 
 	if (_animatingText)
 	{
+		float fadeIn = sqrt(_textFade);
+		float fadeOut = 1.0f - sqr(_textFade);
+
 		_nextTextSize = _font->measureStringSize(_nextText, _allowFormatting);
+
 		renderer.createStringVertices(_vertices, _font->buildString(_text, _allowFormatting), vec2(0.0), 
-			color() * vec4(1.0, 1.0, 1.0, 1.0f - _textFade), transform, GuiRenderLayer_Layer1);
+			color() * vec4(1.0, 1.0, 1.0, fadeOut), transform, GuiRenderLayer_Layer1);
+
 		renderer.createStringVertices(_vertices, _font->buildString(_nextText, _allowFormatting), vec2(0.0), 
-			color() * vec4(1.0, 1.0, 1.0, _textFade), transform, GuiRenderLayer_Layer1);
+			color() * vec4(1.0, 1.0, 1.0, fadeIn), transform, GuiRenderLayer_Layer1);
 	}
 	else 
 	{
@@ -54,6 +59,8 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 
 void Label::setText(const std::string& text, float duration)
 {
+	if (text == _text) return;
+
 	if (duration == 0.0f)
 	{
 		_text = text;
