@@ -1,11 +1,3 @@
-//
-//  videocapture.mm
-//  IBL
-//
-//  Created by Sergey Reznik on 4/12/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
-
 #import <CoreVideo/CoreVideo.h>
 #import <AVFoundation/AVFoundation.h>
 

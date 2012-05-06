@@ -3,8 +3,7 @@
 #include <string>
 
 #include <et/opengl/opengl.h>
-#include <et/loaders/ddsloader.h>
-#include <et/loaders/ddsloader.const.h>
+#include <et/imaging/ddsloader.h>
 
 using namespace et;
 

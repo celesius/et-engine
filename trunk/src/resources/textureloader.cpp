@@ -4,9 +4,9 @@
 #include <et/app/application.h>
 #include <et/core/containers.h>
 #include <et/resources/textureloader.h>
-#include <et/loaders/pngloader.h>
-#include <et/loaders/ddsloader.h>
-#include <et/loaders/pvrloader.h>
+#include <et/imaging/pngloader.h>
+#include <et/imaging/ddsloader.h>
+#include <et/imaging/pvrloader.h>
 
 #define ET_TEXTURE_DEBUG_LOAD	0
 
