@@ -40,7 +40,4 @@ namespace et
 		static void smoothTangents(VertexArrayRef data, const IndexArrayRef& buffer, size_t first, size_t last);
 	};
 
-
-	#include <et/primitives/primitives.inl.h>
-
 }
