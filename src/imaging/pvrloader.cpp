@@ -1,7 +1,7 @@
 #include <fstream>
 #include <et/core/tools.h>
 #include <et/opengl/opengl.h>
-#include <et/loaders/pvrloader.h>
+#include <et/imaging/pvrloader.h>
 
 using namespace et;
 

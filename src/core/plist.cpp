@@ -2,7 +2,7 @@
 #include <fstream>
 #include <cassert>
 #include <et/core/tools.h>
-#include <et/utils/plist.h>
+#include <et/core/plist.h>
 #include <et/app/application.h>
 
 using namespace et;
