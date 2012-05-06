@@ -1,7 +1,7 @@
 #pragma once
 
 #include <et/gui/fontbase.h>
-#include <et/utils/imagewriter.h>
+#include <et/imaging/imagewriter.h>
 
 namespace et
 {

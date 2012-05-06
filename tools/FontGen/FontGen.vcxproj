@@ -89,6 +89,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\core\tools.cpp" />
     <ClCompile Include="..\..\src\libpng\png.c" />
     <ClCompile Include="..\..\src\libpng\pngerror.c" />
     <ClCompile Include="..\..\src\libpng\pngget.c" />
@@ -104,8 +105,9 @@
     <ClCompile Include="..\..\src\libpng\pngwrite.c" />
     <ClCompile Include="..\..\src\libpng\pngwtran.c" />
     <ClCompile Include="..\..\src\libpng\pngwutil.c" />
-    <ClCompile Include="..\..\src\platform\win\fontgen.win.cpp" />
-    <ClCompile Include="..\..\src\platform\win\imagewriter.win.cpp" />
+    <ClCompile Include="..\..\src\platform-win\fontgen.win.cpp" />
+    <ClCompile Include="..\..\src\platform-win\imagewriter.win.cpp" />
+    <ClCompile Include="..\..\src\platform-win\tools.win.cpp" />
     <ClCompile Include="..\..\src\zlib\adler32.c" />
     <ClCompile Include="..\..\src\zlib\compress.c" />
     <ClCompile Include="..\..\src\zlib\crc32.c" />

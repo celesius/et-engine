@@ -39,12 +39,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\platform\win\fontgen.win.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform\win\imagewriter.win.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\libpng\png.c">
       <Filter>libpng</Filter>
     </ClCompile>
@@ -134,6 +128,18 @@
     </ClCompile>
     <ClCompile Include="..\..\src\zlib\zutil.c">
       <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\imagewriter.win.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\fontgen.win.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\tools.win.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\tools.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

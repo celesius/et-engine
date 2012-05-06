@@ -1,7 +1,7 @@
-#include <et/utils/textureatlaswriter.h>
-#include <et/utils/imagewriter.h>
-#include <et/loaders/pngloader.h>
-#include <et/utils/imageoperations.h>
+#include <et/imaging/textureatlaswriter.h>
+#include <et/imaging/imagewriter.h>
+#include <et/imaging/pngloader.h>
+#include <et/imaging/imageoperations.h>
 
 using namespace et;
 using namespace et::gui;

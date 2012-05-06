@@ -1,7 +1,7 @@
 #include <et/core/tools.h>
 #include <et/gui/guibase.h>
-#include <et/loaders/pngloader.h>
-#include <et/utils/textureatlaswriter.h>
+#include <et/imaging/pngloader.h>
+#include <et/imaging/textureatlaswriter.h>
 
 using namespace et;
 

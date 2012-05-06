@@ -1,7 +1,7 @@
 #include <fstream>
 #include <Windows.h>
 #include <libpng/png.h>
-#include <et/utils/imagewriter.h>
+#include <et/imaging/imagewriter.h>
 
 using namespace et;
 
