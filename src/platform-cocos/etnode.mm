@@ -6,7 +6,7 @@
  */
 
 #include <ccGLState.h>
-#include <et/platform/cocos/etnode.h>
+#include <et/platform-cocos/etnode.h>
 #include <et/app/applicationnotifier.h>
 
 using namespace et;
