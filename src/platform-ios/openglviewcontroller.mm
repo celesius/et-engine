@@ -6,7 +6,7 @@
  */
 
 #import <QuartzCore/QuartzCore.h>
-#import <et/platform/ios/openglviewcontroller.h>
+#import <et/platform-ios/openglviewcontroller.h>
 
 using namespace et;
 

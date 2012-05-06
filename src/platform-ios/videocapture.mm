@@ -61,15 +61,21 @@ void VideoCapture::run()
 void VideoCapture::stop()
     { _private->stop(); }
 
+bool VideoCapture::available()
+{
+    return [[AVCaptureDevice devices] count] > 0;
+}
+
 VideoCapturePrivate::VideoCapturePrivate(VideoCapture* owner) : _owner(owner)
 {
+	NSArray* devices = [AVCaptureDevice devices];
+    if ([devices count] == 0) return;
+    
 	_proxy = [[VideoCaptureProxy alloc] initWithVideoCapturePrivate:this];
-	
+
 	AVCaptureSession* _session = [[AVCaptureSession alloc] init];
 	_session.sessionPreset = AVCaptureSessionPresetHigh;
-	
-	NSArray* devices = [AVCaptureDevice devices];
-	
+
 	NSError* error = nil;
 	AVCaptureDeviceInput* _input = [AVCaptureDeviceInput deviceInputWithDevice:[devices objectAtIndex:0] error:&error];
 	if (_input)

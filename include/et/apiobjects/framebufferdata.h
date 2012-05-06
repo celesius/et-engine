@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <et/core/intrusiveptr.h>
 #include <et/apiobjects/apiobject.h>
 #include <et/apiobjects/texture.h>
 #include <et/apiobjects/texturefactory.h>

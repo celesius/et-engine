@@ -6,7 +6,7 @@
  */
 
 #include <et/opengl/openglcaps.h>
-#include <et/device/rendercontext.h>
+#include <et/rendering/rendercontext.h>
 #include <et/rendering/renderer.h>
 #include <et/vertexbuffer/IndexArray.h>
 

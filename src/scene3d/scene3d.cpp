@@ -7,6 +7,7 @@
 
 #include <assert.h>
 #include <fstream>
+#include <et/rendering/rendercontext.h>
 #include <et/scene3d/scene3d.h>
 #include <et/scene3d/collisionmesh.h>
 #include <et/scene3d/serialization.h>

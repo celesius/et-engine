@@ -5,7 +5,7 @@
  *
  */
 
-#include <et/device/rendercontext.h>
+#include <et/rendering/rendercontext.h>
 #include <et/threading/threading.h>
 #include <et/apiobjects/texturefactory.h>
 #include <et/resources/textureloader.h>

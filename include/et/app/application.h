@@ -8,10 +8,10 @@
 #pragma once
 
 #include <et/core/singleton.h>
-#include <et/device/rendercontext.h>
 #include <et/app/appevironment.h>
 #include <et/app/events.h>
 #include <et/app/runloop.h>
+#include <et/rendering/rendercontext.h>
 
 namespace et
 {

@@ -7,7 +7,7 @@
 
 #include <et/core/tools.h>
 #include <et/apiobjects/framebufferdata.h>
-#include <et/device/rendercontext.h>
+#include <et/rendering/rendercontext.h>
 
 using namespace et;
 

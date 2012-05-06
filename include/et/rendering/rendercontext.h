@@ -8,10 +8,10 @@
 #pragma once
 
 #include <et/platform/platform.h>
-#include <et/device/rendercontextparams.h>
 #include <et/timers/notifytimer.h>
 #include <et/app/events.h>
 
+#include <et/rendering/rendercontextparams.h>
 #include <et/rendering/renderer.h>
 #include <et/rendering/renderstate.h>
 
