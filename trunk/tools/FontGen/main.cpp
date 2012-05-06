@@ -2,7 +2,7 @@
 #include "stdafx.h"
 
 #include <et/core/tools.h>
-#include <et/utils/fontgen.h>
+#include <et/gui/fontgen.h>
 
 using namespace et;
 using namespace et::gui;

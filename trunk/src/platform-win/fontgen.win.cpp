@@ -3,7 +3,7 @@
 #include <fstream>
 #include <et/core/tools.h>
 #include <et/core/serialization.h>
-#include <et/utils/fontgen.h>
+#include <et/gui/fontgen.h>
 
 using namespace et;
 using namespace et::gui;

@@ -2,8 +2,9 @@
 #include <fstream>
 #include <string>
 #include <libpng/png.h>
+
 #include <et/opengl/opengl.h>
-#include <et/loaders/pngloader.h>
+#include <et/imaging/pngloader.h>
 
 using namespace et;
 

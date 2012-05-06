@@ -1,7 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <et/utils/imageoperations.h>
+
+#include <et/imaging/imageoperations.h>
 
 using namespace et;
 

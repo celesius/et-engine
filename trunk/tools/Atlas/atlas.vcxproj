@@ -77,6 +77,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\core\tools.cpp" />
+    <ClCompile Include="..\..\src\imaging\imageoperations.cpp" />
+    <ClCompile Include="..\..\src\imaging\pngloader.cpp" />
+    <ClCompile Include="..\..\src\imaging\textureatlaswriter.cpp" />
     <ClCompile Include="..\..\src\libpng\png.c" />
     <ClCompile Include="..\..\src\libpng\pngerror.c" />
     <ClCompile Include="..\..\src\libpng\pngget.c" />
@@ -92,11 +95,8 @@
     <ClCompile Include="..\..\src\libpng\pngwrite.c" />
     <ClCompile Include="..\..\src\libpng\pngwtran.c" />
     <ClCompile Include="..\..\src\libpng\pngwutil.c" />
-    <ClCompile Include="..\..\src\loaders\pngloader.cpp" />
-    <ClCompile Include="..\..\src\platform\win\imagewriter.win.cpp" />
-    <ClCompile Include="..\..\src\platform\win\tools.win.cpp" />
-    <ClCompile Include="..\..\src\utils\imageoperations.cpp" />
-    <ClCompile Include="..\..\src\utils\textureatlaswriter.cpp" />
+    <ClCompile Include="..\..\src\platform-win\imagewriter.win.cpp" />
+    <ClCompile Include="..\..\src\platform-win\tools.win.cpp" />
     <ClCompile Include="..\..\src\zlib\adler32.c" />
     <ClCompile Include="..\..\src\zlib\compress.c" />
     <ClCompile Include="..\..\src\zlib\crc32.c" />
@@ -116,9 +116,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\et\core\tools.h" />
-    <ClInclude Include="..\..\include\et\loaders\pngloader.h" />
-    <ClInclude Include="..\..\include\et\utils\imageoperations.h" />
-    <ClInclude Include="..\..\include\et\utils\textureatlaswriter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

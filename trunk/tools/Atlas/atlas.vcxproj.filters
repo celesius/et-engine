@@ -17,9 +17,6 @@
     <ClCompile Include="atlas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\loaders\pngloader.cpp">
-      <Filter>et</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\libpng\png.c">
       <Filter>png</Filter>
     </ClCompile>
@@ -110,33 +107,27 @@
     <ClCompile Include="..\..\src\zlib\adler32.c">
       <Filter>png</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\platform\win\tools.win.cpp">
-      <Filter>et</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform\win\imagewriter.win.cpp">
-      <Filter>et</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\utils\imageoperations.cpp">
-      <Filter>et</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\utils\textureatlaswriter.cpp">
-      <Filter>et</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\core\tools.cpp">
+      <Filter>et</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\imagewriter.win.cpp">
+      <Filter>et</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\tools.win.cpp">
+      <Filter>et</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\imaging\pngloader.cpp">
+      <Filter>et</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\imaging\textureatlaswriter.cpp">
+      <Filter>et</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\imaging\imageoperations.cpp">
       <Filter>et</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\et\loaders\pngloader.h">
-      <Filter>et</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\et\core\tools.h">
-      <Filter>et</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\et\utils\imageoperations.h">
-      <Filter>et</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\et\utils\textureatlaswriter.h">
       <Filter>et</Filter>
     </ClInclude>
   </ItemGroup>
