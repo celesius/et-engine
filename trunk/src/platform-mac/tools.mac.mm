@@ -5,9 +5,12 @@
  *
  */
 
+#include <Foundation/Foundation.h>
+
 #include <errno.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <dirent.h>
 #include <et/core/tools.h>
 
 using namespace std;
@@ -42,11 +45,47 @@ std::string et::normalizeFilePath(string s)
 		if ((*i) == '\\')
 			(*i) = pathDelimiter;
 	}
-	
 	return s;
 }
 
 bool et::fileExists(const std::string& name)
 {
-	return access(name.c_str(), R_OK) == 0;
+	return access(name.c_str(), R_OK) == 0; 
+}
+
+void et::findFiles(const std::string& aFolder, const std::string& mask, bool /* recursive */, std::vector<std::string>& list)
+{
+	std::string folder = addTrailingSlash(aFolder);
+	
+	size_t maskLength = mask.length();
+	size_t nameSearchCriteria = mask.find_last_of(".*");
+	bool searchByName = nameSearchCriteria == maskLength - 1;
+	bool searchByExt = mask.find_first_of("*.") == 0;
+	
+	@autoreleasepool 
+	{
+		NSError* err = nil;
+		NSString* path = [NSString stringWithCString:folder.c_str() encoding:NSASCIIStringEncoding];
+		NSArray* files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:&err];
+		
+		NSArray* filtered = files;
+		
+		if (searchByExt)
+		{
+			std::string extMask = mask.substr(2, mask.length() - 2);
+			NSString* objcMask = [NSString stringWithCString:extMask.c_str() encoding:NSASCIIStringEncoding];
+			filtered = [filtered filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"self ENDSWITH %@", objcMask]];
+		}
+		
+		if (searchByName)
+		{
+			std::string nameMask = mask.substr(0, mask.length() - 3);
+			NSString* objcMask = [NSString stringWithCString:nameMask.c_str() encoding:NSASCIIStringEncoding];
+			objcMask = [objcMask stringByAppendingString:@"*"];
+			filtered = [filtered filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"self LIKE %@", objcMask]];
+		}
+		
+		for (NSString* file in filtered)
+			list.push_back(folder + std::string([file cStringUsingEncoding:NSASCIIStringEncoding]));
+	}
 }

@@ -14,7 +14,6 @@ namespace et
 {
 	enum ImageFormat 
 	{
-		ImageFormat_Bitmap,
 		ImageFormat_PNG,
 		ImageFormat_RAW
 	};

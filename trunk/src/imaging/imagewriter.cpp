@@ -6,37 +6,10 @@
  */
 
 #include <fstream>
-#include <Windows.h>
 #include <libpng/png.h>
 #include <et/imaging/imagewriter.h>
 
 using namespace et;
-
-bool internal_writeBitmap(const std::string& fileName, const BinaryDataStorage& data, const vec2i& size, int components, int bitsPerComponent)
-{
-	BITMAPINFO bi = { sizeof(BITMAPINFO) };
-	bi.bmiHeader.biPlanes = 1;
-	bi.bmiHeader.biBitCount = static_cast<WORD>(components * bitsPerComponent);
-	bi.bmiHeader.biHeight = size.y;
-	bi.bmiHeader.biWidth = size.x;
-	bi.bmiHeader.biSizeImage = size.square() * bi.bmiHeader.biBitCount / 8;
-
-	BITMAPFILEHEADER bfh = { sizeof(BITMAPFILEHEADER) };
-	bfh.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
-	bfh.bfType = 'B' | 'M' << 8;
-
-	std::ofstream outFile(fileName, std::ios::binary);
-	if (!outFile.fail())
-	{
-		outFile.write(reinterpret_cast<const char*>(&bfh), sizeof(bfh));
-		outFile.write(reinterpret_cast<const char*>(&bi), sizeof(bi.bmiHeader));
-		outFile.write(data.binary(), data.dataSize());
-		outFile.close();
-		return true;
-	}
-	else 
-		return true;
-}
 
 bool internal_writePNG(const std::string& fileName, const BinaryDataStorage& data, const vec2i& size, int components, int bitsPerComponent)
 {
@@ -112,9 +85,6 @@ bool ImageWriter::writeImageToFile(const std::string& fileName, const BinaryData
 {
 	switch (fmt)
 	{
-	case ImageFormat_Bitmap:
-		return internal_writeBitmap(fileName, data, size, components, bitsPerComponent);
-
 	case ImageFormat_PNG:
 		return internal_writePNG(fileName, data, size, components, bitsPerComponent);
 
@@ -130,9 +100,6 @@ std::string ImageWriter::extensionForImageFormat(ImageFormat fmt)
 {
 	switch (fmt)
 	{
-	case ImageFormat_Bitmap:
-		return ".bmp";
-
 	case ImageFormat_PNG:
 		return ".png";
 
