@@ -21,13 +21,15 @@ namespace et
 			TextureAtlas(RenderContext* rc, const std::string& filename, TextureCache& cache);
 			
 			bool loaded() const
-			{ return _loaded; }
+				{ return _loaded; }
 			
 			void loadFromFile(RenderContext* rc, const std::string& filename, TextureCache& cache);
 			void unload();
 			
 			const gui::Image& image(const std::string& key) const;
 			gui::ImageList imagesForTexture(Texture t) const;
+			
+			Texture firstTexture() const;
 			
 		private:
 			static gui::Image _emptyImage;

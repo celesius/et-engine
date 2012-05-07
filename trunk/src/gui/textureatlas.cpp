@@ -193,3 +193,7 @@ void TextureAtlas::unload()
 	_loaded = false;
 }
 
+Texture TextureAtlas::firstTexture() const
+{
+	return _textures.size() ? _textures.begin()->second : Texture();
+}
