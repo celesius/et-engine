@@ -16,30 +16,34 @@ namespace et
 	{
 		vec3 value;
 		float timestamp;
+        float interval;
 
 		AccelerometerData() : 
-			timestamp(0.0f) { }
+			timestamp(0.0f), interval(0.0f) { }
 
 		AccelerometerData(const vec3& v) : 
-			value(v), timestamp(0.0f) { }
+			value(v), timestamp(0.0f), interval(0.0f) { }
 
 		AccelerometerData(const vec3& v, float t) : 
-			value(v), timestamp(t) { }
+			value(v), timestamp(t), interval(0.0f) { }
 	};
 
 	struct GyroscopeData
 	{
 		vec3 rate;
+        vec3 orientation;
+        
 		float timestamp;
+        float interval;
 
 		GyroscopeData() : 
-			timestamp(0.0f) { }
+			timestamp(0.0f), interval(0.0f) { }
 
 		GyroscopeData(const vec3& r) : 
-			rate(r), timestamp(0.0f) { }
+			rate(r), timestamp(0.0f), interval(0.0f) { }
 
 		GyroscopeData(const vec3& r, float t) : 
-			rate(r), timestamp(t) { }
+			rate(r), timestamp(t), interval(0.0f) { }
 	};
 
 	class OrientationManagerPrivate;

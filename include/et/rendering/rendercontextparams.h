@@ -27,6 +27,18 @@ namespace et
 		MultisamplingQuality_Best,
 		MultisamplingQuality_Max
 	};
+    
+    enum InterfaceOrientation
+    {
+        InterfaceOrientation_Portrait = 0x01,
+        InterfaceOrientation_PortraitUpsideDown = 0x02,
+        InterfaceOrientation_LandscapeLeft = 0x04,
+        InterfaceOrientation_LandscapeRight = 0x08,
+        
+        InterfaceOrientation_AnyPortrait = InterfaceOrientation_Portrait + InterfaceOrientation_PortraitUpsideDown,
+        InterfaceOrientation_AnyLandscape = InterfaceOrientation_LandscapeLeft + InterfaceOrientation_LandscapeRight,
+        InterfaceOrientation_Any = InterfaceOrientation_AnyPortrait + InterfaceOrientation_AnyLandscape
+    };
 	
 	struct RenderContextParameters
 	{
@@ -35,8 +47,8 @@ namespace et
 		bool openGLForwardContext;
 		bool openGLCoreProfile;
 		bool verticalSync;
-		bool supportLandscapeOrientation;
-		bool supportPortraitOrientation;
+        
+        size_t supportedInterfaceOrientations;
 		vec2i contextPosition;
 		vec2i contextSize;
 		vec2i openGLMaxVersion;
@@ -53,8 +65,7 @@ namespace et
 								bool forwardContext = false, 
 								bool coreProfile = false,
 								bool vSync = true,
-								bool landscapeOrientation = true,
-								bool portraitOrientation = true
+                                size_t orientationFlags = InterfaceOrientation_AnyLandscape
 #else 
 								WindowStyle ws = WindowStyle_FixedWithCaption, 
 								MultisamplingQuality ms = MultisamplingQuality_Best,
@@ -65,8 +76,7 @@ namespace et
 								bool forwardContext = true, 
 								bool coreProfile = true,
 								bool vSync = false,
-								bool landscapeOrientation = true,
-								bool portraitOrientation = false
+                                size_t orientationFlags = InterfaceOrientation_Any
 #endif								
 								) : 
 		windowStyle(ws), 
@@ -78,10 +88,8 @@ namespace et
 		openGLMaxVersion(openGLMaxVer), 
 		baseContextSize(baseScrSize),
 		verticalSync(vSync),
-		supportLandscapeOrientation(landscapeOrientation),
-		supportPortraitOrientation(portraitOrientation)
-		{
-		}
+		supportedInterfaceOrientations(orientationFlags)
+		{ }
 	};
 	
 }

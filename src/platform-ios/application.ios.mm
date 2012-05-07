@@ -13,9 +13,9 @@
 #include <et/platform-ios/applicationdelegate.h>
 
 #if defined(ET_EMBEDDED_APPLICATION)
-	#include <et/opengl/openglcaps.h>
+#include <et/opengl/openglcaps.h>
 #else
-	#include <et/platform-ios/openglviewcontroller.h>
+#include <et/platform-ios/openglviewcontroller.h>
 #endif
 
 using namespace et;
@@ -23,7 +23,7 @@ using namespace et;
 IApplicationDelegate* et::Application::_delegate = 0;
 
 Application::Application() : 
-	_renderContext(0), _running(false), _exitCode(0), _lastQueuedTime(queryTime())
+_renderContext(0), _running(false), _exitCode(0), _lastQueuedTime(queryTime())
 {
 }
 
@@ -37,7 +37,7 @@ IApplicationDelegate* Application::delegate()
 {
 	if (_delegate == 0)
 		_delegate = initApplicationDelegate();
-
+    
 	return _delegate;
 }
 
@@ -120,12 +120,14 @@ void Application::performRendering()
 
 void Application::idle()
 { 
-	float t = queryTime();
-	_lastQueuedTime = t;
-	
-	_delegate->idle(t);
-	_runLoop->update(t);
-	performRendering();
+    _lastQueuedTime = queryTime();
+    _runLoop->update(_lastQueuedTime);
+    
+    if (_running)
+    {
+        _delegate->idle(_lastQueuedTime);
+        performRendering();
+    }
 }
 
 void Application::alert(const std::string& title, const std::string& message, AlertType)
