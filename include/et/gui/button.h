@@ -46,12 +46,12 @@ namespace et
 
 			bool capturePointer() const;
 
-			inline const std::string& title() const 
+			const std::string& title() const 
 				{ return _title; }
 
 			void setTitle(const std::string& t);
 
-			inline const Image& image() const
+			const Image& image() const
 				{ return _image; }
 			void setImage(const Image& img);
 
@@ -61,18 +61,21 @@ namespace et
 
 			void setTextColor(const vec4& color);
 			const vec4& textColor() const;
+			
+			void setTextPressedColor(const vec4& color);
+			const vec4& textPressedColor() const;
 
 			bool pointerPressed(const PointerInputInfo&);
 			bool pointerReleased(const PointerInputInfo&);
 			void pointerEntered(const PointerInputInfo&);
 			void pointerLeaved(const PointerInputInfo&);
 
-			inline Button::Type type() const
+			Button::Type type() const
 				{ return _type; }
 
 			void setType(Button::Type t);
 
-			inline bool selected() const
+			bool selected() const
 				{ return _selected; }
 			void setSelected(bool s);
 
@@ -96,6 +99,7 @@ namespace et
 			vec2 _textSize;
 			vec2 _imageSize;
 			vec4 _textColor;
+			vec4 _textPressedColor;
 			vec2 _contentOffset;
 
 			Type _type;

@@ -13,8 +13,8 @@ using namespace et::gui;
 
 Button::Button(const std::string& title, const Font& font, Element2D* parent) : Element2D(parent), 
 	_title(title), _font(font), _textSize(font->measureStringSize(title, false)), _textColor(vec3(0.0f), 1.0f), 
-	_type(Button::Type_PushButton), _state(ElementState_Default), _imageLayout(ImageLayout_Left),
-	_pressed(false), _hovered(false), _selected(false)
+	_textPressedColor(vec3(0.0f), 1.0f), _type(Button::Type_PushButton), _state(ElementState_Default), 
+	_imageLayout(ImageLayout_Left),	_pressed(false), _hovered(false), _selected(false)
 {
 	setSize(sizeForText(title));
 }
@@ -74,8 +74,8 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 
 	if (_title.length())
 	{
-		gr.createStringVertices(_textVertices, _font->buildString(_title), textOrigin, _textColor * alphaScaleColor, 
-			transform, GuiRenderLayer_Layer1);
+		vec4 aColor = _state == ElementState_Pressed ? _textPressedColor : _textColor;
+		gr.createStringVertices(_textVertices, _font->buildString(_title), textOrigin, aColor * alphaScaleColor, transform, GuiRenderLayer_Layer1);
 	}
 
 	if (_image.texture.valid())
@@ -183,6 +183,17 @@ void Button::setTextColor(const vec4& color)
 const vec4& Button::textColor() const
 {
 	return _textColor;
+}
+
+void Button::setTextPressedColor(const vec4& color)
+{
+	_textPressedColor = color;
+	invalidateContent();
+}
+
+const vec4& Button::textPressedColor() const
+{
+	return _textPressedColor;
 }
 
 void Button::adjustSize(float duration)
