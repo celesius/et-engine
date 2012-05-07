@@ -40,9 +40,12 @@ bool Gui::pointerPressed(const et::PointerInputInfo& p)
 	if (_keyboard.visible())
 		processed = _keyboard.pointerPressed(p);
 
-	if (!processed && _currentModalLayout.valid())
-		processed = _currentModalLayout->pointerPressed(p);
-
+	if (_currentModalLayout.valid())
+	{
+		_currentModalLayout->pointerPressed(p);
+		processed = true;
+	}
+	
 	if (!processed && _currentLayout.valid())
 		processed = _currentLayout->pointerPressed(p);
 
@@ -58,8 +61,11 @@ bool Gui::pointerMoved(const et::PointerInputInfo& p)
 	if (_keyboard.visible())
 		processed = _keyboard.pointerMoved(p);
 
-	if (!processed && _currentModalLayout.valid())
-		processed = _currentModalLayout->pointerMoved(p);
+	if (_currentModalLayout.valid())
+	{
+		_currentModalLayout->pointerMoved(p);
+		processed = true;
+	}
 
 	if (!processed && _currentLayout.valid())
 		processed = _currentLayout->pointerMoved(p);
@@ -76,9 +82,12 @@ bool Gui::pointerReleased(const et::PointerInputInfo& p)
 	if (_keyboard.visible())
 		processed = _keyboard.pointerReleased(p);
 
-	if (!processed && _currentModalLayout.valid())
-		processed = _currentModalLayout->pointerReleased(p);
-
+	if (_currentModalLayout.valid())
+	{
+		_currentModalLayout->pointerReleased(p);
+		processed = true;
+	}
+	
 	if (!processed && _currentLayout.valid())
 		processed = _currentLayout->pointerReleased(p);
 
@@ -94,8 +103,11 @@ bool Gui::pointerScrolled(const et::PointerInputInfo& p)
 	if (_keyboard.visible())
 		processed = _keyboard.pointerScrolled(p);
 
-	if (!processed && _currentModalLayout.valid())
-		processed = _currentModalLayout->pointerScrolled(p);
+	if (_currentModalLayout.valid())
+	{
+		_currentModalLayout->pointerScrolled(p);
+		processed = true;
+	}
 
 	if (!processed && _currentLayout.valid())
 		processed = _currentLayout->pointerScrolled(p);
