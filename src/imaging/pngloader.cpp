@@ -46,7 +46,6 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 			break;
 		}
 #endif
-
 	case PNG_COLOR_TYPE_PALETTE:
 		{
 			png_set_palette_to_rgb(pngPtr);           
@@ -55,7 +54,7 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 		}
 
 	default: 
-		{ }
+		break;
 	} 
 
 	if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) 

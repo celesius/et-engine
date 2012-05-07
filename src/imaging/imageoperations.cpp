@@ -45,7 +45,7 @@ void ImageOperations::transfer(const BinaryDataStorage& src, const vec2i& srcSiz
 	for (int y = startY, srcY = 0; y < endY; ++y, ++srcY)			
 		for (int x = startX, srcX = 0; x < endX; ++x, ++srcX)
 		{
-			int dstIndex = srcComponents * (x + (dstSize.y - y - 1) * dstSize.x);
+			int dstIndex = dstComponents * (x + (dstSize.y - y - 1) * dstSize.x);
 			int srcIndex = srcComponents * (srcX + (srcSize.y - srcY - 1) * srcSize.x);
 			for (size_t k = 0; k < dstComponents; ++k)
 				dst[dstIndex+k] = (k < srcComponents) ? src[srcIndex + k] : 255;
