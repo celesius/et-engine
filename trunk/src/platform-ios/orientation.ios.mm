@@ -10,7 +10,7 @@ namespace et
 		{
             _oq = [[NSOperationQueue alloc] init];
             _motionManager = [[CMMotionManager alloc] init];
-            _motionManager.deviceMotionUpdateInterval = 1.0f / 30.0f;
+            _motionManager.deviceMotionUpdateInterval = 1.0f / 100.0f;
 		}
         
         ~OrientationManagerPrivate()
@@ -27,15 +27,23 @@ namespace et
             updating = gyroEnabled || accelEnabled;
             if (updating)
             {
+                __block float t = 0.0f;
+                
                 [_motionManager startDeviceMotionUpdatesToQueue:_oq withHandler:^(CMDeviceMotion *motion, NSError *error)
                  {
+                     float dt = (t == 0.0f) ? 0.0f : (motion.timestamp - t);
+                     
                      if (gyroEnabled)
                      {
                          et::GyroscopeData d;
                          d.rate.x = motion.rotationRate.x;
                          d.rate.y = motion.rotationRate.y;
                          d.rate.z = motion.rotationRate.z;
+                         d.orientation.x = motion.attitude.pitch;
+                         d.orientation.y = motion.attitude.yaw;
+                         d.orientation.z = motion.attitude.roll;
                          d.timestamp = motion.timestamp;
+                         d.interval = dt;
                          manager->gyroscopeDataUpdated.invokeInMainRunLoop(d);
                      }
                      
@@ -46,8 +54,11 @@ namespace et
                          d.value.y = motion.gravity.y;
                          d.value.z = motion.gravity.z;
                          d.timestamp = motion.timestamp;
+                         d.interval = dt;
                          manager->accelerometerDataUpdated.invokeInMainRunLoop(d);
                      }
+                     
+                     t = motion.timestamp;
                  }];
             }
             else 
@@ -85,19 +96,19 @@ namespace et
 using namespace et;
 
 OrientationManager::OrientationManager() : _private(new OrientationManagerPrivate)
-{ _private->manager = this; }
+    { _private->manager = this; }
 
 OrientationManager::~OrientationManager()
-{ delete _private; }
+    { delete _private; }
 
 void OrientationManager::setAccelerometerEnabled(bool e)
-{ _private->setAccelEnabled(e); }
+    { _private->setAccelEnabled(e); }
 
 bool OrientationManager::accelerometerEnabled(bool e) const
-{ return _private->accelEnabled; }
+    { return _private->accelEnabled; }
 
 void OrientationManager::setGyroscopeEnabled(bool e)
-{ _private->setGyroEnabled(e); }
+    { _private->setGyroEnabled(e); }
 
 bool OrientationManager::gyroscopeEnabled(bool e) const
-{ return _private->gyroEnabled; }
+    { return _private->gyroEnabled; }

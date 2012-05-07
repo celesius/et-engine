@@ -67,9 +67,19 @@ using namespace et;
 				   
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
-	BOOL handleLandscape = _params.supportLandscapeOrientation && UIInterfaceOrientationIsLandscape(toInterfaceOrientation);
-	BOOL handlePortrait = _params.supportPortraitOrientation && (toInterfaceOrientation == UIInterfaceOrientationPortrait);
-	return handlePortrait || handleLandscape;
+    if ((toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) &&
+        ((_params.supportedInterfaceOrientations & InterfaceOrientation_LandscapeLeft) == InterfaceOrientation_LandscapeLeft)) return YES;
+    
+    if ((toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) &&
+        ((_params.supportedInterfaceOrientations & InterfaceOrientation_LandscapeRight) == InterfaceOrientation_LandscapeRight)) return YES;
+    
+    if ((toInterfaceOrientation == UIInterfaceOrientationPortrait) &&
+        ((_params.supportedInterfaceOrientations & InterfaceOrientation_Portrait) == InterfaceOrientation_Portrait)) return YES;
+    
+    if ((toInterfaceOrientation == UIInterfaceOrientationPortraitUpsideDown) &&
+        ((_params.supportedInterfaceOrientations & InterfaceOrientation_PortraitUpsideDown) == InterfaceOrientation_PortraitUpsideDown)) return YES;
+    
+    return NO;
 }
 
 - (void)beginRender
