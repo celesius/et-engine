@@ -44,26 +44,29 @@ namespace et
 		ComponentTransformable();
 		virtual ~ComponentTransformable() { }
 
-		virtual mat4 transform();
-		virtual void setTransform(mat4 m);
+		mat4 transform();
+		void setTransform(mat4 m);
 
-		virtual void setTranslation(const vec3& t);
-		virtual void applyTranslation(const vec3& t);
+		void setTranslation(const vec3& t);
+		void applyTranslation(const vec3& t);
 		
-		virtual void setScale(const vec3& s);
-		virtual void applyScale(const vec3& s);
+		void setScale(const vec3& s);
+		void applyScale(const vec3& s);
 		
-		virtual void setOrientation(const quaternion& q);
-		virtual void applyOrientation(const quaternion& q);
+		void setOrientation(const quaternion& q);
+		void applyOrientation(const quaternion& q);
 
 		virtual void invalidateTransform();
 		
 		bool transformValid() const
 			{ return _transformValid; }
+		
 		const vec3& translation() const
 			{ return _translation; }
+		
 		const vec3& scale() const
 			{ return _scale; }
+		
 		const quaternion& orientation() const
 			{ return _orientation; }
 
