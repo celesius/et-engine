@@ -42,7 +42,8 @@ void TextField::buildVertices(RenderContext*, GuiRenderer& gr)
 	gr.createImageVertices(_imageVertices, _background.texture, _background.descriptor, 
 		rect(vec2(0.0), size()), alphaVector, transform, GuiRenderLayer_Layer0);
 
-	_charList = _secured ? CharDescriptorList(_text.length(), _font->charDescription(securedChar)) : _font->buildString(_text);
+	_charList = _secured ? CharDescriptorList(_text.length(), _font->charDescription(securedChar)) : 
+							_font->buildString(_text);
 
 	vec2 textSize = _charList.size() ? _font->measureStringSize(_charList) : vec2(0.0f, _font->lineHeight());
 
@@ -52,8 +53,8 @@ void TextField::buildVertices(RenderContext*, GuiRenderer& gr)
 	_textVertices.setOffset(0);
 	if (_charList.size())
 	{
-		gr.createStringVertices(_textVertices, _charList, 0.5f * (size() - textSize), 
-			color() * alphaVector, transform, GuiRenderLayer_Layer1);
+		gr.createStringVertices(_textVertices, _charList, ElementAlignment_Near, ElementAlignment_Near,
+								0.5f * (size() - textSize), color() * alphaVector, transform, GuiRenderLayer_Layer1);
 	}
 	setContentValid();
 }

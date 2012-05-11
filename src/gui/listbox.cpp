@@ -60,8 +60,8 @@ void ListboxPopup::buildVertices(GuiRenderer& gr)
 					rect(vec2(0.0f, row * rowSize), vec2(size().x, rowSize)), drawColor, transform, GuiRenderLayer_Layer0);
 			}
 
-			gr.createStringVertices(_textVertices, _owner->_font->buildString(*i), 
-				textPos, drawColor, transform, GuiRenderLayer_Layer1);
+			gr.createStringVertices(_textVertices, _owner->_font->buildString(*i), ElementAlignment_Near, ElementAlignment_Near,
+									textPos, drawColor, transform, GuiRenderLayer_Layer1);
 			textPos.y += dy;
 		}
 	}
@@ -210,7 +210,8 @@ void Listbox::buildVertices(GuiRenderer& gr)
 	{
 		std::string textToDraw = _prefix + _values[_selectedIndex];
 		vec2 textPos = _contentOffset + vec2(0.0f, 0.5f * (size().y - _font->lineHeight()));
-		gr.createStringVertices(_textVertices, _font->buildString(textToDraw), textPos, color(), transform, GuiRenderLayer_Layer1);
+		gr.createStringVertices(_textVertices, _font->buildString(textToDraw), ElementAlignment_Near, ElementAlignment_Near,
+								textPos, color(), transform, GuiRenderLayer_Layer1);
 	}
 
 	setContentValid();

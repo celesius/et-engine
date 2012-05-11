@@ -181,33 +181,77 @@ void GuiRenderer::buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, c
 	vertices.push_back(topLeft);
 }
 
-void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescriptorList& chars, const vec2& pos, 
-				const vec4& color, const mat4& transform, GuiRenderLayer layer)
+void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescriptorList& chars, ElementAlignment hAlign, ElementAlignment vAlign, 
+									   const vec2& pos, const vec4& color, const mat4& transform, GuiRenderLayer layer)
 {
-	vec2 origin = pos;
+	vec4 line;
+	std::vector<vec4> lines;
+	
+	for (CharDescriptorList::const_iterator i = chars.begin(), e = chars.end(); i != e; ++i)
+	{
+		const CharDescriptor& desc = *i;
+		line.w = etMax(line.w, desc.size.y);
+		
+		if ((desc.value == ET_NEWLINE) || (desc.value == ET_RETURN))
+		{
+			lines.push_back(line);
+			line = vec4(0.0f, line.y + line.w, 0.0f, 0.0f);
+		}
+		else 
+		{
+			line.z += desc.size.x;
+		}
+	}
+	lines.push_back(line);
+	
+	if (hAlign == ElementAlignment_Center)
+	{
+		for (std::vector<vec4>::iterator i = lines.begin(), e = lines.end(); i != e; ++i)
+			i->x = -0.5f * i->z;
+	}
+	else if (hAlign == ElementAlignment_Far)
+	{
+		for (std::vector<vec4>::iterator i = lines.begin(), e = lines.end(); i != e; ++i)
+			i->x = -i->z;
+	}
+	
+	if (vAlign != ElementAlignment_Near)
+	{
+	}
+	
+	size_t lineIndex = 0;
+	line = lines.front();
+	
 	vec2 mask(layer == GuiRenderLayer_Layer0 ? 0.0f : 1.0f, 0.0f);
-
 	vertices.fitToSize(6 * chars.size());
 	for (CharDescriptorList::const_iterator i = chars.begin(), e = chars.end(); i != e; ++i)
 	{
 		const CharDescriptor& desc = *i;
-		vec2 topLeft = origin;
-		vec2 bottomLeft = topLeft + vec2(0.0f, desc.size.y);
-		vec2 topRight = topLeft + vec2(desc.size.x, 0.0f);
-		vec2 bottomRight = bottomLeft + vec2(desc.size.x, 0.0f);
-		vec2 topLeftUV = desc.uvOrigin;
-		vec2 topRightUV = topLeftUV + vec2(desc.uvSize.x, 0.0f);
-		vec2 bottomLeftUV = desc.uvOrigin - vec2(0.0f, desc.uvSize.y);
-		vec2 bottomRightUV = bottomLeftUV + vec2(desc.uvSize.x, 0.0f);
-		vec4 charColor = desc.color * color;
-
-		buildQuad(vertices,
-			GuiVertex(floorv(transform * topLeft), vec4(topLeftUV, mask), charColor),
-			GuiVertex(floorv(transform * topRight), vec4(topRightUV, mask), charColor),
-			GuiVertex(floorv(transform * bottomLeft), vec4(bottomLeftUV, mask), charColor),
-			GuiVertex(floorv(transform * bottomRight), vec4(bottomRightUV, mask), charColor));
-
-		origin += vec2(desc.size.x, 0);
+		if ((desc.value == ET_NEWLINE) || (desc.value == ET_RETURN))
+		{
+			line = lines[++lineIndex];
+		}
+		else 
+		{
+			vec2 topLeft = line.xy() + pos;
+			vec2 bottomLeft = topLeft + vec2(0.0f, desc.size.y);
+			vec2 topRight = topLeft + vec2(desc.size.x, 0.0f);
+			vec2 bottomRight = bottomLeft + vec2(desc.size.x, 0.0f);
+			
+			vec2 topLeftUV = desc.uvOrigin;
+			vec2 topRightUV = topLeftUV + vec2(desc.uvSize.x, 0.0f);
+			vec2 bottomLeftUV = desc.uvOrigin - vec2(0.0f, desc.uvSize.y);
+			vec2 bottomRightUV = bottomLeftUV + vec2(desc.uvSize.x, 0.0f);
+			vec4 charColor = desc.color * color;
+			
+			buildQuad(vertices,
+					  GuiVertex(floorv(transform * topLeft), vec4(topLeftUV, mask), charColor),
+					  GuiVertex(floorv(transform * topRight), vec4(topRightUV, mask), charColor),
+					  GuiVertex(floorv(transform * bottomLeft), vec4(bottomLeftUV, mask), charColor),
+					  GuiVertex(floorv(transform * bottomRight), vec4(bottomRightUV, mask), charColor));
+			
+			line.x += desc.size.x;
+		}
 	}
 }
 
@@ -438,8 +482,8 @@ std::string gui_vertex_src =
 	"}";
 
 std::string gui_frag_src = 
-	"uniform sampler2D layer0_texture;"
-	"uniform sampler2D layer1_texture;"
+	"uniform etLowp sampler2D layer0_texture;"
+	"uniform etLowp sampler2D layer1_texture;"
 	"etFragmentIn etMediump vec2 vTexCoord;"
 	"etFragmentIn etLowp float textureMask;"
 	"etFragmentIn etLowp vec4 additiveColor;"

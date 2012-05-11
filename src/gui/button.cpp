@@ -12,7 +12,7 @@ using namespace et;
 using namespace et::gui;
 
 Button::Button(const std::string& title, const Font& font, Element2D* parent) : Element2D(parent), 
-	_title(title), _font(font), _textSize(font->measureStringSize(title, false)), _textColor(vec3(0.0f), 1.0f), 
+	_title(title), _font(font), _textSize(font->measureStringSize(title)), _textColor(vec3(0.0f), 1.0f),
 	_textPressedColor(vec3(0.0f), 1.0f), _type(Button::Type_PushButton), _state(ElementState_Default), 
 	_imageLayout(ImageLayout_Left),	_pressed(false), _hovered(false), _selected(false)
 {
@@ -75,7 +75,8 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 	if (_title.length())
 	{
 		vec4 aColor = _state == ElementState_Pressed ? _textPressedColor : _textColor;
-		gr.createStringVertices(_textVertices, _font->buildString(_title), textOrigin, aColor * alphaScaleColor, transform, GuiRenderLayer_Layer1);
+		gr.createStringVertices(_textVertices, _font->buildString(_title), ElementAlignment_Near, ElementAlignment_Near,
+								textOrigin, aColor * alphaScaleColor, transform, GuiRenderLayer_Layer1);
 	}
 
 	if (_image.texture.valid())
@@ -170,7 +171,7 @@ void Button::setTitle(const std::string& t)
 	if (_title == t) return;
 
 	_title = t;
-	_textSize = _font->measureStringSize(_title, false);
+	_textSize = _font->measureStringSize(_title);
 	invalidateContent();
 }
 
@@ -208,8 +209,8 @@ void Button::adjustSizeForText(const std::string& text, float duration)
 
 vec2 Button::sizeForText(const std::string& text)
 {
-	vec2 textSize = _font->measureStringSize(text, false);
-	vec2 textOffset = _font->measureStringSize("AA", false);
+	vec2 textSize = _font->measureStringSize(text);
+	vec2 textOffset = _font->measureStringSize("AA");
 	return vec2(floorf(textSize.x + 2.0f * textOffset.x), floorf(textSize.y * 1.25f));
 }
 

@@ -32,6 +32,15 @@ namespace et
 			vec2 uvOrigin;
 			vec2 uvSize;
 			vec4i extra;
+			
+			CharDescriptor() : value(0), params(0) 
+				{ }
+			
+			CharDescriptor(char c, unsigned short p = 0) : value(c), params(p)
+				{ }
+			
+			CharDescriptor(char c, unsigned short p, const vec2& sz) : value(c), params(p), size(sz)
+				{ }
 		};
 
 
