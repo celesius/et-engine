@@ -78,6 +78,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\core\tools.cpp" />
     <ClCompile Include="..\..\src\imaging\imageoperations.cpp" />
+    <ClCompile Include="..\..\src\imaging\imagewriter.cpp" />
     <ClCompile Include="..\..\src\imaging\pngloader.cpp" />
     <ClCompile Include="..\..\src\imaging\textureatlaswriter.cpp" />
     <ClCompile Include="..\..\src\libpng\png.c" />
@@ -95,7 +96,6 @@
     <ClCompile Include="..\..\src\libpng\pngwrite.c" />
     <ClCompile Include="..\..\src\libpng\pngwtran.c" />
     <ClCompile Include="..\..\src\libpng\pngwutil.c" />
-    <ClCompile Include="..\..\src\platform-win\imagewriter.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\tools.win.cpp" />
     <ClCompile Include="..\..\src\zlib\adler32.c" />
     <ClCompile Include="..\..\src\zlib\compress.c" />

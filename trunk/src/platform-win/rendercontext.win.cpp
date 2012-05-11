@@ -9,11 +9,11 @@
 #include <WinUser.h>
 
 #include <et/opengl/opengl.h>
-#include <et/device/rendercontext.h>
 #include <et/app/application.h>
-#include <et/input/input.h>
+#include <et/rendering/rendercontext.h>
 #include <et/rendering/renderer.h>
 #include <et/opengl/openglcaps.h>
+#include <et/input/input.h>
 
 using namespace et;
 

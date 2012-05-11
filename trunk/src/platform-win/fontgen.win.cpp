@@ -43,7 +43,7 @@ void FontGenerator::fillCharacterDescriptors(const std::string& face, int size, 
 
 	for (CharacterRange::const_iterator i = range.begin(), e = range.end(); i != e; ++i)
 	{
-		CharDescriptor desc = { *i, bold ? CharParameter_Bold : 0 };
+		CharDescriptor desc = CharDescriptor(*i, bold ? CharParameter_Bold : 0);
 
 		wchar_t wStr[2] = { desc.value };
 

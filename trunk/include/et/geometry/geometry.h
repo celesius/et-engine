@@ -26,6 +26,7 @@ namespace et
 	typedef vector3<float> vec3;
 	typedef vector4<float> vec4;
 	typedef vector2<int> vec2i;
+	typedef vector2<size_t> vec2sz;
 	typedef vector3<int> vec3i;
 	typedef vector4<int> vec4i;
 	typedef vector3<unsigned char> vec3ub;

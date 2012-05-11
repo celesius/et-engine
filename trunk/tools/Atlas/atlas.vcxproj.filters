@@ -110,19 +110,19 @@
     <ClCompile Include="..\..\src\core\tools.cpp">
       <Filter>et</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\imagewriter.win.cpp">
-      <Filter>et</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\platform-win\tools.win.cpp">
       <Filter>et</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\imaging\pngloader.cpp">
       <Filter>et</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\imaging\imageoperations.cpp">
+      <Filter>et</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\imaging\textureatlaswriter.cpp">
       <Filter>et</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\imaging\imageoperations.cpp">
+    <ClCompile Include="..\..\src\imaging\imagewriter.cpp">
       <Filter>et</Filter>
     </ClCompile>
   </ItemGroup>
