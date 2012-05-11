@@ -11,6 +11,11 @@
 using namespace et;
 using namespace et::gui;
 
+static float alignmentValues[ElementAlignment_max] = { 0.0f, 0.5f, 1.0f };
+
+float et::gui::alignmentFactor(ElementAlignment a)
+	{ return alignmentValues[a]; }
+
 Element::Element(Element* parent) : ElementHierarchy(parent), tag(0),
 	_enabled(true), _transformValid(false), _inverseTransformValid(false), _contentValid(false)
 {

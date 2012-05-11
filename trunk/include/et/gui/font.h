@@ -29,8 +29,8 @@ namespace et
 			inline const Texture& texture() const 
 				{ return _texture; }
 
-			const CharDescriptor& charDescription(short c) const;
-			const CharDescriptor& boldCharDescription(short c) const;
+			CharDescriptor charDescription(short c) const;
+			CharDescriptor boldCharDescription(short c) const;
 
 			float lineHeight() const;
 
@@ -42,7 +42,7 @@ namespace et
 
 			CharDescriptorList buildString(const std::string& s, bool formatted = false) const;
 
-			vec2 measureStringSize(const std::string& s, bool formatted) const;
+			vec2 measureStringSize(const std::string& s, bool formatted = false) const;
 			vec2 measureStringSize(const CharDescriptorList& s) const;
 
 		private:
@@ -53,6 +53,8 @@ namespace et
 			CharDescriptorMap _chars;
 			CharDescriptorMap _boldChars;
 			std::string _face;
+			et::vec2 _biggestChar;
+			et::vec2 _biggestBoldChar;
 			int _size;
 		};
 

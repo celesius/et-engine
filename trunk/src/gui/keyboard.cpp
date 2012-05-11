@@ -149,7 +149,7 @@ void Keyboard::genServiceButtons(const Font& font, float lastRowWidth)
 
 	Button::Pointer b;
 
-	vec2 textSize = floorv(font->measureStringSize(serviceButtonsNames[ServiceButton_Shift], false) + vec2(serviceButtonExtraSize, 0.0f));
+	vec2 textSize = floorv(font->measureStringSize(serviceButtonsNames[ServiceButton_Shift]) + vec2(serviceButtonExtraSize, 0.0f));
 	b = createButton(_serviceButtons, serviceButtonsNames[ServiceButton_Shift], font, true);
 	b->setFrame(buttonStartOffset, lastRowY, 0.5f * (size().x - lastRowWidth) - buttonOffset, buttonHeight);
 	b->clicked.connect(this, &Keyboard::onShiftPressed);
@@ -158,13 +158,13 @@ void Keyboard::genServiceButtons(const Font& font, float lastRowWidth)
 	b->setFrame(size().x - buttonStartOffset, lastRowY, 0.5f * (size().x - lastRowWidth) - buttonOffset, buttonHeight);
 	b->clicked.connect(this, &Keyboard::onDeletePressed);
 
-	textSize = floorv(font->measureStringSize(serviceButtonsNames[ServiceButton_Punctuation], false) + vec2(serviceButtonExtraSize, 0.0f));
+	textSize = floorv(font->measureStringSize(serviceButtonsNames[ServiceButton_Punctuation]) + vec2(serviceButtonExtraSize, 0.0f));
 	b = createButton(_serviceButtons, serviceButtonsNames[ServiceButton_Punctuation], font, true, vec2(0.0f, 1.0f));
 	b->setFrame(buttonStartOffset, size().y - buttonStartOffset, textSize.x, buttonHeight);
 	b->clicked.connect(this, &Keyboard::onSwitchKeyboardsPressed);
 	serviceButtonsWidth += textSize.x;
 
-	textSize = floorv(font->measureStringSize(serviceButtonsNames[ServiceButton_Return], false) + vec2(serviceButtonExtraSize, 0.0f));
+	textSize = floorv(font->measureStringSize(serviceButtonsNames[ServiceButton_Return]) + vec2(serviceButtonExtraSize, 0.0f));
 	serviceButtonsWidth += textSize.x;
 
 	b = createButton(_serviceButtons, serviceButtonsNames[ServiceButton_Space], font, false, vec2(0.5f, 1.0f));

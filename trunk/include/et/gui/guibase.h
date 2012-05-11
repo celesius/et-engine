@@ -58,7 +58,7 @@ namespace et
 			ElementFlag_TransparentForPointer = 0x0004,
 			ElementFlag_RenderTopmost = 0x0008
 		};
-
+		
 		enum GuiRenderLayer 
 		{
 			GuiRenderLayer_Layer0,
@@ -66,6 +66,16 @@ namespace et
 			GuiRenderLayer_max
 		};
 
+		enum ElementAlignment
+		{
+			ElementAlignment_Near,
+			ElementAlignment_Center,
+			ElementAlignment_Far,
+			ElementAlignment_max,
+		};
+		
+		float alignmentFactor(ElementAlignment a);
+		
 		struct ContentOffset
 		{
 			float left;
@@ -104,19 +114,19 @@ namespace et
 			ImageDescriptor(const vec2& aOrigin, const vec2& aSize, const ContentOffset& offset = ContentOffset()) : 
 				origin(aOrigin), size(aSize), contentOffset(offset) { }
 
-			inline vec2 centerPartTopLeft() const 
+			vec2 centerPartTopLeft() const 
 				{ return origin + contentOffset.origin(); }
 
-			inline vec2 centerPartTopRight() const 
+			vec2 centerPartTopRight() const 
 				{ return origin + vec2(size.x - contentOffset.right, contentOffset.top); }
 
-			inline vec2 centerPartBottomLeft() const 
+			vec2 centerPartBottomLeft() const 
 				{ return origin + vec2(contentOffset.left, size.y - contentOffset.bottom); }
 
-			inline vec2 centerPartBottomRight() const 
+			vec2 centerPartBottomRight() const 
 				{ return origin + size - vec2(contentOffset.right, contentOffset.bottom); }
 
-			inline rect rectangle() const
+			rect rectangle() const
 				{ return rect(origin, size); }
 		};
 

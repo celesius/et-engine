@@ -26,11 +26,13 @@ namespace et
 			void setText(const std::string& text, float duration = 0.0f);
 
 			vec2 textSize();
-			inline const std::string& text() const
+			const std::string& text() const
 				{ return _text; }
 
 			void adjustSize();
 			void setAllowFormatting(bool f);
+			
+			void setHorizontalAlignment(ElementAlignment h);
 
 		private:
 			void buildVertices(RenderContext* rc, GuiRenderer& guiRenderer);
@@ -46,6 +48,8 @@ namespace et
 			float _textFade;
 			float _textFadeDuration;
 			float _textFadeStartTime;
+			ElementAlignment _horizontalAlignment;
+			ElementAlignment _verticalAlignment;
 			bool _animatingText;
 			bool _allowFormatting;
 		};

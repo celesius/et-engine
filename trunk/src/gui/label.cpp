@@ -13,7 +13,9 @@ using namespace et::gui;
 
 Label::Label(const std::string& text, const Font& font, Element2D* parent) : 
 	Element2D(parent), _text(text), _nextText(text), _font(font), _vertices(0), 
-	_textFade(0.0f), _textFadeDuration(0.0f), _textFadeStartTime(0.0f), _animatingText(false)
+	_textFade(0.0f), _textFadeDuration(0.0f), _textFadeStartTime(0.0f),
+	_horizontalAlignment(ElementAlignment_Near), _verticalAlignment(ElementAlignment_Near),
+	_animatingText(false), _allowFormatting(false)
 {
 	adjustSize();
 }
@@ -31,6 +33,8 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 {
 	mat4 transform = finalTransform();
 
+	vec2 textOffset = size() * vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment));
+	
 	_textSize = _font->measureStringSize(_text, _allowFormatting);
 	_vertices.resize(0);
 
@@ -41,17 +45,17 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 
 		_nextTextSize = _font->measureStringSize(_nextText, _allowFormatting);
 
-		renderer.createStringVertices(_vertices, _font->buildString(_text, _allowFormatting), vec2(0.0), 
-			color() * vec4(1.0, 1.0, 1.0, fadeOut), transform, GuiRenderLayer_Layer1);
-
-		renderer.createStringVertices(_vertices, _font->buildString(_nextText, _allowFormatting), vec2(0.0), 
-			color() * vec4(1.0, 1.0, 1.0, fadeIn), transform, GuiRenderLayer_Layer1);
+		renderer.createStringVertices(_vertices, _font->buildString(_text, _allowFormatting), _horizontalAlignment, _verticalAlignment, textOffset, 
+									  color() * vec4(1.0, 1.0, 1.0, fadeOut), transform, GuiRenderLayer_Layer1);
+		
+		renderer.createStringVertices(_vertices, _font->buildString(_nextText, _allowFormatting), _horizontalAlignment, _verticalAlignment, textOffset, 
+									  color() * vec4(1.0, 1.0, 1.0, fadeIn), transform, GuiRenderLayer_Layer1);
 	}
 	else 
 	{
 		_nextTextSize = _textSize;
-		renderer.createStringVertices(_vertices, _font->buildString(_text, _allowFormatting), vec2(0.0f), 
-			color(), transform, GuiRenderLayer_Layer1);
+		renderer.createStringVertices(_vertices, _font->buildString(_text, _allowFormatting), _horizontalAlignment, _verticalAlignment, 
+									  textOffset, color(), transform, GuiRenderLayer_Layer1);
 	}
 
 	setContentValid();
@@ -121,5 +125,13 @@ void Label::adjustSize()
 void Label::setAllowFormatting(bool f)
 {
 	_allowFormatting = f;
+	invalidateContent();
+}
+
+void Label::setHorizontalAlignment(ElementAlignment h)
+{
+	if (_horizontalAlignment == h) return;
+	
+	_horizontalAlignment = h;
 	invalidateContent();
 }

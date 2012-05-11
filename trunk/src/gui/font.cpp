@@ -14,8 +14,6 @@
 using namespace et;
 using namespace et::gui;
 
-static const CharDescriptor emptyCharDescriptor = { };
-
 FontData::FontData() : _size(0)
 {
 }
@@ -63,23 +61,40 @@ void FontData::loadFromFile(RenderContext* rc, const std::string& fileName, Text
 		std::string textureFileName = fontFileDir + textureFile;
 		_texture = rc->textureFactory().loadTexture(fileExists(textureFileName) ? textureFileName : textureFile, cache);
 
+		_biggestChar = vec2(0.0f);
+		_biggestBoldChar = vec2(0.0f);
 		int charCount = deserializeInt(fontFile);
 		for (int i = 0; i < charCount; ++i)
 		{
-			CharDescriptor desc = { };
+			CharDescriptor desc;
 			fontFile.read(reinterpret_cast<char*>(&desc), sizeof(desc));
+			
 			if ((desc.params & CharParameter_Bold) == CharParameter_Bold)
+			{
+				_biggestBoldChar = maxv(_biggestBoldChar, desc.size);
 				_boldChars[desc.value] = desc;
+			}
 			else
+			{
+				_biggestChar = maxv(_biggestChar, desc.size);
 				_chars[desc.value] = desc;
+			}
 		}
 	}
+	
+	std::cout << _face << ", biggest char: " << _biggestChar << ", biggest bold: " << _biggestBoldChar << std::endl;
 }
 
-const CharDescriptor& FontData::charDescription(short c) const
+CharDescriptor FontData::charDescription(short c) const
 {
 	CharDescriptorMap::const_iterator i = _chars.find(c);
-	return (i != _chars.end()) ? i->second : emptyCharDescriptor;
+	return (i != _chars.end()) ? i->second : CharDescriptor(c, 0, _biggestChar * vec2(0.0f, 1.0f));
+}
+
+CharDescriptor FontData::boldCharDescription(short c) const
+{
+	CharDescriptorMap::const_iterator i = _boldChars.find(c);
+	return (i != _boldChars.end()) ? i->second : CharDescriptor(c, CharParameter_Bold, _biggestBoldChar * vec2(0.0f, 1.0f));
 }
 
 float FontData::lineHeight() const
@@ -95,27 +110,37 @@ float FontData::lineHeight() const
 	}
 }
 
-const CharDescriptor& FontData::boldCharDescription(short c) const
-{
-	CharDescriptorMap::const_iterator i = _boldChars.find(c);
-	return (i != _boldChars.end()) ? i->second : emptyCharDescriptor;
-}
-
 vec2 FontData::measureStringSize(const CharDescriptorList& s) const
 {
-	vec2 sz(0.0f, 0.0f);
+	vec2 sz;
+	vec2 lineSize;
+	
 	for (CharDescriptorList::const_iterator i = s.begin(), e = s.end(); i != e; ++i)
 	{
 		const CharDescriptor& desc = *i;
-		sz.x += desc.size.x;
-		sz.y = etMax(desc.size.y, sz.y);
+		lineSize.y = etMax(lineSize.y, desc.size.y);
+		
+		if ((desc.value == ET_RETURN) || (desc.value == ET_NEWLINE))
+		{
+			sz.x = etMax(sz.x, lineSize.x);
+			sz.y += lineSize.y;
+			lineSize = vec2(0.0f);
+		}
+		else 
+		{
+			lineSize.x += desc.size.x;
+		}
 	}
+	
+	sz.x = etMax(lineSize.x, sz.x);
+	sz.y += lineSize.y;
+	
 	return sz;
 }
 
 vec2 FontData::measureStringSize(const std::string& s, bool formatted) const
 {
-	return measureStringSize(formatted ? parseString(s) : buildString(s));
+	return measureStringSize(formatted ? parseString(s) : buildString(s, formatted));
 }
 
 CharDescriptorList FontData::buildString(const std::string& s, bool formatted) const
