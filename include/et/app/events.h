@@ -57,7 +57,8 @@ namespace et
 		void setRemoved(bool value)
 			{ _removed = value; }
 
-		virtual EventReceiver* receiver() = 0;
+		virtual EventReceiver* receiver() 
+			{ return 0; }
 
 	private:
 		bool _removed;

@@ -16,13 +16,8 @@ namespace et
 	{
 		vector4<T> mat[4];
 
-		matrix4()
-		{
-			mat[0] = vector4<T>(0.0f, 0.0f, 0.0f, 0.0f);
-			mat[1] = vector4<T>(0.0f, 0.0f, 0.0f, 0.0f);
-			mat[2] = vector4<T>(0.0f, 0.0f, 0.0f, 0.0f);
-			mat[3] = vector4<T>(0.0f, 0.0f, 0.0f, 0.0f);
-		}
+		matrix4() 
+		{ }
 
 		matrix4(const matrix4<T>& c)
 		{
