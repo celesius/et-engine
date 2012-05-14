@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <list>
 #include <string>
 #include <queue>
 #include <et/threading/thread.h>
@@ -15,10 +16,28 @@
 
 namespace et
 {
+	struct TextureLoadingRequest;
+	typedef std::list<TextureLoadingRequest*> TextureLoadingRequestList;
+
 	class TextureLoaderDelegate
 	{
 	public:
+		virtual ~TextureLoaderDelegate();
+
 		virtual void textureDidLoad(Texture t) = 0;
+
+	private:
+		friend struct TextureLoadingRequest;
+
+		void removeTextureLoadingRequest(TextureLoadingRequest* req)
+			{ CriticalSectionScope lock(_csRequest); _requests.remove(req); }
+
+		void addTextureLoadingRequest(TextureLoadingRequest* req)
+			{ CriticalSectionScope lock(_csRequest); _requests.push_back(req); }
+
+	private:
+		CriticalSection _csRequest;
+		TextureLoadingRequestList _requests;
 	};
 
 	struct TextureLoadingRequest
@@ -29,11 +48,9 @@ namespace et
 		Texture texture;
 		TextureLoaderDelegate* delegate;
 
-		TextureLoadingRequest(const std::string& name, size_t scrScale, const Texture& tex, TextureLoaderDelegate* d) : 
-			fileName(name), screenScale(scrScale), textureDescription(new TextureDescription), texture(tex), delegate(d) { }
-
-		~TextureLoadingRequest()
-			{ delete textureDescription; }
+		TextureLoadingRequest(const std::string& name, size_t scrScale, const Texture& tex, TextureLoaderDelegate* d);
+		~TextureLoadingRequest();
+		void discardDelegate();
 	};
 	typedef std::queue<TextureLoadingRequest*> TextureLoadingRequestQueue;
 

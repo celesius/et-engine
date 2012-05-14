@@ -27,7 +27,7 @@ namespace et
 				_timer.cancelUpdates();
 		}
 
-		void timerExpired(NotifyTimer* t)
+		void timerExpired(NotifyTimer*)
 		{
 			_defaultLocation.latitude += 0.001f * randf();
 			_defaultLocation.longitude += 0.001f * randf();
