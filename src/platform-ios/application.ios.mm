@@ -128,6 +128,8 @@ void Application::idle()
         _delegate->idle(_lastQueuedTime);
         performRendering();
     }
+	
+	usleep(0);
 }
 
 void Application::alert(const std::string& title, const std::string& message, AlertType)

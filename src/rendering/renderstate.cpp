@@ -378,21 +378,20 @@ void RenderState::frameBufferDeleted(GLuint buffer)
 
 void RenderState::setVertexAttribEnabled(GLuint attrib, bool enabled, bool force)
 {
-	if (enabled)
+	bool wasEnabled = _currentState.enabledVertexAttributes[attrib];
+
+	if (enabled && (!wasEnabled || force))
 	{
-		if (!_currentState.enabledVertexAttributes[attrib] || force)
-		{
-			_currentState.enabledVertexAttributes[attrib] = enabled;
-			glEnableVertexAttribArray(attrib);
-			checkOpenGLError("glEnableVertexAttribArray(" + intToStr(attrib) + ")");
-		}
+		glEnableVertexAttribArray(attrib);
+		checkOpenGLError("glEnableVertexAttribArray(" + intToStr(attrib) + ")");
 	}
-	else if (_currentState.enabledVertexAttributes[attrib] || force)
+	else if (!enabled && (wasEnabled || force))
 	{
-		_currentState.enabledVertexAttributes[attrib] = false;
 		glDisableVertexAttribArray(attrib);
 		checkOpenGLError("glDisableVertexAttribArray(" + intToStr(attrib) + ")");
 	}
+	
+	_currentState.enabledVertexAttributes[attrib] = enabled;
 }
 
 void RenderState::setVertexAttribPointer(const VertexElement& e, size_t baseIndex)
