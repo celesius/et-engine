@@ -11,7 +11,7 @@
 using namespace et;
 using namespace et::gui;
 
-Gui::Gui(RenderContext* rc, TextureCache& texCache) : _textureCache(texCache), _renderer(rc), 
+Gui::Gui(RenderContext* rc, TextureCache& texCache) : _textureCache(texCache), _renderer(rc, true), 
 	_renderingElementBackground(new RenderingElement(rc, "background-rendering-element")), 
 	_renderingElementCurrentLayout(new RenderingElement(rc, "current-layout-rendering-element")), 
 	_renderingElementNextLayout(new RenderingElement(rc, "next-layout-rendering-element")), 
