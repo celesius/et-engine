@@ -58,10 +58,10 @@ namespace et
 		~OrientationManager();
 
 		void setAccelerometerEnabled(bool e);
-		bool accelerometerEnabled(bool e) const;
+		bool accelerometerEnabled() const;
 
 		void setGyroscopeEnabled(bool e);
-		bool gyroscopeEnabled(bool e) const;
+		bool gyroscopeEnabled() const;
 
 		ET_DECLARE_EVENT1(accelerometerDataUpdated, AccelerometerData)
 		ET_DECLARE_EVENT1(gyroscopeDataUpdated, GyroscopeData)

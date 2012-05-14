@@ -1,9 +1,9 @@
 /*
- * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
- *
- */
+* This file is part of `et engine`
+* Copyright 2009-2012 by Sergey Reznik
+* Please, do not modify contents without approval.
+*
+*/
 
 #include <et/apiobjects/textureloadingthread.h>
 #include <et/resources/textureloader.h>
@@ -11,9 +11,34 @@
 
 using namespace et;
 
+TextureLoaderDelegate::~TextureLoaderDelegate()
+{
+	for (TextureLoadingRequestList::iterator i = _requests.begin(), e = _requests.end(); i != e; ++i)
+		(*i)->discardDelegate();
+}
+
+TextureLoadingRequest::TextureLoadingRequest(const std::string& name, size_t scrScale, const Texture& tex, TextureLoaderDelegate* d) : 
+	fileName(name), screenScale(scrScale), textureDescription(new TextureDescription), texture(tex), delegate(d)
+{
+	if (delegate)
+		delegate->addTextureLoadingRequest(this);
+}
+
+TextureLoadingRequest::~TextureLoadingRequest()
+{
+	if (delegate)
+		delegate->removeTextureLoadingRequest(this);
+
+	delete textureDescription; 
+}
+
+void TextureLoadingRequest::discardDelegate()
+{
+	delegate = 0; 
+}
+
 TextureLoadingThread::TextureLoadingThread(TextureLoadingThreadDelegate* delegate) : Thread(false), _delegate(delegate)
 {
-
 }
 
 TextureLoadingThread::~TextureLoadingThread()
@@ -37,7 +62,7 @@ TextureLoadingRequest* TextureLoadingThread::dequeRequest()
 		result = _requests.front();
 		_requests.pop();
 	}
-	
+
 	return result;
 }
 

@@ -35,7 +35,7 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
 
 		size_t screenScale = _rc->screenScaleFactor();
 		TextureDescription desc = async ? 
-            TextureLoader::loadDescription(file, screenScale, false) : // !calledFromAnotherThread) : 
+            TextureLoader::loadDescription(file, screenScale, false) :
 			TextureLoader::load(file, screenScale);
 
 		texture = Texture(new TextureData(_rc, desc, file, calledFromAnotherThread));

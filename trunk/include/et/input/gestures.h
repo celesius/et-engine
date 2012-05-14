@@ -42,6 +42,11 @@ namespace et
 
 		void handlePointersMovement();
 
+		GesturesRecognizer(const GesturesRecognizer&)
+			{ }
+		GesturesRecognizer& operator = (const GesturesRecognizer&)
+			{ return *this; }
+
 	private:
 		struct PointersInputDelta
 		{

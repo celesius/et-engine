@@ -74,11 +74,11 @@ OrientationManager::~OrientationManager()
 void OrientationManager::setAccelerometerEnabled(bool e)
 	{ _private->setAccelEnabled(e); }
 
-bool OrientationManager::accelerometerEnabled(bool e) const
+bool OrientationManager::accelerometerEnabled() const
 	{ return _private->accelEnabled; }
 
 void OrientationManager::setGyroscopeEnabled(bool e)
 	{ _private->setGyroEnabled(e); }
 
-bool OrientationManager::gyroscopeEnabled(bool e) const
+bool OrientationManager::gyroscopeEnabled() const
 	{ return _private->gyroEnabled; }
