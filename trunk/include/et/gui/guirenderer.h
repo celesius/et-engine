@@ -19,7 +19,7 @@ namespace et
 		class GuiRenderer
 		{
 		public:
-			GuiRenderer(RenderContext* rc);
+			GuiRenderer(RenderContext* rc, bool saveFillRate);
 			void setProjectionMatrices(const vec2& contextSize);
 			
 			void setRendernigElement(const RenderingElementRef& r);
@@ -77,7 +77,8 @@ namespace et
 			
 			vec2 _customOffset;
 			float _customAlpha;
-			
+	
+			bool _saveFillRate;
 			bool _depthTestEnabled;
 			bool _depthMaskEnabled;
 			bool _blendEnabled;

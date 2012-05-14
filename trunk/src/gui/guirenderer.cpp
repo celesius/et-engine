@@ -13,19 +13,31 @@ using namespace et::gui;
 
 const size_t BlockSize = 1024;
 
-extern std::string gui_vertex_src;
-extern std::string gui_frag_src;
+extern std::string gui_default_vertex_src;
+extern std::string gui_default_frag_src;
+extern std::string gui_savefillrate_vertex_src;
+extern std::string gui_savefillrate_frag_src;
 
-GuiRenderer::GuiRenderer(RenderContext* rc) : _customAlpha(1.0f)
+GuiRenderer::GuiRenderer(RenderContext* rc, bool saveFillRate) : _customAlpha(1.0f), _saveFillRate(saveFillRate)
 {
-	_guiProgram = rc->programFactory().genProgram(gui_vertex_src, std::string(), gui_frag_src,
-		ProgramDefinesList(),  std::string(), "shader-gui");
+	if (saveFillRate)
+	{
+		_guiProgram = rc->programFactory().genProgram(gui_savefillrate_vertex_src, std::string(), gui_savefillrate_frag_src,
+													  ProgramDefinesList(),  std::string(), "shader-gui");
+	}
+	else 
+	{
+		_guiProgram = rc->programFactory().genProgram(gui_default_vertex_src, std::string(), gui_default_frag_src,
+													  ProgramDefinesList(),  std::string(), "shader-gui");
+	}
 
 	_guiDefaultTransformUniform = _guiProgram->getUniformLocation("mDefaultTransform");
 	_guiCustomOffsetUniform = _guiProgram->getUniformLocation("vCustomOffset");
 	_guiCustomAlphaUniform = _guiProgram->getUniformLocation("customAlpha");
 	_guiProgram->setUniform("layer0_texture", 0);
-	_guiProgram->setUniform("layer1_texture", 1);
+	
+	if (!saveFillRate)
+		_guiProgram->setUniform("layer1_texture", 1);
 
 	setProjectionMatrices(rc->size());
 }
@@ -61,15 +73,16 @@ GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& text
 {
 	if (!_renderingElement.valid()) return 0;
 
+	bool shouldAdd = _saveFillRate && (layer == GuiRenderLayer_Layer1);
+	if (shouldAdd)
+		layer = GuiRenderLayer_Layer0;
+	
 	_renderingElement->_changed = true;
 	size_t i0 = _renderingElement->_vertexList.currentIndex();
-
-	bool shouldAdd = false;
-
 	if (_renderingElement->_chunks.size())
 	{
 		RenderChunk& lastChunk = _renderingElement->_chunks.back();
-
+		
 		if ((lastChunk.elementClass == cls) && (lastChunk.layers[layer] == texture))
 			lastChunk.count += count;
 		else
@@ -459,7 +472,7 @@ void GuiRenderer::createColorVertices(GuiVertexList& vertices, const rect& p, co
 			  GuiVertex(transform * bottomRight, vec4(vec2(0.0f), mask), color ) );	
 }
 
-std::string gui_vertex_src = 
+std::string gui_default_vertex_src = 
 	"uniform mat4 mDefaultTransform;"
 	"uniform vec2 vCustomOffset;"
 	"uniform float customAlpha;"
@@ -467,29 +480,62 @@ std::string gui_vertex_src =
 	"etVertexIn vec4 TexCoord0;"
 	"etVertexIn vec4 Color;"
 	"etVertexOut vec2 vTexCoord;"
-	"etVertexOut float textureMask;"
+	"etVertexOut float texture0Mask;"
+	"etVertexOut float texture1Mask;"
 	"etVertexOut vec4 additiveColor;"
-	"etVertexOut vec4 vColor;"
+	"etVertexOut vec4 tintColor;"
 	"void main()"
 	"{"
-	" vColor = Color;"
-	" vColor.w *= customAlpha;"
-	" vTexCoord = TexCoord0.xy;"
-	" textureMask = TexCoord0.z;"
-	" additiveColor = vColor * TexCoord0.w;"
-	" vec4 vTransformed = mDefaultTransform * vec4(Vertex, 1.0);"
-	" gl_Position = vTransformed + vec4(vTransformed.w * vCustomOffset, 0.0, 0.0);"
+	"	tintColor = Color * vec4(1.0, 1.0, 1.0, customAlpha);"
+	"	additiveColor = tintColor * TexCoord0.w;"
+
+	"	vTexCoord = TexCoord0.xy;"
+	"	texture0Mask = 1.0 - TexCoord0.z;"
+	"	texture1Mask = TexCoord0.z;"
+
+	"	vec4 vTransformed = mDefaultTransform * vec4(Vertex, 1.0);"
+	"	gl_Position = vTransformed + vec4(vTransformed.w * vCustomOffset, 0.0, 0.0);"
 	"}";
 
-std::string gui_frag_src = 
+std::string gui_default_frag_src = 
 	"uniform etLowp sampler2D layer0_texture;"
 	"uniform etLowp sampler2D layer1_texture;"
-	"etFragmentIn etMediump vec2 vTexCoord;"
-	"etFragmentIn etLowp float textureMask;"
+	"etFragmentIn etHighp vec2 vTexCoord;"
+	"etFragmentIn etLowp float texture0Mask;"
+	"etFragmentIn etLowp float texture1Mask;"
 	"etFragmentIn etLowp vec4 additiveColor;"
-	"etFragmentIn etLowp vec4 vColor;"
+	"etFragmentIn etLowp vec4 tintColor;"
 	"void main()"
 	"{"
-	" etLowp vec4 textureColor = mix(etTexture2D(layer0_texture, vTexCoord), etTexture2D(layer1_texture, vTexCoord), textureMask);"
-	" etFragmentOut = vColor * textureColor + additiveColor;"
+	"	etLowp vec4 textureColor = etTexture2D(layer0_texture, vTexCoord) * texture0Mask + etTexture2D(layer1_texture, vTexCoord) * texture1Mask;"
+	"	etFragmentOut = textureColor * tintColor + additiveColor;"
+	"}";
+
+std::string gui_savefillrate_vertex_src = 
+	"uniform mat4 mDefaultTransform;"
+	"uniform vec2 vCustomOffset;"
+	"uniform float customAlpha;"
+	"etVertexIn vec3 Vertex;"
+	"etVertexIn vec4 TexCoord0;"
+	"etVertexIn vec4 Color;"
+	"etVertexOut vec2 vTexCoord;"
+	"etVertexOut vec4 additiveColor;"
+	"etVertexOut vec4 tintColor;"
+	"void main()"
+	"{"
+	"	tintColor = Color * vec4(1.0, 1.0, 1.0, customAlpha);"
+	"	additiveColor = tintColor * TexCoord0.w;"
+	"	vTexCoord = TexCoord0.xy;"
+	"	vec4 vTransformed = mDefaultTransform * vec4(Vertex, 1.0);"
+	"	gl_Position = vTransformed + vec4(vTransformed.w * vCustomOffset, 0.0, 0.0);"
+	"}";
+
+std::string gui_savefillrate_frag_src = 
+	"uniform etLowp sampler2D layer0_texture;"
+	"etFragmentIn etMediump vec2 vTexCoord;"
+	"etFragmentIn etLowp vec4 additiveColor;"
+	"etFragmentIn etLowp vec4 tintColor;"
+	"void main()"
+	"{"
+	"	etFragmentOut = etTexture2D(layer0_texture, vTexCoord) * tintColor + additiveColor;"
 	"}";
