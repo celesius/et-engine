@@ -81,8 +81,9 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 
 	if (_image.texture.valid())
 	{
+		vec4 aColor = _state == ElementState_Pressed ? vec4(0.5f, 0.5f, 0.5f, 1.0f) : vec4(1.0f);
 		gr.createImageVertices(_imageVertices, _image.texture, _image.descriptor, 
-			rect(imageOrigin, _image.descriptor.size), alphaScaleColor, transform, GuiRenderLayer_Layer0);
+			rect(imageOrigin, _image.descriptor.size), aColor * alphaScaleColor, transform, GuiRenderLayer_Layer0);
 	}
 }
 
@@ -120,6 +121,20 @@ bool Button::pointerReleased(const PointerInputInfo& p)
 		newState = adjustElementState(_selected ? ElementState_SelectedHovered : ElementState_Hovered);
 	}
 
+	setCurrentState(newState);
+	return true;
+}
+
+bool Button::pointerCanceled(const PointerInputInfo& p)
+{
+	if ((p.type != PointerType_General) || !_pressed) return false;
+	
+	_pressed = false;
+	ElementState newState = newState = _selected ? ElementState_Selected : ElementState_Default;
+	
+	if (containLocalPoint(p.pos))
+		newState = adjustElementState(_selected ? ElementState_SelectedHovered : ElementState_Hovered);
+	
 	setCurrentState(newState);
 	return true;
 }

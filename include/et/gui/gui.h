@@ -18,6 +18,7 @@
 #include <et/gui/button.h>
 #include <et/gui/listbox.h>
 #include <et/gui/textfield.h>
+#include <et/gui/scroll.h>
 
 namespace et
 {

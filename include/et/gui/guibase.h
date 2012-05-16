@@ -56,7 +56,8 @@ namespace et
 			ElementFlag_RequiresKeyboard = 0x0001,
 			ElementFlag_Dragable = 0x0002,
 			ElementFlag_TransparentForPointer = 0x0004,
-			ElementFlag_RenderTopmost = 0x0008
+			ElementFlag_RenderTopmost = 0x0008,
+			ElementFlag_HandlesChildEvents = 0x0010
 		};
 		
 		enum GuiRenderLayer 
@@ -149,10 +150,10 @@ namespace et
 				position(0.0f), texCoord(0.0f), color(0.0f) { }
 
 			GuiVertex(const vec2& pos, const vec4& tc, const vec4& c = vec4(1.0f)) : 
-				position(pos, 0.0f), texCoord(tc), color(c) { }
+				position(floorv(pos), 0.0f), texCoord(tc), color(c) { }
 
 			GuiVertex(const vec3& pos, const vec4& tc, const vec4& c = vec4(1.0f)) : 
-				position(pos), texCoord(tc), color(c) { }
+				position(floorv(pos)), texCoord(tc), color(c) { }
 
 		public:
 			vec3 position;
@@ -265,6 +266,9 @@ namespace et
 			virtual bool pointerScrolled(const PointerInputInfo&)
 				{ return !hasFlag(ElementFlag_TransparentForPointer); }
 
+			virtual bool pointerCanceled(const PointerInputInfo&)
+				{ return !hasFlag(ElementFlag_TransparentForPointer); }
+			
 			virtual void pointerEntered(const PointerInputInfo&) { }
 			virtual void pointerLeaved(const PointerInputInfo&) { }
 
@@ -282,6 +286,9 @@ namespace et
 				{ return 1.0f; }
 
 			virtual mat4 finalTransform() 
+				{ return IDENTITY_MATRIX; }
+			
+			virtual mat4 finalInverseTransform() 
 				{ return IDENTITY_MATRIX; }
 
 			virtual void setFocus() { };
@@ -303,7 +310,7 @@ namespace et
 			virtual vec2 origin() const = 0;
 			virtual const vec2& size() const = 0;
 			virtual BaseAnimator* setPosition(const vec2& p, float duration = 0.0f) = 0;
-			virtual bool containPoint(const vec2&, const vec2&) = 0;
+			virtual bool containsPoint(const vec2&, const vec2&) = 0;
 
 			/*
 			 * Events

@@ -67,7 +67,7 @@ namespace et
 		inline Rect operator + (const Rect& r) const
 			{ return Rect(left + r.left, top + r.top, width + r.width, height + r.height); }
 
-		inline bool containPoint(const vector2<T>& p) const
+		inline bool containsPoint(const vector2<T>& p) const
 			{ return (p.x >= left) && (p.y >= top) && (p.x < right()) && (p.y < bottom()); }
 
 		inline vector2<T> leftTop() const 

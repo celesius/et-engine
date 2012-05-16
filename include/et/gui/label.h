@@ -53,7 +53,5 @@ namespace et
 			bool _animatingText;
 			bool _allowFormatting;
 		};
-
-		typedef std::vector<Label::Pointer> LabelList;
 	}
 }

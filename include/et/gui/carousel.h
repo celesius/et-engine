@@ -52,7 +52,7 @@ namespace et
 			inline void setActualIndex(float i)
 				{ _actualIndex = i; }
 
-			bool containPoint(const vec2&, const vec2&);
+			bool containsPoint(const vec2&, const vec2&);
 			void buildVertexList(GuiRenderer& gr);
 			bool rayIntersect(const ray& r);
 
@@ -109,7 +109,7 @@ namespace et
 			void pointerEntered(const PointerInputInfo&);
 			void pointerLeaved(const PointerInputInfo&);
 
-			bool containPoint(const vec2&, const vec2&);
+			bool containsPoint(const vec2&, const vec2&);
 			void update(float t);
 
 			void setCenter(const vec2& c, float duration = 0.0f);
