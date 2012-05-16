@@ -101,7 +101,7 @@ void CarouselItem::buildVertexList(GuiRenderer& gr)
 	setContentValid();
 }
 
-bool CarouselItem::containPoint(const vec2&, const vec2&)
+bool CarouselItem::containsPoint(const vec2&, const vec2&)
 {
 	return false;
 }
@@ -441,7 +441,7 @@ void Carousel::pointerLeaved(const PointerInputInfo&)
 {
 }
 
-bool Carousel::containPoint(const vec2& p, const vec2& np)
+bool Carousel::containsPoint(const vec2& p, const vec2& np)
 {
 	CarouselItem::Pointer item = itemForInputInfo(PointerInputInfo(PointerType_General, p, np, 0, 0, 0.0f), 0);
 	return (_alpha > 0.0f) && (_dragOnlyItems ? item.valid() : true);

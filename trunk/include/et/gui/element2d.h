@@ -76,7 +76,7 @@ namespace et
 			BaseAnimator* rotate(float angle, float duration = 0.0f);
 			BaseAnimator* setVisible(bool visible, float duration = 0.0f);
 
-			virtual bool containPoint(const vec2& p, const vec2&);
+			virtual bool containsPoint(const vec2& p, const vec2&);
 			virtual bool containLocalPoint(const vec2& p);
 
 			mat4 finalTransform();

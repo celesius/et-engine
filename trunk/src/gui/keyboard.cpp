@@ -294,7 +294,7 @@ bool Keyboard::pointerPressed(const PointerInputInfo& p)
 	for (; i != e; ++i)
 	{
 		Button::Pointer btn = *i;
-		if (btn->containPoint(p.pos, p.normalizedPos))
+		if (btn->containsPoint(p.pos, p.normalizedPos))
 		{
 			_pressedButton = btn;
 			btn->pointerPressed(PointerInputInfo(p.type, btn->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp));
@@ -305,7 +305,7 @@ bool Keyboard::pointerPressed(const PointerInputInfo& p)
 	for (i = _serviceButtons.begin(), e = _serviceButtons.end(); i != e; ++i)
 	{
 		Button::Pointer btn = *i;
-		if (btn->containPoint(p.pos, p.normalizedPos))
+		if (btn->containsPoint(p.pos, p.normalizedPos))
 		{
 			_pressedButton = btn;
 			btn->pointerPressed(PointerInputInfo(p.type, btn->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp));
@@ -313,7 +313,7 @@ bool Keyboard::pointerPressed(const PointerInputInfo& p)
 		}
 	}
 
-	return containPoint(p.pos, p.normalizedPos);
+	return containsPoint(p.pos, p.normalizedPos);
 }
 
 void Keyboard::setActiveButton(Button::Pointer btn, const PointerInputInfo& np)
@@ -336,7 +336,7 @@ bool Keyboard::pointerMoved(const PointerInputInfo& p)
 	for (; i != e; ++i)
 	{
 		Button::Pointer btn = *i;
-		if (btn->containPoint(p.pos, p.normalizedPos))
+		if (btn->containsPoint(p.pos, p.normalizedPos))
 		{
 			PointerInputInfo np(p.type, btn->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp);
 			setActiveButton(btn, np);
@@ -348,7 +348,7 @@ bool Keyboard::pointerMoved(const PointerInputInfo& p)
 	for (i = _serviceButtons.begin(), e = _serviceButtons.end(); i != e; ++i)
 	{
 		Button::Pointer btn = *i;
-		if (btn->containPoint(p.pos, p.normalizedPos))
+		if (btn->containsPoint(p.pos, p.normalizedPos))
 		{
 			PointerInputInfo np(p.type, btn->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp);
 			setActiveButton(btn, np);
@@ -358,7 +358,7 @@ bool Keyboard::pointerMoved(const PointerInputInfo& p)
 	}
 
 	setActiveButton(Button::Pointer(), p);
-	return containPoint(p.pos, p.normalizedPos);
+	return containsPoint(p.pos, p.normalizedPos);
 }
 
 bool Keyboard::pointerReleased(const PointerInputInfo& p)
@@ -370,7 +370,7 @@ bool Keyboard::pointerReleased(const PointerInputInfo& p)
 	for (; i != e; ++i)
 	{
 		Button::Pointer btn = *i;
-		if (btn->containPoint(p.pos, p.normalizedPos))
+		if (btn->containsPoint(p.pos, p.normalizedPos))
 		{
 			btn->pointerReleased(PointerInputInfo(p.type, btn->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp));
 			processed = true;
@@ -383,7 +383,7 @@ bool Keyboard::pointerReleased(const PointerInputInfo& p)
 		for (i = _serviceButtons.begin(), e = _serviceButtons.end(); i != e; ++i)
 		{
 			Button::Pointer btn = *i;
-			if (btn->containPoint(p.pos, p.normalizedPos))
+			if (btn->containsPoint(p.pos, p.normalizedPos))
 			{
 				btn->pointerReleased(PointerInputInfo(p.type, btn->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp));
 				processed = true;
@@ -398,12 +398,12 @@ bool Keyboard::pointerReleased(const PointerInputInfo& p)
 		_pressedButton.reset(0);
 	}
 
-	return processed || containPoint(p.pos, p.normalizedPos);
+	return processed || containsPoint(p.pos, p.normalizedPos);
 }
 
 bool Keyboard::pointerScrolled(const PointerInputInfo& p)
 {
-	return containPoint(p.pos, p.normalizedPos);
+	return containsPoint(p.pos, p.normalizedPos);
 }
 
 void Keyboard::onButtonPressed(Button* b)

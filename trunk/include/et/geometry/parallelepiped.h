@@ -74,7 +74,7 @@ namespace et
 		inline Parallelepiped operator + (const Parallelepiped& r) const
 			{ return Parallelepiped(left + r.left, top + r.top, nearValue + r.nearValue, width + r.width, height + r.height, depth + r.depth); }
 
-		inline bool containPoint(const vector3<T>& p) const
+		inline bool containsPoint(const vector3<T>& p) const
 			{ return (p.x >= left) && (p.y >= top) && (p.z >= nearValue) && (p.x < right()) && (p.y < bottom()) && (p.z <= farValue()); }
 
 	};

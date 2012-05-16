@@ -234,7 +234,10 @@ Element* Layout::activeElement(const PointerInputInfo& p)
 
 Element* Layout::getActiveElement(const PointerInputInfo& p, Element* e)
 {
-	if (!e->visible() || !e->enabled() || !e->containPoint(p.pos, p.normalizedPos)) return 0;
+	if (!e->visible() || !e->enabled() || !e->containsPoint(p.pos, p.normalizedPos)) return 0;
+	
+	if (e->hasFlag(ElementFlag_HandlesChildEvents))
+		return e;
 
 	for (Element::List::reverse_iterator ei = e->children().rbegin(), ee = e->children().rend(); ei != ee; ++ei)
 	{

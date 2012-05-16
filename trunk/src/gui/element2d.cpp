@@ -238,7 +238,7 @@ void Element2D::animatorFinished(BaseAnimator* a)
 	a->destroy();
 }
 
-bool Element2D::containPoint(const vec2& p, const vec2&) 
+bool Element2D::containsPoint(const vec2& p, const vec2&) 
 {
 	vec2 tp = finalInverseTransform() * p;
 	return (tp.x >= 0.0f) && (tp.y >= 0.0f) && (tp.x < _frame.width) && (tp.y < _frame.height);
@@ -282,4 +282,3 @@ vec2 Element2D::positionInElement(const vec2& p)
 {
 	return finalInverseTransform() * p;
 }
-

@@ -234,10 +234,10 @@ bool Listbox::shouldDrawText()
 	return !(_popupOpened || (_selectedIndex == -1));
 }
 
-bool Listbox::containPoint(const vec2& p, const vec2& np)
+bool Listbox::containsPoint(const vec2& p, const vec2& np)
 {
-	bool inPopup = _popupOpened && _popup->containPoint(p, np);
-	return Element2D::containPoint(p, np) || inPopup;
+	bool inPopup = _popupOpened && _popup->containsPoint(p, np);
+	return Element2D::containsPoint(p, np) || inPopup;
 }
 
 BaseAnimator* Listbox::setFrame(const rect& r, float duration)

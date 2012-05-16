@@ -67,6 +67,7 @@ namespace et
 
 			bool pointerPressed(const PointerInputInfo&);
 			bool pointerReleased(const PointerInputInfo&);
+			bool pointerCanceled(const PointerInputInfo&);
 			void pointerEntered(const PointerInputInfo&);
 			void pointerLeaved(const PointerInputInfo&);
 
