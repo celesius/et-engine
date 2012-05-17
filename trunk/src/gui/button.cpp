@@ -21,7 +21,7 @@ Button::Button(const std::string& title, const Font& font, Element2D* parent) : 
 
 void Button::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 {
-	if (!contentValid())
+	if (!contentValid() || !transformValid())
 		buildVertices(rc, gr);
 
 	bool hasBackground = _background[_state].texture.valid();

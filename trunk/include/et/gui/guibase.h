@@ -40,8 +40,8 @@ namespace et
 		{
 			if (!input().canGetCurrentPointerInfo() && ((s == ElementState_Hovered) || (s == ElementState_SelectedHovered)))
 				return static_cast<ElementState>(s - 1);
-			else 
-				return s;
+			
+			return s;
 		}
 
 		enum ElementClass
@@ -320,25 +320,25 @@ namespace et
 			ET_DECLARE_EVENT2(dragFinished, Element*, const ElementDragInfo&)
 
 		protected:
-			inline void setContentValid()
+			void setContentValid()
 				{ _contentValid = true; }
 
-			inline bool contentValid() const
+			bool contentValid() const
 				{ return _contentValid; }
 
-			inline bool transformValid() const
+			bool transformValid() const
 				{ return _transformValid; }
 
-			inline bool inverseTransformValid()
+			bool inverseTransformValid()
 				{ return _inverseTransformValid; }
 
 			virtual void setInvalid()
 				{ if (parent()) parent()->setInvalid(); }
 
-			inline void setTransformValid(bool v) 
+			void setTransformValid(bool v) 
 				{ _transformValid = v; }
 
-			inline void setIverseTransformValid(bool v)
+			void setIverseTransformValid(bool v)
 				{ _inverseTransformValid = v; }
 
 			virtual mat4 parentFinalTransform()
@@ -362,8 +362,11 @@ namespace et
 		private:
 			friend class Hierarchy<Element>;
 
-			Element(const Element&) : ElementHierarchy(0) { }
-			inline Element& operator = (const Element&) { return *this; }
+			Element(const Element&) : ElementHierarchy(0)
+				{ }
+			
+			Element& operator = (const Element&)
+				{ return *this; }
 
 			void startUpdates(TimerPoolObject* timerPool);
 
