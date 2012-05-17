@@ -478,9 +478,7 @@ void Carousel::update(float t)
 	float fvel = fabsf(_velocity);
 	if (!_animating && (fvel != 0.0f))
 	{
-		float dv = dt * slowdownCoefficient;
-		if (dv > 1.0f)
-			dv = 1.0f;
+		float dv = etMin(1.0f, dt * slowdownCoefficient);
 
 		_selectedItem += dt * _velocity;
 		_velocity -= dv * _velocity;
@@ -496,7 +494,6 @@ bool Carousel::performClick(const PointerInputInfo& p)
 {
 	int index = 0;
 
-	ray r =	camera().castRay(p.normalizedPos);
 	CarouselItem::Pointer item = itemForInputInfo(p, &index);
 	if (item.valid())
 	{

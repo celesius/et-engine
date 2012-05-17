@@ -30,7 +30,7 @@ ImageView::ImageView(const Image& img, Element2D* parent) :
 
 void ImageView::addToRenderQueue(RenderContext* rc, GuiRenderer& g)
 {
-	if (!contentValid())
+	if (!contentValid() || !transformValid())
 		buildVertices(rc, g);
 
 	if (_vertices.size())
@@ -39,14 +39,14 @@ void ImageView::addToRenderQueue(RenderContext* rc, GuiRenderer& g)
 
 void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 {
+	mat4 transform = finalTransform();
 	_vertices.setOffset(0);
 	
 	if (_backgroundColor.w > 0.0f)
-		g.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor, finalTransform(), GuiRenderLayer_Layer1);
+		g.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor, transform, GuiRenderLayer_Layer1);
 	
 	if (!_texture.valid()) return;
 
-	mat4 transform = finalTransform();
 	float imageWidth = _descriptor.size.x;
 	float imageHeight = _descriptor.size.y;
 

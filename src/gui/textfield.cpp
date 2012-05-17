@@ -23,7 +23,7 @@ TextField::TextField(const Image& background, const std::string& text, const Fon
 
 void TextField::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 {
-	if (!contentValid())
+	if (!contentValid() || !transformValid())
 		buildVertices(rc, gr);
 
 	if (_imageVertices.currentIndex())

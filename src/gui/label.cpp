@@ -22,7 +22,7 @@ Label::Label(const std::string& text, const Font& font, Element2D* parent) :
 
 void Label::addToRenderQueue(RenderContext* rc, GuiRenderer& guiRenderer) 
 {
-	if (!contentValid())
+	if (!contentValid() || !transformValid())
 		buildVertices(rc, guiRenderer);
 
 	if (_vertices.currentIndex())

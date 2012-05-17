@@ -107,7 +107,7 @@ void ListboxPopup::animatorFinished(BaseAnimator* a)
 
 void ListboxPopup::addToRenderQueue(RenderContext*, GuiRenderer& gr)
 {
-	if (!contentValid())
+	if (!contentValid() || !transformValid())
 		buildVertices(gr);
 
 	if (_backgroundVertices.currentIndex())

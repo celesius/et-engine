@@ -38,11 +38,14 @@ void CameraElement::serialize(std::ostream& stream)
 
 void CameraElement::deserialize(std::istream& stream, ElementFactory* factory)
 {
-	mat4 mv = deserializeMatrix(stream);
-	mat4 proj = deserializeMatrix(stream);
-    //	bool upLocked = deserializeInt(stream) != 0;
+//	mat4 mv =
+	deserializeMatrix(stream);
+//	mat4 proj =
+	deserializeMatrix(stream);
+//	bool upLocked =
     deserializeInt(stream);
-	vec3 locked = deserializeVector<vec3>(stream);
+//	vec3 locked =
+	deserializeVector<vec3>(stream);
 
 	deserializeGeneralParameters(stream);
 	deserializeChildren(stream, factory);
