@@ -402,17 +402,36 @@ bool RenderContextPrivate::initOpenGL(const RenderContextParameters& params)
 	{
 		int attrib_list[] = 
 		{
-			WGL_CONTEXT_MAJOR_VERSION_ARB, 0,
-			WGL_CONTEXT_MINOR_VERSION_ARB, 0,
-			WGL_CONTEXT_FLAGS_ARB, 0,
-			WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
-			0, 0
+			WGL_CONTEXT_MAJOR_VERSION_ARB, 
+				params.openGLMaxVersion.x,
+
+			WGL_CONTEXT_MINOR_VERSION_ARB, 
+				params.openGLMaxVersion.y,
+
+			WGL_CONTEXT_FLAGS_ARB, 
+				params.openGLForwardContext * WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+
+			0, 0, 0, 0
 		};
 
-		attrib_list[1] = params.openGLMaxVersion.x;
-		attrib_list[3] = params.openGLMaxVersion.y;
-		attrib_list[5] = params.openGLForwardContext * WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB;
+		if (params.openGLMaxVersion.x >= 3)
+		{
+			attrib_list[6] = WGL_CONTEXT_PROFILE_MASK_ARB;
+			attrib_list[7] = params.openGLCoreProfile * WGL_CONTEXT_CORE_PROFILE_BIT_ARB | 
+							 params.openGLCoreProfile * WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
+		}
+
 		primaryContext.hGLRC = wglCreateContextAttribsARB(primaryContext.hDC, 0, attrib_list);
+		if (primaryContext.hGLRC == 0)
+		{
+			DWORD lastError = GetLastError();
+			if (lastError = ERROR_INVALID_VERSION_ARB)
+				std::cout << "Error creating context: ERROR_INVALID_VERSION_ARB. Requested: " << params.openGLMaxVersion << std::endl;
+			else if (lastError == ERROR_INVALID_PROFILE_ARB)
+				std::cout << "Error creating context: ERROR_INVALID_PROFILE_ARB" << std::endl;
+			else if (lastError == ERROR_INVALID_PROFILE_ARB)
+				std::cout << "Error creating context: ERROR_INVALID_PROFILE_ARB" << std::endl;
+		}
 
 		while (primaryContext.hGLRC == 0)
 		{
@@ -433,6 +452,15 @@ bool RenderContextPrivate::initOpenGL(const RenderContextParameters& params)
 			}
 
 			primaryContext.hGLRC = wglCreateContextAttribsARB(primaryContext.hDC, 0, attrib_list);
+			if (primaryContext.hGLRC == 0)
+			{
+				DWORD lastError = GetLastError();
+				if (lastError = ERROR_INVALID_VERSION_ARB)
+					std::cout << "Error creating context: ERROR_INVALID_VERSION_ARB. " <<
+								 "Requested: " << attrib_list[1] << "." << attrib_list[3] << std::endl;
+				else if (lastError == ERROR_INVALID_PROFILE_ARB)
+					std::cout << "Error creating context: ERROR_INVALID_PROFILE_ARB" << std::endl;
+			}
 		}
 
 		if (!wglMakeContextCurrentARB(primaryContext.hDC, primaryContext.hDC, primaryContext.hGLRC))

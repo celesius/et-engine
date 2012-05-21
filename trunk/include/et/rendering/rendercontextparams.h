@@ -46,6 +46,7 @@ namespace et
 		MultisamplingQuality multisamplingQuality;
 		bool openGLForwardContext;
 		bool openGLCoreProfile;
+		bool openGLCompatibilityProfile;
 		bool verticalSync;
         
         size_t supportedInterfaceOrientations;

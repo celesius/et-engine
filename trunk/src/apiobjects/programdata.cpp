@@ -214,22 +214,19 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 		glAttachShader(_glID, FragmentShader);
 		checkOpenGLError("glAttachShader<FRAG> " + name());
 
-#if (!ET_OPENGLES)
-		glBindFragDataLocation(_glID, 0, "FragColor");
-		checkOpenGLError("glBindFragDataLocation<color0> " + name());
-
-		glBindFragDataLocation(_glID, 1, "FragColor1");
-		checkOpenGLError("glBindFragDataLocation<color1> " + name());
-
-		glBindFragDataLocation(_glID, 2, "FragColor2");
-		checkOpenGLError("glBindFragDataLocation<color2> " + name());
-
-		glBindFragDataLocation(_glID, 3, "FragColor3");
-		checkOpenGLError("glBindFragDataLocation<color3> " + name());
-
-		glBindFragDataLocation(_glID, 4, "FragColor4");
-		checkOpenGLError("glBindFragDataLocation<color4> " + name());
-#endif	 
+		if (glBindFragDataLocation)
+		{
+			glBindFragDataLocation(_glID, 0, "FragColor");
+			checkOpenGLError("glBindFragDataLocation<color0> " + name());
+			glBindFragDataLocation(_glID, 1, "FragColor1");
+			checkOpenGLError("glBindFragDataLocation<color1> " + name());
+			glBindFragDataLocation(_glID, 2, "FragColor2");
+			checkOpenGLError("glBindFragDataLocation<color2> " + name());
+			glBindFragDataLocation(_glID, 3, "FragColor3");
+			checkOpenGLError("glBindFragDataLocation<color3> " + name());
+			glBindFragDataLocation(_glID, 4, "FragColor4");
+			checkOpenGLError("glBindFragDataLocation<color4> " + name());
+		}
 	} 
 
 	cStatus = link();
