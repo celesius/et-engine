@@ -214,6 +214,7 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 		glAttachShader(_glID, FragmentShader);
 		checkOpenGLError("glAttachShader<FRAG> " + name());
 
+#if (!ET_OPENGLES)
 		if (glBindFragDataLocation)
 		{
 			glBindFragDataLocation(_glID, 0, "FragColor");
@@ -227,6 +228,7 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 			glBindFragDataLocation(_glID, 4, "FragColor4");
 			checkOpenGLError("glBindFragDataLocation<color4> " + name());
 		}
+#endif
 	} 
 
 	cStatus = link();
