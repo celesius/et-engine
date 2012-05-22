@@ -67,7 +67,7 @@ namespace et
 	#define	glBindVertexArray						glBindVertexArrayOES
 	#define	glIsVertexArray							glIsVertexArrayOES
 	
-	#if !defined(glDeleteVertexArrays)	
+	#if !defined(glDeleteVertexArrays)
 		#define glDeleteVertexArrays				glGenVertexArraysOES
 	#endif
 	

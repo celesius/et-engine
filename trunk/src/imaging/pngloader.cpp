@@ -27,8 +27,6 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 	int interlace_method = png_get_interlace_type(pngPtr, infoPtr);
 	int compression = png_get_compression_type(pngPtr, infoPtr);
 	int filter = png_get_filter_type(pngPtr, infoPtr);
-	if (rowBytes)
-		*rowBytes = png_get_rowbytes(pngPtr, infoPtr);
 
 	switch (color_type) 
 	{        
@@ -70,10 +68,13 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 
 	desc.bitsPerPixel = desc.channels * bpp;
 	desc.type = (bpp == 16) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_BYTE;
-
+	
+	if (rowBytes)
+		*rowBytes = png_get_rowbytes(pngPtr, infoPtr);
+	
 	switch (desc.channels)
 	{
-#if defined(GL_R)			
+#if defined(GL_R)
 	case 1: 
 		{
 			desc.internalformat = (bpp == 16) ? GL_R16 : GL_R;
