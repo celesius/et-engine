@@ -8,7 +8,7 @@
 #include <cocos2d.h>
 
 #include <et/app/applicationnotifier.h>
-#include <et/platform-cocos/etapplication.cocos.h>
+#include <et/platform-ios/embeddedapplication.h>
 
 using namespace et;
 
@@ -51,7 +51,7 @@ static etApplication* _sharedInstance = nil;
 	return self;
 }
 
-- (void)loaded
+- (void)loadedInViewController:(UIViewController*)vc
 {
 	NSAssert(_loaded == NO, @"Method [etApplication loaded] should be called once.");
 	
