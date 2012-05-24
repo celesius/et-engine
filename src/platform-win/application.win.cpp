@@ -72,8 +72,8 @@ int Application::run(int argc, char* argv[])
 
 	_delegate->applicationWillTerminate();
 
-	delete _delegate;
-	delete _renderContext;
+	delete _delegate, _delegate = 0;
+	delete _renderContext, _renderContext = 0;
 
 	return _exitCode;
 }
@@ -155,13 +155,14 @@ void Application::setFPSLimit(size_t value)
 void Application::setActive(bool active)
 {
 	if (_active == active) return;
-
 	_active = active;
 
-	if (_active)
-		_delegate->applicationWillActivate();
-	else
-		_delegate->applicationWillDeactivate();
+	if (_delegate == 0) return;
+
+	Invocation i;
+	i.setTarget(_delegate, _active ? &IApplicationDelegate::applicationWillActivate :
+		&IApplicationDelegate::applicationWillDeactivate);
+	i.invoke();
 }
 
 void Application::contextResized(const vec2i& size)

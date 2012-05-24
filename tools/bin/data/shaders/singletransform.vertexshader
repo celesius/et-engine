@@ -1,0 +1,39 @@
+uniform mat4 mModelViewProjection;
+uniform vec3 vCamera;
+uniform vec3 vPrimaryLight;
+uniform mat4 mTransform;
+
+in vec4 Vertex;
+in vec3 Normal;
+in vec2 TexCoord0;
+in vec3 Tangent;
+
+out vec2 TexCoord;
+out vec3 vViewTS;
+out vec3 vLightTS;
+out vec3 vViewWS;
+out vec3 vLightWS;
+out vec3 vNormalWS;
+
+void main()
+{
+ mat3 mTransform3 = mat3(mTransform);
+ vec4 transVertex = mTransform * Vertex;
+
+ vNormalWS = mTransform3 * Normal;
+ vec3 aTangent = mTransform3 * Tangent;
+ vec3 aBinormal = cross(aTangent, vNormalWS);
+
+ vLightWS = vPrimaryLight - transVertex.xyz;
+ vLightTS.x = dot(vLightWS, aTangent);
+ vLightTS.y = dot(vLightWS, aBinormal);
+ vLightTS.z = dot(vLightWS, vNormalWS);
+
+ vViewWS = vCamera - transVertex.xyz;
+ vViewTS.x = dot(vViewWS, aTangent);
+ vViewTS.y = dot(vViewWS, aBinormal);
+ vViewTS.z = dot(vViewWS, vNormalWS);
+
+ TexCoord  = TexCoord0;
+ gl_Position = mModelViewProjection * transVertex;
+}
