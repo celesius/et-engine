@@ -14,20 +14,20 @@
 #include <fbxsdk.h>
 
 #include <et/app/application.h>
-#include <et/device/rendercontext.h>
+#include <et/rendering/rendercontext.h>
 #include <et/apiobjects/vertexbuffer.h>
 #include <et/vertexbuffer/IndexArray.h>
 #include <et/primitives/primitives.h>
 #include <et/resources/textureloader.h>
 #include <et/scene3d/collisionmesh.h>
-#include <et/loaders/fbxloader.h>
+#include <et/models/fbxloader.h>
 
 #pragma comment(lib, "wininet.lib")
 
 #if (ET_DEBUG)
-	#pragma comment(lib, "fbxsdk-2012.2-mtd.lib")
+	#pragma comment(lib, "fbxsdk-2013.1-mtd.lib")
 #else
-	#pragma comment(lib, "fbxsdk-2012.2-mt.lib")
+	#pragma comment(lib, "fbxsdk-2013.1-mt.lib")
 #endif
 
 using namespace FBXSDK_NAMESPACE;
@@ -45,9 +45,9 @@ namespace et
 		std::string _folder;
 
 	public:
-		KFbxSdkManager* manager;
-		KFbxImporter* importer;
-		KFbxScene* scene;
+		FbxManager* manager;
+		FbxImporter* importer;
+		FbxScene* scene;
 
 		s3d::Scene3dStorage::Pointer storage;
 		
@@ -59,22 +59,22 @@ namespace et
 
 		bool import(const std::string& filename);
 		void loadTextures();
-		void loadNode(KFbxNode* node, s3d::Element::Pointer parent);
+		void loadNode(FbxNode* node, s3d::Element::Pointer parent);
 		void buildVertexBuffers(RenderContext* rc, s3d::Element::Pointer root);
 
-		s3d::Mesh::Pointer loadMesh(KFbxMesh* mesh, s3d::Element::Pointer parent, const MaterialList& materials, const StringList& params);
-		Material loadMaterial(KFbxSurfaceMaterial* material);
+		s3d::Mesh::Pointer loadMesh(FbxMesh* mesh, s3d::Element::Pointer parent, const MaterialList& materials, const StringList& params);
+		Material loadMaterial(FbxSurfaceMaterial* material);
 
-		void loadMaterialColorValue(Material& m, const std::string& propName, KFbxSurfaceMaterial* fbxm, 
+		void loadMaterialColorValue(Material& m, const std::string& propName, FbxSurfaceMaterial* fbxm, 
 			const char* fbxprop, const char* fbxpropfactor);
 
-		void loadMaterialValue(Material& m, const std::string& propName, KFbxSurfaceMaterial* fbxm, 
+		void loadMaterialValue(Material& m, const std::string& propName, FbxSurfaceMaterial* fbxm, 
 			const char* fbxprop);
 
-		void loadMaterialTextureValue(Material& m, const std::string& propName, KFbxSurfaceMaterial* fbxm, 
+		void loadMaterialTextureValue(Material& m, const std::string& propName, FbxSurfaceMaterial* fbxm, 
 			const char* fbxprop);
 
-		StringList loadNodeProperties(KFbxNode* node);
+		StringList loadNodeProperties(FbxNode* node);
 	};
 }
 
@@ -84,10 +84,10 @@ using namespace et;
 * Private implementation
 */ 
 
-FBXLoaderPrivate::FBXLoaderPrivate(RenderContext* rc, TextureCache& textureCache) : manager(KFbxSdkManager::Create()), 
+FBXLoaderPrivate::FBXLoaderPrivate(RenderContext* rc, TextureCache& textureCache) : manager(FbxManager::Create()), 
 	_rc(rc), _texCache(textureCache)
 {
-	scene = KFbxScene::Create(manager, 0);
+	scene = FbxScene::Create(manager, 0);
 }
 
 FBXLoaderPrivate::~FBXLoaderPrivate()
@@ -109,18 +109,18 @@ bool FBXLoaderPrivate::import(const std::string& filename)
 	int lSDKMinor = 0;
 	int lSDKRevision = 0;;
 
-	KFbxSdkManager::GetFileFormatVersion(lSDKMajor, lSDKMinor, lSDKRevision);
-	importer = KFbxImporter::Create(manager, 0);
+	FbxManager::GetFileFormatVersion(lSDKMajor, lSDKMinor, lSDKRevision);
+	importer = FbxImporter::Create(manager, 0);
 	bool status = importer->Initialize(filename.c_str(), -1, manager->GetIOSettings());
 	importer->GetFileVersion(lFileMajor, lFileMinor, lFileRevision);
 
 	if (!status)
 	{
-		printf("Call to KFbxImporter::Initialize() failed.\n");
+		printf("Call to FbxImporter::Initialize() failed.\n");
 		printf("Error returned: %s\n", importer->GetLastErrorString());
 
-		if (importer->GetLastErrorID() == KFbxIO::eFILE_VERSION_NOT_SUPPORTED_YET ||
-			importer->GetLastErrorID() == KFbxIO::eFILE_VERSION_NOT_SUPPORTED_ANYMORE)
+		if (importer->GetLastErrorID() == FbxIO::eFileVersionNotSupportedYet ||
+			importer->GetLastErrorID() == FbxIO::eFileVersionNotSupportedAnymore)
 		{
 			printf("FBX version number for this FBX SDK is %d.%d.%d\n", lSDKMajor, lSDKMinor, lSDKRevision);
 			printf("FBX version number for file %s is %d.%d.%d\n\n", filename.c_str(), lFileMajor, lFileMinor, lFileRevision);
@@ -154,17 +154,17 @@ s3d::ElementContainer::Pointer FBXLoaderPrivate::parse()
 	s3d::ElementContainer::Pointer result(new s3d::ElementContainer("_fbx", 0));
 	storage = s3d::Scene3dStorage::Pointer(new s3d::Scene3dStorage("_fbx_storage", result.ptr()));
 
-	KFbxAxisSystem targetAxisSystem(KFbxAxisSystem::YAxis, KFbxAxisSystem::ParityOdd, KFbxAxisSystem::RightHanded);
+	FbxAxisSystem targetAxisSystem(FbxAxisSystem::eYAxis, FbxAxisSystem::eParityOdd, FbxAxisSystem::eRightHanded);
 
 	int upAxis = scene->GetGlobalSettings().GetOriginalUpAxis();
 	if (upAxis != 1)
 		targetAxisSystem.ConvertScene(scene);
 
-	KFbxSystemUnit sceneSystemUnit = scene->GetGlobalSettings().GetOriginalSystemUnit();
+	FbxSystemUnit sceneSystemUnit = scene->GetGlobalSettings().GetOriginalSystemUnit();
 	if (sceneSystemUnit.GetScaleFactor() != 1.0f)
-		KFbxSystemUnit::cm.ConvertScene(scene);
+		FbxSystemUnit::cm.ConvertScene(scene);
 
-	KFbxNode* root = scene->GetRootNode(); 
+	FbxNode* root = scene->GetRootNode(); 
 	root->ResetPivotSetAndConvertAnimation();
 
 	loadTextures();
@@ -179,7 +179,7 @@ void FBXLoaderPrivate::loadTextures()
 	int textures = scene->GetTextureCount();
 	for (int i = 0; i < textures; ++i)
 	{
-		KFbxFileTexture* fileTexture = KFbxCast<KFbxFileTexture>(scene->GetTexture(i));
+		FbxFileTexture* fileTexture = FbxCast<FbxFileTexture>(scene->GetTexture(i));
 		if (fileTexture && !fileTexture->GetUserDataPtr())
 		{
 			std::string originalName = removeFileExt(fileTexture->GetRelativeFileName());
@@ -196,7 +196,7 @@ void FBXLoaderPrivate::loadTextures()
 	}
 }
 
-void FBXLoaderPrivate::loadNode(KFbxNode* node, s3d::Element::Pointer parent)
+void FBXLoaderPrivate::loadNode(FbxNode* node, s3d::Element::Pointer parent)
 {
 	MaterialList materials;
 	StringList props = loadNodeProperties(node);
@@ -204,7 +204,7 @@ void FBXLoaderPrivate::loadNode(KFbxNode* node, s3d::Element::Pointer parent)
 	const int lMaterialCount = node->GetMaterialCount();
 	for (int lMaterialIndex = 0; lMaterialIndex < lMaterialCount; ++lMaterialIndex)
 	{
-		KFbxSurfaceMaterial* lMaterial = node->GetMaterial(lMaterialIndex);
+		FbxSurfaceMaterial* lMaterial = node->GetMaterial(lMaterialIndex);
 		MaterialData* storedMaterial = static_cast<MaterialData*>(lMaterial->GetUserDataPtr());
 		if (storedMaterial == 0)
 		{
@@ -221,16 +221,16 @@ void FBXLoaderPrivate::loadNode(KFbxNode* node, s3d::Element::Pointer parent)
 
 	s3d::Element::Pointer createdElement;
 
-	KFbxNodeAttribute* lNodeAttribute = node->GetNodeAttribute();
+	FbxNodeAttribute* lNodeAttribute = node->GetNodeAttribute();
 	if (lNodeAttribute)
 	{
-		if (lNodeAttribute->GetAttributeType() == KFbxNodeAttribute::eMESH)
+		if (lNodeAttribute->GetAttributeType() == FbxNodeAttribute::eMesh)
 		{
-			KFbxMesh* mesh = node->GetMesh();
+			FbxMesh* mesh = node->GetMesh();
 			if (!mesh->IsTriangleMesh())
 			{
 				std::cout << "Triangulating " << node->GetName() << "...";
-				KFbxGeometryConverter lConverter(node->GetFbxSdkManager());
+				FbxGeometryConverter lConverter(node->GetFbxManager());
 				lConverter.TriangulateInPlace(node);
 				mesh = node->GetMesh();
 				std::cout << " done." << std::endl;
@@ -259,7 +259,7 @@ void FBXLoaderPrivate::loadNode(KFbxNode* node, s3d::Element::Pointer parent)
 	if (!createdElement.valid())
 		createdElement = s3d::ElementContainer::Pointer(new s3d::ElementContainer(node->GetName(), parent.ptr()));
 
-	const KFbxMatrix& fbxTransform = node->EvaluateLocalTransform();
+	const FbxMatrix& fbxTransform = node->EvaluateLocalTransform();
 	mat4 transform;
 	for (int v = 0; v < 4; ++v)
 	{
@@ -277,17 +277,17 @@ void FBXLoaderPrivate::loadNode(KFbxNode* node, s3d::Element::Pointer parent)
 		loadNode(node->GetChild(lChildIndex), createdElement);
 }
 
-void FBXLoaderPrivate::loadMaterialColorValue(Material& m, const std::string& propName, KFbxSurfaceMaterial* fbxm, 
+void FBXLoaderPrivate::loadMaterialColorValue(Material& m, const std::string& propName, FbxSurfaceMaterial* fbxm, 
 	const char* fbxprop, const char* fbxpropfactor)
 {
-	KFbxProperty value = fbxm->FindProperty(fbxprop);
-	KFbxProperty factor = fbxm->FindProperty(fbxpropfactor);
+	FbxProperty value = fbxm->FindProperty(fbxprop);
+	FbxProperty factor = fbxm->FindProperty(fbxpropfactor);
 	if (value.IsValid())
 	{
-		fbxDouble3 data = KFbxGet<fbxDouble3>(value);
+		FbxDouble3 data = value.Get<FbxDouble3>();
 		if (factor.IsValid())
 		{
-			double factorData = KFbxGet<double>(factor);
+			double factorData = factor.Get<double>();
 			data[0] *= factorData;
 			data[1] *= factorData;
 			data[2] *= factorData;
@@ -296,15 +296,15 @@ void FBXLoaderPrivate::loadMaterialColorValue(Material& m, const std::string& pr
 	}
 }
 
-void FBXLoaderPrivate::loadMaterialTextureValue(Material& m, const std::string& propName, KFbxSurfaceMaterial* fbxm, const char* fbxprop)
+void FBXLoaderPrivate::loadMaterialTextureValue(Material& m, const std::string& propName, FbxSurfaceMaterial* fbxm, const char* fbxprop)
 {
-	KFbxProperty value = fbxm->FindProperty(fbxprop);
+	FbxProperty value = fbxm->FindProperty(fbxprop);
 	if (value.IsValid())
 	{
-		int lTextureCount = value.GetSrcObjectCount(KFbxFileTexture::ClassId);
+		int lTextureCount = value.GetSrcObjectCount(FbxFileTexture::ClassId);
 		if (lTextureCount)
 		{
-			KFbxFileTexture* lTexture = value.GetSrcObject(FBX_TYPE(KFbxFileTexture), 0);
+			FbxFileTexture* lTexture = value.GetSrcObject(FBX_TYPE(FbxFileTexture), 0);
 			if (lTexture && lTexture->GetUserDataPtr())
 			{
 				TextureData* ptr = reinterpret_cast<TextureData*>(lTexture->GetUserDataPtr());
@@ -314,37 +314,37 @@ void FBXLoaderPrivate::loadMaterialTextureValue(Material& m, const std::string& 
 	}
 }
 
-void FBXLoaderPrivate::loadMaterialValue(Material& m, const std::string& propName, KFbxSurfaceMaterial* fbxm, const char* fbxprop)
+void FBXLoaderPrivate::loadMaterialValue(Material& m, const std::string& propName, FbxSurfaceMaterial* fbxm, const char* fbxprop)
 {
-	const KFbxProperty value = fbxm->FindProperty(fbxprop);
+	const FbxProperty value = fbxm->FindProperty(fbxprop);
 	if (value.IsValid())
-		m->setFloat(propName, static_cast<float>(KFbxGet<double>(value)));
+		m->setFloat(propName, static_cast<float>(value.Get<double>()));
 }
 
-Material FBXLoaderPrivate::loadMaterial(KFbxSurfaceMaterial* mat)
+Material FBXLoaderPrivate::loadMaterial(FbxSurfaceMaterial* mat)
 {
 	Material m;
 
-	loadMaterialValue(m, MaterialParameter_Roughness, mat, KFbxSurfaceMaterial::sShininess);
+	loadMaterialValue(m, MaterialParameter_Roughness, mat, FbxSurfaceMaterial::sShininess);
 
-	loadMaterialColorValue(m, MaterialParameter_DiffuseColor, mat, KFbxSurfaceMaterial::sDiffuse, KFbxSurfaceMaterial::sDiffuseFactor);
-	loadMaterialColorValue(m, MaterialParameter_AmbientColor, mat, KFbxSurfaceMaterial::sAmbient, KFbxSurfaceMaterial::sAmbientFactor);
-	loadMaterialColorValue(m, MaterialParameter_EmissiveColor, mat, KFbxSurfaceMaterial::sEmissive, KFbxSurfaceMaterial::sEmissive);
-	loadMaterialColorValue(m, MaterialParameter_SpecularColor, mat, KFbxSurfaceMaterial::sSpecular, KFbxSurfaceMaterial::sSpecularFactor);
+	loadMaterialColorValue(m, MaterialParameter_DiffuseColor, mat, FbxSurfaceMaterial::sDiffuse, FbxSurfaceMaterial::sDiffuseFactor);
+	loadMaterialColorValue(m, MaterialParameter_AmbientColor, mat, FbxSurfaceMaterial::sAmbient, FbxSurfaceMaterial::sAmbientFactor);
+	loadMaterialColorValue(m, MaterialParameter_EmissiveColor, mat, FbxSurfaceMaterial::sEmissive, FbxSurfaceMaterial::sEmissive);
+	loadMaterialColorValue(m, MaterialParameter_SpecularColor, mat, FbxSurfaceMaterial::sSpecular, FbxSurfaceMaterial::sSpecularFactor);
 
-	loadMaterialTextureValue(m, MaterialParameter_DiffuseMap, mat, KFbxSurfaceMaterial::sDiffuse);
-	loadMaterialTextureValue(m, MaterialParameter_AmbientMap, mat, KFbxSurfaceMaterial::sAmbient);
-	loadMaterialTextureValue(m, MaterialParameter_EmissiveMap, mat, KFbxSurfaceMaterial::sEmissive);
-	loadMaterialTextureValue(m, MaterialParameter_SpecularMap, mat, KFbxSurfaceMaterial::sSpecular);
-	loadMaterialTextureValue(m, MaterialParameter_NormalMap, mat, KFbxSurfaceMaterial::sNormalMap);
+	loadMaterialTextureValue(m, MaterialParameter_DiffuseMap, mat, FbxSurfaceMaterial::sDiffuse);
+	loadMaterialTextureValue(m, MaterialParameter_AmbientMap, mat, FbxSurfaceMaterial::sAmbient);
+	loadMaterialTextureValue(m, MaterialParameter_EmissiveMap, mat, FbxSurfaceMaterial::sEmissive);
+	loadMaterialTextureValue(m, MaterialParameter_SpecularMap, mat, FbxSurfaceMaterial::sSpecular);
+	loadMaterialTextureValue(m, MaterialParameter_NormalMap, mat, FbxSurfaceMaterial::sNormalMap);
 
 	if (!m->hasTexture(MaterialParameter_NormalMap))
-		loadMaterialTextureValue(m, MaterialParameter_NormalMap, mat, KFbxSurfaceMaterial::sBump);
+		loadMaterialTextureValue(m, MaterialParameter_NormalMap, mat, FbxSurfaceMaterial::sBump);
 
 	return m;
 }
 
-s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(KFbxMesh* mesh, s3d::Element::Pointer parent, 
+s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Pointer parent, 
 	const MaterialList& materials, const StringList& params)
 {
 	s3d::Element::Pointer element;
@@ -376,15 +376,15 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(KFbxMesh* mesh, s3d::Element::Poin
 	int numMaterials = 0;
 	s3d::Element* realParent = parent.ptr();
 	
-	KFbxGeometryElementMaterial* material = mesh->GetElementMaterial();
-	KFbxLayerElementArrayTemplate<int>* materialIndices = 0;
+	FbxGeometryElementMaterial* material = mesh->GetElementMaterial();
+	FbxLayerElementArrayTemplate<int>* materialIndices = 0;
 	if (material)
 	{
 		numMaterials = 1;
-		KFbxGeometryElement::EMappingMode mapping = material->GetMappingMode();
-		assert((mapping == KFbxGeometryElement::eALL_SAME) || (mapping == KFbxGeometryElement::eBY_POLYGON));
+		FbxGeometryElement::EMappingMode mapping = material->GetMappingMode();
+		assert((mapping == FbxGeometryElement::eAllSame) || (mapping == FbxGeometryElement::eByPolygon));
 
-		isContainer = mapping == KFbxGeometryElement::eBY_POLYGON;
+		isContainer = mapping == FbxGeometryElement::eByPolygon;
 		if (isContainer)
 		{
 			materialIndices = &mesh->GetElementMaterial()->GetIndexArray();
@@ -412,21 +412,21 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(KFbxMesh* mesh, s3d::Element::Poin
 	bool hasTangents = mesh->GetElementTangentCount() > 0;
 	bool hasSmoothingGroups = mesh->GetElementSmoothingCount() > 0;
 
-	const KFbxVector4* lControlPoints = mesh->GetControlPoints();
-	KFbxGeometryElementTangent* tangents = hasTangents ? mesh->GetElementTangent() : 0;
-	KFbxGeometryElementSmoothing* smoothing = hasSmoothingGroups ? mesh->GetElementSmoothing() : 0;
+	const FbxVector4* lControlPoints = mesh->GetControlPoints();
+	FbxGeometryElementTangent* tangents = hasTangents ? mesh->GetElementTangent() : 0;
+	FbxGeometryElementSmoothing* smoothing = hasSmoothingGroups ? mesh->GetElementSmoothing() : 0;
 
 	if (hasNormal)
-		hasNormal = mesh->GetElementNormal()->GetMappingMode() != KFbxGeometryElement::eNONE;
+		hasNormal = mesh->GetElementNormal()->GetMappingMode() != FbxGeometryElement::eNone;
 
 	if (hasUV)
-		hasUV = mesh->GetElementUV()->GetMappingMode() != KFbxGeometryElement::eNONE;
+		hasUV = mesh->GetElementUV()->GetMappingMode() != FbxGeometryElement::eNone;
 
 	if (hasTangents)
-		hasTangents = tangents->GetMappingMode() == KFbxGeometryElement::eBY_POLYGON_VERTEX;
+		hasTangents = tangents->GetMappingMode() == FbxGeometryElement::eByPolygonVertex;
 
 	if (hasSmoothingGroups)
-		hasSmoothingGroups = smoothing->GetMappingMode() == KFbxGeometryElement::eBY_POLYGON;
+		hasSmoothingGroups = smoothing->GetMappingMode() == FbxGeometryElement::eByPolygon;
 
 	VertexDeclaration decl(true, Usage_Position, Type_Vec3);
 
@@ -453,7 +453,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(KFbxMesh* mesh, s3d::Element::Poin
 	RawDataAcessor<vec3> tang = va->chunk(Usage_Tangent).accessData<vec3>(vertexBaseOffset);
 	RawDataAcessor<int> smooth = va->smoothing().accessData<int>(vertexBaseOffset);
 
-	KStringList lUVNames;
+	FbxStringList lUVNames;
 	mesh->GetUVSetNames(lUVNames);
 	std::string uvSetName = (hasUV && lUVNames.GetCount()) ? lUVNames[0].Buffer() : std::string();
 
@@ -461,21 +461,21 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(KFbxMesh* mesh, s3d::Element::Poin
 	int vertexCount = 0;
 	size_t indexOffset = vertexBaseOffset;
 
-#define ET_FBX_LOADER_PUSH_VERTEX KFbxVector4 v = lControlPoints[lControlPointIndex]; \
+#define ET_FBX_LOADER_PUSH_VERTEX FbxVector4 v = lControlPoints[lControlPointIndex]; \
 		pos[vertexCount] = vec3(static_cast<float>(v[0]), static_cast<float>(v[1]), static_cast<float>(v[2]));
 
 #define ET_FBX_LOADER_PUSH_NORMAL if (hasNormal) { \
-		KFbxVector4 n; mesh->GetPolygonVertexNormal(lPolygonIndex, lVerticeIndex, n); \
+		FbxVector4 n; mesh->GetPolygonVertexNormal(lPolygonIndex, lVerticeIndex, n); \
 		nrm[vertexCount] = vec3(static_cast<float>(n[0]), static_cast<float>(n[1]), static_cast<float>(n[2])); }
 
-#define ET_FBX_LOADER_PUSH_UV if (hasUV) { KFbxVector2 t; \
+#define ET_FBX_LOADER_PUSH_UV if (hasUV) { FbxVector2 t; \
 		mesh->GetPolygonVertexUV(lPolygonIndex, lVerticeIndex, uvSetName.c_str(), t); \
 		uv[vertexCount] = vec2(static_cast<float>(t[0]), static_cast<float>(t[1]));	}
 
-#define ET_FBX_LOADER_PUSH_TANGENT if (hasTangents) { KFbxVector4 t; \
-		if (tangents->GetReferenceMode() == KFbxGeometryElement::eDIRECT) \
+#define ET_FBX_LOADER_PUSH_TANGENT if (hasTangents) { FbxVector4 t; \
+		if (tangents->GetReferenceMode() == FbxGeometryElement::eDirect) \
 			t = tangents->GetDirectArray().GetAt(vertexCount); \
-		else if (tangents->GetReferenceMode() == KFbxGeometryElement::eINDEX_TO_DIRECT) \
+	else if (tangents->GetReferenceMode() == FbxGeometryElement::eIndexToDirect) \
 			t = tangents->GetDirectArray().GetAt(tangents->GetIndexArray().GetAt(vertexCount)); \
 		tang[vertexCount] = vec3(static_cast<float>(t[0]), static_cast<float>(t[1]), static_cast<float>(t[2])); }
 
@@ -542,9 +542,9 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(KFbxMesh* mesh, s3d::Element::Poin
 				if (hasSmoothingGroups)
 				{
 					int sgIndex = 0;
-					if (smoothing->GetReferenceMode() == KFbxGeometryElement::eDIRECT)
+					if (smoothing->GetReferenceMode() == FbxGeometryElement::eDirect)
 						sgIndex = lPolygonIndex;
-					else if (smoothing->GetReferenceMode() == KFbxGeometryElement::eINDEX_TO_DIRECT)
+					else if (smoothing->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
 						sgIndex = smoothing->GetIndexArray().GetAt(vertexCount);
 					sgIndex = smoothing->GetDirectArray().GetAt(sgIndex);
 					smooth[vertexCount] = sgIndex;
@@ -605,15 +605,15 @@ void FBXLoaderPrivate::buildVertexBuffers(RenderContext* rc, s3d::Element::Point
 	rc->renderState().bindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-StringList FBXLoaderPrivate::loadNodeProperties(KFbxNode* node)
+StringList FBXLoaderPrivate::loadNodeProperties(FbxNode* node)
 {
 	StringList result;
-	KFbxProperty prop = node->GetFirstProperty();
+	FbxProperty prop = node->GetFirstProperty();
 	while (prop.IsValid())
 	{
-		if (prop.GetFlag(KFbxProperty::eUSER) && (prop.GetPropertyDataType().GetType() == eSTRING))
+		if (prop.GetFlag(FbxPropertyAttr::eUser) && (prop.GetPropertyDataType().GetType() == eFbxString))
 		{
-			KString str = KFbxGet<KString>(prop);
+			FbxString str = prop.Get<FbxString>();
 			size_t len = str.GetLen();
 			size_t i = 0;
 
