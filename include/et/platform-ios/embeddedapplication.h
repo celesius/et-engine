@@ -7,6 +7,8 @@
 
 #pragma once
 
+#import <UIKit/UIKit.h>
+
 namespace et
 {
 	class RenderContext;
@@ -17,7 +19,7 @@ namespace et
 
 + (etApplication*)sharedApplication;
 
-- (void)loaded;
+- (void)loadedInViewController:(UIViewController*)viewController;
 - (et::RenderContext*)renderContext;
 - (et::IApplicationDelegate*)applicationDelegate;
 

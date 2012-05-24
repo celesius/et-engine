@@ -62,7 +62,7 @@ inline bool isOpeningTag(char c)
 inline bool isClosingTag(char c)
 	{ return c == charClosingTag; }
 
-size_t distanceToChar(char* ptr, char value, bool including)
+inline size_t distanceToChar(char* ptr, char value, bool including)
 {
 	size_t result = including ? 1 : 0;
 	while (*ptr++ != value) ++result;

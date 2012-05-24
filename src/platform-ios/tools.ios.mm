@@ -15,12 +15,7 @@ static bool startTimeInitialized = false;
 
 char et::pathDelimiter = '/';
 
-double __queryTime()
-{
-	timeval tv;
-	gettimeofday(&tv, 0);
-	return static_cast<double>(tv.tv_sec) + static_cast<double>(tv.tv_usec) / 1000000.0;
-}
+double __queryTime();
 
 float et::queryTime()
 {
@@ -31,7 +26,14 @@ float et::queryTime()
 	};
 	
 	return static_cast<float>(__queryTime() - startTime);
-} 
+}
+
+double __queryTime()
+{
+	timeval tv;
+	gettimeofday(&tv, 0);
+	return static_cast<double>(tv.tv_sec) + static_cast<double>(tv.tv_usec) / 1000000.0;
+}
 
 std::string et::applicationPath()
 {

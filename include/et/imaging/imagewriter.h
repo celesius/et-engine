@@ -15,7 +15,6 @@ namespace et
 	enum ImageFormat 
 	{
 		ImageFormat_PNG,
-		ImageFormat_RAW
 	};
 
 	class ImageWriter

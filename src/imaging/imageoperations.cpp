@@ -28,12 +28,11 @@ mat3i ImageOperations::matrixFilterSharpen = mat3i(
 	-1,  5, -1,
 	 0, -1,  0);
 
-size_t indexForCoord(const vec2i& coord, const vec2i& size)
-{
-	size_t xVal = coord.x < 0 ? 0 : (coord.x >= size.x ? size.x - 1 : coord.x);
-	size_t yVal = coord.y < 0 ? 0 : (coord.y >= size.y ? size.y - 1 : coord.y);
-	return yVal * size.x + xVal;
-}
+size_t indexForCoord(const vec2i& coord, const vec2i& size);
+bool grayscaleSortFunction(const vec4ub& v1, const vec4ub& v2);
+
+inline int roundf(float v, int minV, int maxV)
+	{ return clamp(static_cast<int>(v), minV, maxV); }
 
 void ImageOperations::transfer(const BinaryDataStorage& src, const vec2i& srcSize, size_t srcComponents,
 	BinaryDataStorage& dst, const vec2i& dstSize, size_t dstComponents, const vec2i& position)
@@ -50,11 +49,6 @@ void ImageOperations::transfer(const BinaryDataStorage& src, const vec2i& srcSiz
 			for (size_t k = 0; k < dstComponents; ++k)
 				dst[dstIndex+k] = (k < srcComponents) ? src[srcIndex + k] : 255;
 		}
-}
-
-int roundf(float v, int minV, int maxV)
-{
-	return clamp(static_cast<int>(v), minV, maxV);
 }
 
 void ImageOperations::draw(const BinaryDataStorage& src, const vec2i& srcSize, size_t srcComponents,
@@ -199,13 +193,6 @@ void ImageOperations::blur(BinaryDataStorage& data, const vec2i& size, size_t co
 	}
 }
 
-bool grayscaleSortFunction(const vec4ub& v1, const vec4ub& v2)
-{
-	int g1 = 76 * v1.x + 150 * v1.y + 29 * v1.z;
-	int g2 = 76 * v2.x + 150 * v2.y + 29 * v2.z;
-	return g1 < g2;
-}
-
 void ImageOperations::median(BinaryDataStorage& data, const vec2i& size, size_t components, int radius)
 {
 	BinaryDataStorage source(data);
@@ -283,4 +270,21 @@ void ImageOperations::applyMatrixFilter(BinaryDataStorage& data, const vec2i& si
 				data[i0 + c] = static_cast<unsigned char>(clamp(result[c], 0, 255));
 		}
 	}
+}
+
+/*
+ * Internal Stuff
+ */
+size_t indexForCoord(const vec2i& coord, const vec2i& size)
+{
+	size_t xVal = coord.x < 0 ? 0 : (coord.x >= size.x ? size.x - 1 : coord.x);
+	size_t yVal = coord.y < 0 ? 0 : (coord.y >= size.y ? size.y - 1 : coord.y);
+	return yVal * size.x + xVal;
+}
+
+bool grayscaleSortFunction(const vec4ub& v1, const vec4ub& v2)
+{
+	int g1 = 76 * v1.x + 150 * v1.y + 29 * v1.z;
+	int g2 = 76 * v2.x + 150 * v2.y + 29 * v2.z;
+	return g1 < g2;
 }
