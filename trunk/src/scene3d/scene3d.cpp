@@ -105,6 +105,7 @@ void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 			std::cout << "READING ELEMENTS..." << std::endl;
 			ElementContainer::deserialize(stream, this);
 			readCompleted = true;
+			std::cout << "DONE." << std::endl;
 		}
 	}
 
