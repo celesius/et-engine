@@ -53,7 +53,7 @@ namespace et
 		float& getFloat(const std::string& param) 
 			{ return _floatParameters[param]; }
 
-		inline vec4& getVec4(const std::string& param) 
+		vec4& getVec4(const std::string& param) 
 			{ return _vectorParameters[param]; }
 
 		bool hasTexture(const std::string& param)

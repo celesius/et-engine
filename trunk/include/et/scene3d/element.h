@@ -87,7 +87,7 @@ namespace et
 
 			void addPropertyString(const std::string& s)
 				{ _properites.push_back(s); }
-
+			
 		protected:
 			void serializeGeneralParameters(std::ostream& stream);
 			void serializeChildren(std::ostream& stream);
@@ -144,7 +144,7 @@ namespace et
 			typedef IntrusivePtr<RenderableElement> Pointer;
 
 		public:
-			RenderableElement(const std::string& name, Element* parent) : Element(name, parent)
+			RenderableElement(const std::string& name, Element* parent) : Element(name, parent), _visible(true)
 				{ setFlag(ElementFlag_Renderable); }
 
 			Material& material() 
@@ -156,8 +156,15 @@ namespace et
 			void setMaterial(const Material& material)
 				{ _material = material; }
 
+			bool visible() const
+				{ return _visible; }
+			
+			void setVisible(bool visible)
+				{ _visible = visible; }
+			
 		private:
 			Material _material;
+			bool _visible;
 		};
 
 		class Scene3dStorage;
