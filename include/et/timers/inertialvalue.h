@@ -16,10 +16,10 @@ namespace et
 	{
 	public:
 		InertialValue() : 
-			_velocity(0), _value(0), _deccelerationRate(1.0f), _time(0.0f) { }
+			_velocity(0), _value(0), _epsilon(0), _deccelerationRate(1.0f), _time(0.0f) { }
 
 		InertialValue(const T& val) :
-			_velocity(0), _value(val), _deccelerationRate(1.0f), _time(0.0f) { }
+			_velocity(0), _value(val), _epsilon(0), _deccelerationRate(1.0f), _time(0.0f) { }
 
 		void setVelocity(const T& t)
 			{ _velocity = t; }
@@ -72,16 +72,22 @@ namespace et
 		{
 			float dt = _deccelerationRate * (t - _time);
 			_velocity *= etMax(0.0f, 1.0f - dt);
-			_value += dt * _velocity;
+			
+			float dValue = dt * _velocity;
+			if (fabsf(dValue) > _epsilon)
+			{
+				_value += dValue;
+				valueUpdated.invoke(_value);
+				updated.invoke();
+			}
+			
 			_time = t;
-
-			valueUpdated.invoke(_value);
-			updated.invoke();
 		}
 
 	private:
 		T _velocity;
 		T _value;
+		T _epsilon;
 		float _deccelerationRate;
 		float _time;
 	};
