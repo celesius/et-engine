@@ -205,3 +205,8 @@ std::string et::selectFile(const std::string& description, const std::string& ex
 	m.push_back(ext);
 	return selectFile(m);
 }
+
+void et::openUrl(const std::string& url)
+{
+	ShellExecute(0, url.c_str(), 0, 0, 0, 0);
+}

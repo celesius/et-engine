@@ -65,6 +65,7 @@ namespace et
 								const vec2i& baseScrSize = vec2i(480, 320),
 								bool forwardContext = false, 
 								bool coreProfile = false,
+								bool compatibilityProfile = false,
 								bool vSync = true,
                                 size_t orientationFlags = InterfaceOrientation_AnyLandscape
 #else 
@@ -76,6 +77,7 @@ namespace et
 								const vec2i& baseScrSize = vec2i(512, 512),
 								bool forwardContext = true, 
 								bool coreProfile = true,
+								bool compatibilityProfile = false,
 								bool vSync = false,
                                 size_t orientationFlags = InterfaceOrientation_Any
 #endif								
@@ -84,6 +86,7 @@ namespace et
 		multisamplingQuality(ms), 
 		openGLForwardContext(forwardContext), 
 		openGLCoreProfile(coreProfile), 
+		openGLCompatibilityProfile(compatibilityProfile),
 		contextPosition(windowPos), 
 		contextSize(windowSize), 
 		openGLMaxVersion(openGLMaxVer), 
