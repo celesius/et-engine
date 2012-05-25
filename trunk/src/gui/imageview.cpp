@@ -68,7 +68,6 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 		}
 		else
 		{
-
 		}
 
 		g.createImageVertices(_vertices, _texture, desc, frame, color(), transform, GuiRenderLayer_Layer0);

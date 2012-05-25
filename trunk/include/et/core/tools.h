@@ -33,6 +33,7 @@ namespace et
 	void findSubfolders(const std::string& folder, bool recursive, StringList& list);
 	std::string selectFile(const StringList& mask);
 	std::string selectFile(const std::string& description, const std::string& ext);
+	void openUrl(const std::string& url);
 
 	// common code
 	inline bool isWhitespaceChar(char c)
