@@ -192,7 +192,7 @@ std::string et::localizedDate()
 	[formatter setTimeStyle:kCFDateFormatterNoStyle];
 	[formatter setDateStyle:kCFDateFormatterMediumStyle];
 	[formatter setLocale:[NSLocale currentLocale]];
-	return std::string([[formatter stringFromDate:[NSDate date]] cStringUsingEncoding:NSASCIIStringEncoding]);
+	return std::string([[formatter stringFromDate:[NSDate date]] cStringUsingEncoding:NSUTF8StringEncoding]);
 }
 
 std::string et::localizedTime()
@@ -201,5 +201,5 @@ std::string et::localizedTime()
 	[formatter setTimeStyle:kCFDateFormatterMediumStyle];
 	[formatter setDateStyle:kCFDateFormatterNoStyle];
 	[formatter setLocale:[NSLocale currentLocale]];
-	return std::string([[formatter stringFromDate:[NSDate date]] cStringUsingEncoding:NSASCIIStringEncoding]);
+	return std::string([[formatter stringFromDate:[NSDate date]] cStringUsingEncoding:NSUTF8StringEncoding]);
 }
