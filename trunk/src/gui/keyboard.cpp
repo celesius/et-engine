@@ -81,7 +81,7 @@ const float yWhitespaceSize = 2.0f * buttonStartOffset + buttonOffset * static_c
 const float switchKeyboardDuration = 0.15f;
 const float showHideDuration = 0.3f;
 
-Keyboard::Keyboard(RenderContext* rc, const Font& font, TextureCache& cache) : Element2D(0), _delegate(0),
+Keyboard::Keyboard(RenderContext* rc, Font font, TextureCache& cache) : Element2D(0), _delegate(0),
 	_descriptor(vec2(0.0f), vec2(128.0f), ContentOffset(6.0f)), _lastActiveButton(0), _pressedButton(0), _capturedElement(0),
 	_extraButtonsVisible(false), _visible(false), _shift(false), _shiftLocked(false)
 {
@@ -110,7 +110,7 @@ void Keyboard::layout(const vec2& sz)
 	setInvalid();
 }
 
-Button::Pointer Keyboard::createButton(ButtonList& list, const std::string& title, const Font& f, bool accented, const vec2& pivot)
+Button::Pointer Keyboard::createButton(ButtonList& list, const std::string& title, Font f, bool accented, const vec2& pivot)
 {
 	Button::Pointer b = Button::Pointer(new Button(title, f, this));
 	b->setPivotPoint(pivot);
@@ -140,7 +140,7 @@ Button::Pointer Keyboard::createButton(ButtonList& list, const std::string& titl
 	return b;
 }
 
-void Keyboard::genServiceButtons(const Font& font, float lastRowWidth)
+void Keyboard::genServiceButtons(Font font, float lastRowWidth)
 {
 	float buttonHeight = floorf((size().y - yWhitespaceSize) / static_cast<float>(numKeyboardRows + 1));
 	float lastRowY = buttonStartOffset + static_cast<float>(numKeyboardRows - 1) * buttonHeight + static_cast<float>(numKeyboardRows - 1) * buttonOffset;
@@ -177,7 +177,7 @@ void Keyboard::genServiceButtons(const Font& font, float lastRowWidth)
 	b->clicked.connect(this, &Keyboard::onReturnPressed);
 }
 
-float Keyboard::genPrimaryButtons(const Font& font)
+float Keyboard::genPrimaryButtons(Font font)
 {
 	float buttonHeight = floorf((size().y - yWhitespaceSize) / static_cast<float>(numKeyboardRows + 1));
 	float yOffset = buttonStartOffset;
@@ -206,7 +206,7 @@ float Keyboard::genPrimaryButtons(const Font& font)
 	return rowWidth;
 }
 
-float Keyboard::genExtraButtons(const Font& font)
+float Keyboard::genExtraButtons(Font font)
 {
 	float buttonHeight = floorf((size().y - yWhitespaceSize) / static_cast<float>(numKeyboardRows + 1));
 	float yOffset = buttonStartOffset;

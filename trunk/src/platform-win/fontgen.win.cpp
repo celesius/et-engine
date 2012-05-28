@@ -25,8 +25,8 @@ FontGenerator::FontGenerator() : _face("Times New Roman"), _size(12), _offset(0.
 		_characterRange.push_back(c);
 }
 
-void FontGenerator::fillCharacterDescriptors(const std::string& face, int size, bool bold, CharDescriptorList& chars, const CharacterRange& range, 
-		const vec2& extraOffsets)
+void FontGenerator::fillCharacterDescriptors(const std::string& face, int size, bool bold, CharDescriptorList& chars, 
+		const CharacterRange& range, const vec2& extraOffsets)
 {
 	HDC dc = CreateCompatibleDC(0);
 	int pointsSize = MulDiv(size, GetDeviceCaps(dc, LOGPIXELSY), 72);

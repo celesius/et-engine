@@ -16,6 +16,7 @@ namespace et
 	{
 	public:
 		RunLoopObject();
+		~RunLoopObject();
 		
 		void update(float t);
 		void pause();

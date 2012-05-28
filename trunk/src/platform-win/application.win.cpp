@@ -33,6 +33,7 @@ Application::Application() :
 
 Application::~Application()
 {
+
 }
 
 IApplicationDelegate* Application::delegate()

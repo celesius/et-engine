@@ -20,7 +20,7 @@ namespace et
 			typedef IntrusivePtr<Label> Pointer;
 
 		public:
-			Label(const std::string& text, const Font& font, Element2D* parent);
+			Label(const std::string& text, Font font, Element2D* parent);
 
 			void addToRenderQueue(RenderContext* rc, GuiRenderer& guiRenderer);
 			void setText(const std::string& text, float duration = 0.0f);

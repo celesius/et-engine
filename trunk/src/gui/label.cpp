@@ -11,7 +11,7 @@
 using namespace et;
 using namespace et::gui;
 
-Label::Label(const std::string& text, const Font& font, Element2D* parent) : 
+Label::Label(const std::string& text, Font font, Element2D* parent) : 
 	Element2D(parent), _text(text), _nextText(text), _font(font), _vertices(0),
 	_backgroundColor(0.0f), _textFade(0.0f), _textFadeDuration(0.0f), _textFadeStartTime(0.0f),
 	_horizontalAlignment(ElementAlignment_Near), _verticalAlignment(ElementAlignment_Near),

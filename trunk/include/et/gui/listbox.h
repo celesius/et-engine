@@ -73,7 +73,7 @@ namespace et
 			typedef IntrusivePtr<Listbox> Pointer;
 
 		public:
-			Listbox(const Font& font, Element2D* parent);
+			Listbox(Font font, Element2D* parent);
 
 			void setImage(const Image& img, ListboxState state);
 			void setBackgroundImage(const Image& img);

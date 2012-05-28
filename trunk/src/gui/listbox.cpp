@@ -161,7 +161,7 @@ void ListboxPopup::pointerLeaved(const PointerInputInfo&)
  * Listbox
  */ 
 
-Listbox::Listbox(const Font& font, Element2D* parent) : Element2D(parent), _font(font), 
+Listbox::Listbox(Font font, Element2D* parent) : Element2D(parent), _font(font), 
 	_state(ListboxState_Default), _contentOffset(0.0f), _selectedIndex(-1), 
 	_direction(ListboxPopupDirection_Bottom), _popupOpened(false), _popupOpening(false), _popupValid(false)
 {
