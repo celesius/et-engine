@@ -7,6 +7,7 @@
 
 #include <Windows.h>
 #include <et/core/tools.h>
+#include <et/core/containers.h>
 
 static bool shouldInitializeFrequency = true;
 static double performanceFrequency = 0.0;
@@ -209,4 +210,38 @@ std::string et::selectFile(const std::string& description, const std::string& ex
 void et::openUrl(const std::string& url)
 {
 	ShellExecute(0, "open", url.c_str(), 0, 0, SW_SHOWNORMAL);
+}
+
+std::string et::localizedDate()
+{
+	SYSTEMTIME st = { };
+	GetSystemTime(&st);
+
+	int bufferSize = GetDateFormatEx(LOCALE_NAME_SYSTEM_DEFAULT, DATE_LONGDATE, &st, 0, 0, 0, 0);
+
+	DataStorage<wchar_t> buffer(bufferSize + 1, 0);
+	GetDateFormatEx(LOCALE_NAME_SYSTEM_DEFAULT, DATE_LONGDATE, &st, 0, buffer.data(), buffer.size(), 0);
+
+	int mbcWidth = WideCharToMultiByte(CP_UTF8, 0, buffer.data(), -1, 0, 0, 0, 0);
+	DataStorage<char> result(mbcWidth + 1, 0);
+	WideCharToMultiByte(CP_UTF8, 0, buffer.data(), -1, result.data(), result.size(), 0, 0);
+
+	return std::string(result.data());
+}
+
+std::string et::localizedTime()
+{
+	SYSTEMTIME st = { };
+	GetSystemTime(&st);
+
+	int bufferSize = GetTimeFormatEx(LOCALE_NAME_SYSTEM_DEFAULT, 0, &st, 0, 0, 0);
+
+	DataStorage<wchar_t> buffer(bufferSize + 1, 0);
+	GetTimeFormatEx(LOCALE_NAME_SYSTEM_DEFAULT, 0, &st, 0, buffer.data(), buffer.size());
+
+	int mbcWidth = WideCharToMultiByte(CP_UTF8, 0, buffer.data(), -1, 0, 0, 0, 0);
+	DataStorage<char> result(mbcWidth + 1, 0);
+	WideCharToMultiByte(CP_UTF8, 0, buffer.data(), -1, result.data(), result.size(), 0, 0);
+
+	return std::string(result.data());
 }
