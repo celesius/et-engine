@@ -80,12 +80,10 @@ void Application::loaded()
 	[mainWindow setRootViewController:(etOpenGLViewController*)_renderingContextHandle];
 	[mainWindow makeKeyAndVisible];
     
-    Invocation i;
-    i.setTarget(this, &Application::enterRunLoop);
-    i.invokeInMainRunLoop();
-    
 	etApplicationDelegate* d = (etApplicationDelegate*)[[UIApplication sharedApplication] delegate];
 	[d beginUpdates];
+	
+	enterRunLoop();
 #endif	
 }
 
