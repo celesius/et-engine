@@ -34,6 +34,9 @@ namespace et
 	std::string selectFile(const StringList& mask);
 	std::string selectFile(const std::string& description, const std::string& ext);
 	void openUrl(const std::string& url);
+	
+	std::string localizedDate();
+	std::string localizedTime();
 
 	// common code
 	inline bool isWhitespaceChar(char c)
