@@ -74,8 +74,7 @@ namespace et
 			_duration = duration;
 			_startTime = actualTime();
 		};
-
-
+		
 	protected:
 		void update(float t)
 		{
