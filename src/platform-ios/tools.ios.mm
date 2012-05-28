@@ -185,3 +185,21 @@ void et::openUrl(const std::string& url)
 	NSURL* aUrl = [NSURL URLWithString:[NSString stringWithCString:url.c_str() encoding:NSASCIIStringEncoding]];
 	[[UIApplication sharedApplication] openURL:aUrl];
 }
+
+std::string et::localizedDate()
+{
+	NSDateFormatter* formatter = [[[NSDateFormatter alloc] init] autorelease];
+	[formatter setTimeStyle:kCFDateFormatterNoStyle];
+	[formatter setDateStyle:kCFDateFormatterMediumStyle];
+	[formatter setLocale:[NSLocale currentLocale]];
+	return std::string([[formatter stringFromDate:[NSDate date]] cStringUsingEncoding:NSASCIIStringEncoding]);
+}
+
+std::string et::localizedTime()
+{
+	NSDateFormatter* formatter = [[[NSDateFormatter alloc] init] autorelease];
+	[formatter setTimeStyle:kCFDateFormatterMediumStyle];
+	[formatter setDateStyle:kCFDateFormatterNoStyle];
+	[formatter setLocale:[NSLocale currentLocale]];
+	return std::string([[formatter stringFromDate:[NSDate date]] cStringUsingEncoding:NSASCIIStringEncoding]);
+}
