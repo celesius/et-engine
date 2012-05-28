@@ -33,6 +33,11 @@ namespace et
 			void setAllowFormatting(bool f);
 			
 			void setHorizontalAlignment(ElementAlignment h);
+			
+			const vec4& backgroundColor() const
+				{ return _backgroundColor; }
+			
+			void setBackgroundColor(const vec4& color);
 
 		private:
 			void buildVertices(RenderContext* rc, GuiRenderer& guiRenderer);
@@ -43,6 +48,7 @@ namespace et
 			std::string _nextText;
 			Font _font;
 			GuiVertexList _vertices;
+			vec4 _backgroundColor;
 			vec2 _textSize;
 			vec2 _nextTextSize;
 			float _textFade;

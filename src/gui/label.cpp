@@ -12,8 +12,8 @@ using namespace et;
 using namespace et::gui;
 
 Label::Label(const std::string& text, const Font& font, Element2D* parent) : 
-	Element2D(parent), _text(text), _nextText(text), _font(font), _vertices(0), 
-	_textFade(0.0f), _textFadeDuration(0.0f), _textFadeStartTime(0.0f),
+	Element2D(parent), _text(text), _nextText(text), _font(font), _vertices(0),
+	_backgroundColor(0.0f), _textFade(0.0f), _textFadeDuration(0.0f), _textFadeStartTime(0.0f),
 	_horizontalAlignment(ElementAlignment_Near), _verticalAlignment(ElementAlignment_Near),
 	_animatingText(false), _allowFormatting(false)
 {
@@ -37,6 +37,9 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 	
 	_textSize = _font->measureStringSize(_text, _allowFormatting);
 	_vertices.resize(0);
+	
+	if (_backgroundColor.w > 0.0f)
+		renderer.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor, transform, GuiRenderLayer_Layer0);
 
 	if (_animatingText)
 	{
@@ -133,5 +136,11 @@ void Label::setHorizontalAlignment(ElementAlignment h)
 	if (_horizontalAlignment == h) return;
 	
 	_horizontalAlignment = h;
+	invalidateContent();
+}
+
+void Label::setBackgroundColor(const vec4& color)
+{
+	_backgroundColor = color;
 	invalidateContent();
 }
