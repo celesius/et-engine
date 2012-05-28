@@ -24,9 +24,10 @@ namespace et
 			{
 				ContentMode_Stretch,
 				ContentMode_Center,
+				ContentMode_Fit,
 				ContentMode_Fill,
 				ContentMode_Tile,
-				ContentMode_Crop
+				ContentMode_Crop,
 			};
 
 		public:

@@ -56,30 +56,32 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 		g.createImageVertices(_vertices, _texture, _descriptor, rect(dp, _descriptor.size), 
 			color(), transform, GuiRenderLayer_Layer0);
 	}
+	else if (_contentMode == ContentMode_Fit)
+	{
+		vec2 frameSize = size();
+		
+		if (_descriptor.size.x > _descriptor.size.y)
+			frameSize.y = frameSize.x / _descriptor.size.aspect();
+		else
+			frameSize.x = frameSize.y / _descriptor.size.aspect();
+		
+		vec2 origin = 0.5f * (size() - frameSize);
+		
+		g.createImageVertices(_vertices, _texture, _descriptor, rect(origin, frameSize), color(), transform, GuiRenderLayer_Layer0);
+	}
 	else if (_contentMode == ContentMode_Fill)
 	{
-		ImageDescriptor desc(_descriptor);
-		rect frame(vec2(0.0f), size());
-
-		bool fitToWidth = (frame.width > frame.height) && (desc.size.x > desc.size.y);
-
-		if (fitToWidth)
-		{
-		}
-		else
-		{
-		}
-
-		g.createImageVertices(_vertices, _texture, desc, frame, color(), transform, GuiRenderLayer_Layer0);
+		std::cout << "ImageView::ContentMode_Fill is not supported yet." << std::endl;
 	}
 	else if (_contentMode == ContentMode_Tile)
 	{
 		int repeatsWidth = static_cast<int>(size().x / imageWidth);
 		int repeatsHeight = static_cast<int>(size().y / imageHeight);
 		int verticesPerImage = g.measuseVerticesCountForImageDescriptor(_descriptor);
+		
 		_vertices.resize(repeatsWidth * repeatsHeight * verticesPerImage);
-
 		_vertices.setOffset(0);
+		
 		for (int v = 0; v < repeatsHeight; ++v)
 		{
 			for (int u = 0; u < repeatsWidth; ++u)
@@ -97,11 +99,9 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 		vec2 dSize = desc.size;
 		desc.size.x = size().x < desc.size.x ? size().x : dSize.x;
 		desc.size.y = size().y < desc.size.y ? size().y : dSize.y;
-
 		vec2 cropped = dSize - desc.size;
 		desc.origin += cropped * pivotPoint();
-
-		 g.createImageVertices(_vertices, _texture, desc, rect(vec2(0.0f), size()), color(), transform, GuiRenderLayer_Layer0);
+		g.createImageVertices(_vertices, _texture, desc, rect(vec2(0.0f), size()), color(), transform, GuiRenderLayer_Layer0);
 	}
 	else
 	{
