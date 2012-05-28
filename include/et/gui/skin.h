@@ -19,7 +19,7 @@ namespace et
 		{
 		public:
 			Skin() { }
-			Skin(const Font& font, const Texture& texture) : _font(font), _texture(texture) { }
+			Skin(Font font, const Texture& texture) : _font(font), _texture(texture) { }
 
 			inline Texture& texture()
 				{ return _texture; }
@@ -30,10 +30,10 @@ namespace et
 			inline void setTexture(const Texture& texture)
 				{ _texture = texture; }
 
-			inline const Font& font() const
+			inline Font font() const
 				{ return _font; }
 
-			inline void setFont(const Font& font)
+			inline void setFont(Font font)
 				{ _font = font; }
 
 			inline const ImageDescriptor& viewImageDescriptor() const

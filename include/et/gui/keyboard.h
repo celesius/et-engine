@@ -25,7 +25,7 @@ namespace et
 		class Keyboard : public Element2D
 		{
 		public:
-			Keyboard(RenderContext* rc, const Font& font, TextureCache& cache);
+			Keyboard(RenderContext* rc, Font font, TextureCache& cache);
 			~Keyboard();
 
 			void layout(const vec2& sz);
@@ -53,10 +53,10 @@ namespace et
 		private:
 			typedef std::vector<Button::Pointer> ButtonList;
 
-			Button::Pointer createButton(ButtonList& list, const std::string& title, const Font& f, bool accented, const vec2& pivot = vec2(0.0f));
-			void genServiceButtons(const Font& font, float lastRowWidth);
-			float genPrimaryButtons(const Font& font);
-			float genExtraButtons(const Font& font);
+			Button::Pointer createButton(ButtonList& list, const std::string& title, Font f, bool accented, const vec2& pivot = vec2(0.0f));
+			void genServiceButtons(Font font, float lastRowWidth);
+			float genPrimaryButtons(Font font);
+			float genExtraButtons(Font font);
 
 			void switchKeyboards(bool animated);
 			void setActiveButton(Button::Pointer btn, const PointerInputInfo& np);

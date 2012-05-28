@@ -32,7 +32,7 @@ namespace et
 			};
 
 		public:
-			Button(const std::string& title, const Font& font, Element2D* parent);
+			Button(const std::string& title, Font font, Element2D* parent);
 
 			void setBackgroundForState(const Texture& tex, const ImageDescriptor& desc, ElementState s);
 			void setBackgroundForState(const Image& img, ElementState s);

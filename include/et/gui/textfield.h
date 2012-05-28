@@ -20,7 +20,7 @@ namespace et
 			typedef IntrusivePtr<TextField> Pointer;
 
 		public:
-			TextField(const Image& background, const std::string& text, const Font& font, 
+			TextField(const Image& background, const std::string& text, Font font, 
 				Element* parent);
 
 			void addToRenderQueue(RenderContext*, GuiRenderer&);

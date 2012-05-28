@@ -18,6 +18,10 @@ RunLoopObject::RunLoopObject() : _mainTimerPool(new TimerPoolObject),
 	attachTimerPool(_mainTimerPool);
 }
 
+RunLoopObject::~RunLoopObject()
+{
+}
+
 void RunLoopObject::update(float t)
 {
 	updateTime(t);

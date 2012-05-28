@@ -8,10 +8,13 @@
 #pragma once
 
 #include <map>
+#include <vector>
 #include <et/core/containers.h>
+#include <et/geometry/geometry.h>
 
 #define FONT_VERSION_1			0x0001
-#define FONT_VERSION_CURRENT	FONT_VERSION_1
+#define FONT_VERSION_2			0x0002
+#define FONT_VERSION_CURRENT	FONT_VERSION_2
 
 namespace et
 {
@@ -24,8 +27,8 @@ namespace et
 
 		struct CharDescriptor
 		{
-			unsigned short value;
-			unsigned short params;
+			int value;
+			int params;
 			vec4 color;
 			vec2 origin;
 			vec2 size;
@@ -44,8 +47,8 @@ namespace et
 		};
 
 
-		typedef std::vector<unsigned short> CharacterRange;
+		typedef std::vector<int> CharacterRange;
 		typedef std::vector<CharDescriptor> CharDescriptorList;
-		typedef std::map<unsigned short, CharDescriptor> CharDescriptorMap;
+		typedef std::map<int, CharDescriptor> CharDescriptorMap;
 	}
 }

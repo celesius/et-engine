@@ -265,4 +265,31 @@ namespace et
 		return result;
 	}
 
+	vec4 strHexToVec4(const std::wstring& s)
+	{
+		vec4 result;
+		size_t value = 0;
+		size_t l = etMin<size_t>(8, s.size());
+
+		size_t scale = 1;
+		const wchar_t* cstr = s.c_str();
+		for (size_t i = 0; i < l; ++i)
+		{
+			value += scale * decodeHex(tolower(cstr[i]));
+			scale *= 16;
+		}
+
+		unsigned char b = static_cast<unsigned char>((value & 0xff000000) >> 24);
+		unsigned char g = static_cast<unsigned char>((value & 0x00ff0000) >> 16);
+		unsigned char r = static_cast<unsigned char>((value & 0x0000ff00) >> 8);
+		unsigned char a = static_cast<unsigned char>((value & 0x000000ff) >> 0);
+
+		result.x = static_cast<float>(r) / 255.0f;
+		result.y = static_cast<float>(g) / 255.0f;
+		result.z = static_cast<float>(b) / 255.0f;
+		result.w = static_cast<float>(a) / 255.0f;
+
+		return result;
+	}
+
 }

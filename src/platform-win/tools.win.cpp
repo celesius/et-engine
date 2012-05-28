@@ -218,15 +218,9 @@ std::string et::localizedDate()
 	GetSystemTime(&st);
 
 	int bufferSize = GetDateFormatEx(LOCALE_NAME_SYSTEM_DEFAULT, DATE_LONGDATE, &st, 0, 0, 0, 0);
-
 	DataStorage<wchar_t> buffer(bufferSize + 1, 0);
 	GetDateFormatEx(LOCALE_NAME_SYSTEM_DEFAULT, DATE_LONGDATE, &st, 0, buffer.data(), buffer.size(), 0);
-
-	int mbcWidth = WideCharToMultiByte(CP_UTF8, 0, buffer.data(), -1, 0, 0, 0, 0);
-	DataStorage<char> result(mbcWidth + 1, 0);
-	WideCharToMultiByte(CP_UTF8, 0, buffer.data(), -1, result.data(), result.size(), 0, 0);
-
-	return std::string(result.data());
+	return unicodeToUtf8(buffer.data());
 }
 
 std::string et::localizedTime()
@@ -235,13 +229,52 @@ std::string et::localizedTime()
 	GetSystemTime(&st);
 
 	int bufferSize = GetTimeFormatEx(LOCALE_NAME_SYSTEM_DEFAULT, 0, &st, 0, 0, 0);
-
 	DataStorage<wchar_t> buffer(bufferSize + 1, 0);
 	GetTimeFormatEx(LOCALE_NAME_SYSTEM_DEFAULT, 0, &st, 0, buffer.data(), buffer.size());
+	return unicodeToUtf8(buffer.data());
+}
 
-	int mbcWidth = WideCharToMultiByte(CP_UTF8, 0, buffer.data(), -1, 0, 0, 0, 0);
+std::string et::unicodeToUtf8(const std::wstring& w)
+{
+	int mbcWidth = WideCharToMultiByte(CP_UTF8, 0, w.c_str(), -1, 0, 0, 0, 0);
+
+	if (mbcWidth == 0)
+		return std::string();
+
 	DataStorage<char> result(mbcWidth + 1, 0);
-	WideCharToMultiByte(CP_UTF8, 0, buffer.data(), -1, result.data(), result.size(), 0, 0);
+	WideCharToMultiByte(CP_UTF8, 0, w.c_str(), -1, result.data(), result.size(), 0, 0);
 
 	return std::string(result.data());
+}
+
+std::wstring et::utf8ToUnicode(const std::string& mbcs)
+{
+	int uWidth = MultiByteToWideChar(CP_UTF8, 0, mbcs.c_str(), -1, 0, 0);
+	if (uWidth == 0)
+	{
+		switch (GetLastError())
+		{
+		case ERROR_INSUFFICIENT_BUFFER:
+			std::cout << "A supplied buffer size was not large enough, or it was incorrectly set to NULL." << std::endl;
+			break;
+		case ERROR_INVALID_FLAGS:
+			std::cout << "The values supplied for flags were not valid." << std::endl;
+			break;
+		case ERROR_INVALID_PARAMETER:
+			std::cout << "Any of the parameter values was invalid." << std::endl;
+			break;
+		case ERROR_NO_UNICODE_TRANSLATION:
+			std::cout << "Invalid Unicode was found in a string" << std::endl;
+			break;
+		default:
+			std::cout << "Failed to convert utf-8 to wchar_t" << std::endl;
+		}
+
+		return std::wstring();
+	}
+
+	DataStorage<wchar_t> result(uWidth + 1, 0);
+	MultiByteToWideChar(CP_UTF8, 0, mbcs.c_str(), -1, result.data(), result.size());
+
+	return std::wstring(result.data());
 }

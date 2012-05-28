@@ -37,9 +37,13 @@ namespace et
 	
 	std::string localizedDate();
 	std::string localizedTime();
+	std::string unicodeToUtf8(const std::wstring& w);
+	std::wstring utf8ToUnicode(const std::string& mbcs);
 
 	// common code
 	inline bool isWhitespaceChar(char c)
+		{ return (c == 32) || (c == 13) || (c == 10) || (c == 9); }
+	inline bool isWhitespaceChar(wchar_t c)
 		{ return (c == 32) || (c == 13) || (c == 10) || (c == 9); }
 
 	inline void lowercase(std::string& str)
@@ -151,5 +155,7 @@ namespace et
 
 	vec4 strToVec4(const std::string& s, const std::string& delimiter = ";");
 	vec4 strToVec4(std::string& s, const std::string& delimiter = ";");
+
 	vec4 strHexToVec4(const std::string& s);
+	vec4 strHexToVec4(const std::wstring& s);
 }
