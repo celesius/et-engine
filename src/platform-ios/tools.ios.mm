@@ -203,3 +203,15 @@ std::string et::localizedTime()
 	[formatter setLocale:[NSLocale currentLocale]];
 	return std::string([[formatter stringFromDate:[NSDate date]] cStringUsingEncoding:NSUTF8StringEncoding]);
 }
+
+std::string et::unicodeToUtf8(const std::wstring& w)
+{
+	NSString* s = [[[NSString alloc] initWithBytes:w.c_str() length:w.length() * sizeof(wchar_t) encoding:NSUTF32LittleEndianStringEncoding] autorelease];
+	return std::string([s cStringUsingEncoding:NSUTF8StringEncoding]);
+}
+
+std::wstring et::utf8ToUnicode(const std::string& mbcs)
+{
+	NSString* s = [NSString stringWithCString:mbcs.c_str() encoding:NSUTF8StringEncoding];
+	return std::wstring(reinterpret_cast<const wchar_t*>([s cStringUsingEncoding:NSUTF32LittleEndianStringEncoding]));
+}
