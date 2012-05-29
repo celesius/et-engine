@@ -146,7 +146,22 @@ namespace et
 	template <typename T>
 	inline vector2<T> sqrtv(const vector2<T>& v)
 		{ return vector2<T>(::sqrt(v.x), ::sqrt(v.y)); }
+	
+	template <typename T>
+	inline T length(const vector2<T>& v)
+		{ return v.length(); }
 
+	template <typename T>
+	inline T length(const vector3<T>& v)
+		{ return v.length(); }
+	
+	template <typename T>
+	inline T length(const vector4<T>& v)
+		{ return v.length(); }
+	
+	inline float length(float v)
+		{ return fabsf(v); }
+	
 	template<typename T>
 	inline T clamp(T value, T min, T max)
 		{ return (value < min) ? min : (value > max) ? max : value; }

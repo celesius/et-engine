@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <et/geometry/geometry.h>
 #include <et/timers/timedobject.h>
 
 namespace et
@@ -73,8 +74,8 @@ namespace et
 			float dt = _deccelerationRate * (t - _time);
 			_velocity *= etMax(0.0f, 1.0f - dt);
 			
-			float dValue = dt * _velocity;
-			if (fabsf(dValue) > _epsilon)
+			T dValue = dt * _velocity;
+			if (length(dValue) > _epsilon)
 			{
 				_value += dValue;
 				valueUpdated.invoke(_value);
@@ -87,7 +88,7 @@ namespace et
 	private:
 		T _velocity;
 		T _value;
-		T _epsilon;
+		float _epsilon;
 		float _deccelerationRate;
 		float _time;
 	};
