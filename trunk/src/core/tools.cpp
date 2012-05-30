@@ -17,15 +17,19 @@ namespace et
 
 		int hours = seconds / 3600;
 		seconds -= 3600 * hours;
-		int minues = seconds / 60;
-		seconds -= minues * 60;
-
+		int minutes = seconds / 60;
+		seconds -= minutes * 60;
+        
+        hours = abs(hours);
+        minutes = abs(minutes);
+        seconds = abs(seconds);
+        mSec = abs(mSec);
 		std::string sHours = intToStr(hours);
-		std::string sMin = intToStr(minues);
+		std::string sMin = intToStr(minutes);
 		std::string sSec = intToStr(seconds);
 		std::string sMSec = intToStr(mSec);
 
-		if ((hours > 0) && (minues < 10))
+		if ((hours > 0) && (minutes < 10))
 			sMin = "0" + sMin;
 		
 		if (seconds < 10)
@@ -48,6 +52,9 @@ namespace et
 
 		if (showMSec)
 			result += ":" + sMSec;
+        
+        if (value < 0)
+            result = "-" + result;
 
 		return result;
 	}
