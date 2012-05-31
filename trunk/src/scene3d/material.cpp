@@ -60,7 +60,7 @@ void MaterialData::serialize(std::ostream& stream) const
 
 }
 
-void MaterialData::deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache)
+void MaterialData::deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath)
 {
 	int version = deserializeInt(stream);
 	if (version != MaterialVersion1_0_0) return;
@@ -98,7 +98,16 @@ void MaterialData::deserialize(std::istream& stream, RenderContext* rc, TextureC
 	{
 		std::string param = deserializeString(stream);
 		std::string path = deserializeString(stream);
-		setTexture(param, rc->textureFactory().loadTexture(path, cache));
+		if (path.length())
+		{
+			Texture t = rc->textureFactory().loadTexture(path, cache);
+			if (t.invalid())
+			{
+				path = texturesBasePath + getFileName(path);
+				t = rc->textureFactory().loadTexture(path, cache);
+			}
+			setTexture(param, t);
+		}
 	}
 
 	count = deserializeInt(stream);
@@ -115,10 +124,10 @@ MaterialData::MaterialData() : APIObjectData("default"), _blend(Blend_Disabled),
 	setVec4(MaterialParameter_DiffuseColor, vec4(1.0f));
 }
 
-MaterialData::MaterialData(std::istream& stream, RenderContext* rc, TextureCache& cache) : APIObjectData("default"),
-	_blend(Blend_Disabled), _depthMask(true)
+MaterialData::MaterialData(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath) :
+	APIObjectData("default"), _blend(Blend_Disabled), _depthMask(true)
 {
-	deserialize(stream, rc, cache);
+	deserialize(stream, rc, cache, texturesBasePath);
 }
 
 MaterialData* MaterialData::clone() const

@@ -50,6 +50,9 @@ namespace et
 				result += dataSizeForMipLevel(i);
 			return result;
 		}
+		
+		bool valid() const
+			{ return internalformat && format && (size.square() > 0); }
 
 	public:
 		std::string source;

@@ -64,7 +64,7 @@ void Scene3d::serialize(std::ostream& stream)
 	ElementContainer::serialize(stream);
 }
 
-void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory)
+void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory, const std::string& basePath)
 {
 	if (stream.fail()) 
     {
@@ -96,7 +96,7 @@ void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 
 			for (size_t i = 0; i < numStorages; ++i)
 			{
-				Scene3dStorage::Pointer ptr = deserializeStorage(stream, rc, tc);
+				Scene3dStorage::Pointer ptr = deserializeStorage(stream, rc, tc, basePath);
 				ptr->setParent(this);
 			}
 		}
@@ -113,7 +113,7 @@ void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 }
 
 
-Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, RenderContext* rc, TextureCache& tc)
+Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, RenderContext* rc, TextureCache& tc, const std::string& basePath)
 {
 	Scene3dStorage::Pointer result(new Scene3dStorage("storage", 0));
 
@@ -133,7 +133,7 @@ Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, Render
 			{
 				Material m;
 				m->tag = deserializeInt(stream);
-				m->deserialize(stream, rc, tc);
+				m->deserialize(stream, rc, tc, basePath);
 				result->addMaterial(m);
 			}
 			materialsRead = true;
@@ -202,7 +202,7 @@ void Scene3d::serialize(const std::string& filename)
 void Scene3d::deserialize(const std::string& filename, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory)
 {
 	std::ifstream file(filename.c_str(), std::ios::binary | std::ios::in);
-	deserialize(file, rc, tc, factory);
+	deserialize(file, rc, tc, factory, getFilePath(filename));
 }
 
 Element::Pointer Scene3d::createElementOfType(size_t type, Element* parent)

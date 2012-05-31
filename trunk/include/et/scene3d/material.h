@@ -42,7 +42,7 @@ namespace et
 	{
 	public:
 		MaterialData();
-		MaterialData(std::istream& stream, RenderContext* rc, TextureCache& cache);
+		MaterialData(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath);
 
 		void setName(const std::string& name)
 			{ APIObjectData::setName(name); }
@@ -96,7 +96,7 @@ namespace et
 			{ _depthMask = d; }
 
 		void serialize(std::ostream& stream) const;
-		void deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache);
+		void deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath);
 		
 		MaterialData* clone() const;
 
