@@ -38,13 +38,16 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
             TextureLoader::loadDescription(file, screenScale, false) :
 			TextureLoader::load(file, screenScale);
 
-		texture = Texture(new TextureData(_rc, desc, file, calledFromAnotherThread));
-		cache.manageTexture(texture);
-
-		if (async)
-			_loadingThread->addRequest(file, _rc->screenScaleFactor(), texture, delegate);
-		else if (calledFromAnotherThread)
-			std::cout << "ERROR: Unable to load texture synchronously from secondary thread." << std::endl;
+		if (desc.valid())
+		{
+			texture = Texture(new TextureData(_rc, desc, file, calledFromAnotherThread));
+			cache.manageTexture(texture);
+			if (async)
+				_loadingThread->addRequest(file, _rc->screenScaleFactor(), texture, delegate);
+			else if (calledFromAnotherThread)
+				std::cout << "ERROR: Unable to load texture synchronously from secondary thread." << std::endl;
+		}
+		
 	}
 	else if (async && delegate)
 	{

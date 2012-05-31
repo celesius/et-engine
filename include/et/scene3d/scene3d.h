@@ -24,11 +24,11 @@ namespace et
 			void serialize(std::ostream& stream);
 			void serialize(const std::string& filename);
 
-			void deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory);
+			void deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory, const std::string& basePath);
 			void deserialize(const std::string& filename, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory);
 
 		private:
-			Scene3dStorage::Pointer deserializeStorage(std::istream& stream, RenderContext* rc, TextureCache& tc);
+			Scene3dStorage::Pointer deserializeStorage(std::istream& stream, RenderContext* rc, TextureCache& tc, const std::string& basePath);
 			void buildAPIObjects(Scene3dStorage::Pointer p, RenderContext* rc);
 
 			Element::Pointer createElementOfType(size_t type, Element* parent);
