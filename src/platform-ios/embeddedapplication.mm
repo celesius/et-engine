@@ -52,7 +52,7 @@ static etApplication* _sharedInstance = nil;
 
 - (void)loadedInViewController:(UIViewController*)viewController
 {
-	NSAssert(_loaded == NO, @"Method [etApplication loaded] should be called once.");
+	NSAssert(_loaded == NO, @"Method [etApplication loadedInViewController:] should be called once.");
 	
 	RenderState::State state = RenderState::currentState();
 	application().run(0, 0);
@@ -64,8 +64,15 @@ static etApplication* _sharedInstance = nil;
 		[self renderContext]->framebufferFactory().createFramebufferWrapper(defaultFrameBuffer));
 	_notifier->accessRenderContext()->renderState().applyState(state);
 
-	
 	_loaded = YES;
+}
+
+- (void)unloadedInViewController:(UIViewController*)viewController
+{
+	NSAssert(_loaded == YES, @"Method [etApplication unloadedInViewController:] should be called once.");
+	
+	application().quit();
+	_loaded = NO;
 }
 
 - (void)dealloc
