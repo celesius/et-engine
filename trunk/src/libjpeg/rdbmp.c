@@ -22,7 +22,7 @@
  * This code contributed by James Arthur Boucher.
  */
 
-#include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
+#include <libjpeg/cdjpeg.h>		/* Common decls for cjpeg/djpeg applications */
 
 #ifdef BMP_SUPPORTED
 

@@ -19,7 +19,7 @@
  * the file is indeed PPM format).
  */
 
-#include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
+#include <libjpeg/cdjpeg.h>		/* Common decls for cjpeg/djpeg applications */
 
 #ifdef PPM_SUPPORTED
 

@@ -8,7 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <jpeglib.h>
+#include <libjpeg/jpeglib.h>
 
 #include <et/core/tools.h>
 #include <et/opengl/opengl.h>
@@ -69,7 +69,6 @@ void JPGLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
 	
 	if (cinfo.out_color_space == JCS_GRAYSCALE)
 	{
-
 		jpeg_destroy_decompress(&cinfo);
 		return;
 	}

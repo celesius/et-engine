@@ -183,10 +183,8 @@ CharDescriptorList FontData::buildString(const std::string& s, bool formatted)
 		return parseString(s);
 
 	CharDescriptorList result;
-
 	for (std::string::const_iterator i = s.begin(), e = s.end(); i != e; ++i)
 		result.push_back(charDescription(*i));
-
 	return result;
 }
 

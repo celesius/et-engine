@@ -14,7 +14,7 @@
  *	-sample HxV[,HxV,...]	Set component sampling factors
  */
 
-#include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
+#include <libjpeg/cdjpeg.h>		/* Common decls for cjpeg/djpeg applications */
 #include <ctype.h>		/* to declare isdigit(), isspace() */
 
 
