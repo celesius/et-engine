@@ -20,6 +20,8 @@ namespace et
 + (etApplication*)sharedApplication;
 
 - (void)loadedInViewController:(UIViewController*)viewController;
+- (void)unloadedInViewController:(UIViewController*)viewController;
+
 - (et::RenderContext*)renderContext;
 - (et::IApplicationDelegate*)applicationDelegate;
 
