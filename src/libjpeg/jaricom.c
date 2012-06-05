@@ -14,8 +14,8 @@
  */
 
 #define JPEG_INTERNALS
-#include "jinclude.h"
-#include "jpeglib.h"
+#include <libjpeg/jinclude.h>
+#include <libjpeg/jpeglib.h>
 
 /* The following #define specifies the packing of the four components
  * into the compact INT32 representation.

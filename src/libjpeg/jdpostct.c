@@ -17,8 +17,8 @@
  */
 
 #define JPEG_INTERNALS
-#include "jinclude.h"
-#include "jpeglib.h"
+#include <libjpeg/jinclude.h>
+#include <libjpeg/jpeglib.h>
 
 
 /* Private buffer controller object */

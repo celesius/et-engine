@@ -11,9 +11,9 @@
  * provides some lossless and sort-of-lossless transformations of JPEG data.
  */
 
-#include "cdjpeg.h"		/* Common decls for cjpeg/djpeg applications */
-#include "transupp.h"		/* Support routines for jpegtran */
-#include "jversion.h"		/* for version message */
+#include <libjpeg/cdjpeg.h>		/* Common decls for cjpeg/djpeg applications */
+#include <libjpeg/transupp.h>		/* Support routines for jpegtran */
+#include <libjpeg/jversion.h>		/* for version message */
 
 #ifdef USE_CCOMMAND		/* command-line reader for Macintosh */
 #ifdef __MWERKS__
