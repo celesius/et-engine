@@ -14,6 +14,7 @@
 #include <et/imaging/pngloader.h>
 #include <et/imaging/ddsloader.h>
 #include <et/imaging/pvrloader.h>
+#include <et/imaging/jpgloader.h>
 
 #define ET_TEXTURE_DEBUG_LOAD	0
 
@@ -28,12 +29,15 @@ const StringList& TextureLoader::preferredExtensions()
 #if ET_PLATFORM_WIN
 		extensions.push_back(".dds");
 		extensions.push_back(".png");
+		extensions.push_back(".jpg");
 #elif ET_PLATFORM_IOS
 		extensions.push_back(".pvr");
 		extensions.push_back(".png");
+		extensions.push_back(".jpg");
 #elif ET_PLATFORM_MAC
 		extensions.push_back(".dds");
 		extensions.push_back(".png");
+		extensions.push_back(".jpg");
 #else
 	#error Please, define preferred extensions list for current platform.
 #endif
@@ -147,6 +151,10 @@ const TextureDescription TextureLoader::loadDescription(const std::string& name,
 	{
 		PVRLoader::loadInfoFromFile(fileName, desc);
 	}
+	else if ((ext == ".jpg") || (ext == ".jpeg"))
+	{
+		JPGLoader::loadInfoFromFile(fileName, desc);
+	}
 	else
 	{
 		std::cout << "Unable to load texture description from file: " << name << std::endl;
@@ -185,7 +193,11 @@ const TextureDescription TextureLoader::load(const std::string& name, size_t sca
 	{
 		PVRLoader::loadFromFile(fileName, desc);
 	}
-	else 
+	else if ((ext == ".jpg") || (ext == ".jpeg"))
+	{
+		JPGLoader::loadFromFile(fileName, desc);
+	}
+	else
 	{
 		std::cout << "Unable to load texture from file: " << name << std::endl;
 	}
