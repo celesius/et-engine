@@ -272,6 +272,45 @@ void ImageOperations::applyMatrixFilter(BinaryDataStorage& data, const vec2i& si
 	}
 }
 
+void ImageOperations::normalMapFilter(BinaryDataStorage& data, const vec2i& size, size_t components, const vec2& scale)
+{
+	assert(components > 2);
+
+	vec2 fScale = scale / 255.0f;
+	BinaryDataStorage source(data);
+	for (int y = 0; y < size.y; ++y)
+	{
+		bool halfY = y < size.y / 2;
+		for (int x = 0; x < size.x; ++x)
+		{
+			bool halfX = x < size.x / 2;
+			vec2i nextX(x + (halfX ? 1 : -1), y);
+			vec2i nextY(x, y + (halfY ? 1 : -1));
+
+			size_t c00 = components * indexForCoord(vec2i(x, y), size);
+			size_t c01 = components * indexForCoord(nextX, size);
+			size_t c10 = components * indexForCoord(nextY, size);
+
+			short h00 = source[c00];
+			short h01 = source[c01];
+			short h10 = source[c10];
+
+			float dx = static_cast<float>(halfX ? h01 - h00 : h00 - h01) * fScale.x;
+			float dy = static_cast<float>(halfY ? h10 - h00 : h00 - h10) * fScale.y;
+
+			vec3 du(1.0f, 0.0f, dx);
+			vec3 dv(0.0f, 1.0f, dy);
+
+			vec3 produce = normalize(cross(du, dv));
+
+			vec3ub result = vec3fto3ubscaled(produce);
+			data[c00+0] = result.x;
+			data[c00+1] = result.y;
+			data[c00+2] = result.z;
+		}
+	}
+}
+
 /*
  * Internal Stuff
  */
