@@ -20,7 +20,7 @@ using namespace et;
 	{
 		_params = params;
 		_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-		_glView = [[etOpenGLView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+		_glView = [[etOpenGLView alloc] initWithFrame:[[UIScreen mainScreen] bounds] parameters:_params];
 		self.view = _glView;
 		
 		if (!_context)
