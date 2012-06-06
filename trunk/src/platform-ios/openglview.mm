@@ -12,13 +12,21 @@
 class et::RenderContextNotifier
 {
 public:
-	inline void resized(const et::vec2i& sz, et::RenderContext* rc)
+	void resized(const et::vec2i& sz, et::RenderContext* rc)
 		{ rc->resized(sz); }
 };
 
 using namespace et;
 
-@interface etOpenGLView(PrivateMethods)
+@interface etOpenGLView()
+{
+@private
+    EAGLContext* _context;
+	et::Framebuffer _defaultFramebuffer;
+	et::RenderContext* _rc;
+	et::RenderContextNotifier* _rcNotifier;
+	et::Input::PointerInputSource _inputSource;
+}
 
 - (void)createFramebuffer;
 - (void)deleteFramebuffer;
@@ -34,7 +42,7 @@ using namespace et;
     return [CAEAGLLayer class];
 }
 
-- (id)initWithFrame:(CGRect)frame
+- (id)initWithFrame:(CGRect)frame parameters:(et::RenderContextParameters&)params
 {
 	self = [super initWithFrame:frame];
 	
@@ -48,7 +56,7 @@ using namespace et;
                                         [NSNumber numberWithBool:NO], kEAGLDrawablePropertyRetainedBacking,
                                         kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
 		_context = nil;
-		self.multipleTouchEnabled = YES;
+		self.multipleTouchEnabled = params.multipleTouch;
 	}
 	
 	return self;

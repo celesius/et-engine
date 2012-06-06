@@ -48,6 +48,7 @@ namespace et
 		bool openGLCoreProfile;
 		bool openGLCompatibilityProfile;
 		bool verticalSync;
+		bool multipleTouch;
         
         size_t supportedInterfaceOrientations;
 		vec2i contextPosition;
@@ -67,6 +68,7 @@ namespace et
 								bool coreProfile = false,
 								bool compatibilityProfile = false,
 								bool vSync = true,
+								bool mTouch = true,
                                 size_t orientationFlags = InterfaceOrientation_AnyLandscape
 #else 
 								WindowStyle ws = WindowStyle_FixedWithCaption, 
@@ -79,6 +81,7 @@ namespace et
 								bool coreProfile = true,
 								bool compatibilityProfile = false,
 								bool vSync = false,
+								bool mTouch = false,
                                 size_t orientationFlags = InterfaceOrientation_Any
 #endif								
 								) : 
@@ -92,6 +95,7 @@ namespace et
 		openGLMaxVersion(openGLMaxVer), 
 		baseContextSize(baseScrSize),
 		verticalSync(vSync),
+		multipleTouch(mTouch),
 		supportedInterfaceOrientations(orientationFlags)
 		{ }
 	};
