@@ -58,5 +58,7 @@ namespace et
 		static void blur(BinaryDataStorage& data, const vec2i& size, size_t components, vec2i direction, size_t radius, ImageBlurType type);
 		static void median(BinaryDataStorage& data, const vec2i& size, size_t components, int radius);
 
+		static void normalMapFilter(BinaryDataStorage& data, const vec2i& size, size_t components, const vec2& scale);
+
 	};
 }
