@@ -119,9 +119,10 @@ void Input::removePointerInfo(const PointerInputInfo& info)
  * Input Handler
  */
 
-InputHandler::InputHandler()
+InputHandler::InputHandler(bool connect)
 {
-	connectInputEvents();
+	if (connect)
+		connectInputEvents();
 }
 
 InputHandler::~InputHandler()

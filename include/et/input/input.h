@@ -157,7 +157,7 @@ namespace et
 	class InputHandler : virtual public EventReceiver
 	{
 	protected:
-		InputHandler();
+		InputHandler(bool connect = true);
 		virtual ~InputHandler();
 
 		void connectInputEvents();

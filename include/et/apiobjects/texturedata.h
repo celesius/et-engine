@@ -31,6 +31,7 @@ namespace et
 		void setWrap(RenderContext* rc, TextureWrap s, TextureWrap t, TextureWrap r = TextureWrap_ClampToEdge);
 		void setFiltration(RenderContext* rc, TextureFiltration minFiltration, TextureFiltration magFiltration);
 		void compareRefToTexture(RenderContext* rc, bool enable, GLenum compareFunc = GL_LEQUAL);
+		void generateMipMaps(RenderContext* rc);
 
 		vec2 getTexCoord(const vec2& ivec, TextureOrigin origin = TextureOrigin_TopLeft) const;
 
