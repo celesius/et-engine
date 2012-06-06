@@ -13,13 +13,14 @@
 
 namespace et
 {
-	class GesturesRecognizer : private InputHandler
+	class GesturesRecognizer : private InputHandler, private TimedObject
 	{
 	public:
-		GesturesRecognizer();
+		GesturesRecognizer(bool automaticMode = true);
 
 	public:
 		ET_DECLARE_PROPERTY(float, scrollZoomScale, setScrollZoomScale)
+		ET_DECLARE_PROPERTY(float, clickThreshold, setClickThreshold)
 		ET_DECLARE_PROPERTY(float, doubleClickThreshold, setDoubleClickThreshold)
 		ET_DECLARE_PROPERTY(float, holdThreshold, setHoldThreshold)
 
@@ -33,17 +34,23 @@ namespace et
 		ET_DECLARE_EVENT0(released)
 		ET_DECLARE_EVENT0(cancelled)
 
-	private:
+	public:
 		void onPointerPressed(et::PointerInputInfo);
 		void onPointerMoved(et::PointerInputInfo);
 		void onPointerReleased(et::PointerInputInfo);
         void onPointerCancelled(et::PointerInputInfo);
 		void onPointerScrolled(et::PointerInputInfo);
 
+	private:
+		void update(float);
 		void handlePointersMovement();
+		void startWaitingForClicks();
+		void stopWaitingForClicks();
+		void cancelWaitingForClicks();
 
-		GesturesRecognizer(const GesturesRecognizer&)
+		GesturesRecognizer(const GesturesRecognizer&) : InputHandler(false)
 			{ }
+		
 		GesturesRecognizer& operator = (const GesturesRecognizer&)
 			{ return *this; }
 
@@ -62,5 +69,10 @@ namespace et
         typedef std::map<size_t, PointersInputDelta> PointersInputDeltaMap;
 
 		PointersInputDeltaMap _pointers;
+		float _actualTime;
+		float _clickStartTime;
+		bool _expectClick;
+		bool _expectDoubleClick;
+		bool _clickTimeoutActive;
 	};
 }

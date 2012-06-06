@@ -84,7 +84,8 @@ void TextureData::setFiltration(RenderContext* rc, TextureFiltration minFiltrati
 		_filtration.y = TextureFiltration_Linear;
 
 	glTexParameteri(_desc.target, GL_TEXTURE_MIN_FILTER, textureFiltrationValue(_filtration.x)); 
-	checkOpenGLError("glTexParameteri<GL_TEXTURE_MIN_FILTER> " + name()); 
+	checkOpenGLError("glTexParameteri<GL_TEXTURE_MIN_FILTER> " + name());
+	
 	glTexParameteri(_desc.target, GL_TEXTURE_MAG_FILTER, textureFiltrationValue(_filtration.y)); 
 	checkOpenGLError("glTexParameteri<GL_TEXTURE_MAG_FILTER> " + name()); 
 }
@@ -218,4 +219,11 @@ void TextureData::updateDataDirectly(RenderContext* rc, const vec2i& size, char*
     _desc.size = size;
     rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc.target);
 	buildData(data, dataSize);
+}
+
+void TextureData::generateMipMaps(RenderContext* rc)
+{
+    rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc.target);
+	glGenerateMipmap(_desc.target);
+	checkOpenGLError("glGenerateMipmap");
 }

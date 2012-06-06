@@ -5,13 +5,15 @@
  *
  */
 
+#include <et/app/application.h>
 #include <et/input/gestures.h>
 
 using namespace et;
 
-GesturesRecognizer::GesturesRecognizer() : _scrollZoomScale(0.1f), _doubleClickThreshold(0.3f), _holdThreshold(1.0f)
+GesturesRecognizer::GesturesRecognizer(bool automaticMode) : InputHandler(automaticMode),
+	_scrollZoomScale(0.1f), _clickThreshold(0.25f), _doubleClickThreshold(0.25f), _holdThreshold(1.0f), _actualTime(0.0f),
+	_clickStartTime(0.0f), _expectClick(false), _expectDoubleClick(false), _clickTimeoutActive(false)
 {
-	connectInputEvents();
 }
 
 void GesturesRecognizer::handlePointersMovement()
@@ -42,6 +44,25 @@ void GesturesRecognizer::onPointerPressed(et::PointerInputInfo pi)
 {
 	_pointers[pi.id] = PointersInputDelta(pi, pi);
 	pressed.invoke();
+	
+	if (_pointers.size() == 1)
+	{
+		float currentTime = mainTimerPool()->actualTime();
+		float dt = currentTime - _actualTime;
+		
+		_clickTimeoutActive = false;
+		_expectClick = dt > _doubleClickThreshold;
+		_expectDoubleClick = !_expectClick;
+		
+		if (_expectClick)
+			_clickStartTime = currentTime;
+		
+		startWaitingForClicks();
+	}
+	else
+	{
+		cancelWaitingForClicks();
+	}
 }
 
 void GesturesRecognizer::onPointerMoved(et::PointerInputInfo pi)
@@ -63,18 +84,24 @@ void GesturesRecognizer::onPointerMoved(et::PointerInputInfo pi)
 	{
 		handlePointersMovement();
 	}
+	
+	cancelWaitingForClicks();
 }
 
 void GesturesRecognizer::onPointerReleased(et::PointerInputInfo pi)
 {
 	_pointers.erase(pi.id);
 	released.invoke();
+	
+	stopWaitingForClicks();
 }
 
 void GesturesRecognizer::onPointerCancelled(et::PointerInputInfo pi)
 {
 	_pointers.erase(pi.id);
 	cancelled.invoke();
+	
+	cancelWaitingForClicks();
 }
 
 void GesturesRecognizer::onPointerScrolled(et::PointerInputInfo i)
@@ -83,3 +110,41 @@ void GesturesRecognizer::onPointerScrolled(et::PointerInputInfo i)
 	zoom.invoke(1.0f + static_cast<float>(i.scroll) * _scrollZoomScale);
 }
 
+void GesturesRecognizer::update(float t)
+{
+	if (_clickTimeoutActive && (t >= _clickStartTime + _clickThreshold))
+	{
+		click.invoke();
+		cancelUpdates();
+		_clickTimeoutActive = false;
+	}
+	
+	_actualTime = t;
+}
+
+void GesturesRecognizer::startWaitingForClicks()
+{
+	startUpdates();
+}
+
+void GesturesRecognizer::stopWaitingForClicks()
+{
+	if (_expectDoubleClick)
+	{
+		doubleClick.invoke();
+		_expectDoubleClick = false;
+		_expectClick = false;
+		cancelUpdates();
+	}
+	else if (_expectClick)
+	{
+		_clickTimeoutActive = true;
+	}
+}
+
+void GesturesRecognizer::cancelWaitingForClicks()
+{
+	_expectClick = false;
+	_expectDoubleClick = false;
+	cancelUpdates();
+}
