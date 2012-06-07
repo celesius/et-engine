@@ -19,7 +19,7 @@ namespace et
 		class RenderingElement : public Shared
 		{
 		public:
-			RenderingElement(RenderContext* rc, const std::string& name);
+			RenderingElement(RenderContext* rc);
 			void clear();
 
 			const VertexArrayObject& vertexArrayObject();
@@ -33,8 +33,6 @@ namespace et
 			IndexArrayRef _indexArray;
 			GuiVertexList _vertexList;
 
-			VertexBuffer _vertexBuffer;
-			IndexBuffer _indexBuffer;
 			VertexArrayObject _vao;
 
 			bool _changed;

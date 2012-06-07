@@ -10,18 +10,18 @@
 using namespace et;
 using namespace et::gui;
 
-RenderingElement::RenderingElement(RenderContext* rc, const std::string& name) : _rs(rc->renderState()),
+RenderingElement::RenderingElement(RenderContext* rc) : _rs(rc->renderState()),
 	_indexArray(new IndexArray(IndexArrayFormat_16bit, 0, IndexArrayContentType_Triangles)), _changed(false)
 {
 	VertexDeclaration decl(true, Usage_Position, Type_Vec3);
 	decl.push_back(Usage_TexCoord0, Type_Vec4);
 	decl.push_back(Usage_Color, Type_Vec4);
 	
-	_vao = rc->vertexBufferFactory().createVertexArrayObject(name + "-vao");
-	_vertexBuffer = rc->vertexBufferFactory().createVertexBuffer(name + "-ib", 
-		VertexArrayRef(new VertexArray(decl, true)), BufferDrawType_Stream);
-	_indexBuffer = rc->vertexBufferFactory().createIndexBuffer(name + "-vb", _indexArray, BufferDrawType_Static);
-	_vao->setBuffers(_vertexBuffer, _indexBuffer);
+	std::string nameId = intToStr(reinterpret_cast<size_t>(this));
+
+	_vao = rc->vertexBufferFactory().createVertexArrayObject(nameId + "-vao",
+		rc->vertexBufferFactory().createVertexBuffer(nameId + "-ib", VertexArrayRef(new VertexArray(decl, true)), BufferDrawType_Stream), 
+		rc->vertexBufferFactory().createIndexBuffer(nameId + "-vb", _indexArray, BufferDrawType_Static));
 }
 
 void RenderingElement::clear()
@@ -39,9 +39,9 @@ const VertexArrayObject& RenderingElement::vertexArrayObject()
 	if (_changed)
 	{
 		size_t count = _vertexList.currentIndex();
-		_vertexBuffer->setData(_vertexList.data(), count * _vertexList.typeSize());
 		_indexArray->setActualSize(count);
-		_indexBuffer->setData(_indexArray);
+		_vao->vertexBuffer()->setData(_vertexList.data(), count * _vertexList.typeSize());
+		_vao->indexBuffer()->setData(_indexArray);
 		_changed = false;
 	}
 

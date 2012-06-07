@@ -325,3 +325,31 @@ void Layout::collectTopmostElements(Element* element)
 	for (Element::List::iterator i = element->children().begin(), e = element->children().end(); i != e; ++i)
 		collectTopmostElements(i->ptr());
 }
+
+/*
+ * Modal Layout
+ */
+
+bool ModalLayout::pointerPressed(const et::PointerInputInfo& p)
+{
+	Layout::pointerPressed(p);
+	return true;
+}
+
+bool ModalLayout::pointerMoved(const et::PointerInputInfo& p)
+{
+	Layout::pointerMoved(p);
+	return true;
+}
+
+bool ModalLayout::pointerReleased(const et::PointerInputInfo& p)
+{
+	Layout::pointerReleased(p);
+	return true;
+}
+
+bool ModalLayout::pointerScrolled(const et::PointerInputInfo& p )
+{
+	Layout::pointerScrolled(p);
+	return true;
+}

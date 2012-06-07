@@ -24,8 +24,6 @@ namespace et
 		IndexBuffer createIndexBuffer(const std::string& name, IndexArrayRef data, BufferDrawType drawType);
 
 		VertexArrayObject createVertexArrayObject(const std::string& name);
-
-	private:
 		VertexArrayObject createVertexArrayObject(const std::string& name, VertexBuffer vb, IndexBuffer ib);
 
 	private:

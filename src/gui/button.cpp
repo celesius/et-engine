@@ -75,15 +75,21 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 	if (_title.length())
 	{
 		vec4 aColor = _state == ElementState_Pressed ? _textPressedColor : _textColor;
-		gr.createStringVertices(_textVertices, _font->buildString(_title), ElementAlignment_Near, ElementAlignment_Near,
-								textOrigin, aColor * alphaScaleColor, transform, GuiRenderLayer_Layer1);
+		if (aColor.w > 0.0f)
+		{
+			gr.createStringVertices(_textVertices, _font->buildString(_title), ElementAlignment_Near, ElementAlignment_Near,
+				textOrigin, aColor * alphaScaleColor, transform, GuiRenderLayer_Layer1);
+		}
 	}
 
 	if (_image.texture.valid())
 	{
 		vec4 aColor = _state == ElementState_Pressed ? vec4(0.5f, 0.5f, 0.5f, 1.0f) : vec4(1.0f);
-		gr.createImageVertices(_imageVertices, _image.texture, _image.descriptor, 
-			rect(imageOrigin, _image.descriptor.size), aColor * alphaScaleColor, transform, GuiRenderLayer_Layer0);
+		if (aColor.w > 0.0f)
+		{
+			gr.createImageVertices(_imageVertices, _image.texture, _image.descriptor, 
+				rect(imageOrigin, _image.descriptor.size), aColor * alphaScaleColor, transform, GuiRenderLayer_Layer0);
+		}
 	}
 }
 
@@ -224,9 +230,11 @@ void Button::adjustSizeForText(const std::string& text, float duration)
 
 vec2 Button::sizeForText(const std::string& text)
 {
-	vec2 textSize = _font->measureStringSize(text);
-	vec2 textOffset = _font->measureStringSize("AA");
-	return vec2(floorf(textSize.x + 2.0f * textOffset.x), floorf(textSize.y * 1.25f));
+	vec2 textSize = _font->measureStringSize("AA" + text + "AA");
+	for (size_t i = 0; i < ElementState_max; ++i)
+		textSize = maxv(textSize, _background[i].descriptor.size);
+
+	return vec2(floorf(textSize.x), floorf(textSize.y * 1.25f));
 }
 
 void Button::setImage(const Image& img)

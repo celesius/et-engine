@@ -75,7 +75,7 @@ namespace et
 	protected:
 		friend class RenderContext;
 
-		inline RenderContext* renderContext() 
+		RenderContext* renderContext() 
 			{ return _renderContext; }
 
 		void performRendering();

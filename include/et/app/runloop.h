@@ -22,10 +22,10 @@ namespace et
 		void pause();
 		void resume();
 
-		inline TimerPool& mainTimerPool()
+		TimerPool& mainTimerPool()
 			{ return _mainTimerPool; }
 
-		inline float time() const
+		float time() const
 			{ return _time; }
 
 		void attachTimerPool(TimerPool& pool);
