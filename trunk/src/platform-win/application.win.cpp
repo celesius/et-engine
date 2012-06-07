@@ -33,7 +33,7 @@ Application::Application() :
 
 Application::~Application()
 {
-
+	_runLoop.reset(0);
 }
 
 IApplicationDelegate* Application::delegate()

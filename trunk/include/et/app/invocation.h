@@ -127,7 +127,7 @@ namespace et
 		void invokeInRunLoop(RunLoop& rl, float delay = 0.0f);
 
 		template <typename T>
-		inline void setTarget(T* o, void(T::*m)())
+		void setTarget(T* o, void(T::*m)())
 			{ _target = new InvocationTarget<T>(o, m); }
 
 	private:
@@ -142,11 +142,11 @@ namespace et
 		void invokeInRunLoop(RunLoop& rl, float delay = 0.0f);
 
 		template <typename T, typename A1>
-		inline void setTarget(T* o, void(T::*m)(A1), A1 param)
+		void setTarget(T* o, void(T::*m)(A1), A1 param)
 			{ _target = new Invocation1Target<T, A1>(o, m, param); }
 
 		template <typename T, typename A1>
-		inline void setParameter(A1 p)
+		void setParameter(A1 p)
 			{ (static_cast<Invocation1Target<T, A1>*>(_target.ptr()))->setParameter(p); }
 	};
 
@@ -158,11 +158,11 @@ namespace et
 		void invokeInRunLoop(RunLoop& rl, float delay = 0.0f);
 
 		template <typename T, typename A1, typename A2>
-		inline void setTarget(T* o, void(T::*m)(A1, A2), A1 p1, A2 p2)
+		void setTarget(T* o, void(T::*m)(A1, A2), A1 p1, A2 p2)
 			{ _target = new Invocation2Target<T, A1, A2>(o, m, p1, p2); }
 
 		template <typename T, typename A1, typename A2>
-		inline void setParameters(A1 p1, A2 p2)
+		void setParameters(A1 p1, A2 p2)
 			{ (static_cast<Invocation2Target<T, A1, A2>*>(_target.ptr()))->setParameters(p1, p2); }
 	};
 }

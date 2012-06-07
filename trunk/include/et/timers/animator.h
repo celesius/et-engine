@@ -28,14 +28,11 @@ namespace et
 		int tag;
 
 	public:
-		BaseAnimator(const TimerPool& tp) : _timerPool(tp)
+		BaseAnimator(const TimerPool& tp) : tag(0), _timerPool(tp)
 			{ }
 
-		void cancel() 
-		{ 
-			cancelUpdates(); 
-			_delegate->animatorFinished(this);
-		}
+		void setDelegate(AnimatorDelegate* delegate)
+			{ _delegate = delegate; }
 
 	protected:
 		BaseAnimator(AnimatorDelegate* delegate, int t, const TimerPool& tp) : 
@@ -82,8 +79,8 @@ namespace et
 			if (dt >= 1.0f)
 			{
 				*_value = _to;
-				_delegate->animatorUpdated(this);
-				cancel();
+				_delegate->animatorFinished(this);
+				cancelUpdates();
 			}
 			else 
 			{

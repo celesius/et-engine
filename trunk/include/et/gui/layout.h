@@ -70,5 +70,14 @@ namespace et
 			bool _valid;
 			bool _dragging;
 		};
+
+		class ModalLayout : public Layout
+		{
+		protected:
+			bool pointerPressed(const et::PointerInputInfo&);
+			bool pointerMoved(const et::PointerInputInfo&);
+			bool pointerReleased(const et::PointerInputInfo&);
+			bool pointerScrolled(const et::PointerInputInfo&);
+		};
 	}
 }

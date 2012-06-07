@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <deque>
 #include <et/rendering/rendercontext.h>
 #include <et/input/input.h>
 #include <et/gui/guirenderer.h>
@@ -27,14 +28,14 @@ namespace et
 		enum AnimationFlags
 		{
 			AnimationFlag_None = 0x0,
-			AnimationFlag_Fade = 0x1,
-			AnimationFlag_FromLeft = 0x2,
-			AnimationFlag_FromRight = 0x4,
-			AnimationFlag_FromTop = 0x8,
+			AnimationFlag_Fade = 0x01,
+			AnimationFlag_FromLeft = 0x02,
+			AnimationFlag_FromRight = 0x04,
+			AnimationFlag_FromTop = 0x08,
 			AnimationFlag_FromBottom = 0x10
 		};
 
-		class Gui : public Shared, public EventReceiver, public AnimatorDelegate
+		class Gui : public Shared, public EventReceiver
 		{
 		public:
 			Gui(RenderContext* rc, TextureCache& texCache);
@@ -45,16 +46,15 @@ namespace et
 			GuiRenderer& renderer() 
 				{ return _renderer; }
 
-			Layout::Pointer currentLayout() const
-				{ return _currentLayout; }
+			Layout::Pointer topmostLayout() const
+				{ return _layouts.size() ? _layouts.back()->layout : Layout::Pointer(); }
 
-			Layout::Pointer currentModalLayout() const
-				{ return _currentModalLayout; }
-
-			void setCurrentLayout(Layout::Pointer layout, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
-
-			void presentModalLayout(Layout::Pointer layout, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
-			void dismissModalLayout(size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
+			bool hasLayout(Layout::Pointer aLayout);
+			void replaceTopmostLayout(Layout::Pointer newLayout, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
+			void popTopmostLayout(size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
+			void replaceLayout(Layout::Pointer oldLayout, Layout::Pointer newLayout, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
+			void removeLayout(Layout::Pointer oldLayout, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
+			void pushLayout(Layout::Pointer newLayout, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
 
 			void setBackgroundImage(const Image& img);
 
@@ -69,52 +69,74 @@ namespace et
 			ET_DECLARE_EVENT1(layoutWillDisappear, Layout::Pointer)
 
 		private:
+			class LayoutEntryObject;
+
 			void buildLayoutVertices(RenderContext* rc, RenderingElementRef& element, Layout::Pointer layout);
 			void buildBackgroundVertices(RenderContext* rc);
 			void buildKeyboardVertices(RenderContext* rc);
-			void animatorUpdated(BaseAnimator*);
-			void animatorFinished(BaseAnimator*);
 
 			void onKeyboardNeeded(Layout* l, Element* e);
 			void onKeyboardResigned(Layout* l);
 
 			void getAnimationParams(size_t flags, vec3* nextSrc, vec3* nextDst, vec3* currDst);
-			void processAnimatorFinishForRegularLayout(BaseAnimator* a);
-			void processAnimatorFinishForModalLayout(BaseAnimator* a);
-			void exchangeLayouts(Layout::Pointer& l1, Layout::Pointer& l2);
+
+			void removeLayoutFromList(Layout::Pointer);
+			void removeLayoutEntryFromList(LayoutEntryObject*);
+			void layoutEntryTransitionFinished(LayoutEntryObject*);
+			LayoutEntryObject* entryForLayout(Layout::Pointer);
+			bool animatingTransition();
+			void animateLayoutAppearing(Layout::Pointer, LayoutEntryObject* newEntry, size_t animationFlags, float duration);
 
 		private:
+			class LayoutEntryObject : public Shared, public AnimatorDelegate
+			{
+			public:
+				enum State
+				{
+					State_Still,
+					State_Appear,
+					State_Disappear,
+				};
+
+			public:
+				LayoutEntryObject(Gui* own, RenderContext* rc, Layout::Pointer l);
+				LayoutEntryObject(LayoutEntryObject&& l);
+				LayoutEntryObject(LayoutEntryObject& l);
+				LayoutEntryObject& operator = (LayoutEntryObject& l);
+
+				void animateTo(const vec3& oa, float duration, State s);
+
+			private:
+				void animatorUpdated(BaseAnimator*);
+				void animatorFinished(BaseAnimator*);
+				void moveDelegate();
+
+			public:
+				Gui* owner;
+				RenderingElementRef renderingElement;
+				Layout::Pointer layout;
+				AutoPtr<Vector3Animator> animator;
+				vec3 offsetAlpha;
+				State state;
+			};
+			typedef IntrusivePtr<LayoutEntryObject> LayoutEntry;
+			typedef std::deque<LayoutEntry> LayoutEntryStack;
+			friend class LayoutEntryObject;
+
+		private:
+			RenderContext* _rc;
 			TextureCache& _textureCache;
 			GuiRenderer _renderer;
-			RenderingElementRef _renderingElementBackground;
-			RenderingElementRef _renderingElementCurrentLayout;
-			RenderingElementRef _renderingElementNextLayout;
-			RenderingElementRef _renderingElementCurrentModalLayout;
-			RenderingElementRef _renderingElementNextModalLayout;
-			RenderingElementRef _renderingElementKeyboard;
 
+			RenderingElementRef _renderingElementBackground;
+			ImageView _background;
+
+			RenderingElementRef _renderingElementKeyboard;
 			Keyboard _keyboard;
 
-			Layout::Pointer _currentLayout;
-			Layout::Pointer _nextLayout;
-			Layout::Pointer _currentModalLayout;
-			Layout::Pointer _nextModalLayout;
-
-			BaseAnimator* _currentLayoutAnimator;
-			BaseAnimator* _nextLayoutAnimator;
-			BaseAnimator* _currentModalLayoutAnimator;
-			BaseAnimator* _nextModalLayoutAnimator;
-
+			LayoutEntryStack _layouts;
 			vec2 _screenSize;
-			vec3 _currentLayoutOffsetAlpha;
-			vec3 _nextLayoutOffsetAlpha;
-			vec3 _currentModalLayoutOffsetAlpha;
-			vec3 _nextModalLayoutOffsetAlpha;
-
-			ImageView _background;
 			bool _backgroundValid;
-			bool _switchingRegular;
-			bool _switchingModal;
 		};
 
 		typedef IntrusivePtr<Gui> GuiRef;
