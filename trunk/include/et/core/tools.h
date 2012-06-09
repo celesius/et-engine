@@ -35,8 +35,6 @@ namespace et
 	std::string selectFile(const std::string& description, const std::string& ext);
 	void openUrl(const std::string& url);
 	
-	std::string localizedDate();
-	std::string localizedTime();
 	std::string unicodeToUtf8(const std::wstring& w);
 	std::wstring utf8ToUnicode(const std::string& mbcs);
 

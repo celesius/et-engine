@@ -212,28 +212,6 @@ void et::openUrl(const std::string& url)
 	ShellExecute(0, "open", url.c_str(), 0, 0, SW_SHOWNORMAL);
 }
 
-std::string et::localizedDate()
-{
-	SYSTEMTIME st = { };
-	GetSystemTime(&st);
-
-	int bufferSize = GetDateFormatEx(LOCALE_NAME_SYSTEM_DEFAULT, DATE_LONGDATE, &st, 0, 0, 0, 0);
-	DataStorage<wchar_t> buffer(bufferSize + 1, 0);
-	GetDateFormatEx(LOCALE_NAME_SYSTEM_DEFAULT, DATE_LONGDATE, &st, 0, buffer.data(), buffer.size(), 0);
-	return unicodeToUtf8(buffer.data());
-}
-
-std::string et::localizedTime()
-{
-	SYSTEMTIME st = { };
-	GetSystemTime(&st);
-
-	int bufferSize = GetTimeFormatEx(LOCALE_NAME_SYSTEM_DEFAULT, 0, &st, 0, 0, 0);
-	DataStorage<wchar_t> buffer(bufferSize + 1, 0);
-	GetTimeFormatEx(LOCALE_NAME_SYSTEM_DEFAULT, 0, &st, 0, buffer.data(), buffer.size());
-	return unicodeToUtf8(buffer.data());
-}
-
 std::string et::unicodeToUtf8(const std::wstring& w)
 {
 	int mbcWidth = WideCharToMultiByte(CP_UTF8, 0, w.c_str(), -1, 0, 0, 0, 0);

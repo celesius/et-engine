@@ -1,0 +1,41 @@
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2012 by Sergey Reznik
+ * Please, do not modify contents without approval.
+ *
+ */
+
+#pragma once
+
+#include <map>
+#include <string>
+#include <et/core/singleton.h>
+
+namespace et
+{
+	class Locale : public Singleton<Locale>
+	{
+	public:
+		static std::string time();
+		static std::string date();
+		static size_t currentLocale();
+		static std::string localeLanguage(size_t locale);
+
+	public:
+		bool loadCurrentLanguageFile(const std::string& rootFolder, const std::string& extension = ".lang");
+		bool loadLanguageFile(const std::string& fileName);
+		std::string localizedString(const std::string& key);
+
+	private:
+		void parseLanguageFile(const std::string& name);
+		char* parseComment(char*);
+		char* parseKey(char*);
+
+	private:
+		typedef std::map<std::string, std::string> LocaleMap;
+		LocaleMap _localeMap;
+	};
+
+	inline std::string localized(const std::string& key)
+		{ return Locale::instance().localizedString(key); }
+}
