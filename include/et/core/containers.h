@@ -233,6 +233,7 @@ namespace et
 
 	typedef DataStorage<float> FloatDataStorage;
 	typedef DataStorage<unsigned char> BinaryDataStorage;
+	typedef DataStorage<char> StringDataStorage;
 
 	template <typename T>
 	class RawDataAcessor : public Container
