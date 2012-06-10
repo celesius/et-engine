@@ -56,6 +56,7 @@ namespace et
 			CharDescriptor generateBoldCharacter(int value);
 
 		private:
+			RenderContext* _rc;
 			CharacterGeneratorPrivate* _private;
 
 			Texture _texture;

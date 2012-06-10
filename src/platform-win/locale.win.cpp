@@ -38,9 +38,9 @@ std::string Locale::date()
 size_t Locale::currentLocale()
 {
 	wchar_t localeName[256] = { };
-	GetUserDefaultLocaleName(localeName, 256);
-
 	wchar_t localeData[256] = { };
+
+	GetUserDefaultLocaleName(localeName, 256);
 	if (GetLocaleInfoEx(localeName, LOCALE_SNAME, localeData, 256) == 0)
 	{
 		switch (GetLastError())

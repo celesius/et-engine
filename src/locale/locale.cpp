@@ -29,6 +29,7 @@ bool Locale::loadLanguageFile(const std::string& fileName)
 		return true;
 	}
 
+	std::cout << "Unable to load language file `" << fileName << "`" << std::endl;
 	return false;
 }
 
@@ -41,7 +42,8 @@ bool Locale::loadCurrentLanguageFile(const std::string& rootFolder, const std::s
 		parseLanguageFile(fileName);
 		return true;
 	}
-
+	
+	std::cout << "Unable to locate language file `" << fileName << "` in folder " << rootFolder << std::endl;
 	return false;
 }
 

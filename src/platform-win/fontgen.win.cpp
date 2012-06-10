@@ -35,29 +35,20 @@ void FontGenerator::fillCharacterDescriptors(const std::string& face, int size, 
 		CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH, face.c_str());
 
 	SelectObject(dc, font);
-	OUTLINETEXTMETRICW otm = { };
-	GetOutlineTextMetricsW(dc, sizeof(otm), &otm);
-
-	TEXTMETRIC metrics = { };
-	GetTextMetrics(dc, &metrics);
 
 	for (CharacterRange::const_iterator i = range.begin(), e = range.end(); i != e; ++i)
 	{
-		CharDescriptor desc = CharDescriptor(*i, bold ? CharParameter_Bold : 0);
-
-		wchar_t wStr[2] = { desc.value };
-
 		SIZE charSize = { };
-		float fWidth = 0.0f;
+		wchar_t wStr[2] = { *i, 0 };
 		GetTextExtentPointW(dc, wStr, 1, &charSize);
-		GetCharWidthFloatW(dc, desc.value, desc.value, &fWidth);
 
-		desc.color = vec4(1.0f);
+		CharDescriptor desc = CharDescriptor(*i, bold ? CharParameter_Bold : 0);
 		desc.size.x = static_cast<float>(charSize.cx + 2) + extraOffsets.x;
 		desc.size.y = static_cast<float>(charSize.cy) + extraOffsets.y;
 		desc.extra.x = static_cast<int>(0.5f * extraOffsets.x + 1.0f);
 		desc.extra.y = static_cast<int>(0.5f * extraOffsets.y - 1.0f);
 		desc.extra.z = reinterpret_cast<int>(font);
+
 		chars.push_back(desc);
 	}
 
