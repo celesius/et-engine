@@ -39,10 +39,10 @@ namespace et
 			CharDescriptor() : value(0), params(0) 
 				{ }
 			
-			CharDescriptor(unsigned short c, unsigned short p = 0) : value(c), params(p)
+			CharDescriptor(int c, int p = 0) : value(c), params(p), color(1.0f)
 				{ }
 			
-			CharDescriptor(unsigned short c, unsigned short p, const vec2& sz) : value(c), params(p), size(sz)
+			CharDescriptor(int c, int p, const vec2& sz) : value(c), params(p), color(1.0f), size(sz)
 				{ }
 		};
 

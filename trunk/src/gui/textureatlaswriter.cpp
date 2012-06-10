@@ -5,10 +5,10 @@
  *
  */
 
-#include <et/imaging/textureatlaswriter.h>
 #include <et/imaging/imagewriter.h>
 #include <et/imaging/pngloader.h>
 #include <et/imaging/imageoperations.h>
+#include <et/gui/textureatlaswriter.h>
 
 using namespace et;
 using namespace et::gui;
@@ -25,6 +25,7 @@ bool TextureAtlasWriter::placeImage(const TextureDescription& image, TextureAtla
 {
 	int w = image.size.x;
 	int h = image.size.y;
+
 	int xOffset = 0;
 	int yOffset = 0;
 
@@ -121,9 +122,7 @@ bool TextureAtlasWriter::placeImage(const TextureDescription& image, TextureAtla
 }
 
 inline bool textureNameSort(const TextureAtlasWriter::ImageItem& i1, const TextureAtlasWriter::ImageItem& i2)
-{
-	return i1.image.source < i2.image.source;
-}
+	{ return i1.image.source < i2.image.source; }
 
 void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* textureNamePattern)
 {

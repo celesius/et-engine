@@ -41,7 +41,7 @@ namespace et
 		TextureAtlasItem& addItem(const vec2i& textureSize);
 		bool placeImage(const TextureDescription& image, TextureAtlasItem& item);
 
-		inline const TextureAtlasItemList& items() const 
+		const TextureAtlasItemList& items() const 
 			{ return _items; }
 
 		void writeToFile(const std::string& fileName, const char* textureNamePattern = "texture_%d.png");
