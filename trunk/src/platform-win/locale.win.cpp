@@ -71,7 +71,7 @@ size_t Locale::currentLocale()
 
 	size_t result = 0;
 
-	if ((mbcs.length() == 5) && (mbcs[2] == '-'))
+	if ((mbcs.size() == 5) && (mbcs[2] == '-'))
 	{
 		lowercase(mbcs);
 		result = mbcs[0] | (mbcs[1] << 8) | (mbcs[3] << 16) | (mbcs[4] << 24);

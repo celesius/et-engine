@@ -186,24 +186,6 @@ void et::openUrl(const std::string& url)
 	[[UIApplication sharedApplication] openURL:aUrl];
 }
 
-std::string et::localizedDate()
-{
-	NSDateFormatter* formatter = [[[NSDateFormatter alloc] init] autorelease];
-	[formatter setTimeStyle:kCFDateFormatterNoStyle];
-	[formatter setDateStyle:kCFDateFormatterMediumStyle];
-	[formatter setLocale:[NSLocale currentLocale]];
-	return std::string([[formatter stringFromDate:[NSDate date]] cStringUsingEncoding:NSUTF8StringEncoding]);
-}
-
-std::string et::localizedTime()
-{
-	NSDateFormatter* formatter = [[[NSDateFormatter alloc] init] autorelease];
-	[formatter setTimeStyle:kCFDateFormatterMediumStyle];
-	[formatter setDateStyle:kCFDateFormatterNoStyle];
-	[formatter setLocale:[NSLocale currentLocale]];
-	return std::string([[formatter stringFromDate:[NSDate date]] cStringUsingEncoding:NSUTF8StringEncoding]);
-}
-
 std::string et::unicodeToUtf8(const std::wstring& w)
 {
 	NSString* s = [[[NSString alloc] initWithBytes:w.c_str() length:w.length() * sizeof(wchar_t) encoding:NSUTF32LittleEndianStringEncoding] autorelease];
