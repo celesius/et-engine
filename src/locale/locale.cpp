@@ -57,14 +57,13 @@ void Locale::parseLanguageFile(const std::string& fileName)
 {
 	_localeMap.clear();
 
-	std::ifstream file(fileName.c_str(), std::ios::beg | std::ios::binary);
+	std::ifstream file(fileName.c_str(), static_cast<std::ios_base::openmode>(std::ios_base::beg | std::ios_base::binary));
 	if (file.fail()) return;
 
 	StringDataStorage raw(streamSize(file) + 1, 0);
 	file.read(raw.data(), raw.size());
 
 	StringDataStorage keyValues(raw.size(), 0);
-	size_t j = 0;
 
 	bool inQuote = false;
 	char* ptr = raw.data();
@@ -90,7 +89,7 @@ void Locale::parseLanguageFile(const std::string& fileName)
 	inQuote = false;
 	size_t sourceLength = keyValues.currentIndex();
 	StringDataStorage source(sourceLength + 1, 0);
-	for (size_t i = 0, j = 0; i < sourceLength; ++i)
+	for (size_t i = 0; i < sourceLength; ++i)
 	{
 		char c = keyValues[i];
 
@@ -123,7 +122,7 @@ char* Locale::parseComment(char* ptr)
 		}
 		return ptr + 1;
 	}
-	else if (*ptr = '*') // block comment
+	else if (*ptr == '*') // block comment
 	{
 		while ( (*ptr) && (*(ptr+1)) && !( (*ptr == '*') && ( (*(ptr+1)) == '/')) ) ++ptr;
 		return ptr + 2;
