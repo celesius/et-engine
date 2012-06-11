@@ -34,10 +34,10 @@ size_t Locale::currentLocale()
 {
     NSString* localeId = [[NSLocale currentLocale] localeIdentifier];
 	std::string mbcs = [localeId cStringUsingEncoding:NSUTF8StringEncoding];
-    
+	
 	size_t result = 0;
-    
-	if ((mbcs.size() == 5) && (mbcs[2] == '_'))
+	
+	if ((mbcs.size() >= 5) && ((mbcs[2] == '-') || (mbcs[2] == '_')))
 	{
 		lowercase(mbcs);
 		result = mbcs[0] | (mbcs[1] << 8) | (mbcs[3] << 16) | (mbcs[4] << 24);
