@@ -16,7 +16,7 @@ class et::gui::CharacterGeneratorPrivate
 		~CharacterGeneratorPrivate();
 
 		void updateTexture(RenderContext* rc, Texture texture);
-		void renderCharacter(NSString* value, const vec2i& position, const vec2i& size);
+		void renderCharacter(NSString* value, const vec2i& position);
 
 	public:
 		std::string _fontFace;
@@ -46,19 +46,16 @@ CharacterGenerator::~CharacterGenerator()
 CharDescriptor CharacterGenerator::generateCharacter(int value)
 {
 	wchar_t string[2] = { value, 0 };
-    NSString* wString = [[[NSString alloc] initWithBytes:string length:sizeof(string) encoding:NSUTF32LittleEndianStringEncoding] autorelease];
-
+    NSString* wString = [[NSString alloc] initWithBytes:string length:sizeof(string) encoding:NSUTF32LittleEndianStringEncoding];
     CGSize characterSize = [wString sizeWithFont:_private->_font];
-	characterSize.height = [_private->_font lineHeight];
 
 	rect textureRect;
 	_private->_placer.place(vec2i(characterSize.width + 2, characterSize.height + 2), textureRect);
-	_private->renderCharacter(wString, vec2i(static_cast<int>(textureRect.left + 1), static_cast<int>(textureRect.top + 1)),
-							  vec2i(static_cast<int>(textureRect.width - 2), static_cast<int>(textureRect.height - 2)));
+	_private->renderCharacter(wString, vec2i(static_cast<int>(textureRect.left + 1), static_cast<int>(textureRect.top + 1)));
 	_private->updateTexture(_rc, _texture);
 
-	std::cout << "Value for `" << value << "` placed to " << textureRect.origin() << std::endl;
-
+	[wString release];
+	
 	CharDescriptor desc(value);
 	
 	desc.origin = textureRect.origin() + vec2(1.0f);
@@ -117,20 +114,10 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, Texture texture
 		_data[4*i+1] = 255;
 		_data[4*i+2] = 255;
 	}
-	
-	static int counter = 0;
-	++counter;
-	
-	if (counter % 59 == 0)
-	{
-		ImageWriter::writeImageToFile(applicationDocumentsFolder() + intToStr(counter) + ".png",
-									  _data, vec2i(defaultTextureSize), 4, 8, ImageFormat_PNG);
-	}
-
 	texture->updateDataDirectly(rc, vec2i(defaultTextureSize), static_cast<char*>(_data.raw()), _data.size());
 }
 
-void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i& position, const vec2i& size)
+void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i& position)
 {
 	UIGraphicsPushContext(_context);
 	[value drawAtPoint:CGPointMake(position.x, position.y) withFont:_font];
