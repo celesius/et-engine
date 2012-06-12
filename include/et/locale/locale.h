@@ -21,6 +21,7 @@ namespace et
 		static std::string date();
 		static size_t currentLocale();
 		static std::string localeLanguage(size_t locale);
+		static std::string localeSubLanguage(size_t locale);
 
 	public:
 		bool loadCurrentLanguageFile(const std::string& rootFolder, const std::string& extension = ".lang");

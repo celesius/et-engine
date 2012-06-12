@@ -20,6 +20,12 @@ std::string Locale::localeLanguage(size_t locale)
 	return std::string(lang);
 }
 
+std::string Locale::localeSubLanguage(size_t locale)
+{
+	char lang[3] = { (locale & 0x00ff0000) >> 16, (locale & 0xff000000) >> 24, 0 };
+	return std::string(lang);
+}
+
 bool Locale::loadLanguageFile(const std::string& fileName)
 {
 	if (fileExists(fileName))
@@ -34,12 +40,23 @@ bool Locale::loadLanguageFile(const std::string& fileName)
 
 bool Locale::loadCurrentLanguageFile(const std::string& rootFolder, const std::string& extension)
 {
-	std::string lang = Locale::localeLanguage(Locale::currentLocale());
+	size_t cLocale = Locale::currentLocale();
+	std::string lang = Locale::localeLanguage(cLocale);
 	std::string fileName = addTrailingSlash(rootFolder) + lang + extension;
 	if (fileExists(fileName))
 	{
 		parseLanguageFile(fileName);
 		return true;
+	}
+	else
+	{
+		std::string subLang = Locale::localeSubLanguage(cLocale);
+		fileName = addTrailingSlash(rootFolder) + subLang + extension;
+		if (fileExists(fileName))
+		{
+			parseLanguageFile(fileName);
+			return true;
+		}
 	}
 	
 	std::cout << "Unable to locate language file `" << fileName << "` in folder " << rootFolder << std::endl;
