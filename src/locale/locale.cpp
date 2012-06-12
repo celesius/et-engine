@@ -7,7 +7,6 @@
 
 #include <fstream>
 #include <et/core/tools.h>
-#include <et/core/containers.h>
 #include <et/locale/locale.h>
 
 using namespace et;
@@ -65,24 +64,24 @@ void Locale::parseLanguageFile(const std::string& fileName)
 
 	StringDataStorage keyValues(raw.size(), 0);
 
+	size_t i = 0;
 	bool inQuote = false;
-	char* ptr = raw.data();
-	while (*ptr)
+	while ((i < raw.size()) && raw[i])
 	{
-		if (*ptr == CommentChar)
+		if (raw[i] == CommentChar)
 		{
 			inQuote = false;
-			ptr = parseComment(ptr + 1);
+			i = parseComment(raw, i+1);
 		}
 		else 
 		{
-			if (*ptr == KeyChar)
+			if (raw[i] == KeyChar)
 				inQuote = !inQuote;
 
-			if (inQuote || !isWhitespaceChar(*ptr))
-				keyValues.push_back(*ptr);
-
-			++ptr;
+			if (inQuote || !isWhitespaceChar(raw[i]))
+				keyValues.push_back(raw[i]);
+			
+			++i;
 		}
 	}
 
@@ -105,59 +104,78 @@ void Locale::parseLanguageFile(const std::string& fileName)
 
 		source.push_back(c);
 	}
-
-	ptr = source.data();
-	while (*ptr && (*ptr+1))
-		ptr = (*ptr == KeyChar) ? parseKey(ptr+1) : ptr + 1;
+	
+	i = 0;
+	while (source[i] && (i < source.size()) && source[i+1])
+		i = (source[i] == KeyChar) ? parseKey(source, i+1) : ++i;
 }
 
 
-char* Locale::parseComment(char* ptr)
+size_t Locale::parseKey(const StringDataStorage& data, size_t index)
 {
-	if (*ptr == '/') // line comment
+	size_t keyEnd = 0;
+	size_t valueStart = 0;
+	size_t i = index;
+	
+	while ((i < data.size()) && data[i] && (data[i] != ';'))
 	{
-		while ((*ptr) && !((*ptr == 0x0a) || (*ptr == 0x0d)))
+		if (data[i] == KeyChar)
 		{
-			++ptr;
+			if (keyEnd == 0)
+				keyEnd = i;
+			
+			else if (valueStart == 0)
+				valueStart = i+1;
 		}
-		return ptr + 1;
+		++i;
 	}
-	else if (*ptr == '*') // block comment
+
+	size_t keyLenght = keyEnd - index;
+	size_t valueLenght = i - valueStart - 1;
+	
+	std::string key(keyLenght, 0);
+	for (size_t i = 0; i < keyLenght; ++i)
+		key[i] = data[index+i];
+	
+	std::string value(valueLenght, 0);
+	for (size_t i = 0; i < valueLenght; ++i)
+		value[i] = data[valueStart+i];
+
+	_localeMap[key] = value;
+	
+	return i+1;
+}
+
+size_t Locale::parseComment(const StringDataStorage& data, size_t index)
+{
+	if (data[index] == CommentChar) // line comment
 	{
-		while ( (*ptr) && (*(ptr+1)) && !( (*ptr == '*') && ( (*(ptr+1)) == '/')) ) ++ptr;
-		return ptr + 2;
+		while ((index < data.size()) && data[index] && !((data[index] == 0x0a)||(data[index] == 0x0d)))
+			++index;
+		return index + 1;
+	}
+	else if (data[index] == '*') // block comment
+	{
+		while ((index + 1 < data.size()) && data[index] && !((data[index] == '*') && (data[index+1] == CommentChar)) )
+			++index;
+		
+		return index + 2;
 	}
 	else
 	{
 		std::cout << "Unsupported comment format in language file";
-		return ptr + 1;
+		return index;
 	}
 }
 
-char* Locale::parseKey(char* ptr)
+void Locale::printKeyValues()
 {
-	char* ptr0 = ptr;
-	char* keyEnd = 0;
-	char* valueStart = 0;
-	while (*ptr && (*ptr != ';'))
+	std::cout << std::endl << "Key value pairs." << std::endl;
+	for (LocaleMap::iterator i = _localeMap.begin(), e = _localeMap.end(); i != e; ++i)
 	{
-		if (*ptr == KeyChar)
-		{
-			if (keyEnd == 0)
-				keyEnd = ptr;
-			else if (valueStart == 0)
-				valueStart = ptr + 1;
-		}
-		++ptr;
+		const std::string& key = i->first;
+		std::string& value = i->second;
+		std::cout << key.size() << " / " << value.size() << " -> " << key << " -> " << value << std::endl;
+		std::cout.flush();
 	}
-
-	StringDataStorage key(keyEnd - ptr0 + 1, 0);
-	memcpy(key.data(), ptr0, key.size() - 1);
-
-	StringDataStorage value(ptr - valueStart, 0);
-	memcpy(value.data(), valueStart, value.size() - 1);
-
-	_localeMap[std::string(key.data())] = std::string(value.data());
-
-	return ptr + 1;
 }

@@ -194,6 +194,19 @@ std::string et::unicodeToUtf8(const std::wstring& w)
 
 std::wstring et::utf8ToUnicode(const std::string& mbcs)
 {
-	NSString* s = [NSString stringWithCString:mbcs.c_str() encoding:NSUTF8StringEncoding];
+	NSString* s = [NSString stringWithUTF8String:mbcs.c_str()];
+	
+	if (s == nil)
+	{
+		NSLog(@"Unable to convert UTF-8 `%s` to NSString.", mbcs.c_str());
+		return std::wstring();
+	}
+	
+	if (![s canBeConvertedToEncoding:NSUTF32LittleEndianStringEncoding])
+	{
+		NSLog(@"Unable to convert %@ to NSUTF32LittleEndianStringEncoding", s);
+		return std::wstring();
+	}
+	
 	return std::wstring(reinterpret_cast<const wchar_t*>([s cStringUsingEncoding:NSUTF32LittleEndianStringEncoding]));
 }
