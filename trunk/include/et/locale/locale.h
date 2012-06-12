@@ -10,6 +10,7 @@
 #include <map>
 #include <string>
 #include <et/core/singleton.h>
+#include <et/core/containers.h>
 
 namespace et
 {
@@ -25,11 +26,13 @@ namespace et
 		bool loadCurrentLanguageFile(const std::string& rootFolder, const std::string& extension = ".lang");
 		bool loadLanguageFile(const std::string& fileName);
 		std::string localizedString(const std::string& key);
+		
+		void printKeyValues();
 
 	private:
 		void parseLanguageFile(const std::string& name);
-		char* parseComment(char*);
-		char* parseKey(char*);
+		size_t parseComment(const StringDataStorage& data, size_t index);
+		size_t parseKey(const StringDataStorage& data, size_t index);
 
 	private:
 		typedef std::map<std::string, std::string> LocaleMap;
