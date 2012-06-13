@@ -20,6 +20,7 @@
 #include <et/gui/listbox.h>
 #include <et/gui/textfield.h>
 #include <et/gui/scroll.h>
+#include <et/gui/messageview.h>
 
 namespace et
 {
@@ -62,6 +63,8 @@ namespace et
 			bool pointerMoved(const et::PointerInputInfo&);
 			bool pointerReleased(const et::PointerInputInfo&);
 			bool pointerScrolled(const et::PointerInputInfo&);
+			
+			void showMessageView(MessageView::Pointer mv);
 
 			ET_DECLARE_EVENT1(layoutDidAppear, Layout::Pointer)
 			ET_DECLARE_EVENT1(layoutDidDisappear, Layout::Pointer)
@@ -86,6 +89,8 @@ namespace et
 			LayoutEntryObject* entryForLayout(Layout::Pointer);
 			bool animatingTransition();
 			void animateLayoutAppearing(Layout::Pointer, LayoutEntryObject* newEntry, size_t animationFlags, float duration);
+			
+			void onMessageViewButtonClicked(MessageView* view, MessageViewButton);
 
 		private:
 			class LayoutEntryObject : public Shared, public AnimatorDelegate

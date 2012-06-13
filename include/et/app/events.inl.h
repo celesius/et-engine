@@ -282,3 +282,21 @@ inline void Event2<Arg1Type, Arg2Type>::invoke(Arg1Type a1, Arg2Type a2)
 		++i;
 	}
 }
+
+template <typename Arg1Type, typename Arg2Type>
+inline void Event2<Arg1Type, Arg2Type>::invokeInMainRunLoop(Arg1Type a1, Arg2Type a2, float delay)
+{
+	typename ConnectionList::iterator i = remove_if(_connections.begin(), _connections.end(), shouldRemoveConnection);
+	
+	if (i != _connections.end())
+		_connections.erase(i, _connections.end());
+	
+	i = _connections.begin();
+	while (i != _connections.end())
+	{
+		(*i)->invokeInMainRunLoop(a1, a2, delay);
+		if (_connections.size() == 0) return;
+		
+		++i;
+	}
+}
