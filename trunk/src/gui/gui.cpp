@@ -449,3 +449,14 @@ void Gui::LayoutEntryObject::animatorFinished(BaseAnimator* a)
 	animator.extract()->destroy();
 	owner->layoutEntryTransitionFinished(this);
 }
+
+void Gui::showMessageView(MessageView::Pointer mv)
+{
+	mv->messageViewButtonSelected.connect(this, &Gui::onMessageViewButtonClicked);
+	pushLayout(mv);
+}
+
+void Gui::onMessageViewButtonClicked(MessageView* view, MessageViewButton button)
+{
+	removeLayout(Layout::Pointer(view));
+}

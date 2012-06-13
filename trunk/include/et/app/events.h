@@ -203,6 +203,7 @@ namespace et
 	{
 	public:
 		virtual void invoke(Arg1Type a1, Arg2Type a2) = 0;
+		virtual void invokeInMainRunLoop(Arg1Type a1, Arg2Type a2, float delay) = 0;
 	};
 
 	template <typename ReceiverType, typename Arg1Type, typename Arg2Type>
@@ -216,6 +217,13 @@ namespace et
 
 		void invoke(Arg1Type a1, Arg2Type a2) 
 			{ (_receiver->*_receiverMethod)(a1, a2); }
+		
+		void invokeInMainRunLoop(Arg1Type a1, Arg2Type a2, float delay)
+		{
+			Invocation2 i;
+			i.setTarget<ReceiverType, Arg1Type, Arg2Type>(_receiver, _receiverMethod, a1, a2);
+			i.invokeInMainRunLoop(delay);
+		}
 
 	private:
 		void (ReceiverType::*_receiverMethod)(Arg1Type, Arg2Type);
@@ -238,6 +246,7 @@ namespace et
 
 		void receiverDisconnected(EventReceiver* r);
 		void invoke(Arg1Type a1, Arg2Type a2);
+		void invokeInMainRunLoop(Arg1Type a1, Arg2Type a2, float delay = 0.0f);
 
 	private:
 		EventReceiver* receiver()
