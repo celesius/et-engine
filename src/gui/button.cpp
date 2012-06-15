@@ -235,7 +235,7 @@ vec2 Button::sizeForText(const std::string& text)
 	for (size_t i = 0; i < ElementState_max; ++i)
 		textSize = maxv(textSize, _background[i].descriptor.size);
 
-	return vec2(floorf(textSize.x), floorf(1.33333f * textSize.y));
+	return vec2(floorf(textSize.x), floorf(1.25f * textSize.y));
 }
 
 void Button::setImage(const Image& img)

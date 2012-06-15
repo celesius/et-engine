@@ -34,7 +34,7 @@ MessageView::MessageView(const std::string& text, Font font, const Image& image,
 
 void MessageView::layout(const vec2& sz)
 {
-	vec2 bgSize = maxv(_background->imageDescriptor().size, floorv(vec2(0.9f * sz.x, 0.4f * sz.y)));
+	vec2 bgSize = maxv(_background->imageDescriptor().size, floorv(vec2(0.9f * sz.x, 0.35f * sz.y)));
 	_background->setFrame(floorv(0.5f * sz), bgSize);
 
 	vec2 bOffset = floorv(0.15f * bgSize);
