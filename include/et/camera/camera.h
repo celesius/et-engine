@@ -30,10 +30,9 @@ namespace et
 		const quaternion orientation() const
 			{ return matrixToQuaternion(_modelViewMatrix.mat3()); }
 
-		void setOrientation(const vec3& pos);
-
 		vec3 direction() const;
 		void setDirection(const vec3& d);
+		void setSide(const vec3& s);
 
 		const mat4& modelViewMatrix() const 
 			{ return _modelViewMatrix; }
@@ -83,9 +82,12 @@ namespace et
 
 		void setModelViewMatrix(const mat4& m)
 			{ _modelViewMatrix = m; modelViewUpdated(); }
+		
 		void setProjectionMatrix(const mat4& m)
 			{ _projectionMatrix = m; projectionUpdated(); }
 
+		Camera reflected(const plane&);
+		
 	private:
 		void modelViewUpdated();
 		void projectionUpdated();

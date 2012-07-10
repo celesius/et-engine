@@ -5,31 +5,31 @@
  *
  */
 
-#include <et/scene3d/collisionmesh.h>
+#include <et/scene3d/supportmesh.h>
 
 using namespace et;
 using namespace et::s3d;
 
-CollisionMesh::CollisionMesh(const std::string& name, Element* parent) : Mesh(name, parent),
+SupportMesh::SupportMesh(const std::string& name, Element* parent) : Mesh(name, parent),
 	_cachedFinalTransformScale(0.0f), _inverseTransformValid(false)
 {
 
 }
 
-CollisionMesh::CollisionMesh(const std::string& name, const VertexArrayObject& ib, const Material& material,
+SupportMesh::SupportMesh(const std::string& name, const VertexArrayObject& ib, const Material& material,
 	size_t startIndex, size_t numIndexes, Element* parent) : Mesh(name, ib, material, startIndex, numIndexes, parent),
 	_data(numIndexes / 3), _cachedFinalTransformScale(0.0f), _inverseTransformValid(false)
 {
 
 }
 
-void CollisionMesh::setNumIndexes(size_t num)
+void SupportMesh::setNumIndexes(size_t num)
 {
 	Mesh::setNumIndexes(num);
 	_data.fitToSize(num / 3);
 }
 
-void CollisionMesh::fillCollisionData(VertexArrayRef v, IndexArrayRef ind)
+void SupportMesh::fillCollisionData(VertexArrayRef v, IndexArrayRef ind)
 {
 	RawDataAcessor<vec3> pos = v->chunk(Usage_Position).accessData<vec3>(0);
 
@@ -72,9 +72,9 @@ void CollisionMesh::fillCollisionData(VertexArrayRef v, IndexArrayRef ind)
 	_radius = distance;
 }
 
-CollisionMesh* CollisionMesh::duplicate()
+SupportMesh* SupportMesh::duplicate()
 {
-	CollisionMesh* result = new CollisionMesh(name(), vertexArrayObject(), material(), startIndex(), numIndexes(), parent());
+	SupportMesh* result = new SupportMesh(name(), vertexArrayObject(), material(), startIndex(), numIndexes(), parent());
 	result->_size = _size;
 	result->_center = _center;
 	result->_radius = _radius;
@@ -82,19 +82,19 @@ CollisionMesh* CollisionMesh::duplicate()
 	return result;
 }
 
-Sphere CollisionMesh::sphere() 
+Sphere SupportMesh::sphere() 
 {
 	const vec3& s = scale();
 	return Sphere(finalTransform() * _center, etMax(s.x, etMax(s.y, s.z)) * _radius);
 }
 
-AABB CollisionMesh::aabb()
+AABB SupportMesh::aabb()
 {
 	mat4 ft = finalTransform();
 	return AABB(ft * _center, absv(ft.rotationMultiply(_size)));
 }
 
-OBB CollisionMesh::obb()
+OBB SupportMesh::obb()
 {
 	mat4 ft = finalTransform();
 	mat3 r = ft.mat3();
@@ -102,7 +102,7 @@ OBB CollisionMesh::obb()
 	return OBB(ft * _center, s * _size, r);
 }
 
-void CollisionMesh::serialize(std::ostream& stream)
+void SupportMesh::serialize(std::ostream& stream)
 {
 	serializeFloat(stream, _radius);
 	serializeVector(stream, _size);
@@ -112,7 +112,7 @@ void CollisionMesh::serialize(std::ostream& stream)
 	Mesh::serialize(stream);
 }
 
-void CollisionMesh::deserialize(std::istream& stream, ElementFactory* factory)
+void SupportMesh::deserialize(std::istream& stream, ElementFactory* factory)
 {
 	_radius = deserializeFloat(stream);
 	_size = deserializeVector<vec3>(stream);
@@ -122,7 +122,7 @@ void CollisionMesh::deserialize(std::istream& stream, ElementFactory* factory)
 	Mesh::deserialize(stream, factory);
 }
 
-mat4 CollisionMesh::finalTransform()
+mat4 SupportMesh::finalTransform()
 {
 	if (!transformValid())
 		_inverseTransformValid = false;
@@ -130,7 +130,7 @@ mat4 CollisionMesh::finalTransform()
 	return Element::finalTransform();
 }
 
-mat4 CollisionMesh::finalTransformInverse()
+mat4 SupportMesh::finalTransformInverse()
 {
 	if (!_inverseTransformValid)
 		buildInverseTransform();
@@ -138,7 +138,7 @@ mat4 CollisionMesh::finalTransformInverse()
 	return _cachedInverseTransform;
 }
 
-float CollisionMesh::finalTransformScale()
+float SupportMesh::finalTransformScale()
 {
 	if (!_inverseTransformValid)
 		buildInverseTransform();
@@ -146,7 +146,7 @@ float CollisionMesh::finalTransformScale()
 	return _cachedFinalTransformScale;
 }
 
-void CollisionMesh::buildInverseTransform()
+void SupportMesh::buildInverseTransform()
 {
 	_cachedInverseTransform = Element::finalTransform().inverse();
 	_cachedFinalTransformScale = 1.0f / powf(_cachedInverseTransform.mat3().determinant(), 1.0f / 3.0f);

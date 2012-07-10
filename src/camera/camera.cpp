@@ -97,9 +97,17 @@ void Camera::setDirection(const vec3& d)
 	modelViewUpdated();
 }
 
-void Camera::setOrientation(const vec3&)
+void Camera::setSide(const vec3& s)
 {
-
+	vec3 u = up();
+	vec3 d = s.cross(u);
+	vec3 p = position();
+	vec3 e(-dot(s, p), -dot(u, p), dot(d, p));
+	_modelViewMatrix[0] = vec4(s.x, u.x, -d.x, 0.0);
+	_modelViewMatrix[1] = vec4(s.y, u.y, -d.y, 0.0);
+	_modelViewMatrix[2] = vec4(s.z, u.z, -d.z, 0.0);
+	_modelViewMatrix[3] = vec4(e.x, e.y,  e.z, 1.0);
+	modelViewUpdated();
 }
 
 vec3 Camera::direction() const
@@ -203,9 +211,29 @@ void Camera::lockUpVector(const vec3& u)
 
 void Camera::unlockUpVector()
 {
-	_lockUpVector = true;
+	_lockUpVector = false;
 }
 
+Camera Camera::reflected(const plane& pl)
+{
+	Camera result(*this);
+	
+	vec3 s = normalize(reflect(side(), pl.normal()));
+	vec3 u = normalize(reflect(up(), pl.normal()));
+	vec3 d = normalize(reflect(direction(), pl.normal()));
+	vec3 p = pl.reflect(position());
+	
+	mat4 mv = _modelViewMatrix;
+	mv[0][0] = s.x; mv[0][1] = u.x; mv[0][2] = d.x;
+	mv[1][0] = s.y; mv[1][1] = u.y; mv[1][2] = d.y;
+	mv[2][0] = s.z; mv[2][1] = u.z; mv[2][2] = d.z;
+	mv[3] = vec4(-mv.rotationMultiply(p), mv[3][3]);
+	
+	result.unlockUpVector();
+ 	result.setModelViewMatrix(mv);
+	
+	return result;
+}
 
 CubemapProjectionMatrixArray et::cubemapMatrixProjectionArray(const mat4& proj, const vec3& point)
 {
