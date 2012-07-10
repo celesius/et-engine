@@ -180,3 +180,8 @@ void Element::setActive(bool active)
 {
 	_active = active;
 }
+
+bool Element::hasPropertyString(const std::string& s) const
+{
+	return std::find(_properites.begin(), _properites.end(), s) != _properites.end();
+}

@@ -57,11 +57,13 @@ static etApplication* _sharedInstance = nil;
 	RenderState::State state = RenderState::currentState();
 	application().run(0, 0);
 	
-	GLint defaultFrameBuffer = 0;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFrameBuffer);
+	GLint defaultFrameBufferId = 0;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFrameBufferId);
 	
-	_notifier->accessRenderContext()->renderState().setDefaultFramebuffer(
-		[self renderContext]->framebufferFactory().createFramebufferWrapper(defaultFrameBuffer));
+	Framebuffer defaultFrameBuffer = [self renderContext]->framebufferFactory().createFramebufferWrapper(defaultFrameBufferId);
+	defaultFrameBuffer->forceSize(viewController.view.bounds.size.width, viewController.view.bounds.size.height);
+	
+	_notifier->accessRenderContext()->renderState().setDefaultFramebuffer(defaultFrameBuffer);
 	_notifier->accessRenderContext()->renderState().applyState(state);
 
 	_loaded = YES;

@@ -9,7 +9,6 @@
 #include <fstream>
 #include <et/rendering/rendercontext.h>
 #include <et/scene3d/scene3d.h>
-#include <et/scene3d/collisionmesh.h>
 #include <et/scene3d/serialization.h>
 
 using namespace et;
@@ -68,7 +67,7 @@ void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 {
 	if (stream.fail()) 
     {
-        std::cout << "Unable to deserialize scene from stream" << std::endl;
+        std::cout << "Unable to deserialize scene from stream." << std::endl;
         return;
     }
     
@@ -91,9 +90,6 @@ void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 			if (storageVersion != StorageVersion_1_0_0) return;
 
 			size_t numStorages = deserializeInt(stream);
-
-			std::cout << "READING STORAGE v " << storageVersion << ", " << numStorages << std::endl;
-
 			for (size_t i = 0; i < numStorages; ++i)
 			{
 				Scene3dStorage::Pointer ptr = deserializeStorage(stream, rc, tc, basePath);
@@ -102,10 +98,8 @@ void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 		}
 		else if (chunkEqualTo(readChunk, HeaderElements))
 		{
-			std::cout << "READING ELEMENTS..." << std::endl;
 			ElementContainer::deserialize(stream, this);
 			readCompleted = true;
-			std::cout << "DONE." << std::endl;
 		}
 	}
 
@@ -215,8 +209,8 @@ Element::Pointer Scene3d::createElementOfType(size_t type, Element* parent)
 	case ElementType_Mesh:
 		return Mesh::Pointer(new Mesh(std::string(), parent));
 
-	case ElementType_CollisionMesh:
-		return CollisionMesh::Pointer(new CollisionMesh(std::string(), parent));
+	case ElementType_SupportMesh:
+		return SupportMesh::Pointer(new SupportMesh(std::string(), parent));
 
 	case ElementType_Storage:
 		return Scene3dStorage::Pointer(new Scene3dStorage(std::string(), parent));

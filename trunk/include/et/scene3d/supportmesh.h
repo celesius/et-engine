@@ -14,24 +14,24 @@ namespace et
 {
 	namespace s3d
 	{
-		class CollisionMesh : public Mesh
+		class SupportMesh : public Mesh
 		{
 		public:
-			typedef IntrusivePtr<CollisionMesh> Pointer;
+			typedef IntrusivePtr<SupportMesh> Pointer;
 			typedef DataStorage<triangle> CollisionData;
 
 		public:
-			CollisionMesh(const std::string& name = defaultMeshName, Element* parent = 0);
-			CollisionMesh(const std::string& name, const VertexArrayObject& ib, const Material& material,
+			SupportMesh(const std::string& name = defaultMeshName, Element* parent = 0);
+			SupportMesh(const std::string& name, const VertexArrayObject& ib, const Material& material,
 				size_t startIndex, size_t numIndexes, Element* parent = 0);
 
 			ElementType type() const 
-				{ return ElementType_CollisionMesh; }
+				{ return ElementType_SupportMesh; }
 
 			void setNumIndexes(size_t num);
 			void fillCollisionData(VertexArrayRef v, IndexArrayRef i);
 
-			CollisionMesh* duplicate();
+			SupportMesh* duplicate();
 
 			Sphere sphere();
 			AABB aabb();

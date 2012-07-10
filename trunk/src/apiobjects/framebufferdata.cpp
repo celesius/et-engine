@@ -148,8 +148,6 @@ FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, GLuint f
 	rc->renderState().bindFramebuffer(fboId);
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &_size.x);
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &_size.y);
-	
-	
 }
 
 FramebufferData::~FramebufferData()

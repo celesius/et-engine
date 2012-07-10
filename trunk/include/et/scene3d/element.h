@@ -29,7 +29,7 @@ namespace et
 		{
 			ElementType_Container,
 			ElementType_Mesh,
-			ElementType_CollisionMesh,
+			ElementType_SupportMesh,
 			ElementType_Camera,
 			ElementType_Light,
 			// ... to be addded ...
@@ -87,6 +87,8 @@ namespace et
 
 			void addPropertyString(const std::string& s)
 				{ _properites.push_back(s); }
+			
+			bool hasPropertyString(const std::string& s) const;
 			
 		protected:
 			void serializeGeneralParameters(std::ostream& stream);
