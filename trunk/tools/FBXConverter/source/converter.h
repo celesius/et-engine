@@ -41,6 +41,6 @@ namespace fbxc
 		et::gui::Font _mainFont;
 		et::gui::Label::Pointer _labStatus;
 		et::gui::Button::Pointer _btnDrawNormalMeshes;
-		et::gui::Button::Pointer _btnDrawCollisionMeshes;
+		et::gui::Button::Pointer _btnDrawSupportMeshes;
 	};
 }

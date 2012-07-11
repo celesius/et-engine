@@ -22,7 +22,7 @@ void Converter::applicationDidLoad(RenderContext* rc)
 
 	_gui = new gui::Gui(rc, _texCache);
 	_mainLayout = gui::Layout::Pointer(new gui::Layout());
-	_gui->setCurrentLayout(_mainLayout, 0, 0.0f);
+	_gui->pushLayout(_mainLayout, 0, 0.0f);
 	_mainFont = gui::Font(rc, "ui/fonts/main.font", _texCache);
 
 	Texture uiTexture = rc->textureFactory().loadTexture("gui/keyboard.png", _texCache);
@@ -59,17 +59,17 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	_btnDrawNormalMeshes->setType(gui::Button::Type_CheckButton);
 	_btnDrawNormalMeshes->setSelected(true);
 
-	_btnDrawCollisionMeshes = gui::Button::Pointer(new gui::Button("Collision", _mainFont, _mainLayout.ptr()));
-	_btnDrawCollisionMeshes->setBackgroundForState(imgNormalState, gui::ElementState_Default);
-	_btnDrawCollisionMeshes->setBackgroundForState(imgHoverState, gui::ElementState_Hovered);
-	_btnDrawCollisionMeshes->setBackgroundForState(imgPressedState, gui::ElementState_Pressed);
-	_btnDrawCollisionMeshes->setBackgroundForState(imgSelectedNormalState, gui::ElementState_Selected);
-	_btnDrawCollisionMeshes->setBackgroundForState(imgSelectedHoverState, gui::ElementState_SelectedHovered);
-	_btnDrawCollisionMeshes->setBackgroundForState(imgSelectedPressedState, gui::ElementState_SelectedPressed);
-	_btnDrawCollisionMeshes->setPivotPoint(vec2(1.0f));
-	_btnDrawCollisionMeshes->setPosition(_rc->size() - vec2(_btnDrawNormalMeshes->size().x, 0.0f));
-	_btnDrawCollisionMeshes->setType(gui::Button::Type_CheckButton);
-	_btnDrawCollisionMeshes->setSelected(true);
+	_btnDrawSupportMeshes = gui::Button::Pointer(new gui::Button("Support", _mainFont, _mainLayout.ptr()));
+	_btnDrawSupportMeshes->setBackgroundForState(imgNormalState, gui::ElementState_Default);
+	_btnDrawSupportMeshes->setBackgroundForState(imgHoverState, gui::ElementState_Hovered);
+	_btnDrawSupportMeshes->setBackgroundForState(imgPressedState, gui::ElementState_Pressed);
+	_btnDrawSupportMeshes->setBackgroundForState(imgSelectedNormalState, gui::ElementState_Selected);
+	_btnDrawSupportMeshes->setBackgroundForState(imgSelectedHoverState, gui::ElementState_SelectedHovered);
+	_btnDrawSupportMeshes->setBackgroundForState(imgSelectedPressedState, gui::ElementState_SelectedPressed);
+	_btnDrawSupportMeshes->setPivotPoint(vec2(1.0f));
+	_btnDrawSupportMeshes->setPosition(_rc->size() - vec2(_btnDrawNormalMeshes->size().x, 0.0f));
+	_btnDrawSupportMeshes->setType(gui::Button::Type_CheckButton);
+	_btnDrawSupportMeshes->setSelected(true);
 
 	_labStatus = gui::Label::Pointer(new gui::Label("Status", _mainFont, _mainLayout.ptr()));
 	_labStatus->setPivotPoint(vec2(0.0f, 1.0f));
@@ -128,8 +128,8 @@ void Converter::performSceneRendering()
 	if (_btnDrawNormalMeshes->selected())
 		renderMeshList(_rc, _scene.childrenOfType(s3d::ElementType_Mesh));
 
-	if (_btnDrawCollisionMeshes->selected())
-		renderMeshList(_rc, _scene.childrenOfType(s3d::ElementType_CollisionMesh));
+	if (_btnDrawSupportMeshes->selected())
+		renderMeshList(_rc, _scene.childrenOfType(s3d::ElementType_SupportMesh));
 }
 
 void Converter::render(RenderContext* rc)
