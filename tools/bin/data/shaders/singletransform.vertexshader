@@ -3,17 +3,17 @@ uniform vec3 vCamera;
 uniform vec3 vPrimaryLight;
 uniform mat4 mTransform;
 
-in vec4 Vertex;
-in vec3 Normal;
-in vec2 TexCoord0;
-in vec3 Tangent;
+etVertexIn vec4 Vertex;
+etVertexIn vec3 Normal;
+etVertexIn vec2 TexCoord0;
+etVertexIn vec3 Tangent;
 
-out vec2 TexCoord;
-out vec3 vViewTS;
-out vec3 vLightTS;
-out vec3 vViewWS;
-out vec3 vLightWS;
-out vec3 vNormalWS;
+etVertexOut vec2 TexCoord;
+etVertexOut vec3 vViewTS;
+etVertexOut vec3 vLightTS;
+etVertexOut vec3 vViewWS;
+etVertexOut vec3 vLightWS;
+etVertexOut vec3 vNormalWS;
 
 void main()
 {

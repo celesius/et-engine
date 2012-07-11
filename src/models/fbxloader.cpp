@@ -25,9 +25,9 @@
 #pragma comment(lib, "wininet.lib")
 
 #if (ET_DEBUG)
-	#pragma comment(lib, "fbxsdk-2013.1-mtd.lib")
+	#pragma comment(lib, "fbxsdk-2013.2-mtd.lib")
 #else
-	#pragma comment(lib, "fbxsdk-2013.1-mt.lib")
+	#pragma comment(lib, "fbxsdk-2013.2-mt.lib")
 #endif
 
 using namespace FBXSDK_NAMESPACE;
@@ -302,10 +302,10 @@ void FBXLoaderPrivate::loadMaterialTextureValue(Material& m, const std::string& 
 	FbxProperty value = fbxm->FindProperty(fbxprop);
 	if (value.IsValid())
 	{
-		int lTextureCount = value.GetSrcObjectCount(FbxFileTexture::ClassId);
+		int lTextureCount = value.GetSrcObjectCount<FbxFileTexture>();
 		if (lTextureCount)
 		{
-			FbxFileTexture* lTexture = value.GetSrcObject(FBX_TYPE(FbxFileTexture), 0);
+			FbxFileTexture* lTexture = value.GetSrcObject<FbxFileTexture>(0);
 			if (lTexture && lTexture->GetUserDataPtr())
 			{
 				TextureData* ptr = reinterpret_cast<TextureData*>(lTexture->GetUserDataPtr());
@@ -354,17 +354,16 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 	s3d::Element::Pointer element;
 
 	size_t lodIndex = 0;
-	bool collision = false;
+	bool support = false;
 	for (StringList::const_iterator i = params.begin(), e = params.end(); i != e; ++i)
 	{
 		std::string p = *i;
 		lowercase(p);
 		p.erase(std::remove_if(p.begin(), p.end(), [](char c){ return isWhitespaceChar(c); } ), p.end());
-		std::cout << "Prop: " << p << std::endl;
 
-		if (p == s_collisionMeshProperty)
+		if ((p.find_first_of(s_collisionMeshProperty) == 0) || (p.find_first_of(s_supportMeshProperty) == 0))
 		{
-			collision = true;
+			support = true;
 			break;
 		}
 
@@ -407,7 +406,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 	}
 	else
 	{
-		if (collision)
+		if (support)
 			element = s3d::SupportMesh::Pointer(new s3d::SupportMesh(mesh->GetName(), realParent));
 		else
 			element = s3d::Mesh::Pointer(new s3d::Mesh(mesh->GetName(), realParent));
@@ -491,7 +490,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 		{
 			s3d::Mesh::Pointer meshElement;
 
-			if (collision)
+			if (support)
 				meshElement = s3d::SupportMesh::Pointer(new s3d::SupportMesh(mesh->GetName(), realParent));
 			else
 				meshElement = s3d::Mesh::Pointer(new s3d::Mesh(mesh->GetName(), realParent));
