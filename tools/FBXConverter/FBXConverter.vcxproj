@@ -54,6 +54,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>FBXSDK_NEW_API;WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -105,6 +106,7 @@
     <ClCompile Include="..\..\src\core\tools.cpp" />
     <ClCompile Include="..\..\src\core\transformable.cpp" />
     <ClCompile Include="..\..\src\geometry\geometry.cpp" />
+    <ClCompile Include="..\..\src\geometry\rectplacer.cpp" />
     <ClCompile Include="..\..\src\gui\button.cpp" />
     <ClCompile Include="..\..\src\gui\carousel.cpp" />
     <ClCompile Include="..\..\src\gui\element2d.cpp" />
@@ -125,11 +127,71 @@
     <ClCompile Include="..\..\src\imaging\ddsloader.cpp" />
     <ClCompile Include="..\..\src\imaging\imageoperations.cpp" />
     <ClCompile Include="..\..\src\imaging\imagewriter.cpp" />
+    <ClCompile Include="..\..\src\imaging\jpgloader.cpp" />
     <ClCompile Include="..\..\src\imaging\pngloader.cpp" />
     <ClCompile Include="..\..\src\imaging\pvrloader.cpp" />
-    <ClCompile Include="..\..\src\imaging\textureatlaswriter.cpp" />
     <ClCompile Include="..\..\src\input\gestures.cpp" />
     <ClCompile Include="..\..\src\input\input.cpp" />
+    <ClCompile Include="..\..\src\libjpeg\cdjpeg.c" />
+    <ClCompile Include="..\..\src\libjpeg\jaricom.c" />
+    <ClCompile Include="..\..\src\libjpeg\jcapimin.c" />
+    <ClCompile Include="..\..\src\libjpeg\jcapistd.c" />
+    <ClCompile Include="..\..\src\libjpeg\jcarith.c" />
+    <ClCompile Include="..\..\src\libjpeg\jccoefct.c" />
+    <ClCompile Include="..\..\src\libjpeg\jccolor.c" />
+    <ClCompile Include="..\..\src\libjpeg\jcdctmgr.c" />
+    <ClCompile Include="..\..\src\libjpeg\jchuff.c" />
+    <ClCompile Include="..\..\src\libjpeg\jcinit.c" />
+    <ClCompile Include="..\..\src\libjpeg\jcmainct.c" />
+    <ClCompile Include="..\..\src\libjpeg\jcmarker.c" />
+    <ClCompile Include="..\..\src\libjpeg\jcmaster.c" />
+    <ClCompile Include="..\..\src\libjpeg\jcomapi.c" />
+    <ClCompile Include="..\..\src\libjpeg\jcparam.c" />
+    <ClCompile Include="..\..\src\libjpeg\jcprepct.c" />
+    <ClCompile Include="..\..\src\libjpeg\jcsample.c" />
+    <ClCompile Include="..\..\src\libjpeg\jctrans.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdapimin.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdapistd.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdarith.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdatadst.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdatasrc.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdcoefct.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdcolor.c" />
+    <ClCompile Include="..\..\src\libjpeg\jddctmgr.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdhuff.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdinput.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdmainct.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdmarker.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdmaster.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdmerge.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdpostct.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdsample.c" />
+    <ClCompile Include="..\..\src\libjpeg\jdtrans.c" />
+    <ClCompile Include="..\..\src\libjpeg\jerror.c" />
+    <ClCompile Include="..\..\src\libjpeg\jfdctflt.c" />
+    <ClCompile Include="..\..\src\libjpeg\jfdctfst.c" />
+    <ClCompile Include="..\..\src\libjpeg\jfdctint.c" />
+    <ClCompile Include="..\..\src\libjpeg\jidctflt.c" />
+    <ClCompile Include="..\..\src\libjpeg\jidctfst.c" />
+    <ClCompile Include="..\..\src\libjpeg\jidctint.c" />
+    <ClCompile Include="..\..\src\libjpeg\jmemansi.c" />
+    <ClCompile Include="..\..\src\libjpeg\jmemmgr.c" />
+    <ClCompile Include="..\..\src\libjpeg\jquant1.c" />
+    <ClCompile Include="..\..\src\libjpeg\jquant2.c" />
+    <ClCompile Include="..\..\src\libjpeg\jutils.c" />
+    <ClCompile Include="..\..\src\libjpeg\rdbmp.c" />
+    <ClCompile Include="..\..\src\libjpeg\rdcolmap.c" />
+    <ClCompile Include="..\..\src\libjpeg\rdgif.c" />
+    <ClCompile Include="..\..\src\libjpeg\rdppm.c" />
+    <ClCompile Include="..\..\src\libjpeg\rdrle.c" />
+    <ClCompile Include="..\..\src\libjpeg\rdswitch.c" />
+    <ClCompile Include="..\..\src\libjpeg\rdtarga.c" />
+    <ClCompile Include="..\..\src\libjpeg\transupp.c" />
+    <ClCompile Include="..\..\src\libjpeg\wrbmp.c" />
+    <ClCompile Include="..\..\src\libjpeg\wrgif.c" />
+    <ClCompile Include="..\..\src\libjpeg\wrppm.c" />
+    <ClCompile Include="..\..\src\libjpeg\wrrle.c" />
+    <ClCompile Include="..\..\src\libjpeg\wrtarga.c" />
     <ClCompile Include="..\..\src\libpng\png.c" />
     <ClCompile Include="..\..\src\libpng\pngerror.c" />
     <ClCompile Include="..\..\src\libpng\pngget.c" />
@@ -148,6 +210,7 @@
     <ClCompile Include="..\..\src\models\fbxloader.cpp" />
     <ClCompile Include="..\..\src\opengl\opengl.common.cpp" />
     <ClCompile Include="..\..\src\platform-win\application.win.cpp" />
+    <ClCompile Include="..\..\src\platform-win\charactergenerator.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\criticalsection.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\fontgen.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\gl.win.cpp" />
@@ -167,13 +230,13 @@
     <ClCompile Include="..\..\src\rendering\renderstate.cpp" />
     <ClCompile Include="..\..\src\resources\textureloader.cpp" />
     <ClCompile Include="..\..\src\scene3d\cameraelement.cpp" />
-    <ClCompile Include="..\..\src\scene3d\collisionmesh.cpp" />
     <ClCompile Include="..\..\src\scene3d\element.cpp" />
     <ClCompile Include="..\..\src\scene3d\material.cpp" />
     <ClCompile Include="..\..\src\scene3d\mesh.cpp" />
     <ClCompile Include="..\..\src\scene3d\scene3d.cpp" />
     <ClCompile Include="..\..\src\scene3d\serialization.cpp" />
     <ClCompile Include="..\..\src\scene3d\storage.cpp" />
+    <ClCompile Include="..\..\src\scene3d\supportmesh.cpp" />
     <ClCompile Include="..\..\src\tasks\taskpool.cpp" />
     <ClCompile Include="..\..\src\timers\notifytimer.cpp" />
     <ClCompile Include="..\..\src\timers\sequence.cpp" />

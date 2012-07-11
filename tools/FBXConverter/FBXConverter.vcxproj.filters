@@ -168,9 +168,6 @@
     <ClCompile Include="..\..\src\imaging\pvrloader.cpp">
       <Filter>Engine-sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\imaging\textureatlaswriter.cpp">
-      <Filter>Engine-sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\input\gestures.cpp">
       <Filter>Engine-sources</Filter>
     </ClCompile>
@@ -288,9 +285,6 @@
     <ClCompile Include="..\..\src\scene3d\cameraelement.cpp">
       <Filter>Engine-sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\scene3d\collisionmesh.cpp">
-      <Filter>Engine-sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\scene3d\element.cpp">
       <Filter>Engine-sources</Filter>
     </ClCompile>
@@ -379,6 +373,198 @@
       <Filter>Engine-sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\zlib\zutil.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\scene3d\supportmesh.cpp">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\cdjpeg.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jaricom.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jcapimin.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jcapistd.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jcarith.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jccoefct.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jccolor.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jcdctmgr.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jchuff.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jcinit.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jcmainct.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jcmarker.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jcmaster.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jcomapi.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jcparam.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jcprepct.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jcsample.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jctrans.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdapimin.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdapistd.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdarith.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdatadst.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdatasrc.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdcoefct.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdcolor.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jddctmgr.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdhuff.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdinput.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdmainct.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdmarker.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdmaster.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdmerge.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdpostct.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdsample.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jdtrans.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jerror.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jfdctflt.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jfdctfst.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jfdctint.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jidctflt.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jidctfst.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jidctint.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jmemansi.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jmemmgr.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jquant1.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jquant2.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\jutils.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\rdbmp.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\rdcolmap.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\rdgif.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\rdppm.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\rdrle.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\rdswitch.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\rdtarga.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\transupp.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\wrbmp.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\wrgif.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\wrppm.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\wrrle.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libjpeg\wrtarga.c">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\imaging\jpgloader.cpp">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\charactergenerator.win.cpp">
+      <Filter>Engine-sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geometry\rectplacer.cpp">
       <Filter>Engine-sources</Filter>
     </ClCompile>
   </ItemGroup>

@@ -19,7 +19,7 @@
 #include <et/vertexbuffer/IndexArray.h>
 #include <et/primitives/primitives.h>
 #include <et/resources/textureloader.h>
-#include <et/scene3d/collisionmesh.h>
+#include <et/scene3d/supportmesh.h>
 #include <et/models/fbxloader.h>
 
 #pragma comment(lib, "wininet.lib")
@@ -32,8 +32,9 @@
 
 using namespace FBXSDK_NAMESPACE;
 
-const std::string s_collisionMeshProperty = "collision = true";
-const std::string s_lodMeshProperty = "lod = ";
+const std::string s_supportMeshProperty = "support=true";
+const std::string s_collisionMeshProperty = "collision=true";
+const std::string s_lodMeshProperty = "lod=";
 
 namespace et
 {
@@ -248,8 +249,8 @@ void FBXLoaderPrivate::loadNode(FbxNode* node, s3d::Element::Pointer parent)
 
 				if (storedElement->type() == s3d::ElementType_Mesh)
 					 instance = storedElement->duplicate();
-				else if (storedElement->type() == s3d::ElementType_CollisionMesh)
-					s3d::CollisionMesh* instance = static_cast<s3d::CollisionMesh*>(storedElement->duplicate());
+				else if (storedElement->type() == s3d::ElementType_SupportMesh)
+					s3d::SupportMesh* instance = static_cast<s3d::SupportMesh*>(storedElement->duplicate());
 
 				createdElement.reset(instance);
 			}
@@ -344,6 +345,9 @@ Material FBXLoaderPrivate::loadMaterial(FbxSurfaceMaterial* mat)
 	return m;
 }
 
+inline bool isWhiteSpaceSymbol(char c)
+	{ return isWhitespaceChar(c); }
+
 s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Pointer parent, 
 	const MaterialList& materials, const StringList& params)
 {
@@ -355,6 +359,8 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 	{
 		std::string p = *i;
 		lowercase(p);
+		p.erase(std::remove_if(p.begin(), p.end(), [](char c){ return isWhitespaceChar(c); } ), p.end());
+		std::cout << "Prop: " << p << std::endl;
 
 		if (p == s_collisionMeshProperty)
 		{
@@ -402,7 +408,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 	else
 	{
 		if (collision)
-			element = s3d::CollisionMesh::Pointer(new s3d::CollisionMesh(mesh->GetName(), realParent));
+			element = s3d::SupportMesh::Pointer(new s3d::SupportMesh(mesh->GetName(), realParent));
 		else
 			element = s3d::Mesh::Pointer(new s3d::Mesh(mesh->GetName(), realParent));
 	}
@@ -486,7 +492,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 			s3d::Mesh::Pointer meshElement;
 
 			if (collision)
-				meshElement = s3d::CollisionMesh::Pointer(new s3d::CollisionMesh(mesh->GetName(), realParent));
+				meshElement = s3d::SupportMesh::Pointer(new s3d::SupportMesh(mesh->GetName(), realParent));
 			else
 				meshElement = s3d::Mesh::Pointer(new s3d::Mesh(mesh->GetName(), realParent));
 
@@ -592,10 +598,10 @@ void FBXLoaderPrivate::buildVertexBuffers(RenderContext* rc, s3d::Element::Point
 		mesh->cleanupLodChildren();
 	}
 
-	meshes = root->childrenOfType(s3d::ElementType_CollisionMesh);
+	meshes = root->childrenOfType(s3d::ElementType_SupportMesh);
 	for (s3d::Element::List::iterator i = meshes.begin(), e = meshes.end(); i != e; ++i)
 	{
-		s3d::CollisionMesh* mesh = static_cast<s3d::CollisionMesh*>(i->ptr());
+		s3d::SupportMesh* mesh = static_cast<s3d::SupportMesh*>(i->ptr());
 		mesh->setVertexArrayObject(vertexArrayObjects[mesh->tag]);
 		mesh->fillCollisionData(vertexArrays[mesh->tag], storage->indexArray());
 	}
@@ -611,16 +617,13 @@ StringList FBXLoaderPrivate::loadNodeProperties(FbxNode* node)
 	FbxProperty prop = node->GetFirstProperty();
 	while (prop.IsValid())
 	{
-		if (prop.GetFlag(FbxPropertyAttr::eUser) && (prop.GetPropertyDataType().GetType() == eFbxString))
+		if ((true || prop.GetFlag(FbxPropertyAttr::eUser)) && (prop.GetPropertyDataType().GetType() == eFbxString))
 		{
 			FbxString str = prop.Get<FbxString>();
 			size_t len = str.GetLen();
-			size_t i = 0;
 
-			BinaryDataStorage line(len);
-			line.fill(0);
-
-			for (i = 0; i < len; ++i)
+			BinaryDataStorage line(len+1, 0);
+			for (size_t i = 0; i < len; ++i)
 			{
 				char c = str[i];
 				if ((c == 0x0a) || (c == 0x0d))
