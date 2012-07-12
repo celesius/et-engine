@@ -49,7 +49,7 @@ void Mesh::setVertexArrayObject(VertexArrayObject vao)
 	_vao = vao;
 }
 
-void Mesh::serialize(std::ostream& stream)
+void Mesh::serialize(std::ostream& stream, SceneVersion version)
 {
 	std::string vbId = (_vao.valid() && _vao->vertexBuffer().valid()) ? intToStr(_vao->vertexBuffer()->sourceTag()) : "0";
 	std::string ibId = (_vao.valid() && _vao->indexBuffer().valid()) ? intToStr(_vao->indexBuffer()->sourceTag()) : "0";
@@ -69,14 +69,14 @@ void Mesh::serialize(std::ostream& stream)
 	for (LodMap::iterator i = _lods.begin(), e = _lods.end(); i != e; ++i)
 	{
 		serializeInt(stream, i->first);
-		i->second->serialize(stream);
+		i->second->serialize(stream, version);
 	}
 
-	serializeGeneralParameters(stream);
-	serializeChildren(stream);
+	serializeGeneralParameters(stream, version);
+	serializeChildren(stream, version);
 }
 
-void Mesh::deserialize(std::istream& stream, ElementFactory* factory)
+void Mesh::deserialize(std::istream& stream, ElementFactory* factory, SceneVersion version)
 {
 	std::string vaoName = deserializeString(stream);
 	std::string vbName = deserializeString(stream);
@@ -93,12 +93,12 @@ void Mesh::deserialize(std::istream& stream, ElementFactory* factory)
 	{
 		size_t level = deserializeInt(stream);
 		Mesh::Pointer p = factory->createElementOfType(ElementType_Mesh, 0);
-		p->deserialize(stream, factory);
+		p->deserialize(stream, factory, version);
 		attachLod(level, p);
 	}
 
-	deserializeGeneralParameters(stream);
-	deserializeChildren(stream, factory);
+	deserializeGeneralParameters(stream, version);
+	deserializeChildren(stream, factory, version);
 }
 
 void Mesh::attachLod(size_t level, Mesh::Pointer mesh)

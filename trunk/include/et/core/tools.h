@@ -137,6 +137,9 @@ namespace et
 		stream << value.x << ET_CSV_DELIMITER << value.y << ET_CSV_DELIMITER << value.z << ET_CSV_DELIMITER << value.w;
 		return stream;
 	}
+		
+	std::ostream& operator << (std::ostream& stream, const StringList& list);
+		
 	std::string getFilePath(const std::string& name);
 	std::string getFileName(const std::string& fullPath);
 	std::string removeUpDir(std::string name);

@@ -40,8 +40,8 @@ namespace et
 			const CollisionData& triangles() const
 				{ return _data; }
 
-			void serialize(std::ostream& stream);
-			void deserialize(std::istream& stream, ElementFactory* factory);
+			void serialize(std::ostream& stream, SceneVersion version);
+			void deserialize(std::istream& stream, ElementFactory* factory, SceneVersion version);
 
 			mat4 finalTransform();
 			mat4 finalTransformInverse();

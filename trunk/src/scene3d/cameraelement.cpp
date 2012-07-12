@@ -25,18 +25,18 @@ CameraElement* CameraElement::duplicate()
 	return result;
 }
 
-void CameraElement::serialize(std::ostream& stream)
+void CameraElement::serialize(std::ostream& stream, SceneVersion version)
 {
 	serializeMatrix(stream, modelViewMatrix());
 	serializeMatrix(stream, projectionMatrix());
 	serializeInt(stream, upVectorLocked());
 	serializeVector(stream, lockedUpVector());
 
-	serializeGeneralParameters(stream);
-	serializeChildren(stream);
+	serializeGeneralParameters(stream, version);
+	serializeChildren(stream, version);
 }
 
-void CameraElement::deserialize(std::istream& stream, ElementFactory* factory)
+void CameraElement::deserialize(std::istream& stream, ElementFactory* factory, SceneVersion version)
 {
 //	mat4 mv =
 	deserializeMatrix(stream);
@@ -47,7 +47,7 @@ void CameraElement::deserialize(std::istream& stream, ElementFactory* factory)
 //	vec3 locked =
 	deserializeVector<vec3>(stream);
 
-	deserializeGeneralParameters(stream);
-	deserializeChildren(stream, factory);
+	deserializeGeneralParameters(stream, version);
+	deserializeChildren(stream, factory, version);
 }
 

@@ -102,24 +102,24 @@ OBB SupportMesh::obb()
 	return OBB(ft * _center, s * _size, r);
 }
 
-void SupportMesh::serialize(std::ostream& stream)
+void SupportMesh::serialize(std::ostream& stream, SceneVersion version)
 {
 	serializeFloat(stream, _radius);
 	serializeVector(stream, _size);
 	serializeVector(stream, _center);
 	serializeInt(stream, _data.size());
 	stream.write(_data.binary(), _data.dataSize());
-	Mesh::serialize(stream);
+	Mesh::serialize(stream, version);
 }
 
-void SupportMesh::deserialize(std::istream& stream, ElementFactory* factory)
+void SupportMesh::deserialize(std::istream& stream, ElementFactory* factory, SceneVersion version)
 {
 	_radius = deserializeFloat(stream);
 	_size = deserializeVector<vec3>(stream);
 	_center = deserializeVector<vec3>(stream);
 	_data.resize(deserializeInt(stream));
 	stream.read(_data.binary(), _data.dataSize());
-	Mesh::deserialize(stream, factory);
+	Mesh::deserialize(stream, factory, version);
 }
 
 mat4 SupportMesh::finalTransform()

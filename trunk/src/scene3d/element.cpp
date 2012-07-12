@@ -119,7 +119,7 @@ void Element::clear()
 	removeChildren();
 }
 
-void Element::serializeGeneralParameters(std::ostream& stream)
+void Element::serializeGeneralParameters(std::ostream& stream, SceneVersion version)
 {
 	serializeString(stream, _name);
 	serializeInt(stream, _active);
@@ -127,40 +127,58 @@ void Element::serializeGeneralParameters(std::ostream& stream)
 	serializeVector(stream, translation());
 	serializeVector(stream, scale());
 	serializeQuaternion(stream, orientation());
+	
+	if (version >= SceneVersion_1_0_1)
+	{
+		serializeInt(stream, _properites.size());
+		for (StringList::iterator i = _properites.begin(), e = _properites.end(); i != e; ++i)
+			serializeString(stream, *i);
+	}
 }
 
-void Element::deserializeGeneralParameters(std::istream& stream)
+void Element::deserializeGeneralParameters(std::istream& stream, SceneVersion version)
 {
 	_name = deserializeString(stream);
+	
+	std::cout << "Name: " << _name << std::endl;
+	
 	_active = deserializeInt(stream) != 0;
 	setFlags(deserializeInt(stream));
 	setTranslation(deserializeVector<vec3>(stream));
 	setScale(deserializeVector<vec3>(stream));
 	setOrientation(deserializeQuaternion(stream));
+/*
+	if (version >= SceneVersion_1_0_1)
+	{
+		size_t numProperties = deserializeInt(stream);
+		for (size_t i = 0; i < numProperties; ++i)
+			_properites.push_back(deserializeString(stream));
+	}
+*/
 }
 
-void Element::serializeChildren(std::ostream& stream)
+void Element::serializeChildren(std::ostream& stream, SceneVersion version)
 {
 	serializeInt(stream, children().size());
 	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
 	{
 		serializeInt(stream, (*i)->type());
-		(*i)->serialize(stream);
+		(*i)->serialize(stream, version);
 	}
 }
 
-void Element::deserializeChildren(std::istream& stream, ElementFactory* factory)
+void Element::deserializeChildren(std::istream& stream, ElementFactory* factory, SceneVersion version)
 {
 	size_t numChildren = deserializeInt(stream);
 	for (size_t i = 0; i < numChildren; ++i)
 	{
 		size_t type = deserializeInt(stream);
 		Element::Pointer child = factory->createElementOfType(type, (type == ElementType_Storage) ? 0 : this);
-		child->deserialize(stream, factory);
+		child->deserialize(stream, factory, version);
 	}
 }
 
-void Element::serialize(std::ostream&)
+void Element::serialize(std::ostream&, SceneVersion)
 {
 	std::cout << "Serialization method isn't defined for " << typeid(*this).name() << std::endl;
 #if (ET_DEBUG)
@@ -168,7 +186,7 @@ void Element::serialize(std::ostream&)
 #endif
 }
 
-void Element::deserialize(std::istream&, ElementFactory*)
+void Element::deserialize(std::istream&, ElementFactory*, SceneVersion)
 {
 	std::cout << "Deserialization method isn't defined for " << typeid(*this).name() << std::endl;
 #if (ET_DEBUG)

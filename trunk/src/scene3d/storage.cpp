@@ -63,12 +63,12 @@ int Scene3dStorage::indexOfVertexArray(const VertexArrayRef& va)
 	return -1;
 }
 
-void Scene3dStorage::serialize(std::ostream& stream)
+void Scene3dStorage::serialize(std::ostream& stream, SceneVersion version)
 {
 	serializeInt(stream, 0);
 }
 
-void Scene3dStorage::deserialize(std::istream& stream, ElementFactory*)
+void Scene3dStorage::deserialize(std::istream& stream, ElementFactory*, SceneVersion version)
 {
 	int value = deserializeInt(stream);
 	assert(value == 0);
