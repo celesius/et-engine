@@ -37,10 +37,10 @@ namespace et
 		AABB() { }
 		AABB(const vec3& aCenter, const vec3& aDimension);
 
-		inline vec3 minVertex() const
+		vec3 minVertex() const
 			{ return center - dimension; }
 
-		inline vec3 maxVertex() const
+		vec3 maxVertex() const
 			{ return center + dimension; }
 	};
 
