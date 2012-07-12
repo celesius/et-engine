@@ -139,22 +139,18 @@ void Element::serializeGeneralParameters(std::ostream& stream, SceneVersion vers
 void Element::deserializeGeneralParameters(std::istream& stream, SceneVersion version)
 {
 	_name = deserializeString(stream);
-	
-	std::cout << "Name: " << _name << std::endl;
-	
 	_active = deserializeInt(stream) != 0;
 	setFlags(deserializeInt(stream));
 	setTranslation(deserializeVector<vec3>(stream));
 	setScale(deserializeVector<vec3>(stream));
 	setOrientation(deserializeQuaternion(stream));
-/*
+
 	if (version >= SceneVersion_1_0_1)
 	{
 		size_t numProperties = deserializeInt(stream);
 		for (size_t i = 0; i < numProperties; ++i)
 			_properites.push_back(deserializeString(stream));
 	}
-*/
 }
 
 void Element::serializeChildren(std::ostream& stream, SceneVersion version)
