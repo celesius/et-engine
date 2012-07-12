@@ -48,8 +48,8 @@ namespace et
 			void setIndexBuffer(IndexBuffer ib);
 			void setVertexArrayObject(VertexArrayObject vao);
 
-			void serialize(std::ostream& stream);
-			void deserialize(std::istream& stream, ElementFactory* factory);
+			void serialize(std::ostream& stream, SceneVersion version);
+			void deserialize(std::istream& stream, ElementFactory* factory, SceneVersion version);
 
 			void cleanupLodChildren();
 			void attachLod(size_t level, Mesh::Pointer mesh);

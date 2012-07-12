@@ -25,10 +25,10 @@ void Scene3d::serialize(std::ostream& stream)
 	Element::List storages = childrenOfType(ElementType_Storage);
 
 	serializeChunk(stream, HeaderScene);
-	serializeInt(stream, SceneCurrentVersion);
+	serializeInt(stream, SceneVersionLatest);
 
 	serializeChunk(stream, HeaderData);
-	serializeInt(stream, StorageCurrentVersion);
+	serializeInt(stream, StorageVersionLatest);
 
 	serializeInt(stream, storages.size());
 	for (Element::List::iterator i = storages.begin(), e = storages.end(); i != e; ++i)
@@ -60,7 +60,7 @@ void Scene3d::serialize(std::ostream& stream)
 	}
 
 	serializeChunk(stream, HeaderElements);
-	ElementContainer::serialize(stream);
+	ElementContainer::serialize(stream, SceneVersionLatest);
 }
 
 void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory, const std::string& basePath)
@@ -78,7 +78,7 @@ void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 	_externalFactory = factory;
 
 	size_t version = deserializeInt(stream);
-	if (version != SceneVersion_1_0_0) return;
+	if (version > SceneVersionLatest) return;
 
 	volatile bool readCompleted = false;
 	while (!readCompleted)
@@ -98,7 +98,7 @@ void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 		}
 		else if (chunkEqualTo(readChunk, HeaderElements))
 		{
-			ElementContainer::deserialize(stream, this);
+			ElementContainer::deserialize(stream, this, static_cast<SceneVersion>(version));
 			readCompleted = true;
 		}
 	}

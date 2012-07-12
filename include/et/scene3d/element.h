@@ -13,6 +13,7 @@
 #include <et/core/transformable.h>
 #include <et/core/serialization.h>
 #include <et/scene3d/material.h>
+#include <et/scene3d/serialization.h>
 
 namespace et
 {
@@ -74,8 +75,8 @@ namespace et
 			Element::List childrenOfType(ElementType ofType);
 			Element::List childrenHavingFlag(size_t flag);
 
-			virtual void serialize(std::ostream& stream);
-			virtual void deserialize(std::istream& stream, ElementFactory* factory);
+			virtual void serialize(std::ostream& stream, SceneVersion version);
+			virtual void deserialize(std::istream& stream, ElementFactory* factory, SceneVersion version);
 			
 			void clear();
 
@@ -91,10 +92,10 @@ namespace et
 			bool hasPropertyString(const std::string& s) const;
 			
 		protected:
-			void serializeGeneralParameters(std::ostream& stream);
-			void serializeChildren(std::ostream& stream);
-			void deserializeGeneralParameters(std::istream& stream);
-			void deserializeChildren(std::istream& stream, ElementFactory* factory);
+			void serializeGeneralParameters(std::ostream& stream, SceneVersion version);
+			void serializeChildren(std::ostream& stream, SceneVersion version);
+			void deserializeGeneralParameters(std::istream& stream, SceneVersion version);
+			void deserializeChildren(std::istream& stream, ElementFactory* factory, SceneVersion version);
 
 		private:
 			Pointer childWithNameCallback(const std::string& name, Pointer root, ElementType ofType);
@@ -127,16 +128,16 @@ namespace et
 				return result; 
 			}
 
-			void serialize(std::ostream& stream)
+			void serialize(std::ostream& stream, SceneVersion version)
 			{
-				serializeGeneralParameters(stream);
-				serializeChildren(stream);
+				serializeGeneralParameters(stream, version);
+				serializeChildren(stream, version);
 			}
 
-			void deserialize(std::istream& stream, ElementFactory* factory)
+			void deserialize(std::istream& stream, ElementFactory* factory, SceneVersion version)
 			{
-				deserializeGeneralParameters(stream);
-				deserializeChildren(stream, factory);
+				deserializeGeneralParameters(stream, version);
+				deserializeChildren(stream, factory, version);
 			}
 		};
 

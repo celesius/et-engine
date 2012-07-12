@@ -22,6 +22,7 @@ namespace et
 		enum SceneVersion
 		{
 			SceneVersion_1_0_0 = 100,
+			SceneVersion_1_0_1 = 101,
 		};
 
 		enum StorageVersion
@@ -29,8 +30,8 @@ namespace et
 			StorageVersion_1_0_0 = 100,
 		};
 
-		extern const SceneVersion SceneCurrentVersion;
-		extern const StorageVersion StorageCurrentVersion;
+		extern const SceneVersion SceneVersionLatest;
+		extern const StorageVersion StorageVersionLatest;
 
 		typedef char ChunkId[SerializationChunkLength];
 		extern ChunkId HeaderScene;

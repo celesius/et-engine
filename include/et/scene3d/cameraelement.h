@@ -32,8 +32,8 @@ namespace et
 			const Camera& camera() const
 				{ return *this; }
 
-			void serialize(std::ostream& stream);
-			void deserialize(std::istream& stream, ElementFactory* factory);
+			void serialize(std::ostream& stream, SceneVersion version);
+			void deserialize(std::istream& stream, ElementFactory* factory, SceneVersion version);
 		};
 	}
 }

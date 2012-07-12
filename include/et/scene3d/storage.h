@@ -24,8 +24,8 @@ namespace et
 		public:
 			Scene3dStorage(const std::string& name, Element* parent);
 
-			void serialize(std::ostream& stream);
-			void deserialize(std::istream& stream, ElementFactory* factory);
+			void serialize(std::ostream& stream, SceneVersion version);
+			void deserialize(std::istream& stream, ElementFactory* factory, SceneVersion version);
 
 			virtual ElementType type() const 
 				{ return ElementType_Storage; }
