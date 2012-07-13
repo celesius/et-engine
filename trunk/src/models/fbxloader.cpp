@@ -353,6 +353,10 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 {
 	s3d::Element::Pointer element;
 
+	const char* meshName = mesh->GetName();
+	if (strlen(meshName) == 0)
+		meshName = mesh->GetNode()->GetName();
+
 	size_t lodIndex = 0;
 	bool support = false;
 	for (StringList::const_iterator i = params.begin(), e = params.end(); i != e; ++i)
@@ -361,7 +365,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 		lowercase(p);
 		p.erase(std::remove_if(p.begin(), p.end(), [](char c){ return isWhitespaceChar(c); } ), p.end());
 
-		if ((p.find_first_of(s_collisionMeshProperty) == 0) || (p.find_first_of(s_supportMeshProperty) == 0))
+		if ((p.find(s_collisionMeshProperty) == 0) || (p.find(s_supportMeshProperty) == 0))
 		{
 			support = true;
 			break;
@@ -407,9 +411,9 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 	else
 	{
 		if (support)
-			element = s3d::SupportMesh::Pointer(new s3d::SupportMesh(mesh->GetName(), realParent));
+			element = s3d::SupportMesh::Pointer(new s3d::SupportMesh(meshName, realParent));
 		else
-			element = s3d::Mesh::Pointer(new s3d::Mesh(mesh->GetName(), realParent));
+			element = s3d::Mesh::Pointer(new s3d::Mesh(meshName, realParent));
 	}
 
 	bool hasNormal = mesh->GetElementNormalCount() > 0;
@@ -491,9 +495,9 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 			s3d::Mesh::Pointer meshElement;
 
 			if (support)
-				meshElement = s3d::SupportMesh::Pointer(new s3d::SupportMesh(mesh->GetName(), realParent));
+				meshElement = s3d::SupportMesh::Pointer(new s3d::SupportMesh(meshName, realParent));
 			else
-				meshElement = s3d::Mesh::Pointer(new s3d::Mesh(mesh->GetName(), realParent));
+				meshElement = s3d::Mesh::Pointer(new s3d::Mesh(meshName, realParent));
 
 			meshElement->tag = vbIndex;
 			meshElement->setStartIndex(indexOffset);
