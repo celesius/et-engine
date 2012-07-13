@@ -78,7 +78,7 @@ void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 	_externalFactory = factory;
 
 	size_t version = deserializeInt(stream);
-	if (version > SceneVersionLatest) return;
+	if (version > static_cast<size_t>(SceneVersionLatest)) return;
 
 	volatile bool readCompleted = false;
 	while (!readCompleted)
@@ -219,10 +219,12 @@ Element::Pointer Scene3d::createElementOfType(size_t type, Element* parent)
 		return CameraElement::Pointer(new CameraElement(std::string(), parent));
 
 	default:
-		if (_externalFactory)
-			return _externalFactory->createElementOfType(type, parent);
-		else
-			return ElementContainer::Pointer(new ElementContainer(std::string(), parent));
+		{
+			if (_externalFactory)
+				return _externalFactory->createElementOfType(type, parent);
+			else
+				return ElementContainer::Pointer(new ElementContainer(std::string(), parent));
+		}
 	}
 }
 

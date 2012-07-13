@@ -72,7 +72,7 @@ namespace et
 			void setParent(Element* p);
 
 			Pointer childWithName(const std::string& name, ElementType ofType = ElementType_Any, bool assertFail = false);
-			Element::List childrenOfType(ElementType ofType);
+			Element::List childrenOfType(ElementType ofType) const;
 			Element::List childrenHavingFlag(size_t flag);
 
 			virtual void serialize(std::ostream& stream, SceneVersion version);
@@ -99,7 +99,7 @@ namespace et
 
 		private:
 			Pointer childWithNameCallback(const std::string& name, Pointer root, ElementType ofType);
-			void childrenOfTypeCallback(ElementType t, Element::List& list, Pointer root);
+			void childrenOfTypeCallback(ElementType t, Element::List& list, Pointer root) const;
 			void childrenHavingFlagCallback(size_t flag, Element::List& list, Pointer root);
 
 		private:
