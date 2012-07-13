@@ -77,7 +77,7 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	_labStatus->setText("Ready.");
 
 	_camera.perspectiveProjection(QUARTER_PI, rc->size().aspect(), 1.0f, 2000.0f);
-	_camera.lookAt(100.0f * vec3(1.0f, 1.0f, 1.0f));
+	_camera.lookAt(200.0f * vec3(1.0f, 1.0f, 1.0f));
 
 	_defaultProgram = rc->programFactory().loadProgram("default.program");
 	_defaultProgram->setPrimaryLightPosition(500.0f * vec3(0.0f, 1.0f, 0.0f));
