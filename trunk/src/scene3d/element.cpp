@@ -61,7 +61,7 @@ Element::Pointer Element::childWithName(const std::string& name, ElementType ofT
 	return Element::Pointer();
 }
 
-Element::List Element::childrenOfType(ElementType ofType)
+Element::List Element::childrenOfType(ElementType ofType) const
 {
 	Element::List list;
 
@@ -96,7 +96,7 @@ Element::Pointer Element::childWithNameCallback(const std::string& name, Element
 	return Element::Pointer();
 }
 
-void Element::childrenOfTypeCallback(ElementType t, Element::List& list, Element::Pointer root)
+void Element::childrenOfTypeCallback(ElementType t, Element::List& list, Element::Pointer root) const
 {
 	if (root->isKindOf(t))
 		list.push_back(root);
