@@ -14,18 +14,22 @@ namespace et
 	struct Sphere
 	{
 	public:
-		Sphere(const vec3& aCenter, float aRadius) : _center(aCenter), _radius(aRadius) { } 
+		Sphere() : 
+			_radius(0.0f) { }
 
-		virtual vec3 center() 
+		Sphere(const vec3& aCenter, float aRadius) :
+			_center(aCenter), _radius(aRadius) { } 
+
+		vec3 center() 
 			{ return _center; }
 
-		virtual const vec3& center() const
+		const vec3& center() const
 			{ return _center; }
 
-		virtual float radius() const
+		float radius() const
 			{ return _radius; }
 		
-		virtual void setRadius(float r)
+		void setRadius(float r)
 			{ _radius = r; }
 
 	protected:
