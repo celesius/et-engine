@@ -9,6 +9,10 @@
 
 using namespace et;
 
+TextureCache::TextureCache()
+{
+}
+
 TextureCache::~TextureCache()
 {
 	clear();

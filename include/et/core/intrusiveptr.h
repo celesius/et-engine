@@ -21,7 +21,7 @@ namespace et
 		Shared(const Shared&) 
 			{ }
 
-		inline Shared& operator = (const Shared&)
+		Shared& operator = (const Shared&)
 			{ return *this; }
 	};
 
@@ -45,40 +45,40 @@ namespace et
 		virtual ~IntrusivePtr() 
 			{ reset(0); }
 
-		inline T* operator *() 
+		T* operator *() 
 			{ return _data; }
 
-		inline const T* operator *() const 
+		const T* operator *() const 
 			{ return _data; }
 
-		inline T* operator -> ()
+		T* operator -> ()
 			{ return _data; }
 
-		inline const T* operator -> () const 
+		const T* operator -> () const 
 			{ return _data; }
 
-		inline T* ptr()
+		T* ptr()
 			{ return _data; }
 
-		inline const T* ptr() const 
+		const T* ptr() const 
 			{ return _data; }
 
-		inline bool invalid() const
+		bool invalid() const
 			{ return _data == 0; }
 
-		inline bool valid() const 
+		bool valid() const 
 			{ return _data != 0; }
 
-		inline bool operator == (const IntrusivePtr& r) const
+		bool operator == (const IntrusivePtr& r) const
 			{ return _data == r._data; }
 
-		inline bool operator == (T* tr) const
+		bool operator == (T* tr) const
 			{ return _data == tr; }
 
-		inline bool operator != (const IntrusivePtr& r) const
+		bool operator != (const IntrusivePtr& r) const
 			{ return _data != r._data; }
 
-		inline ReferenceCounterType referenceCount() const
+		ReferenceCounterType referenceCount() const
 			{ return _data ? _data->referenceCount() : 0; }
 
 		IntrusivePtr<T>& operator = (const IntrusivePtr<T>& r)

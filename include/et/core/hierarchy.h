@@ -67,6 +67,8 @@ namespace et
 	template <typename T>
 	void Hierarchy<T>::setParent(T* p)
 	{
+		retain();
+
 		if (_parent)
 			_parent->removeChild(static_cast<T*>(this));
 
@@ -74,6 +76,8 @@ namespace et
 
 		if (_parent)
 			_parent->addChild(static_cast<T*>(this));
+
+		release();
 	}
 
 	template <typename T>

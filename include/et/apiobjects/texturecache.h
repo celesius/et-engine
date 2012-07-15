@@ -17,6 +17,7 @@ namespace et
 	class TextureCache
 	{
 	public:
+		TextureCache();
 		~TextureCache();
 
 		void manageTexture(const Texture& tex);
@@ -25,6 +26,16 @@ namespace et
 
 		void clear();
 		void flush();
+
+	private:
+		TextureCache(TextureCache&&)
+			{ }
+
+		TextureCache(const TextureCache&)
+			{ }
+
+		TextureCache& operator = (const TextureCache&)
+			{ return *this; }
 
 	private:
 		typedef std::map<const std::string, Texture> TextureMap;
