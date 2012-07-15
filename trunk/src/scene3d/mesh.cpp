@@ -29,6 +29,10 @@ Mesh* Mesh::duplicate()
 {
 	Mesh* result = new Mesh(name(), _vao, material(), _startIndex, _numIndexes, parent());
 	result->tag = tag;
+
+	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
+		(*i)->duplicate()->setParent(result);
+
 	return result;
 }
 
