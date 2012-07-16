@@ -244,23 +244,24 @@ bool FramebufferData::setDepthTarget(const Texture& texture, GLenum target)
 
 void FramebufferData::addSameRendertarget()
 {
-	GLenum i = _numTargets;
+	if (_numTargets == 0) return;
 
-	if (i == 0)
-		return;
+	Texture& prev = _renderTargets[_numTargets - 1];
 
-	Texture& prev = _renderTargets[i - 1];
-
-	std::string texName = name() + "_color_" + intToStr(i);
+	std::string texName = name() + "_color_" + intToStr(_numTargets);
+	
 	Texture c;
-
 	if (_isCubemapBuffer)
+	{
 		c = _textureFactory->genCubeTexture(prev->internalFormat(), prev->width(), 
 			prev->format(), prev->dataType(), texName);
+	}
 	else
+	{
 		c = _textureFactory->genTexture(prev->target() , prev->internalFormat(), 
 			prev->size(), prev->format(), prev->dataType(), BinaryDataStorage(), texName);
-
+	}
+	
 	c->setWrap(_rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
 	addRenderTarget(c);
 }
@@ -278,6 +279,7 @@ bool FramebufferData::setCurrentRenderTarget(const Texture& texture)
 bool FramebufferData::setCurrentRenderTarget(const Texture& texture, GLenum target)
 {
 	_rc->renderState().bindFramebuffer(_id);
+	
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, texture->glID(), 0);
 	checkOpenGLError("Framebuffer::setCurrentRenderTarget -> glFramebufferTexture2D(..., GL_COLOR_ATTACHMENT0 " + name());
 
