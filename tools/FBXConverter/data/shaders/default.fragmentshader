@@ -26,7 +26,7 @@ vec2 defaultLight()
 
 void main()
 {
- vec4 diffuse = texture(diffuseMap, TexCoord);
+ vec4 diffuse = etTexture2D(diffuseMap, TexCoord);
 
  if (dot(diffuse, diffuse) == 0.0)
   diffuse = diffuseColor;
