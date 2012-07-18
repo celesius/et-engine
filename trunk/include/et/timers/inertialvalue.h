@@ -22,16 +22,17 @@ namespace et
 		InertialValue(const T& val) :
 			_velocity(0), _value(val), _epsilon(0), _deccelerationRate(1.0f), _time(0.0f) { }
 
+		const T& velocity() const
+			{ return _velocity; }
+		const T& value() const
+			{ return _value; }
+		
 		void setVelocity(const T& t)
 			{ _velocity = t; }
 		void addVelocity(const T& t)
 			{ _velocity += t; }
 		void scaleVelocity(const T& t)
 			{ _velocity *= t; }
-
-		const T& value() const
-			{ return _value; }
-
 		void setValue(const T& v)
 			{ _value = v;}
 		void addValue(const T& v)
