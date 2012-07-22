@@ -395,6 +395,18 @@ bool et::intersect::sphereOBB(const Sphere& s, const OBB& b)
 	return sphereBox(b.center + b.transform.transpose() * (s.center() - b.center), s.radius(), b.center, b.dimension);
 }
 
+bool et::intersect::aabbAABB(const AABB& a1, const AABB& a2)
+{
+	vec3 dc = a1.center - a2.center;
+	vec3 sd = a1.dimension + a2.dimension;
+
+	if (fabsf(dc.x) > (sd.x)) return false;
+	if (fabsf(dc.y) > (sd.y)) return false;
+	if (fabsf(dc.z) > (sd.z)) return false;
+
+	return true;
+}
+
 bool et::intersect::sphereTriangle(const vec3& sphereCenter, const float sphereRadius, const triangle& t, vec3* normal, float* penetration)
 {
 	vec3 direction = closestPointOnTriangle(sphereCenter, t) - sphereCenter;
