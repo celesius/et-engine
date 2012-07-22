@@ -15,28 +15,34 @@
 
 namespace et
 {
-	static const std::string MaterialParameter_AmbientColor = "ambient_color";
-	static const std::string MaterialParameter_DiffuseColor = "diffuse_color";
-	static const std::string MaterialParameter_SpecularColor = "specular_color";
-	static const std::string MaterialParameter_EmissiveColor = "emissive_color";
+	enum  MaterialParameters
+	{
+		MaterialParameter_Undefined,
 
-	static const std::string MaterialParameter_AmbientMap = "ambient_map";
-	static const std::string MaterialParameter_DiffuseMap = "diffuse_map";
-	static const std::string MaterialParameter_SpecularMap = "specular_map";
-	static const std::string MaterialParameter_EmissiveMap = "emissive_map";
-	static const std::string MaterialParameter_NormalMap = "normalmap_map";
-	static const std::string MaterialParameter_LightMap = "lightmap_map";
+		MaterialParameter_AmbientColor,
+		MaterialParameter_DiffuseColor,
+		MaterialParameter_SpecularColor,
+		MaterialParameter_EmissiveColor,
+		MaterialParameter_AmbientMap,	
+		MaterialParameter_DiffuseMap,
+		MaterialParameter_SpecularMap,
+		MaterialParameter_EmissiveMap,
+		MaterialParameter_NormalMap,	
+		MaterialParameter_LightMap,
+		MaterialParameter_Roughness,
+		MaterialParameter_Transparency,
+		MaterialParameter_BumpFactor,	
+		MaterialParameter_IlluminationType,
 
-	static const std::string MaterialParameter_Roughness = "roughness";
-	static const std::string MaterialParameter_Transparency = "transparency";
-	static const std::string MaterialParameter_BumpFactor = "bump_factor";
-	static const std::string MaterialParameter_IlluminationType = "illumination_type";
+		MaterialParameter_max,
+		MaterialParameter_User = 0xffff
+	};
 
-	typedef std::map<std::string, int> IntParameters;
-	typedef std::map<std::string, float> FloatParameters;
-	typedef std::map<std::string, vec4> VectorParameters;
-	typedef std::map<std::string, Texture> TextureParameters;
-	typedef std::map<std::string, std::string> StringParameters;
+	typedef std::map<size_t, int> IntParameters;
+	typedef std::map<size_t, float> FloatParameters;
+	typedef std::map<size_t, vec4> VectorParameters;
+	typedef std::map<size_t, Texture> TextureParameters;
+	typedef std::map<size_t, std::string> StringParameters;
 
 	class MaterialData : public APIObjectData
 	{
@@ -47,40 +53,40 @@ namespace et
 		void setName(const std::string& name)
 			{ APIObjectData::setName(name); }
 
-		int& getInt(const std::string& param) 
+		int& getInt(size_t param) 
 			{ return _intParameters[param]; }
 
-		float& getFloat(const std::string& param) 
+		float& getFloat(size_t param) 
 			{ return _floatParameters[param]; }
 
-		vec4& getVec4(const std::string& param) 
+		vec4& getVec4(size_t param) 
 			{ return _vectorParameters[param]; }
 
-		bool hasTexture(const std::string& param)
+		bool hasTexture(size_t param)
 			{ return _textureParameters.find(param) != _textureParameters.end(); }
 
-		Texture& getTexture(const std::string& param)
+		Texture& getTexture(size_t param)
 			{ return _textureParameters[param]; }
 
-		std::string& getString(const std::string& param)
+		std::string& getString(size_t param)
 			{ return _stringParameters[param]; }
 
-		const Texture& getTexture(const std::string& param) const 
+		const Texture& getTexture(size_t param) const 
 			{ return _textureParameters.find(param)->second; }
 
-		void setInt(const std::string& param, int value)
+		void setInt(size_t param, int value)
 			{ _intParameters[param] = value; };
 
-		void setFloat(const std::string& param, float value)
+		void setFloat(size_t param, float value)
 			{ _floatParameters[param] = value; };
 
-		void setVec4(const std::string& param, const vec4& value)
+		void setVec4(size_t param, const vec4& value)
 			{ _vectorParameters[param] = value; };
 
-		void setTexture(const std::string& param, const Texture& value)
+		void setTexture(size_t param, const Texture& value)
 			{ _textureParameters[param] = value; };
 
-		void setString(const std::string& param, const std::string& value)
+		void setString(size_t param, const std::string& value)
 			{ _stringParameters[param] = value; };
 
 		BlendState blendState() const
@@ -99,6 +105,10 @@ namespace et
 		void deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath);
 		
 		MaterialData* clone() const;
+
+	private:
+		void deserialize1(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath);
+		void deserialize2(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath);
 
 	private:
 		IntParameters _intParameters;
