@@ -397,15 +397,12 @@ bool et::intersect::sphereOBB(const Sphere& s, const OBB& b)
 
 bool et::intersect::sphereTriangle(const vec3& sphereCenter, const float sphereRadius, const triangle& t, vec3* normal, float* penetration)
 {
-	plane p(t);
-	if (p.distanceToPoint(sphereCenter) > sphereRadius) return false;
-
 	vec3 direction = closestPointOnTriangle(sphereCenter, t) - sphereCenter;
 	float distance = direction.dotSelf();
 	if (distance > sqr(sphereRadius)) return false;
 
 	if (normal)
-		*normal = p.normal();
+		*normal = t.normalizedNormal();
 
 	if (penetration)
 		*penetration = sphereRadius - sqrtf(distance);

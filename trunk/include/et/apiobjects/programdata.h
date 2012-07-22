@@ -251,8 +251,8 @@ namespace et
 				std::cout << "ProgramData::setUniform refers to unknown uniform type." << std::endl; 
 			}
 		}
-
-		checkOpenGLError("ProgramData::setUniform");
+		static const std::string& tag = "ProgramData::setUniform";
+		checkOpenGLError(tag);
 	}
 
 }
