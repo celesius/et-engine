@@ -20,6 +20,7 @@ namespace et
 		bool sphereBox(const vec3& sphereCenter, float sphereRadius, const vec3& boxCenter, const vec3& boxExtent);
 		bool sphereAABB(const Sphere& s, const AABB& b);
 		bool sphereOBB(const Sphere& s, const OBB& b);
+		bool aabbAABB(const AABB& a1, const AABB& a2);
 
 		bool sphereTriangle(const vec3& sphereCenter, const float sphereRadius, const triangle& t, vec3* normal, 
 			float* penetration);

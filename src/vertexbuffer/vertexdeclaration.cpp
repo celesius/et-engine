@@ -6,6 +6,7 @@
  */
 
 #include <assert.h>
+#include <algorithm>
 #include <et/core/serialization.h>
 #include <et/vertexbuffer/vertexdeclaration.h>
 

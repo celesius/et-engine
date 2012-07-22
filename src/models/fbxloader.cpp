@@ -66,14 +66,9 @@ namespace et
 		s3d::Mesh::Pointer loadMesh(FbxMesh* mesh, s3d::Element::Pointer parent, const MaterialList& materials, const StringList& params);
 		Material loadMaterial(FbxSurfaceMaterial* material);
 
-		void loadMaterialColorValue(Material& m, const std::string& propName, FbxSurfaceMaterial* fbxm, 
-			const char* fbxprop, const char* fbxpropfactor);
-
-		void loadMaterialValue(Material& m, const std::string& propName, FbxSurfaceMaterial* fbxm, 
-			const char* fbxprop);
-
-		void loadMaterialTextureValue(Material& m, const std::string& propName, FbxSurfaceMaterial* fbxm, 
-			const char* fbxprop);
+		void loadMaterialColorValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, const char* fbxprop, const char* fbxpropfactor);
+		void loadMaterialValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, const char* fbxprop);
+		void loadMaterialTextureValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, const char* fbxprop);
 
 		StringList loadNodeProperties(FbxNode* node);
 	};
@@ -278,7 +273,7 @@ void FBXLoaderPrivate::loadNode(FbxNode* node, s3d::Element::Pointer parent)
 		loadNode(node->GetChild(lChildIndex), createdElement);
 }
 
-void FBXLoaderPrivate::loadMaterialColorValue(Material& m, const std::string& propName, FbxSurfaceMaterial* fbxm, 
+void FBXLoaderPrivate::loadMaterialColorValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, 
 	const char* fbxprop, const char* fbxpropfactor)
 {
 	FbxProperty value = fbxm->FindProperty(fbxprop);
@@ -297,7 +292,7 @@ void FBXLoaderPrivate::loadMaterialColorValue(Material& m, const std::string& pr
 	}
 }
 
-void FBXLoaderPrivate::loadMaterialTextureValue(Material& m, const std::string& propName, FbxSurfaceMaterial* fbxm, const char* fbxprop)
+void FBXLoaderPrivate::loadMaterialTextureValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, const char* fbxprop)
 {
 	FbxProperty value = fbxm->FindProperty(fbxprop);
 	if (value.IsValid())
@@ -315,7 +310,7 @@ void FBXLoaderPrivate::loadMaterialTextureValue(Material& m, const std::string& 
 	}
 }
 
-void FBXLoaderPrivate::loadMaterialValue(Material& m, const std::string& propName, FbxSurfaceMaterial* fbxm, const char* fbxprop)
+void FBXLoaderPrivate::loadMaterialValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, const char* fbxprop)
 {
 	const FbxProperty value = fbxm->FindProperty(fbxprop);
 	if (value.IsValid())
