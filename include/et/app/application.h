@@ -72,6 +72,8 @@ namespace et
 		size_t launchParamtersCount() const
 			{ return _parameters.size(); }
 
+		void setTitle(const std::string& s);
+
 	protected:
 		friend class RenderContext;
 

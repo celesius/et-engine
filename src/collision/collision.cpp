@@ -368,12 +368,20 @@ bool et::intersect::sphereBox(const vec3& sphereCenter, float sphereRadius, cons
 	vec3 bMax = boxCenter + boxExtent;
 
 	float d = 0; 
-	if (sphereCenter.x < bMin.x) d += sqr(sphereCenter.x - bMin.x); 
-	else if (sphereCenter.x > bMax.x) d += sqr(sphereCenter.x - bMax.x); 
-	if (sphereCenter.y < bMin.y) d += sqr(sphereCenter.y - bMin.y); 
-	else if (sphereCenter.y > bMax.y) d += sqr(sphereCenter.y - bMax.y); 
-	if (sphereCenter.z < bMin.z) d += sqr(sphereCenter.z - bMin.z); 
-	else if (sphereCenter.z > bMax.z) d += sqr(sphereCenter.z - bMax.z); 
+
+	if (sphereCenter.x < bMin.x)
+		d += sqr(sphereCenter.x - bMin.x); 
+	else if (sphereCenter.x > bMax.x)
+		d += sqr(sphereCenter.x - bMax.x); 
+	if (sphereCenter.y < bMin.y)
+		d += sqr(sphereCenter.y - bMin.y); 
+	else if (sphereCenter.y > bMax.y)
+		d += sqr(sphereCenter.y - bMax.y); 
+	if (sphereCenter.z < bMin.z)
+		d += sqr(sphereCenter.z - bMin.z); 
+	else if (sphereCenter.z > bMax.z)
+		d += sqr(sphereCenter.z - bMax.z); 
+
 	return d <= sqr(sphereRadius); 
 }
 

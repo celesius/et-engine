@@ -13,29 +13,23 @@ using namespace et;
 
 VertexElement VertexDeclaration::_empty;
 
-VertexDeclaration::VertexDeclaration() : _interleaved(true), _totalSize(0)
+VertexDeclaration::VertexDeclaration() : _interleaved(true), _totalSize(0), _usageMask(0)
 {
 }
 
-VertexDeclaration::VertexDeclaration(bool interleaved) : _interleaved(interleaved), _totalSize(0)
+VertexDeclaration::VertexDeclaration(bool interleaved) : _interleaved(interleaved), _totalSize(0), _usageMask(0)
 {
 }
 
 VertexDeclaration::VertexDeclaration(bool interleaved, VertexAttributeUsage usage, VertexAttributeType type) : 
-_interleaved(interleaved), _totalSize(0)
+_interleaved(interleaved), _totalSize(0), _usageMask(0)
 {
 	push_back(usage, type);
 }
 
 bool VertexDeclaration::has(VertexAttributeUsage usage) const
 {
-	for (VertexElementList::const_iterator i = _list.begin(), e = _list.end(); i != e; ++i)
-	{
-		if (i->usage == usage)
-			return true;
-	}
-
-	return false;
+	return (_usageMask & vertexAttributeUsageMask(usage)) != 0;
 }
 
 bool VertexDeclaration::push_back(VertexAttributeUsage usage, VertexAttributeType type)
@@ -46,6 +40,8 @@ bool VertexDeclaration::push_back(VertexAttributeUsage usage, VertexAttributeTyp
 bool VertexDeclaration::push_back(const VertexElement& element)
 {
 	if (has(element.usage)) return false;
+
+	_usageMask = _usageMask | vertexAttributeUsageMask(element.usage);
 
 	_totalSize += vertexAttributeTypeSize(element.type);
 	_list.push_back(element);
@@ -61,16 +57,13 @@ bool VertexDeclaration::push_back(const VertexElement& element)
 
 bool VertexDeclaration::remove(VertexAttributeUsage usage)
 {
-	for (VertexElementList::iterator i = _list.begin(), e = _list.end(); i != e; ++i)
-	{
-		if (i->usage == usage)
-		{
-			_list.erase(i);
-			return true;
-		}
-	}
+	VertexElementList::iterator i = std::find(_list.begin(), _list.end(), usage);
+	if (i == _list.end()) return false;
 
-	return false;
+	_list.erase(i);
+	_usageMask = _usageMask & (~vertexAttributeUsageMask(usage));
+
+	return true;
 }
 
 void VertexDeclaration::clear()

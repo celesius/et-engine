@@ -42,6 +42,7 @@ UniformIterator ProgramData::findUniform(const std::string& name)
 void ProgramData::setModelViewMatrix(const mat4& m)
 {
 	if (_mvm_loc < 0) return;
+
 	glUniformMatrix4fv(_mvm_loc, 1, false, m.data());
 	checkOpenGLError("glUniformMatrix4fv");
 }
@@ -49,6 +50,7 @@ void ProgramData::setModelViewMatrix(const mat4& m)
 void ProgramData::setMVPMatrix(const mat4& m)
 {
 	if (_mvp_loc < 0) return;
+
 	glUniformMatrix4fv(_mvp_loc, 1, false, m.data());
 	checkOpenGLError("glUniformMatrix4fv");
 }
@@ -56,6 +58,7 @@ void ProgramData::setMVPMatrix(const mat4& m)
 void ProgramData::setCameraPosition(const vec3& p)
 {                 
 	if (_cam_loc < 0) return;
+
 	glUniform3fv(_cam_loc, 1, p.raw());
 	checkOpenGLError("SetCameraPosition");
 }
@@ -63,28 +66,33 @@ void ProgramData::setCameraPosition(const vec3& p)
 void ProgramData::setPrimaryLightPosition(const vec3 &p)
 {
 	if (_l0_loc < 0) return;
+
 	glUniform3fv(_l0_loc, 1, p.raw());
 	checkOpenGLError("SetPrimaryLightPosition");
 }
 
 GLint ProgramData::getUniformLocation(const std::string& uniform) 
 {
-	UniformIterator I = findUniform(uniform);
+	UniformIterator i = findUniform(uniform);
+	if (i == _uniforms.end()) return -1;
 
-	if (I == _uniforms.end())
-		return -1;
-	else 
-		return I->second.location;
+	return i->second.location;
 }
 
 GLenum ProgramData::getUniformType(const std::string& uniform) 
 {
-	UniformIterator I = findUniform(uniform);
+	UniformIterator i = findUniform(uniform);
+	if (i == _uniforms.end()) return 0;
 
-	if (I == _uniforms.end())
-		return 0;
-	else 
-		return I->second.type;
+	return i->second.type;
+}
+
+ProgramUniform ProgramData::getUniform(const std::string& uniform)
+{
+	UniformIterator i = findUniform(uniform);
+	if (i == _uniforms.end()) return ProgramUniform();
+
+	return i->second;
 }
 
 void ProgramData::setLightProjectionMatrix(const mat4& m)
@@ -272,10 +280,8 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 			{
 				GLsizei uniformLenght = 0;
 				GLint uniformSize = 0;
-				DataStorage<char> name(maxNameLength);
-				name.fill(0);
-
-				ProgramUniform P = { };
+				DataStorage<char> name(maxNameLength, 0);
+				ProgramUniform P;
 				glGetActiveUniform(_glID, i, maxNameLength, &uniformLenght, &uniformSize, &P.type, name.binary());
 				P.location = glGetUniformLocation(_glID, name.binary());
 				_uniforms[name.binary()] = P;

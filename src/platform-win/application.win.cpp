@@ -171,3 +171,9 @@ void Application::contextResized(const vec2i& size)
 	_delegate->applicationWillResizeContext(size);
 	performRendering();
 }
+
+
+void Application::setTitle(const std::string& s)
+{
+	SendMessage(reinterpret_cast<HWND>(_renderingContextHandle), WM_SETTEXT, 0, reinterpret_cast<LPARAM>(s.c_str()));
+}

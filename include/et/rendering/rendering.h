@@ -28,7 +28,7 @@ namespace et
 		Usage_TexCoord3,
 		Usage_Smoothing,
 
-		Usage_MAX
+		Usage_max
 	};
 
 	enum VertexAttributeType
@@ -43,6 +43,8 @@ namespace et
 		Type_Mat4 = GL_FLOAT_MAT4,
 		Type_Int = GL_INT
 	};
+
+	size_t vertexAttributeUsageMask(VertexAttributeUsage u);
 
 	VertexAttributeUsage stringToVertexAttribute(const std::string& s);
 	std::string vertexAttributeToString(VertexAttributeUsage va);

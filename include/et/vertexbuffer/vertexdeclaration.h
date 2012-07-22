@@ -29,6 +29,9 @@ namespace et
 
 		bool operator != (const VertexElement& r) const
 			{ return (usage != r.usage) || (type != r.type) || (stride != r.stride) || (offset != r.offset); }
+
+		bool operator == (const VertexAttributeUsage& aUsage) const
+			{ return (usage == aUsage); }
 	};
 
 	typedef std::vector<VertexElement> VertexElementList;
@@ -77,6 +80,7 @@ namespace et
 		static VertexElement _empty;
 		VertexElementList _list;
 		size_t _totalSize;
+		size_t _usageMask;
 		bool _interleaved;
 	};
 
