@@ -15,6 +15,12 @@
 
 using namespace et;
 
+static const std::string keyCurrentStateBegin = "RenderState::currentState() - begin";
+static const std::string keyCurrentStateEnd = "RenderState::currentState() - end";
+static const std::string keyEnableVertexAttribArray = "glEnableVertexAttribArray(...)";
+static const std::string keyDisableVertexAttribArray = "glDisableVertexAttribArray(...)";
+static const std::string keyVertexAttribPointer = "glVertexAttribPointer(...)";
+
 RenderState::State::State() : 
 	activeTextureUnit(0), boundFramebuffer(0), boundArrayBuffer(0), boundElementArrayBuffer(0), boundVertexArrayObject(0), 
 	boundProgram(0), polygonOffsetFactor(0.0f), polygonOffsetUnits(0.0f), blendEnabled(false), depthTestEnabled(false),
@@ -113,7 +119,7 @@ void RenderState::bindBuffer(GLenum target, GLuint buffer, bool force)
 
 void RenderState::setVertexAttributes(const VertexDeclaration& decl, bool force)
 {
-	for (VertexAttributeUsage usage = Usage_Position; usage < Usage_MAX; usage = VertexAttributeUsage(usage + 1))
+	for (VertexAttributeUsage usage = Usage_Position; usage < Usage_max; usage = VertexAttributeUsage(usage + 1))
 		setVertexAttribEnabled(usage, decl.has(usage), force);
 
 	setVertexAttributesBaseIndex(decl, 0);
@@ -383,12 +389,12 @@ void RenderState::setVertexAttribEnabled(GLuint attrib, bool enabled, bool force
 	if (enabled && (!wasEnabled || force))
 	{
 		glEnableVertexAttribArray(attrib);
-		checkOpenGLError("glEnableVertexAttribArray(" + intToStr(attrib) + ")");
+		checkOpenGLError(keyEnableVertexAttribArray);
 	}
 	else if (!enabled && (wasEnabled || force))
 	{
 		glDisableVertexAttribArray(attrib);
-		checkOpenGLError("glDisableVertexAttribArray(" + intToStr(attrib) + ")");
+		checkOpenGLError(keyDisableVertexAttribArray);
 	}
 	
 	_currentState.enabledVertexAttributes[attrib] = enabled;
@@ -398,7 +404,7 @@ void RenderState::setVertexAttribPointer(const VertexElement& e, size_t baseInde
 {
 	glVertexAttribPointer(e.usage, vertexAttributeTypeComponents(e.type), vertexAttributeTypeDataType(e.type), 
 		false, static_cast<GLsizei>(e.stride), reinterpret_cast<GLvoid*>(e.offset + baseIndex));
-	checkOpenGLError("glVertexAttribPointer");
+	checkOpenGLError(keyVertexAttribPointer);
 }
 
 void RenderState::setCulling(CullState cull)
@@ -487,7 +493,7 @@ void RenderState::applyState(const RenderState::State& s)
 	for (size_t i = 0; i < MAX_TEXTURE_UNITS; ++i)
 		bindTexture(i, s.boundTextures[i], GL_TEXTURE_2D);
 	
-	for (size_t i = 0; i < Usage_MAX; ++i)
+	for (size_t i = 0; i < Usage_max; ++i)
 		setVertexAttribEnabled(i, s.enabledVertexAttributes[i], false);
 	
 	setActiveTextureUnit(s.activeTextureUnit);
@@ -495,11 +501,11 @@ void RenderState::applyState(const RenderState::State& s)
 
 RenderState::State RenderState::currentState()
 {
-	checkOpenGLError("currentState() - begin");
+	checkOpenGLError(keyCurrentStateBegin);
 	State s;
 
 	GLint value = 0;
-	for (size_t i = 0; i < Usage_MAX; ++i)
+	for (size_t i = 0; i < Usage_max; ++i)
 	{
 		int enabled = 0;
 		glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
@@ -584,7 +590,7 @@ RenderState::State RenderState::currentState()
 	s.wireframe = false;
 	s.lastBlend = s.blendEnabled ? Blend_Default : Blend_Disabled;
 
-	checkOpenGLError("currentState() - end");
+	checkOpenGLError(keyCurrentStateEnd);
 	
 	return s;
 }

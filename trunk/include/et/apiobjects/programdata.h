@@ -19,6 +19,8 @@ namespace et
 	{
 		GLenum type;
 		GLint location;
+
+		ProgramUniform() : type(0), location(-1) { }
 	};
 
 	struct ProgramAttrib
@@ -45,25 +47,26 @@ namespace et
 
 		GLint getUniformLocation(const std::string& uniform);
 		GLenum getUniformType(const std::string& uniform);
+		ProgramUniform getUniform(const std::string& uniform);
 
 		UniformIterator findUniform(const std::string& name);
 
 		void validate() const;
 
 		int modelViewMatrixUniformLocation() const 
-		{ return _mvm_loc; }
+			{ return _mvm_loc; }
 
 		int mvpMatrixUniformLocation() const
-		{ return _mvp_loc; }
+			{ return _mvp_loc; }
 
 		int cameraUniformLocation() const
-		{ return _cam_loc; }
+			{ return _cam_loc; }
 
 		int primaryLightUniformLocation() const
-		{ return _l0_loc; }
+			{ return _l0_loc; }
 
 		int lightProjectionMatrixLocation() const
-		{ return _lp_loc; }
+			{ return _lp_loc; }
 
 		void setModelViewMatrix(const mat4 &m);
 		void setMVPMatrix(const mat4 &m);
@@ -77,9 +80,12 @@ namespace et
 		void setUniform(const std::string& name, const T& value, int count = 1);
 
 		template <typename T>
+		void setUniform(const ProgramUniform& u, const T& value, int count = 1);
+
+		template <typename T>
 		void setUniform(int location, int type, const T& value, int count = 1);
 
-		inline GLenum glID() const
+		GLenum glID() const
 			{ return _glID; }
 
 	private:
@@ -106,6 +112,12 @@ namespace et
 		UniformIterator i = findUniform(uniform_name);
 		if (i != _uniforms.end())
 			setUniform(i->second.location, i->second.type, value, count);
+	}
+
+	template <typename T>
+	void ProgramData::setUniform(const ProgramUniform& u, const T& value, int count)
+	{
+		setUniform(u.location, u.type, value, count);
 	}
 
 	template <typename T>

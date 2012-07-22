@@ -10,15 +10,20 @@
 namespace et
 {
 
-	const std::string VertexAttributeUsageNames[Usage_MAX] = 
+	const std::string VertexAttributeUsageNames[Usage_max] = 
 	{ 
 		"Vertex", "Normal", "Color", "Tangent", "Binormal",
 		"TexCoord0", "TexCoord1", "TexCoord2", "TexCoord3"
 	};
 
+	const size_t VertexAttributeUsageMasks[Usage_max] = 
+	{
+		0x01, 0x02, 0x04, 0x08,	0x10, 0x20, 0x40, 0x80, 0x100, 0x200,
+	};
+
 	VertexAttributeUsage stringToVertexAttribute(const std::string& s)
 	{
-		for (VertexAttributeUsage i = Usage_Position; i < Usage_MAX; i = (VertexAttributeUsage)(i + 1))
+		for (VertexAttributeUsage i = Usage_Position; i < Usage_max; i = (VertexAttributeUsage)(i + 1))
 		{
 			if (s == VertexAttributeUsageNames[i])
 				return i;
@@ -29,7 +34,7 @@ namespace et
 
 	std::string vertexAttributeToString(VertexAttributeUsage va)
 	{
-		return ((va > Usage_Undefined) && (va < Usage_MAX)) ? VertexAttributeUsageNames[va] : "";
+		return ((va > Usage_Undefined) && (va < Usage_max)) ? VertexAttributeUsageNames[va] : "";
 	}
 
 	int vertexAttributeTypeComponents(VertexAttributeType t)
@@ -107,4 +112,8 @@ namespace et
 		}
 	}
 
+	size_t vertexAttributeUsageMask(VertexAttributeUsage u)
+	{
+		return VertexAttributeUsageMasks[u];
+	}
 }

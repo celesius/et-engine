@@ -25,7 +25,7 @@ namespace et
 	{
 		MultisamplingQuality_None,
 		MultisamplingQuality_Best,
-		MultisamplingQuality_Max
+		MultisamplingQuality_max
 	};
     
     enum InterfaceOrientation
