@@ -12,8 +12,6 @@
 #include <et/core/containers.h>
 #include <et/apiobjects/framebuffer.h>
 
-// #define ET_FORCE_STATE_CHANGE
-
 namespace et
 {
 	enum BlendState
@@ -49,7 +47,7 @@ namespace et
 	class IndexBuffer;
 	class VertexArrayObject;
 	class VertexDeclaration;
-	struct VertexElement;
+	class VertexElement;
 
 	class RenderState
 	{

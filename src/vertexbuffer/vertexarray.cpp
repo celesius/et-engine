@@ -24,8 +24,8 @@ VertexArray::VertexArray(const VertexDeclaration& decl, size_t size) : tag(0), _
 	for (size_t i = 0; i < decl.numElements(); ++i)
 	{
 		const VertexElement& e = decl.element(i);
-		_decl.push_back(e.usage, e.type);
-		_chunks.push_back(VertexDataChunk(e.usage, e.type, size));
+		_decl.push_back(e.usage(), e.type());
+		_chunks.push_back(VertexDataChunk(e.usage(), e.type(), size));
 	}
 }
 
@@ -40,12 +40,12 @@ VertexArray::Description VertexArray::getDesc() const
 	for (VertexDataChunkList::const_iterator i = _chunks.begin(), e = _chunks.end(); i != e; ++i)
 	{
 		VertexDataChunk chunk = *i;
-		VertexElement entry;
-		entry.usage = chunk->usage();
-		entry.type = chunk->type();
-		entry.stride = _decl.interleaved() ? static_cast<int>(_decl.dataSize()) : 0;
-		entry.offset = _decl.interleaved() ? offset : static_cast<int>(dataSize);
-		desc.declaration.push_back(entry);
+
+		size_t t_stride = _decl.interleaved() ? static_cast<int>(_decl.dataSize()) : 0;
+		size_t t_offset = _decl.interleaved() ? offset : static_cast<int>(dataSize);
+
+		desc.declaration.push_back(VertexElement(chunk->usage(), chunk->type(), t_stride, t_offset));
+
 		dataSize += chunk->dataSize();
 		offset += chunk->typeSize();
 	}
@@ -58,7 +58,7 @@ VertexArray::Description VertexArray::getDesc() const
 	for (VertexDataChunkList::const_iterator i = _chunks.begin(), e = _chunks.end(); i != e; ++i, ++entry_i)
 	{
 		VertexDataChunk chunk = *i;
-		size_t chunkOffset = desc.declaration[entry_i].offset;
+		size_t chunkOffset = desc.declaration[entry_i].offset();
 		if (desc.declaration.interleaved())
 		{
 			for (size_t j = 0; j < numElements; ++j)
