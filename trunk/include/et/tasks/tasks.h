@@ -20,7 +20,7 @@ namespace et
 		virtual void execute() = 0;
 
 	private:
-		inline float executionTime() const 
+		float executionTime() const 
 			{ return _executionTime; }
 
 		void setExecutionTime(float t)

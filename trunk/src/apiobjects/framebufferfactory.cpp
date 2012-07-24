@@ -24,7 +24,7 @@ Framebuffer FramebufferFactory::createFramebuffer(const vec2i& size, const std::
 	desc.numColorRenderTargets = 1;
 	desc.colorIsRenderbuffer = useRenderbuffers;
 	desc.depthIsRenderbuffer = useRenderbuffers;
-	return Framebuffer(new FramebufferData(_rc, _tf, desc, id));
+	return Framebuffer(new FramebufferData(renderContext(), _tf, desc, id));
 }
 
 Framebuffer FramebufferFactory::createCubemapFramebuffer(size_t size, const std::string& id, GLint colorInternalformat, 
@@ -41,10 +41,10 @@ Framebuffer FramebufferFactory::createCubemapFramebuffer(size_t size, const std:
 	desc.includeDepthRenderTarget = true;
 	desc.isCubemap = true;
 	desc.numColorRenderTargets = 1;
-	return Framebuffer(new FramebufferData(_rc, _tf, desc, id));
+	return Framebuffer(new FramebufferData(renderContext(), _tf, desc, id));
 }
 
 Framebuffer FramebufferFactory::createFramebufferWrapper(GLuint fbo, const std::string& id)
 {
-	return Framebuffer(new FramebufferData(_rc, _tf, fbo, id));
+	return Framebuffer(new FramebufferData(renderContext(), _tf, fbo, id));
 }

@@ -35,7 +35,7 @@ namespace et
 			{ return _name; };
 
 	protected:
-		inline void setName(const std::string& name)
+		void setName(const std::string& name)
 			{ _name = name; }
 
 	private:

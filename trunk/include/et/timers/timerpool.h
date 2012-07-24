@@ -45,9 +45,10 @@ namespace et
 			QueueAction action;
 			QueueEntry(TimedObject* o, QueueAction a) : object(o), action(a) { }
 
-			inline bool operator == (const QueueEntry& e)
-			{ return (e.object == object) && (e.action == action); }
+			bool operator == (const QueueEntry& e)
+				{ return (e.object == object) && (e.action == action); }
 		};
+
 		typedef std::list<QueueEntry> TimerPoolQueue;
 
 	private:

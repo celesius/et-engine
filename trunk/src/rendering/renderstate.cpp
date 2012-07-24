@@ -137,7 +137,7 @@ void RenderState::setVertexAttributesBaseIndex(const VertexDeclaration& decl, si
 
 void RenderState::bindBuffer(const VertexBuffer& buf, bool force)
 {
-	bindBuffer(GL_ARRAY_BUFFER, buf.valid() ? buf->vertexBuffer() : 0, force);
+	bindBuffer(GL_ARRAY_BUFFER, buf.valid() ? buf->glID() : 0, force);
 
 	if (buf.valid()) 
 		setVertexAttributes(buf->declaration(), force);
@@ -145,7 +145,7 @@ void RenderState::bindBuffer(const VertexBuffer& buf, bool force)
 
 void RenderState::bindBuffer(const IndexBuffer& buf, bool force)
 {
-	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf.valid() ? buf->indexBuffer() : 0, force);
+	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf.valid() ? buf->glID() : 0, force);
 }
 
 void RenderState::bindBuffers(const VertexBuffer& vb, const IndexBuffer& ib, bool force)
@@ -167,7 +167,7 @@ void RenderState::bindVertexArray(const VertexArrayObject& vao)
 {
 	if (vao.valid())
 	{
-		bindVertexArray(vao->vertexArrayObject());
+		bindVertexArray(vao->glID());
 		bindBuffers(vao->vertexBuffer(), vao->indexBuffer());
 	}
 	else

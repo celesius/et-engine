@@ -28,7 +28,7 @@ namespace et
 		ReferenceCounterType retain();
 		ReferenceCounterType release();
 
-		inline ReferenceCounterType referenceCount()
+		ReferenceCounterType referenceCount()
 			{ return _referenceCount; }
 
 	private:

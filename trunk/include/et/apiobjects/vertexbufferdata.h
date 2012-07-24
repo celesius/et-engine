@@ -21,7 +21,7 @@ namespace et
 
 		~VertexBufferData();
 	
-		GLuint vertexBuffer() const
+		GLuint glID() const
 			{ return _vertexBuffer; }
 		
 		size_t vertexCount() const
