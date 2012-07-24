@@ -52,7 +52,7 @@ namespace et
 			return *this;
 		}
 
-		inline bool valid() const
+		bool valid() const
 			{ return _data != 0; }
 
 		T* ptr()
@@ -61,7 +61,7 @@ namespace et
 		const T* ptr() const
 			{ return _data; }
 
-		inline bool invalid() const
+		bool invalid() const
 			{ return !valid(); }
 
 		T* operator -> () 
@@ -158,7 +158,7 @@ namespace et
 			return *this;
 		}
 
-		inline bool valid() const
+		bool valid() const
 			{ return _refCount && (_refCount->strong.referenceCount() > 0); }
 
 		T* ptr()
@@ -167,7 +167,7 @@ namespace et
 		const T* ptr() const
 			{ return valid() ? _data : 0; }
 
-		inline bool invalid() const
+		bool invalid() const
 			{ return !valid(); }
 
 		T* operator -> () 

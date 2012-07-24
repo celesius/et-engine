@@ -39,10 +39,10 @@ namespace et
 		void increase(size_t size);
 		void fitToSize(size_t size);
 		
-		inline size_t size() const
+		size_t size() const
 			{ return _size; }
 
-		inline const VertexDeclaration decl() const
+		const VertexDeclaration decl() const
 			{ return _decl; }
 
 		void serialize(std::ostream& stream);

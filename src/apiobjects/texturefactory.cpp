@@ -12,7 +12,7 @@
 
 using namespace et;
 
-TextureFactory::TextureFactory(RenderContext* rc) : _rc(rc)
+TextureFactory::TextureFactory(RenderContext* rc) : APIObjectFactory(rc)
 {
 	_loadingThread = new TextureLoadingThread(this);
 }
@@ -33,17 +33,17 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
 	{
 		bool calledFromAnotherThread = Threading::currentThread() != threading().mainThread();
 
-		size_t screenScale = _rc->screenScaleFactor();
+		size_t screenScale = renderContext()->screenScaleFactor();
 		TextureDescription desc = async ? 
             TextureLoader::loadDescription(file, screenScale, false) :
 			TextureLoader::load(file, screenScale);
 
 		if (desc.valid())
 		{
-			texture = Texture(new TextureData(_rc, desc, file, calledFromAnotherThread));
+			texture = Texture(new TextureData(renderContext(), desc, file, calledFromAnotherThread));
 			cache.manageTexture(texture);
 			if (async)
-				_loadingThread->addRequest(file, _rc->screenScaleFactor(), texture, delegate);
+				_loadingThread->addRequest(file, renderContext()->screenScaleFactor(), texture, delegate);
 			else if (calledFromAnotherThread)
 				std::cout << "ERROR: Unable to load texture synchronously from secondary thread." << std::endl;
 		}
@@ -73,7 +73,7 @@ Texture TextureFactory::genTexture(GLenum target, GLint internalformat, const ve
 	desc.layersCount = 1;
     // TODO: fix to actual values
     desc.bitsPerPixel = format == GL_RGBA ? 32 : 24;
-	return Texture(new TextureData(_rc, desc, id, false));
+	return Texture(new TextureData(renderContext(), desc, id, false));
 }
 
 Texture TextureFactory::genCubeTexture(GLint internalformat, GLsizei size, GLenum format, GLenum type, const std::string& id)
@@ -87,12 +87,12 @@ Texture TextureFactory::genCubeTexture(GLint internalformat, GLsizei size, GLenu
 	desc.layersCount = 6;
 	desc.mipMapCount = 1;
 
-	return Texture(new TextureData(_rc, desc, id, false));
+	return Texture(new TextureData(renderContext(), desc, id, false));
 }
 
 Texture TextureFactory::genTexture(const TextureDescription& desc)
 {
-	return Texture(new TextureData(_rc, desc, desc.source, false));
+	return Texture(new TextureData(renderContext(), desc, desc.source, false));
 }
 
 Texture TextureFactory::genNoiseTexture(const vec2i& size, bool norm, const std::string& id)
@@ -124,14 +124,14 @@ Texture TextureFactory::genNoiseTexture(const vec2i& size, bool norm, const std:
     
 	memcpy(desc.data.raw(), randata.raw(), randata.dataSize());
 
-	return Texture(new TextureData(_rc, desc, id, false));
+	return Texture(new TextureData(renderContext(), desc, id, false));
 }
 
 void TextureFactory::textureLoadingThreadDidLoadTextureData(TextureLoadingRequest* request)
 {
 	CriticalSectionScope lock(_csTextureLoading);
 
-	request->texture->updateData(_rc, *request->textureDescription);
+	request->texture->updateData(renderContext(), *request->textureDescription);
 	textureDidLoad.invoke(request->texture);
 
 	if (request->delegate)
@@ -143,7 +143,7 @@ void TextureFactory::textureLoadingThreadDidLoadTextureData(TextureLoadingReques
 Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std::string& negx, const std::string& posy,
 	const std::string& negy, const std::string& posz, const std::string& negz, TextureCache& cache)
 {
-	size_t screenScale = _rc->screenScaleFactor();
+	size_t screenScale = renderContext()->screenScaleFactor();
 	TextureDescription layers[6] = 
 	{
 		TextureLoader::load(posx, screenScale), 
@@ -191,12 +191,12 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 	desc.size = layers[0].size;
 	desc.type = layers[0].type;
 
-	Texture t(new TextureData(_rc, desc, texId, false));
+	Texture t(new TextureData(renderContext(), desc, texId, false));
 	cache.manageTexture(t);
 	return t;
 }
 
 Texture TextureFactory::createTextureWrapper(GLuint texture, const vec2i& size, const std::string& name)
 {
-	return Texture(new TextureData(_rc, texture, size, name));
+	return Texture(new TextureData(renderContext(), texture, size, name));
 }

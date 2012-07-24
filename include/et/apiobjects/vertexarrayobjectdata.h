@@ -21,16 +21,18 @@ namespace et
 		VertexArrayObjectData(RenderState& rs, const std::string& name = std::string());
 		~VertexArrayObjectData();
 
-		inline GLuint vertexArrayObject() const
+		GLuint glID() const
 			{ return _vao; }
 
 		VertexBuffer& vertexBuffer() 
 			{ return _vb; };
+
 		const VertexBuffer& vertexBuffer() const
 			{ return _vb; };
 
 		IndexBuffer& indexBuffer()
 			{ return _ib; };
+
 		const IndexBuffer& indexBuffer() const
 			{ return _ib; };
 

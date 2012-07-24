@@ -36,45 +36,45 @@ namespace et
 		Parallelepiped(const vector3<T>& pos, const vector3<T>& size) : 
 			left(pos.x), top(pos.y), nearValue(pos.z), width(size.x), height(size.y), depth(size.z) { }
 
-		inline const vector3<T>& origin() const 
+		const vector3<T>& origin() const 
 			{ return *((vector3<T>*)(c)); }
 
-		inline const vector3<T>& size() const 
+		const vector3<T>& size() const 
 			{ return *((vector3<T>*)(c+3)); }
 
-		inline T right() const 
+		T right() const 
 			{ return left + width; }
 
-		inline T bottom() const 
+		T bottom() const 
 			{ return top + height; }
 
-		inline T farValue() const 
+		T farValue() const 
 			{ return nearValue + depth; }
 
-		inline T volume() const
+		T volume() const
 			{ return width * height * depth; }
 
-		inline void setOrigin(const vector3<T>& p)
+		void setOrigin(const vector3<T>& p)
 		{ 
 			left = p.x;
 			top = p.y;
 			nearValue = p.z;
 		}
 
-		inline void setSize(const vector3<T>& s)
+		void setSize(const vector3<T>& s)
 		{ 
 			width = s.x;
 			height = s.y;
 			depth = s.z;
 		}
 
-		inline Parallelepiped operator * (T v) const
+		Parallelepiped operator * (T v) const
 			{ return Parallelepiped(left * v, top * v, nearValue * v, width * v, height * v, depth * v); }
 
-		inline Parallelepiped operator + (const Parallelepiped& r) const
+		Parallelepiped operator + (const Parallelepiped& r) const
 			{ return Parallelepiped(left + r.left, top + r.top, nearValue + r.nearValue, width + r.width, height + r.height, depth + r.depth); }
 
-		inline bool containsPoint(const vector3<T>& p) const
+		bool containsPoint(const vector3<T>& p) const
 			{ return (p.x >= left) && (p.y >= top) && (p.z >= nearValue) && (p.x < right()) && (p.y < bottom()) && (p.z <= farValue()); }
 
 	};

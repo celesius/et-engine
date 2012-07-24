@@ -27,7 +27,7 @@ namespace et
 
 		void* indexOffset(size_t offset) const;
 
-		GLuint indexBuffer() const
+		GLuint glID() const
 			{ return _indexBuffer; }
 
 		size_t size() const

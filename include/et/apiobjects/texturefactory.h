@@ -9,13 +9,14 @@
 
 #include <et/app/events.h>
 #include <et/threading/criticalsection.h>
+#include <et/apiobjects/apiobjectfactory.h>
 #include <et/apiobjects/texture.h>
 #include <et/apiobjects/texturecache.h>
 #include <et/apiobjects/textureloadingthread.h>
 
 namespace et
 {
-	class TextureFactory : public TextureLoadingThreadDelegate
+	class TextureFactory : public APIObjectFactory, public TextureLoadingThreadDelegate
 	{
 	public:
 		Texture loadTexture(const std::string& file, TextureCache& cache, bool async = false, TextureLoaderDelegate* delegate = 0);
@@ -40,14 +41,13 @@ namespace et
 
 		~TextureFactory();
 
-		TextureFactory(const TextureFactory&)
+		TextureFactory(const TextureFactory&) : APIObjectFactory(0)
 			{ }
 
 		TextureFactory& operator = (const TextureFactory&)
 			{ return *this; }
 
 	private:
-		RenderContext* _rc;
 		AutoPtr<TextureLoadingThread> _loadingThread;
 		CriticalSection _csTextureLoading;
 	};

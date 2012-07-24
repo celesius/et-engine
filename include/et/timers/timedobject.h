@@ -22,7 +22,7 @@ namespace et
 		virtual bool running() const
 			{ return _running; }
 
-		inline bool released() const
+		bool released() const
 			{ return _released; }
 
 		virtual void cancelUpdates();

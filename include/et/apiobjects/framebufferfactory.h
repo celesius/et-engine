@@ -13,10 +13,11 @@ namespace et
 {
 
 	class RenderState;
-	class FramebufferFactory
+	class FramebufferFactory : public APIObjectFactory
 	{
 	public:
-		FramebufferFactory(RenderContext* rc, TextureFactory* tf) : _rc(rc), _tf(tf) { }
+		FramebufferFactory(RenderContext* rc, TextureFactory* tf) : 
+			APIObjectFactory(rc), _tf(tf) { }
 
 		Framebuffer createFramebuffer(const vec2i& size, const std::string& id = "", 
 			GLint colorInternalformat = GL_RGBA, GLenum colorFormat = GL_RGBA, GLenum colorType = GL_UNSIGNED_BYTE, 
@@ -30,9 +31,10 @@ namespace et
 		Framebuffer createFramebufferWrapper(GLuint fbo, const std::string& id = "");
 
 	private:
-		FramebufferFactory& operator = (const FramebufferFactory&) { return *this; }
+		FramebufferFactory& operator = (const FramebufferFactory&)
+			{ return *this; }
 
-		RenderContext* _rc;
+	private:
 		TextureFactory* _tf;
 	};
 

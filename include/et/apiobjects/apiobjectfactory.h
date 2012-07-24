@@ -14,8 +14,11 @@ namespace et
 	class APIObjectFactory
 	{
 	protected:
-		APIObjectFactory(RenderContext* rc) : _rc(rc) { }
-		inline RenderContext* renderContext() { return _rc; }
+		APIObjectFactory(RenderContext* rc) : _rc(rc) 
+			{ }
+
+		RenderContext* renderContext()
+			{ return _rc; }
 
 	private:
 		RenderContext* _rc;
