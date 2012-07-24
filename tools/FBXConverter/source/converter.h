@@ -1,10 +1,12 @@
 #include <et/app/application.h>
 #include <et/gui/gui.h>
 #include <et/scene3d/scene3d.h>
+#include <et/timers/inertialvalue.h>
+#include <et/input/gestures.h>
 
 namespace fbxc
 {
-	class Converter : public et::IApplicationDelegate, public et::InputHandler
+	class Converter : public et::IApplicationDelegate
 	{
 	public:
 		Converter();
@@ -16,11 +18,15 @@ namespace fbxc
 		void render(et::RenderContext*);
 		void idle(float);
 
+	private:
+
 		void onPointerPressed(et::PointerInputInfo);
 		void onPointerMoved(et::PointerInputInfo);
 		void onPointerReleased(et::PointerInputInfo);
+		void onZoom(float);
+		void onDrag(et::vec2);
+		void onCameraUpdated();
 
-	private:
 		void onBtnOpenClick(et::gui::Button*); 
 		void onBtnSaveClick(et::gui::Button*); 
 		void performLoading(std::string);
@@ -32,6 +38,7 @@ namespace fbxc
 	private:
 		et::RenderContext* _rc;
 		et::TextureCache _texCache;
+		et::GesturesRecognizer _gestures;
 		et::AutoPtr<et::gui::Gui> _gui;
 		et::s3d::Scene3d _scene;
 		et::Program _defaultProgram;
@@ -42,5 +49,8 @@ namespace fbxc
 		et::gui::Label::Pointer _labStatus;
 		et::gui::Button::Pointer _btnDrawNormalMeshes;
 		et::gui::Button::Pointer _btnDrawSupportMeshes;
+
+		et::InertialValue<float> _vDistance;
+		et::InertialValue<et::vec2> _vAngle;
 	};
 }

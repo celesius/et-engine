@@ -63,6 +63,8 @@ void GesturesRecognizer::onPointerPressed(et::PointerInputInfo pi)
 	{
 		cancelWaitingForClicks();
 	}
+
+	pointerPressed.invoke(pi);
 }
 
 void GesturesRecognizer::onPointerMoved(et::PointerInputInfo pi)
@@ -86,6 +88,7 @@ void GesturesRecognizer::onPointerMoved(et::PointerInputInfo pi)
 	}
 	
 	cancelWaitingForClicks();
+	pointerMoved.invoke(pi);
 }
 
 void GesturesRecognizer::onPointerReleased(et::PointerInputInfo pi)
@@ -94,6 +97,7 @@ void GesturesRecognizer::onPointerReleased(et::PointerInputInfo pi)
 	released.invoke();
 	
 	stopWaitingForClicks();
+	pointerReleased.invoke(pi);
 }
 
 void GesturesRecognizer::onPointerCancelled(et::PointerInputInfo pi)
@@ -106,7 +110,6 @@ void GesturesRecognizer::onPointerCancelled(et::PointerInputInfo pi)
 
 void GesturesRecognizer::onPointerScrolled(et::PointerInputInfo i)
 {
-	std::cout << i.scroll << std::endl;
 	zoom.invoke(1.0f + static_cast<float>(i.scroll) * _scrollZoomScale);
 }
 
