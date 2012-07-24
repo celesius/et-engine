@@ -11,27 +11,44 @@
 
 namespace et
 {
-	struct VertexElement
+	class VertexElement
 	{
-		VertexAttributeUsage usage;
-		VertexAttributeType type; 
-		int stride;
-		size_t offset;
+	public:
+		VertexElement() : 
+			_usage(Usage_Undefined), _type(Type_Undefined), _stride(0), _offset(0) { }
 
-		VertexElement() : usage(Usage_Undefined), type(Type_Undefined), stride(0), offset(0) 
-			{ }
-
-		VertexElement(VertexAttributeUsage u, VertexAttributeType t, int stride_ = 0, size_t offset_ = 0) : 
-			usage(u), type(t), stride(stride_), offset(offset_) { }
+		VertexElement(VertexAttributeUsage aUsage, VertexAttributeType aType, int aStride = 0, size_t aOffset = 0) : 
+			_usage(aUsage), _type(aType), _stride(aStride), _offset(aOffset) { }
 
 		bool operator == (const VertexElement& r) const
-			{ return (usage == r.usage) && (type == r.type) && (stride == r.stride) && (offset == r.offset); }
+			{ return (_usage == r._usage) && (_type == r._type) && (_stride == r._stride) && (_offset == r._offset); }
 
 		bool operator != (const VertexElement& r) const
-			{ return (usage != r.usage) || (type != r.type) || (stride != r.stride) || (offset != r.offset); }
+			{ return (_usage != r._usage) || (_type != r._type) || (_stride != r._stride) || (_offset != r._offset); }
 
 		bool operator == (const VertexAttributeUsage& aUsage) const
-			{ return (usage == aUsage); }
+			{ return (_usage == aUsage); }
+
+		VertexAttributeUsage usage() const
+			{ return _usage; }
+
+		VertexAttributeType type() const
+			{ return _type; } 
+
+		int stride() const
+			{ return _stride; }
+
+		size_t offset() const
+			{ return _offset; }
+
+		void setStride(int s)
+			{ _stride = s; }
+
+	private:
+		VertexAttributeUsage _usage;
+		VertexAttributeType _type; 
+		int _stride;
+		size_t _offset;
 	};
 
 	typedef std::vector<VertexElement> VertexElementList;

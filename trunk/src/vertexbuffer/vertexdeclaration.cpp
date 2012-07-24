@@ -40,17 +40,17 @@ bool VertexDeclaration::push_back(VertexAttributeUsage usage, VertexAttributeTyp
 
 bool VertexDeclaration::push_back(const VertexElement& element)
 {
-	if (has(element.usage)) return false;
+	if (has(element.usage())) return false;
 
-	_usageMask = _usageMask | vertexAttributeUsageMask(element.usage);
+	_usageMask = _usageMask | vertexAttributeUsageMask(element.usage());
 
-	_totalSize += vertexAttributeTypeSize(element.type);
+	_totalSize += vertexAttributeTypeSize(element.type());
 	_list.push_back(element);
 
 	if (_interleaved)
 	{
 		for (VertexElementListIterator i = _list.begin(), e = _list.end(); i != e; ++i)
-			i->stride = static_cast<int>(_totalSize);
+			i->setStride(static_cast<int>(_totalSize));
 	}
 
 	return true;
@@ -103,10 +103,10 @@ void VertexDeclaration::serialize(std::ostream& stream)
 	serializeInt(stream, static_cast<int>(_list.size()));
 	for (VertexElementList::iterator i = _list.begin(), e = _list.end(); i != e; ++i)
 	{
-		serializeInt(stream, i->usage);
-		serializeInt(stream, i->type);
-		serializeInt(stream, i->stride);
-		serializeInt(stream, static_cast<int>(i->offset));
+		serializeInt(stream, i->usage());
+		serializeInt(stream, i->type());
+		serializeInt(stream, i->stride());
+		serializeInt(stream, static_cast<int>(i->offset()));
 	}
 }
 

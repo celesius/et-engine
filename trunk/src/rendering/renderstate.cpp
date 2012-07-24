@@ -130,7 +130,7 @@ void RenderState::setVertexAttributesBaseIndex(const VertexDeclaration& decl, si
 	for (size_t i = 0; i < decl.numElements(); ++i) 
 	{
 		const VertexElement& e = decl.element(i);
-		size_t dataOffset = index * (decl.interleaved() ? decl.dataSize() : vertexAttributeTypeSize(e.type) );
+		size_t dataOffset = index * (decl.interleaved() ? decl.dataSize() : vertexAttributeTypeSize(e.type()) );
 		setVertexAttribPointer(e, dataOffset);
 	}
 }
@@ -402,8 +402,8 @@ void RenderState::setVertexAttribEnabled(GLuint attrib, bool enabled, bool force
 
 void RenderState::setVertexAttribPointer(const VertexElement& e, size_t baseIndex)
 {
-	glVertexAttribPointer(e.usage, vertexAttributeTypeComponents(e.type), vertexAttributeTypeDataType(e.type), 
-		false, static_cast<GLsizei>(e.stride), reinterpret_cast<GLvoid*>(e.offset + baseIndex));
+	glVertexAttribPointer(e.usage(), vertexAttributeTypeComponents(e.type()), vertexAttributeTypeDataType(e.type()), 
+		false, static_cast<GLsizei>(e.stride()), reinterpret_cast<GLvoid*>(e.offset() + baseIndex));
 	checkOpenGLError(keyVertexAttribPointer);
 }
 
