@@ -11,6 +11,10 @@
 
 using namespace et;
 
+static const Texture _emptyTexture;
+static const std::string _emptyString;
+static const vec4 _emptyVector;
+
 const std::string materialKeys[MaterialParameter_max] = 
 {
 	std::string(), 
@@ -221,4 +225,34 @@ void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, Texture
 		std::string value = deserializeString(stream);
 		setString(param, value);
 	}
+}
+
+const int MaterialData::getInt(size_t param) const
+{
+	IntParameters::const_iterator i = _intParameters.find(param);
+	return i == _intParameters.end() ? 0 : i->second; 
+}
+
+const float MaterialData::getFloat(size_t param) const
+{ 
+	FloatParameters::const_iterator i = _floatParameters.find(param);
+	return i == _floatParameters.end() ? 0 : i->second; 
+}
+
+const vec4& MaterialData::getVec4(size_t param) const
+{ 
+	VectorParameters::const_iterator i = _vectorParameters.find(param);
+	return i == _vectorParameters.end() ? _emptyVector : i->second; 
+}
+
+const std::string& MaterialData::getString(size_t param) const
+{ 
+	StringParameters::const_iterator i = _stringParameters.find(param);
+	return i == _stringParameters.end() ? _emptyString : i->second; 
+}
+
+const Texture& MaterialData::getTexture(size_t param) const 
+{ 
+	TextureParameters::const_iterator i = _textureParameters.find(param);
+	return i == _textureParameters.end() ? _emptyTexture : i->second; 
 }

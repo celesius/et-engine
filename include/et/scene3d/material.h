@@ -50,29 +50,14 @@ namespace et
 		MaterialData();
 		MaterialData(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath);
 
+		const int getInt(size_t param) const;
+		const float getFloat(size_t param) const;
+		const vec4& getVec4(size_t param) const;
+		const std::string& getString(size_t param) const;
+		const Texture& getTexture(size_t param) const;
+
 		void setName(const std::string& name)
 			{ APIObjectData::setName(name); }
-
-		int& getInt(size_t param) 
-			{ return _intParameters[param]; }
-
-		float& getFloat(size_t param) 
-			{ return _floatParameters[param]; }
-
-		vec4& getVec4(size_t param) 
-			{ return _vectorParameters[param]; }
-
-		bool hasTexture(size_t param)
-			{ return _textureParameters.find(param) != _textureParameters.end(); }
-
-		Texture& getTexture(size_t param)
-			{ return _textureParameters[param]; }
-
-		std::string& getString(size_t param)
-			{ return _stringParameters[param]; }
-
-		const Texture& getTexture(size_t param) const 
-			{ return _textureParameters.find(param)->second; }
 
 		void setInt(size_t param, int value)
 			{ _intParameters[param] = value; };
@@ -88,6 +73,9 @@ namespace et
 
 		void setString(size_t param, const std::string& value)
 			{ _stringParameters[param] = value; };
+
+		bool hasTexture(size_t param)
+			{ return _textureParameters.find(param) != _textureParameters.end(); }
 
 		BlendState blendState() const
 			{ return _blend; }
