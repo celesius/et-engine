@@ -172,6 +172,10 @@ FramebufferData::~FramebufferData()
 
 bool FramebufferData::check()
 {
+	static const std::string tag = "FramebufferData::check";
+	checkOpenGLError(tag);
+	(void)tag;
+
 	_rc->renderState().bindFramebuffer(_id);
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
@@ -279,8 +283,13 @@ bool FramebufferData::setCurrentRenderTarget(const Texture& texture)
 bool FramebufferData::setCurrentRenderTarget(const Texture& texture, GLenum target)
 {
 	_rc->renderState().bindFramebuffer(_id);
-	
+
+#if (ET_OPENGLES)
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, texture->glID(), 0);
+#else
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture->glID(), 0);
+#endif
+
 	checkOpenGLError("Framebuffer::setCurrentRenderTarget -> glFramebufferTexture2D(..., GL_COLOR_ATTACHMENT0 " + name());
 
 	return check();
@@ -307,15 +316,15 @@ bool FramebufferData::setCurrentCubemapFace(size_t faceIndex)
 {
 	if (!_isCubemapBuffer) return false;
 
-	_rc->renderState().bindFramebuffer(_id);
-    
 	GLenum target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex;
+
+	_rc->renderState().bindFramebuffer(_id);
    
-    if (_depthBuffer.valid())
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, target, _depthBuffer->glID(), 0);
-    
     if (_renderTargets[0].valid())
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, _renderTargets[0]->glID(), 0);
+
+    if (_depthBuffer.valid())
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, target, _depthBuffer->glID(), 0);
 
 	return check(); 
 }
