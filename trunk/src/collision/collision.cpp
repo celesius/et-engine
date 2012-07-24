@@ -40,58 +40,58 @@ vec3 et::worldCoordinatesFromBarycentric(const vec2& b, const triangle& t)
 
 vec3 et::closestPointOnTriangle(const vec3& sourcePosition, const triangle& triangle)
 {
-	vec3 edge0 = triangle[1] - triangle[0];
-	vec3 edge1 = triangle[2] - triangle[0];
-	vec3 v0 = triangle[0] - sourcePosition;
+	vec3 edge0 = triangle.v2 - triangle.v1;
+	vec3 edge1 = triangle.v3 - triangle.v1;
+	vec3 v0 = triangle.v1 - sourcePosition;
 
-	float a = dot(edge0, edge0 );
-	float b = dot(edge0, edge1 );
-	float c = dot(edge1, edge1 );
-	float d = dot(edge0, v0 );
-	float e = dot(edge1, v0 );
+	float a = dot(edge0, edge0);
+	float b = dot(edge0, edge1);
+	float c = dot(edge1, edge1);
+	float d = dot(edge0, v0);
+	float e = dot(edge1, v0);
 
-	float det = a*c - b*b;
-	float s = b*e - c*d;
-	float t = b*d - a*e;
+	float det = a*c - b * b;
+	float s = b * e - c * d;
+	float t = b * d - a * e;
 
-	if ( s + t < det )
+	if (s + t < det)
 	{
-		if ( s < 0.f )
+		if ( s < 0.0f )
 		{
-			if ( t < 0.f )
+			if ( t < 0.0f )
 			{
-				if ( d < 0.f )
+				if ( d < 0.0f )
 				{
-					s = clamp( -d/a, 0.f, 1.f );
-					t = 0.f;
+					s = clamp( -d/a, 0.0f, 1.0f );
+					t = 0.0f;
 				}
 				else
 				{
-					s = 0.f;
-					t = clamp( -e/c, 0.f, 1.f );
+					s = 0.0f;
+					t = clamp( -e/c, 0.0f, 1.0f );
 				}
 			}
 			else
 			{
-				s = 0.f;
-				t = clamp( -e/c, 0.f, 1.f );
+				s = 0.0f;
+				t = clamp( -e/c, 0.0f, 1.0f );
 			}
 		}
-		else if ( t < 0.f )
+		else if ( t < 0.0f )
 		{
-			s = clamp( -d/a, 0.f, 1.f );
-			t = 0.f;
+			s = clamp( -d/a, 0.0f, 1.0f );
+			t = 0.0f;
 		}
 		else
 		{
-			float invDet = 1.f / det;
+			float invDet = 1.0f / det;
 			s *= invDet;
 			t *= invDet;
 		}
 	}
 	else
 	{
-		if ( s < 0.f )
+		if ( s < 0.0f )
 		{
 			float tmp0 = b+d;
 			float tmp1 = c+e;
@@ -99,77 +99,40 @@ vec3 et::closestPointOnTriangle(const vec3& sourcePosition, const triangle& tria
 			{
 				float numer = tmp1 - tmp0;
 				float denom = a-2*b+c;
-				s = clamp( numer/denom, 0.f, 1.f );
+				s = clamp( numer/denom, 0.0f, 1.0f );
 				t = 1-s;
 			}
 			else
 			{
-				t = clamp( -e/c, 0.f, 1.f );
-				s = 0.f;
+				t = clamp( -e/c, 0.0f, 1.0f );
+				s = 0.0f;
 			}
 		}
-		else if ( t < 0.f )
+		else if ( t < 0.0f )
 		{
 			if ( a+d > b+e )
 			{
 				float numer = c+e-b-d;
 				float denom = a-2*b+c;
-				s = clamp( numer/denom, 0.f, 1.f );
+				s = clamp( numer/denom, 0.0f, 1.0f );
 				t = 1-s;
 			}
 			else
 			{
-				s = clamp( -e/c, 0.f, 1.f );
-				t = 0.f;
+				s = clamp( -e/c, 0.0f, 1.0f );
+				t = 0.0f;
 			}
 		}
 		else
 		{
 			float numer = c+e-b-d;
 			float denom = a-2*b+c;
-			s = clamp( numer/denom, 0.f, 1.f );
-			t = 1.f - s;
+			s = clamp( numer/denom, 0.0f, 1.0f );
+			t = 1.0f - s;
 		}
 	}
 
-	return triangle[0] + s * edge0 + t * edge1;
-/*
-	vec3 ab = t.edge21();
-	vec3 ac = t.edge31();
-    vec3 ap = p - t.v1;
-
-    float d1 = dot(ab, ap);
-    float d2 = dot(ac, ap);
-	if ((d1 <= 0.0f) && (d2 <= 0.0f))
-		return t.v1;
-
-    vec3 bp = p - t.v2;
-    float d3 = dot(ab, bp);
-    float d4 = dot(ac, bp);
-    if ((d3 >= 0.0f) && (d4 <= d3))
-		return t.v2;
-
-    float vc = d1 * d4 - d3 * d2;
-    if ((vc <= 0.0f) && (d1 >= 0.0f) && (d3 <= 0.0f))
-		return t.v1 + ab * (d1 / (d1 - d3));
-
-    vec3 cp = p - t.v3;
-    float d5 = dot(ab, cp);
-    float d6 = dot(ac, cp);
-    if ((d6 >= 0.0f) && (d5 <= d6))
-		return t.v3;
-
-    float vb = d5 * d2 - d1 * d6;
-    if ((vb <= 0.0f) && (d2 >= 0.0f) && (d6 <= 0.0f))
-        return t.v1 + ac * d2 / (d2 - d6);
-
-    float va = d3 * d6 - d5 * d4;
-    if ((va <= 0.0f) && ((d4 - d3) >= 0.0f) && ((d5 - d6) >= 0.0f))
-        return t.v2 + (t.v3 - t.v2) * (d4 - d3) / ((d4 - d3) + (d5 - d6));
-
-    float denom = 1.0f / (va + vb + vc);
-    return t.v1 + ab * vb * denom + ac * vc * denom;
-*/
+	return triangle.v1 + s * edge0 + t * edge1;
 }
 
 
@@ -409,8 +372,7 @@ bool et::intersect::aabbAABB(const AABB& a1, const AABB& a2)
 
 bool et::intersect::sphereTriangle(const vec3& sphereCenter, const float sphereRadius, const triangle& t, vec3* normal, float* penetration)
 {
-	vec3 direction = closestPointOnTriangle(sphereCenter, t) - sphereCenter;
-	float distance = direction.dotSelf();
+	float distance = (closestPointOnTriangle(sphereCenter, t) - sphereCenter).dotSelf();
 	if (distance > sqr(sphereRadius)) return false;
 
 	if (normal)
