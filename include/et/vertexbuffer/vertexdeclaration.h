@@ -15,10 +15,11 @@ namespace et
 	{
 	public:
 		VertexElement() : 
-			_usage(Usage_Undefined), _type(Type_Undefined), _stride(0), _offset(0) { }
+			_usage(Usage_Undefined), _type(Type_Undefined), _stride(0), _offset(0), _components(0), _dataType(0) { }
 
 		VertexElement(VertexAttributeUsage aUsage, VertexAttributeType aType, int aStride = 0, size_t aOffset = 0) : 
-			_usage(aUsage), _type(aType), _stride(aStride), _offset(aOffset) { }
+			_usage(aUsage), _type(aType), _stride(aStride), _offset(aOffset),
+			_components(vertexAttributeTypeComponents(aType)), _dataType(vertexAttributeTypeDataType(aType)) { }
 
 		bool operator == (const VertexElement& r) const
 			{ return (_usage == r._usage) && (_type == r._type) && (_stride == r._stride) && (_offset == r._offset); }
@@ -41,6 +42,12 @@ namespace et
 		size_t offset() const
 			{ return _offset; }
 
+		size_t components() const
+			{ return _components; }
+
+		size_t dataType() const 
+			{ return _dataType; }
+
 		void setStride(int s)
 			{ _stride = s; }
 
@@ -49,6 +56,8 @@ namespace et
 		VertexAttributeType _type; 
 		int _stride;
 		size_t _offset;
+		size_t _components;
+		size_t _dataType;
 	};
 
 	typedef std::vector<VertexElement> VertexElementList;

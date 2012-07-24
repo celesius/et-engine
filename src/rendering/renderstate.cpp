@@ -402,8 +402,9 @@ void RenderState::setVertexAttribEnabled(GLuint attrib, bool enabled, bool force
 
 void RenderState::setVertexAttribPointer(const VertexElement& e, size_t baseIndex)
 {
-	glVertexAttribPointer(e.usage(), vertexAttributeTypeComponents(e.type()), vertexAttributeTypeDataType(e.type()), 
-		false, static_cast<GLsizei>(e.stride()), reinterpret_cast<GLvoid*>(e.offset() + baseIndex));
+	glVertexAttribPointer(e.usage(), e.components(), e.dataType(), false, e.stride(), 
+		reinterpret_cast<GLvoid*>(e.offset() + baseIndex));
+
 	checkOpenGLError(keyVertexAttribPointer);
 }
 
