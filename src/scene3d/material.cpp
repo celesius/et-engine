@@ -25,14 +25,13 @@ const int MaterialVersion1_0_0 = 'MAT1';
 const int MaterialVersion1_0_1 = 'MAT2';
 const int MaterialCurrentVersion = MaterialVersion1_0_1;
 
-size_t keyToMaterialParameter(const std::string& k)
+inline size_t keyToMaterialParameter(const std::string& k)
 {
 	for (size_t i = 0; i < MaterialParameter_max; ++i)
 	{
 		if (k == materialKeys[i])
 			return i;
 	}
-
 	return MaterialParameter_Undefined;
 }
 
@@ -157,7 +156,7 @@ void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, Texture
 			if (t.invalid())
 			{
 				path = texturesBasePath + getFileName(path);
-				t = rc->textureFactory().loadTexture(path, cache);
+				t = rc->textureFactory().loadTexture(path, cache, true);
 			}
 			setTexture(keyToMaterialParameter(param), t);
 		}
@@ -209,7 +208,7 @@ void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, Texture
 			if (t.invalid())
 			{
 				path = texturesBasePath + getFileName(path);
-				t = rc->textureFactory().loadTexture(path, cache);
+				t = rc->textureFactory().loadTexture(path, cache, true);
 			}
 			setTexture(param, t);
 		}
