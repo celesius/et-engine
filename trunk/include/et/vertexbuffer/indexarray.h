@@ -72,10 +72,10 @@ namespace et
 			static const size_t MaxVertexCount = 3;
 			IndexType index[MaxVertexCount];
 
-			inline IndexType& operator [] (size_t i) 
+			IndexType& operator [] (size_t i) 
 				{ return index[i]; }
 
-			inline const IndexType& operator [] (size_t i) const
+			const IndexType& operator [] (size_t i) const
 				{ return index[i]; }
 
 			Primitive();

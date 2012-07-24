@@ -231,10 +231,10 @@ Element::Pointer Scene3d::createElementOfType(size_t type, Element* parent)
 Material Scene3d::materialWithId(int id)
 {
 	Scene3dStorage::Pointer s = childrenOfType(ElementType_Storage).front();
+	
 	for (MaterialList::iterator i = s->materials().begin(), e = s->materials().end(); i != e; ++i)
-	{
 		if ((*i)->tag == id) return *i;
-	}
+	
 	return Material();
 }
 
