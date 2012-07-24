@@ -60,34 +60,35 @@ namespace et
 		bool setDepthTarget(const Texture& texture);
 		bool setDepthTarget(const Texture& texture, GLenum target);
 
-		bool setCurrentRenderTarget(const Texture& texture, GLenum target);
 		bool setCurrentRenderTarget(const Texture& texture);
-		bool setCurrentRenderTarget(GLenum rt);
-
 		bool setCurrentCubemapFace(size_t faceIndex);
 
 		void setDrawBuffersCount(int c);
 
-		inline GLuint glID() const
+		GLuint glID() const
 			{ return _id; }
 
-		inline vec2i size() const
+		vec2i size() const
 			{ return _size; }
 	
-		inline GLuint colorRenderbuffer() const
+		GLuint colorRenderbuffer() const
 			{ return _colorRenderbuffer; }
 		
-		inline GLuint depthRenderbuffer() const
+		GLuint depthRenderbuffer() const
 			{ return _depthRenderbuffer; }
 
-		inline void setColorRenderbuffer(GLuint r)
+		void setColorRenderbuffer(GLuint r)
 			{ _colorRenderbuffer = r; }
 		
-		inline void setDepthRenderbuffer(GLuint r) 
+		void setDepthRenderbuffer(GLuint r) 
 			{ _depthRenderbuffer = r; }
 		
 		void forceSize(int w, int h);
 		
+	private:
+		bool setCurrentRenderTarget(const Texture& texture, GLenum target);
+		bool setCurrentRenderTarget(GLenum rt);
+
 	private:
 		friend class FramebufferFactory;
 		FramebufferData(RenderContext* rc, TextureFactory* tf, const FramebufferDescription& desc, const std::string& name);
