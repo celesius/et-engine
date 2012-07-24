@@ -20,6 +20,12 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	_rc = rc;
 	_rc->renderState().setDepthTest(true);
 
+	_gestures.pointerPressed.connect(this, &Converter::onPointerPressed);
+	_gestures.pointerMoved.connect(this, &Converter::onPointerMoved);
+	_gestures.pointerReleased.connect(this, &Converter::onPointerReleased);
+	_gestures.zoom.connect(this, &Converter::onZoom);
+	_gestures.drag.connect(this, &Converter::onDrag);
+
 	_gui = new gui::Gui(rc, _texCache);
 	_mainLayout = gui::Layout::Pointer(new gui::Layout());
 	_gui->pushLayout(_mainLayout, 0, 0.0f);
@@ -71,13 +77,22 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	_btnDrawSupportMeshes->setType(gui::Button::Type_CheckButton);
 	_btnDrawSupportMeshes->setSelected(true);
 
+	_vDistance.setValue(200.0f);
+	_vDistance.updated.connect(this, &Converter::onCameraUpdated);
+	_vDistance.run();
+
+	_vAngle.setValue(vec2(QUARTER_PI));
+	_vAngle.setDeccelerationRate(5.0f);
+	_vAngle.updated.connect(this, &Converter::onCameraUpdated);
+	_vAngle.run();
+
 	_labStatus = gui::Label::Pointer(new gui::Label("Status", _mainFont, _mainLayout.ptr()));
 	_labStatus->setPivotPoint(vec2(0.0f, 1.0f));
 	_labStatus->setPosition(0.0f, _rc->size().y);
 	_labStatus->setText("Ready.");
 
 	_camera.perspectiveProjection(QUARTER_PI, rc->size().aspect(), 1.0f, 2000.0f);
-	_camera.lookAt(200.0f * vec3(1.0f, 1.0f, 1.0f));
+	_camera.lookAt(fromSpherical(_vAngle.value().x, _vAngle.value().y) * _vDistance.value());
 
 	_defaultProgram = rc->programFactory().loadProgram("default.program");
 	_defaultProgram->setPrimaryLightPosition(500.0f * vec3(0.0f, 1.0f, 0.0f));
@@ -143,7 +158,6 @@ void Converter::render(RenderContext* rc)
 
 void Converter::idle(float)
 {
-
 }
 
 void Converter::onPointerPressed(et::PointerInputInfo p)
@@ -159,6 +173,16 @@ void Converter::onPointerMoved(et::PointerInputInfo p)
 void Converter::onPointerReleased(et::PointerInputInfo p)
 {
 	_gui->pointerReleased(p);
+}
+
+void Converter::onZoom(float z)
+{
+	_vDistance.addVelocity(0.1f * _vDistance.value() * (1.0f - z));
+}
+
+void Converter::onDrag(et::vec2 v)
+{
+	_vAngle.addVelocity(vec2(-v.y, v.x));
 }
 
 void Converter::onBtnOpenClick(et::gui::Button*)
@@ -222,7 +246,16 @@ void Converter::performLoading(std::string path)
 
 		s3d::ElementContainer::Pointer loadedScene = loader.load(_rc, _texCache);
 		if (loadedScene.valid())
+		{
+			s3d::Element::List allObjects = loadedScene->childrenOfType(s3d::ElementType_Any);
+
+			std::cout << "Loaded elements:" << std::endl;
+			for (s3d::Element::List::const_iterator i = allObjects.begin(), e = allObjects.end(); i != e; ++i)
+				std::cout << (*i)->name() << " " << (*i)->properties() << std::endl;
+			std::cout << "End." << std::endl;
+
 			loadedScene->setParent(&_scene);
+		}
 	}
 	_labStatus->setText("Completed.");
 }
@@ -234,4 +267,9 @@ void Converter::performSaving(std::string path)
 
 	_scene.serialize(path);
 	_labStatus->setText("Completed.");
+}
+
+void Converter::onCameraUpdated()
+{
+	_camera.lookAt(fromSpherical(_vAngle.value().x, _vAngle.value().y) * _vDistance.value());
 }
