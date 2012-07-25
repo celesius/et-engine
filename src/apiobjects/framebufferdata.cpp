@@ -115,16 +115,22 @@ FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const Fr
 			Texture d;
 			if (_isCubemapBuffer)
 			{
+#if (!ET_OPENLES)
 				d = tf->genCubeTexture(desc.depthInternalformat, desc.size.x, desc.depthFormat, 
 					desc.depthType, name() + "_depth");
+#endif
 			}
 			else 
 			{
 				d = tf->genTexture(GL_TEXTURE_2D, desc.depthInternalformat, desc.size, 
 					desc.depthFormat, desc.depthType, BinaryDataStorage(), name() + "_depth");
 			}
-			d->setWrap(rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
-			setDepthTarget(d);
+			
+			if (d.valid())
+			{
+				d->setWrap(rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
+				setDepthTarget(d);
+			}
 		}
 	}
 
@@ -295,9 +301,9 @@ bool FramebufferData::setCurrentRenderTarget(const Texture& texture, GLenum targ
 	return check();
 }
 
-bool FramebufferData::setCurrentRenderTarget(GLenum rt)
+bool FramebufferData::setCurrentRenderTarget(size_t index)
 {
-	return (rt < _numTargets) ? setCurrentRenderTarget(_renderTargets[rt]) : false;
+	return (index < _numTargets) ? setCurrentRenderTarget(_renderTargets[index]) : false;
 }
 
 void FramebufferData::setDrawBuffersCount(int count)
@@ -321,10 +327,16 @@ bool FramebufferData::setCurrentCubemapFace(size_t faceIndex)
 	_rc->renderState().bindFramebuffer(_id);
    
     if (_renderTargets[0].valid())
+	{
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, _renderTargets[0]->glID(), 0);
-
+		checkOpenGLError("setCurrentCubemapFace -> color");
+	}
+	
     if (_depthBuffer.valid())
+	{
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, target, _depthBuffer->glID(), 0);
+		checkOpenGLError("setCurrentCubemapFace -> depth");
+	}
 
 	return check(); 
 }

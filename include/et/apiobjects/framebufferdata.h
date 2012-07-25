@@ -61,6 +61,9 @@ namespace et
 		bool setDepthTarget(const Texture& texture, GLenum target);
 
 		bool setCurrentRenderTarget(const Texture& texture);
+		bool setCurrentRenderTarget(const Texture& texture, GLenum target);
+		bool setCurrentRenderTarget(size_t index);
+		
 		bool setCurrentCubemapFace(size_t faceIndex);
 
 		void setDrawBuffersCount(int c);
@@ -84,10 +87,6 @@ namespace et
 			{ _depthRenderbuffer = r; }
 		
 		void forceSize(int w, int h);
-		
-	private:
-		bool setCurrentRenderTarget(const Texture& texture, GLenum target);
-		bool setCurrentRenderTarget(GLenum rt);
 
 	private:
 		friend class FramebufferFactory;

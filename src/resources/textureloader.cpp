@@ -157,7 +157,7 @@ const TextureDescription TextureLoader::loadDescription(const std::string& name,
 	}
 	else
 	{
-		std::cout << "Unable to load texture description from file: " << name << std::endl;
+//		std::cout << "Unable to load texture description from file: " << name << std::endl;
 	}
 
 	if (initWithZero)
@@ -199,7 +199,7 @@ const TextureDescription TextureLoader::load(const std::string& name, size_t sca
 	}
 	else
 	{
-		std::cout << "Unable to load texture from file: " << name << std::endl;
+//		std::cout << "Unable to load texture from file: " << name << std::endl;
 	}
 
 	return desc; 

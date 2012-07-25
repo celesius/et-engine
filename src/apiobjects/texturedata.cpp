@@ -119,28 +119,28 @@ void TextureData::generateTexture(RenderContext*)
 	checkOpenGLError("TextureData::generateTexture " + name());
 }
 
-void TextureData::buildData(char* dataPtr, size_t dataSize)
+void TextureData::buildData(char* aDataPtr, size_t aDataSize)
 {
 	if (_desc.target == GL_TEXTURE_1D)
 	{
-		if (_desc.compressed && dataSize)
-			etCompressedTexImage1D(_desc.target, 0, _desc.internalformat, _desc.size.x, 0, dataSize, dataPtr); 
+		if (_desc.compressed && aDataSize)
+			etCompressedTexImage1D(_desc.target, 0, _desc.internalformat, _desc.size.x, 0, aDataSize, aDataPtr); 
 		else
-			etTexImage1D(_desc.target, 0, _desc.internalformat, _desc.size.x, 0, _desc.format, _desc.type, dataPtr); 
-        
+			etTexImage1D(_desc.target, 0, _desc.internalformat, _desc.size.x, 0, _desc.format, _desc.type, aDataPtr); 
 	}
 	else if (_desc.target == GL_TEXTURE_2D)
 	{
 		for (size_t level = 0; level < _desc.mipMapCount; ++level)
 		{
-			vec2i mipSize = _desc.sizeForMipLevel(level);
-			size_t dataSize = _desc.dataSizeForMipLevel(level);
-			size_t offset = _desc.dataOffsetForMipLevel(level);
-			char* ptr = (dataSize > 0) ? &dataPtr[offset] : 0;
+			vec2i t_mipSize = _desc.sizeForMipLevel(level);
+			size_t t_dataSize = _desc.dataSizeForMipLevel(level);
+			size_t t_offset = _desc.dataOffsetForMipLevel(level);
+			
+			char* ptr = (aDataPtr && (t_offset < aDataSize)) ? &aDataPtr[t_offset] : 0;
 			if (_desc.compressed && ptr)
-				etCompressedTexImage2D(_desc.target, level, _desc.internalformat, mipSize.x, mipSize.y, 0, dataSize, ptr); 
+				etCompressedTexImage2D(_desc.target, level, _desc.internalformat, t_mipSize.x, t_mipSize.y, 0, t_dataSize, ptr); 
 			else
-				etTexImage2D(_desc.target, level, _desc.internalformat, mipSize.x, mipSize.y, 0, _desc.format, _desc.type, ptr);
+				etTexImage2D(_desc.target, level, _desc.internalformat, t_mipSize.x, t_mipSize.y, 0, _desc.format, _desc.type, ptr);
 		}
 	}
 	else if (_desc.target == GL_TEXTURE_CUBE_MAP)
@@ -150,14 +150,15 @@ void TextureData::buildData(char* dataPtr, size_t dataSize)
 		{
 			for (size_t level = 0; level < _desc.mipMapCount; ++level)
 			{
-				vec2i mipSize = _desc.sizeForMipLevel(level);
-				size_t dataSize = _desc.dataSizeForMipLevel(level);
-				size_t offset = _desc.dataOffsetForMipLevel(level, layer);
-				char* ptr = (offset < dataSize) ? &dataPtr[offset] : 0;
+				vec2i t_mipSize = _desc.sizeForMipLevel(level);
+				size_t t_dataSize = _desc.dataSizeForMipLevel(level);
+				size_t t_offset = _desc.dataOffsetForMipLevel(level, layer);
+				
+				char* ptr = (aDataPtr && (t_offset < aDataSize)) ? &aDataPtr[t_offset] : 0;
 				if (_desc.compressed && ptr)
-					etCompressedTexImage2D(target, level, _desc.internalformat, mipSize.x, mipSize.y, 0, dataSize, ptr); 
+					etCompressedTexImage2D(target, level, _desc.internalformat, t_mipSize.x, t_mipSize.y, 0, t_dataSize, ptr); 
 				else
-					etTexImage2D(target, level, _desc.internalformat, mipSize.x, mipSize.y, 0, _desc.format, _desc.type, ptr);
+					etTexImage2D(target, level, _desc.internalformat, t_mipSize.x, t_mipSize.y, 0, _desc.format, _desc.type, ptr);
 			}
 		}
 	}
