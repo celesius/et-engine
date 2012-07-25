@@ -79,7 +79,7 @@ void PVRLoader::loadInfoFromV2Header(const PVRHeader2& header, TextureDescriptio
 	desc.size = vec2i(header.dwWidth, header.dwHeight);
 	desc.type = GL_UNSIGNED_BYTE;
 	desc.bitsPerPixel = header.dwBitCount;
-	desc.mipMapCount = header.dwMipMapCount + 1;
+	desc.mipMapCount = header.dwMipMapCount ? header.dwMipMapCount : 1;
 	desc.format = header.dwAlphaBitMask ? GL_RGBA : GL_RGB;
 	desc.layersCount = 1;
     
@@ -115,7 +115,7 @@ void PVRLoader::loadInfoFromV2Header(const PVRHeader2& header, TextureDescriptio
 void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescription& desc)
 {
 	desc.size = vec2i(header.width, header.height);
-	desc.mipMapCount = header.numMipmaps + 1;
+	desc.mipMapCount = header.numMipmaps ? header.numMipmaps : 1;
 	desc.layersCount = 1;
     
 	if (desc.mipMapCount > 1)

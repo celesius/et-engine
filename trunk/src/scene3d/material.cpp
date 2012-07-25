@@ -160,7 +160,7 @@ void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, Texture
 			if (t.invalid())
 			{
 				path = texturesBasePath + getFileName(path);
-				t = rc->textureFactory().loadTexture(path, cache, true);
+				t = rc->textureFactory().loadTexture(path, cache);
 			}
 			setTexture(keyToMaterialParameter(param), t);
 		}
@@ -212,7 +212,7 @@ void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, Texture
 			if (t.invalid())
 			{
 				path = texturesBasePath + getFileName(path);
-				t = rc->textureFactory().loadTexture(path, cache, true);
+				t = rc->textureFactory().loadTexture(path, cache);
 			}
 			setTexture(param, t);
 		}
