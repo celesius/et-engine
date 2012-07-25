@@ -115,7 +115,7 @@ FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const Fr
 			Texture d;
 			if (_isCubemapBuffer)
 			{
-#if (!ET_OPENLES)
+#if (!ET_OPENGLES)
 				d = tf->genCubeTexture(desc.depthInternalformat, desc.size.x, desc.depthFormat, 
 					desc.depthType, name() + "_depth");
 #endif
