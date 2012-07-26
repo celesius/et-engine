@@ -491,6 +491,7 @@ namespace et
 
 	void validateExtensions()
 	{
+#if (!ET_OPENGLES)
 		ET_VALIDATE_GLFUNC_EXT(glIsRenderbuffer);
 		ET_VALIDATE_GLFUNC_EXT(glBindRenderbuffer);
 		ET_VALIDATE_GLFUNC_EXT(glDeleteRenderbuffers);
@@ -510,7 +511,8 @@ namespace et
 		ET_VALIDATE_GLFUNC_EXT(glGenerateMipmap);
 		ET_VALIDATE_GLFUNC_EXT(glBlitFramebuffer);
 		ET_VALIDATE_GLFUNC_EXT(glRenderbufferStorageMultisample);
-		ET_VALIDATE_GLFUNC_EXT(glFramebufferTextureLayer);;
+		ET_VALIDATE_GLFUNC_EXT(glFramebufferTextureLayer);
+#endif
 	}
 
 }

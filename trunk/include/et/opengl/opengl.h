@@ -71,6 +71,11 @@ namespace et
 		#define glDeleteVertexArrays				glGenVertexArraysOES
 	#endif
 	
+	#if !defined(glFramebufferTexture)
+		#define glFramebufferTexture(target, attachment, texture, level)	\ 
+			glFramebufferTexture2D(target, attachment, GL_TEXTURE_2D, texture, level)
+	#endif
+	
 	#define GL_TEXTURE_MAX_LEVEL					GL_TEXTURE_MAX_LEVEL_APPLE
 	#define GL_TEXTURE_1D							0
 	
