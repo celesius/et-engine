@@ -28,6 +28,12 @@ namespace et
 			ElementType type() const 
 				{ return ElementType_SupportMesh; }
 
+			float radius() const
+				{ return _radius; }
+
+			const CollisionData& triangles() const
+				{ return _data; }
+
 			void setNumIndexes(size_t num);
 			void fillCollisionData(VertexArrayRef v, IndexArrayRef i);
 
@@ -36,9 +42,6 @@ namespace et
 			Sphere sphere();
 			AABB aabb();
 			OBB obb();
-
-			const CollisionData& triangles() const
-				{ return _data; }
 
 			void serialize(std::ostream& stream, SceneVersion version);
 			void deserialize(std::istream& stream, ElementFactory* factory, SceneVersion version);

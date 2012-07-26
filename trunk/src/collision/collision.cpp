@@ -315,12 +315,12 @@ bool et::intersect::sphereSphere(const Sphere& s1, const Sphere& s2, vec3* amoun
 {
 	vec3 dv = s2.center() - s1.center();
 
-	float distance = dv.length();
+	float distance = dv.dotSelf();
 	float radiusSum = s1.radius() + s2.radius();
-	bool collised = (distance <= radiusSum);
+	bool collised = (distance <= sqr(radiusSum));
 
-	if (amount)
-		*amount = dv.normalize() * (radiusSum - distance);
+	if (amount && collised)
+		*amount = dv.normalize() * (radiusSum - sqrt(distance));
 
 	return collised;
 }

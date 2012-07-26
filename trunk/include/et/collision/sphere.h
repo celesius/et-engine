@@ -32,6 +32,12 @@ namespace et
 		void setRadius(float r)
 			{ _radius = r; }
 
+		void setCenter(const vec3& c)
+			{ _center = c; }
+
+		void applyTranslation(const vec3& dp)
+			{ _center += dp; }
+
 	protected:
 		vec3 _center;
 		float _radius;
