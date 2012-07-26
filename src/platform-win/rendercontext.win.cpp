@@ -474,6 +474,8 @@ bool RenderContextPrivate::initOpenGL(const RenderContextParameters& params)
 	glgInit();
 	glgInitExts();
 
+	validateExtensions();
+
 	checkOpenGLError("RenderContextPrivate::initOpenGL");
 
 	if (wglSwapIntervalEXT) 

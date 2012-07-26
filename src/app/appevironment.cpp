@@ -54,8 +54,6 @@ AppEnvironment::AppEnvironment() : _appPath(et::applicationPath()), _dataFolder(
 	addSearchPath(_appPath + "../../engine/data/textures/" );
 	addSearchPath(_appPath + "../../engine/data/models/" );
 	addSearchPath(_appPath + "../../engine/data/ui/" );
-#else
-	std::cout << "WARNING: engine folder aren't included in search path." << std::endl;
 #endif
 }
 
