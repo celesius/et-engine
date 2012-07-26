@@ -128,6 +128,8 @@ namespace et
 	std::string glInternalFormatToString(int format);
 	std::string glTypeToString(int type);
 
+	void validateExtensions();
+
 	size_t primitiveCount(GLenum mode, GLsizei count);
 
 	void etViewport(GLint x, GLint y, GLsizei width, GLsizei height);

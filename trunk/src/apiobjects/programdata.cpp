@@ -143,13 +143,13 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 	checkOpenGLError("glGetShaderiv<VERT>" + name() + " compile staus ");
 
 	glGetShaderiv(VertexShader, GL_INFO_LOG_LENGTH, &nLogLen);
-	if (nLogLen > 1)
+	if (!cStatus && (nLogLen > 1))
 	{
-		DataStorage<GLchar> infoLog(nLogLen);
-		infoLog.fill(0);
+		DataStorage<GLchar> infoLog(nLogLen, 0);
 		glGetShaderInfoLog(VertexShader, nLogLen, &nLogLen, infoLog.data());
 		std::cout << "Vertex shader " + name() + " compile report:" << std::endl << infoLog.data() << std::endl;
 	}
+
 	if (cStatus)
 	{
 		glAttachShader(_glID, VertexShader);
@@ -177,8 +177,7 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 		glGetShaderiv(GeometryShader, GL_INFO_LOG_LENGTH, &nLogLen);
 		if (nLogLen > 1)
 		{
-			DataStorage<GLchar> infoLog(nLogLen);
-			infoLog.fill(0);
+			DataStorage<GLchar> infoLog(nLogLen, 0);
 			glGetShaderInfoLog(GeometryShader, nLogLen, &nLogLen, infoLog.data());
 			std::cout << "Geometry shader " + name() + " compile report:" << std::endl << infoLog.data() << std::endl;
 		}
@@ -209,10 +208,9 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 	checkOpenGLError("glGetShaderiv<FRAG>" + name() + " compile staus ");
 
 	glGetShaderiv(FragmentShader, GL_INFO_LOG_LENGTH, &nLogLen);
-	if (nLogLen > 1)
+	if (!cStatus && (nLogLen > 1))
 	{
-		DataStorage<GLchar> infoLog(nLogLen);
-		infoLog.fill(0);
+		DataStorage<GLchar> infoLog(nLogLen, 0);
 		glGetShaderInfoLog(FragmentShader, nLogLen, &nLogLen, infoLog.data());
 		std::cout << "Fragment shader " << name() << " compile report:"  << std::endl << infoLog.data() << std::endl;
 	}
@@ -252,8 +250,7 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 			GLint nameLength = 0;
 			GLint attribSize = 0; 
 			GLenum attribType = 0;
-			DataStorage<char> name(maxNameLength);
-			name.fill(0);
+			DataStorage<char> name(maxNameLength, 0);
 			glGetActiveAttrib(_glID, i, maxNameLength, &nameLength, &attribSize, &attribType, name.binary()); 
 
 			VertexAttributeUsage v = stringToVertexAttribute(name.binary());
@@ -323,14 +320,16 @@ int ProgramData::link()
 
 	glLinkProgram(_glID);
 	checkOpenGLError("glLinkProgram " + name());
+
 	glGetProgramiv(_glID, GL_LINK_STATUS, &cStatus);
 	checkOpenGLError("glGetProgramiv<GL_LINK_STATUS> " + name());
+
 	glGetProgramiv(_glID, GL_INFO_LOG_LENGTH, &nLogLen);
 	checkOpenGLError("glGetProgramiv<GL_INFO_LOG_LENGTH> " + name());
-	if (nLogLen > 1)
+
+	if (!cStatus && (nLogLen > 1))
 	{
-		DataStorage<char> infoLog(nLogLen + 1);
-		infoLog.fill(0);
+		DataStorage<char> infoLog(nLogLen + 1, 0);
 		glGetProgramInfoLog(_glID, nLogLen, &nLogLen, infoLog.data());
 		checkOpenGLError("glGetProgramInfoLog<LINK> " + name());
 		std::cout << "Program " << name() << " link log: " << std::endl << infoLog.data() << std::endl;

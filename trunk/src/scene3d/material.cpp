@@ -157,12 +157,17 @@ void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, Texture
 		if (path.length())
 		{
 			Texture t = rc->textureFactory().loadTexture(path, cache);
+
 			if (t.invalid())
 			{
-				path = texturesBasePath + getFileName(path);
-				t = rc->textureFactory().loadTexture(path, cache);
+				std::string relativePath = texturesBasePath + getFileName(path);
+				t = rc->textureFactory().loadTexture(relativePath, cache);
 			}
-			setTexture(keyToMaterialParameter(param), t);
+
+			if (t.valid())
+				setTexture(keyToMaterialParameter(param), t);
+			else
+				std::cout << "Unable to load texture: " << path << std::endl;
 		}
 	}
 
@@ -211,10 +216,14 @@ void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, Texture
 			Texture t = rc->textureFactory().loadTexture(path, cache);
 			if (t.invalid())
 			{
-				path = texturesBasePath + getFileName(path);
-				t = rc->textureFactory().loadTexture(path, cache);
+				std::string relativePath = texturesBasePath + getFileName(path);
+				t = rc->textureFactory().loadTexture(relativePath, cache);
 			}
-			setTexture(param, t);
+
+			if (t.valid())
+				setTexture(param, t);
+			else
+				std::cout << "Unable to load texture: " << path << std::endl;
 		}
 	}
 
