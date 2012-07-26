@@ -23,16 +23,24 @@ namespace et
 		MaterialParameter_DiffuseColor,
 		MaterialParameter_SpecularColor,
 		MaterialParameter_EmissiveColor,
+
 		MaterialParameter_AmbientMap,	
 		MaterialParameter_DiffuseMap,
 		MaterialParameter_SpecularMap,
 		MaterialParameter_EmissiveMap,
 		MaterialParameter_NormalMap,	
-		MaterialParameter_LightMap,
+		MaterialParameter_BumpMap,	
+		MaterialParameter_ReflectionMap,
+
+		MaterialParameter_AmbientFactor,
+		MaterialParameter_DiffuseFactor,
+		MaterialParameter_SpecularFactor,
+		MaterialParameter_BumpFactor,	
+		MaterialParameter_ReflectionFactor,	
+
 		MaterialParameter_Roughness,
 		MaterialParameter_Transparency,
-		MaterialParameter_BumpFactor,	
-		MaterialParameter_IlluminationType,
+		MaterialParameter_ShadingModel,
 
 		MaterialParameter_max,
 		MaterialParameter_User = 0xffff
