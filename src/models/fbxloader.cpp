@@ -66,7 +66,7 @@ namespace et
 		s3d::Mesh::Pointer loadMesh(FbxMesh* mesh, s3d::Element::Pointer parent, const MaterialList& materials, const StringList& params);
 		Material loadMaterial(FbxSurfaceMaterial* material);
 
-		void loadMaterialColorValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, const char* fbxprop, const char* fbxpropfactor);
+		void loadMaterialColorValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, const char* fbxprop);
 		void loadMaterialValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, const char* fbxprop);
 		void loadMaterialTextureValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, const char* fbxprop);
 
@@ -274,20 +274,12 @@ void FBXLoaderPrivate::loadNode(FbxNode* node, s3d::Element::Pointer parent)
 }
 
 void FBXLoaderPrivate::loadMaterialColorValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, 
-	const char* fbxprop, const char* fbxpropfactor)
+	const char* fbxprop)
 {
 	FbxProperty value = fbxm->FindProperty(fbxprop);
-	FbxProperty factor = fbxm->FindProperty(fbxpropfactor);
 	if (value.IsValid())
 	{
 		FbxDouble3 data = value.Get<FbxDouble3>();
-		if (factor.IsValid())
-		{
-			double factorData = factor.Get<double>();
-			data[0] *= factorData;
-			data[1] *= factorData;
-			data[2] *= factorData;
-		}
 		m->setVec4(propName,  vec4(static_cast<float>(data[0]),static_cast<float>(data[1]),static_cast<float>(data[2]), 1.0f));
 	}
 }
@@ -321,21 +313,27 @@ Material FBXLoaderPrivate::loadMaterial(FbxSurfaceMaterial* mat)
 {
 	Material m;
 
-	loadMaterialValue(m, MaterialParameter_Roughness, mat, FbxSurfaceMaterial::sShininess);
-
-	loadMaterialColorValue(m, MaterialParameter_DiffuseColor, mat, FbxSurfaceMaterial::sDiffuse, FbxSurfaceMaterial::sDiffuseFactor);
-	loadMaterialColorValue(m, MaterialParameter_AmbientColor, mat, FbxSurfaceMaterial::sAmbient, FbxSurfaceMaterial::sAmbientFactor);
-	loadMaterialColorValue(m, MaterialParameter_EmissiveColor, mat, FbxSurfaceMaterial::sEmissive, FbxSurfaceMaterial::sEmissive);
-	loadMaterialColorValue(m, MaterialParameter_SpecularColor, mat, FbxSurfaceMaterial::sSpecular, FbxSurfaceMaterial::sSpecularFactor);
-
 	loadMaterialTextureValue(m, MaterialParameter_DiffuseMap, mat, FbxSurfaceMaterial::sDiffuse);
 	loadMaterialTextureValue(m, MaterialParameter_AmbientMap, mat, FbxSurfaceMaterial::sAmbient);
 	loadMaterialTextureValue(m, MaterialParameter_EmissiveMap, mat, FbxSurfaceMaterial::sEmissive);
 	loadMaterialTextureValue(m, MaterialParameter_SpecularMap, mat, FbxSurfaceMaterial::sSpecular);
 	loadMaterialTextureValue(m, MaterialParameter_NormalMap, mat, FbxSurfaceMaterial::sNormalMap);
+	loadMaterialTextureValue(m, MaterialParameter_BumpMap, mat, FbxSurfaceMaterial::sBump);
+	loadMaterialTextureValue(m, MaterialParameter_ReflectionMap, mat, FbxSurfaceMaterial::sReflection);
 
-	if (!m->hasTexture(MaterialParameter_NormalMap))
-		loadMaterialTextureValue(m, MaterialParameter_NormalMap, mat, FbxSurfaceMaterial::sBump);
+	loadMaterialColorValue(m, MaterialParameter_AmbientColor, mat, FbxSurfaceMaterial::sAmbient);
+	loadMaterialColorValue(m, MaterialParameter_DiffuseColor, mat, FbxSurfaceMaterial::sDiffuse);
+	loadMaterialColorValue(m, MaterialParameter_SpecularColor, mat, FbxSurfaceMaterial::sSpecular);
+	loadMaterialColorValue(m, MaterialParameter_EmissiveColor, mat, FbxSurfaceMaterial::sEmissive);
+
+	loadMaterialValue(m, MaterialParameter_AmbientFactor, mat, FbxSurfaceMaterial::sAmbientFactor);
+	loadMaterialValue(m, MaterialParameter_DiffuseFactor, mat, FbxSurfaceMaterial::sDiffuseFactor);
+	loadMaterialValue(m, MaterialParameter_SpecularFactor, mat, FbxSurfaceMaterial::sSpecularFactor);
+	loadMaterialValue(m, MaterialParameter_BumpFactor, mat, FbxSurfaceMaterial::sBumpFactor);
+	loadMaterialValue(m, MaterialParameter_ReflectionFactor, mat, FbxSurfaceMaterial::sReflectionFactor);
+
+	loadMaterialValue(m, MaterialParameter_Roughness, mat, FbxSurfaceMaterial::sShininess);
+	loadMaterialValue(m, MaterialParameter_ShadingModel, mat, FbxSurfaceMaterial::sShadingModel);
 
 	return m;
 }
