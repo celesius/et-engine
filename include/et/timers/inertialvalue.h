@@ -9,6 +9,7 @@
 
 #include <et/geometry/geometry.h>
 #include <et/timers/timedobject.h>
+#include <et/app/events.h>
 
 namespace et
 {
@@ -40,7 +41,7 @@ namespace et
 
 		void run()
 		{
-			startUpdates(mainTimerPool().ptr());
+			TimedObject::startUpdates(0);
 			_time = actualTime();
 		}
 

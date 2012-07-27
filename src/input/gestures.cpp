@@ -43,10 +43,11 @@ void GesturesRecognizer::handlePointersMovement()
 void GesturesRecognizer::onPointerPressed(et::PointerInputInfo pi)
 {
 	_pointers[pi.id] = PointersInputDelta(pi, pi);
-	pressed.invoke();
+	pressed.invoke(pi.type);
 	
 	if (_pointers.size() == 1)
 	{
+		_singlePointerPosition = pi.normalizedPos;
 		float currentTime = mainTimerPool()->actualTime();
 		float dt = currentTime - _actualTime;
 		
@@ -80,7 +81,7 @@ void GesturesRecognizer::onPointerMoved(et::PointerInputInfo pi)
 		const PointerInputInfo& pCurr = _pointers[pi.id].current; 
 		vec2 dp = pCurr.normalizedPos - pPrev.normalizedPos;
 		float dt = etMax(0.01f, pCurr.timestamp - pPrev.timestamp);
-		drag.invoke(dp / dt);
+		drag.invoke(dp / dt, pi.type);
 	}
 	else
 	{
@@ -117,7 +118,7 @@ void GesturesRecognizer::update(float t)
 {
 	if (_clickTimeoutActive && (t >= _clickStartTime + _clickThreshold))
 	{
-		click.invoke();
+		click.invoke(_singlePointerPosition);
 		cancelUpdates();
 		_clickTimeoutActive = false;
 	}
@@ -134,7 +135,7 @@ void GesturesRecognizer::stopWaitingForClicks()
 {
 	if (_expectDoubleClick)
 	{
-		doubleClick.invoke();
+		doubleClick.invoke(_singlePointerPosition);
 		_expectDoubleClick = false;
 		_expectClick = false;
 		cancelUpdates();

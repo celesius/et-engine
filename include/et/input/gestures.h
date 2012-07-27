@@ -26,10 +26,11 @@ namespace et
 
 	public:
 		ET_DECLARE_EVENT1(zoom, float)
-		ET_DECLARE_EVENT1(drag, vec2)
-		ET_DECLARE_EVENT0(pressed)
-		ET_DECLARE_EVENT0(click)
-		ET_DECLARE_EVENT0(doubleClick)
+		ET_DECLARE_EVENT2(drag, vec2, PointerType)
+
+		ET_DECLARE_EVENT1(pressed, PointerType)
+		ET_DECLARE_EVENT1(click, vec2)
+		ET_DECLARE_EVENT1(doubleClick, vec2)
 		ET_DECLARE_EVENT0(hold)
 		ET_DECLARE_EVENT0(released)
 		ET_DECLARE_EVENT0(cancelled)
@@ -73,6 +74,7 @@ namespace et
         typedef std::map<size_t, PointersInputDelta> PointersInputDeltaMap;
 
 		PointersInputDeltaMap _pointers;
+		vec2 _singlePointerPosition;
 		float _actualTime;
 		float _clickStartTime;
 		bool _expectClick;
