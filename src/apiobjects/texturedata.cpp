@@ -62,9 +62,11 @@ void TextureData::setWrap(RenderContext* rc, TextureWrap s, TextureWrap t, Textu
 	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc.target);
 
 	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_S, textureWrapValue(_wrap.x)); 
-	checkOpenGLError("glTexParameteri<WRAP_S> " + name()); 
+	checkOpenGLError("glTexParameteri<WRAP_S> " + name());
+	
 	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_T, textureWrapValue(_wrap.y));
-	checkOpenGLError("glTexParameteri<WRAP_T> " + name()); 
+	checkOpenGLError("glTexParameteri<WRAP_T> " + name());
+	
 #if defined(GL_TEXTURE_WRAP_R)
 	glTexParameteri(_desc.target, GL_TEXTURE_WRAP_R, textureWrapValue(_wrap.z));
 	checkOpenGLError("glTexParameteri<WRAP_R> " + name()); 
@@ -187,10 +189,7 @@ void TextureData::build(RenderContext* rc)
 	setWrap(rc, _wrap.x, _wrap.y, _wrap.z);
 
 	if (_desc.mipMapCount > 1)
-	{
-		glTexParameteri(_desc.target, GL_TEXTURE_MAX_LEVEL, _desc.mipMapCount - 1);
-		checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(_desc.target, GL_TEXTURE_MAX_LEVEL, _desc.mipMapCount - 1) for " + name());
-	} 
+		setMaxLod(rc, _desc.mipMapCount - 1);
 
     buildData(_desc.data.binary(), _desc.data.dataSize());
 	_desc.data.resize(0);
@@ -227,4 +226,11 @@ void TextureData::generateMipMaps(RenderContext* rc)
     rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc.target);
 	glGenerateMipmap(_desc.target);
 	checkOpenGLError("glGenerateMipmap");
+}
+
+void TextureData::setMaxLod(RenderContext* rc, size_t value)
+{
+    rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc.target);
+	glTexParameteri(_desc.target, GL_TEXTURE_MAX_LEVEL, value);
+	checkOpenGLError("TextureData::setMaxLod " + name());
 }

@@ -30,6 +30,8 @@ namespace et
 
 		void setWrap(RenderContext* rc, TextureWrap s, TextureWrap t, TextureWrap r = TextureWrap_ClampToEdge);
 		void setFiltration(RenderContext* rc, TextureFiltration minFiltration, TextureFiltration magFiltration);
+		void setMaxLod(RenderContext* rc, size_t value);
+		
 		void compareRefToTexture(RenderContext* rc, bool enable, GLenum compareFunc = GL_LEQUAL);
 		void generateMipMaps(RenderContext* rc);
 
