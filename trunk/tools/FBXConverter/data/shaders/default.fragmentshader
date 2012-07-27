@@ -18,23 +18,23 @@ etFragmentIn vec2 TexCoord;
 
 vec2 defaultLight()
 {
- vec3 nl = normalize(vLightWS);
- vec3 nv = normalize(vViewWS);
- vec3 nn = normalize(vNormalWS);
- return Phong(nn, nl, nv, 4.0);
+	vec3 nl = normalize(vLightWS);
+	vec3 nv = normalize(vViewWS);
+	vec3 nn = normalize(vNormalWS);
+	return Phong(nn, nl, nv, 4.0);
 }
 
 void main()
 {
- vec4 diffuse = etTexture2D(diffuseMap, TexCoord);
+	vec4 diffuse = etTexture2D(diffuseMap, TexCoord);
 
- if (dot(diffuse, diffuse) == 0.0)
-  diffuse = diffuseColor;
+	if (dot(diffuse, diffuse) == 0.0)
+		diffuse = diffuseColor;
  
- if (diffuse.w < 0.01) discard;
+	if (diffuse.w < 0.01) discard;
 
- vec2 light = defaultLight();
- light.x = 0.5 + 0.5 * light.x;
+	vec2 light = defaultLight();
+	light.x = 0.5 + 0.5 * light.x;
 
- etFragmentOut = diffuse * vec4(light.x * light.x + light.y);
+	etFragmentOut = diffuse * vec4(light.x * light.x) + specularColor * light.y;
 }
