@@ -6,6 +6,8 @@
  */
 
 #include <et/opengl/openglcaps.h>
+#include <et/input/input.h>
+#include <et/app/applicationnotifier.h>
 #include <et/rendering/rendercontext.h>
 
 using namespace et;
@@ -28,9 +30,15 @@ public:
 	CVDisplayLinkRef _displayLink;
 };
 
+@interface etOpenGLView : NSOpenGLView
+{
+	Input::PointerInputSource _pointerInputSource;
+}
+@end
+
 RenderContext::RenderContext(const RenderContextParameters& params, Application* app) : _params(params),
 	_app(app), _programFactory(0), _textureFactory(0), _framebufferFactory(0), _vertexBufferFactory(0),
-	_renderer(0)
+	_renderer(0), _screenScaleFactor(1)
 {
 	_private = new RenderContextPrivate(this, params);
 	_renderState.setMainViewportSize(params.contextSize);
@@ -51,6 +59,10 @@ RenderContext::~RenderContext()
 void RenderContext::init()
 {
 	_renderer = new Renderer(this);
+	
+	_fpsTimer.expired.connect(this, &RenderContext::onFPSTimerExpired);
+	_fpsTimer.start(mainTimerPool(), 1.0f, -1);
+	
 	_private->run();
 }
 
@@ -70,7 +82,9 @@ void RenderContext::beginRender()
 void RenderContext::endRender()
 {
 	checkOpenGLError("RenderContext::endRender");
-		
+
+	[_private->_openGlContext flushBuffer];
+	
 	++_info.averageFramePerSecond;
 	_info.averageDIPPerSecond += OpenGLCounters::DIPCounter;
 	_info.averagePolygonsPerSecond += OpenGLCounters::primitiveCounter;
@@ -127,15 +141,23 @@ RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContex
 	NSRect openglRect = NSMakeRect(0.0f, 0.0f, params.contextSize.x, params.contextSize.y);
 	
 	NSOpenGLPixelFormatAttribute pixelFormatAttributes[] =
-		{ NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core, 0 };
-	
+		{
+			NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
+			NSOpenGLPFAColorSize, 24,
+			NSOpenGLPFAAlphaSize, 8,
+			NSOpenGLPFADepthSize, 32,
+			NSOpenGLPFAAccelerated,
+			NSOpenGLPFADoubleBuffer,
+			0
+		};
+
 	_pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes] autorelease];
 	
-	_mainWindow = [[NSWindow alloc] initWithContentRect:contentRect styleMask:NSTitledWindowMask backing:NSBackingStoreBuffered defer:NO];
-	_openGlView = [[NSOpenGLView alloc] initWithFrame:openglRect pixelFormat:_pixelFormat];
-	_openGlContext = [[NSOpenGLContext alloc] initWithFormat:_pixelFormat shareContext:nil];
+	_mainWindow = [[NSWindow alloc] initWithContentRect:contentRect styleMask:NSTitledWindowMask | NSClosableWindowMask
+												backing:NSBackingStoreBuffered defer:YES];
 	
-	[_openGlView setOpenGLContext:_openGlContext];
+	_openGlView = [[etOpenGLView alloc] initWithFrame:openglRect pixelFormat:_pixelFormat];
+	_openGlContext = [_openGlView openGLContext];
 	
 	[_mainWindow setContentView:_openGlView];
 	[_mainWindow makeKeyAndOrderFront:NSApp];
@@ -152,7 +174,8 @@ void RenderContextPrivate::run()
 	{
 		CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink);
 		CVDisplayLinkSetOutputCallback(_displayLink, cvDisplayLinkOutputCallback, this);
-		CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink, static_cast<CGLContextObj>([_openGlContext CGLContextObj]),
+		CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink,
+														  static_cast<CGLContextObj>([_openGlContext CGLContextObj]),
 														  static_cast<CGLPixelFormatObj>([_pixelFormat CGLPixelFormatObj]));
 	}
 	
@@ -161,6 +184,63 @@ void RenderContextPrivate::run()
 
 void RenderContextPrivate::displayLinkSynchronized()
 {
-	[_openGlContext makeCurrentContext];
-	[_openGlContext flushBuffer];
 }
+
+@implementation etOpenGLView
+
+- (void)mouseDown:(NSEvent *)theEvent
+{
+	NSRect ownFrame = self.frame;
+	
+	NSPoint nativePoint = [theEvent locationInWindow];
+	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
+	vec2 np = p / vec2(ownFrame.size.width, ownFrame.size.height);
+
+	_pointerInputSource.pointerPressed(PointerInputInfo(PointerType_General, p, np, 0, 1, [theEvent timestamp]));
+}
+
+- (void)mouseUp:(NSEvent *)theEvent
+{
+	NSRect ownFrame = self.frame;
+	
+	NSPoint nativePoint = [theEvent locationInWindow];
+	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
+	vec2 np = p / vec2(ownFrame.size.width, ownFrame.size.height);
+	
+	_pointerInputSource.pointerReleased(PointerInputInfo(PointerType_General, p, np, 0, 1, [theEvent timestamp]));
+}
+
+- (void)mouseMoved:(NSEvent *)theEvent
+{
+	NSRect ownFrame = self.frame;
+	
+	NSPoint nativePoint = [theEvent locationInWindow];
+	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
+	vec2 np = p / vec2(ownFrame.size.width, ownFrame.size.height);
+	
+	_pointerInputSource.pointerMoved(PointerInputInfo(PointerType_General, p, np, 0, 1, [theEvent timestamp]));
+}
+
+- (void)mouseDragged:(NSEvent *)theEvent
+{
+	NSRect ownFrame = self.frame;
+	
+	NSPoint nativePoint = [theEvent locationInWindow];
+	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
+	vec2 np = p / vec2(ownFrame.size.width, ownFrame.size.height);
+	
+	_pointerInputSource.pointerMoved(PointerInputInfo(PointerType_General, p, np, 0, 1, [theEvent timestamp]));
+}
+
+- (void)scrollWheel:(NSEvent *)theEvent
+{
+	NSRect ownFrame = self.frame;
+	
+	NSPoint nativePoint = [theEvent locationInWindow];
+	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
+	vec2 np = p / vec2(ownFrame.size.width, ownFrame.size.height);
+	
+	_pointerInputSource.pointerScrolled(PointerInputInfo(PointerType_General, p, np, [theEvent deltaY], [theEvent hash], [theEvent timestamp]));
+}
+
+@end
