@@ -82,7 +82,13 @@ namespace et
 		void setString(size_t param, const std::string& value)
 			{ _stringParameters[param] = value; };
 
-		bool hasTexture(size_t param)
+		bool hasVec4(size_t param) const
+			{ return _vectorParameters.find(param) != _vectorParameters.end(); }
+
+		bool hasFloat(size_t param) const
+			{ return _floatParameters.find(param) != _floatParameters.end(); }
+
+		bool hasTexture(size_t param) const
 			{ return _textureParameters.find(param) != _textureParameters.end(); }
 
 		BlendState blendState() const
