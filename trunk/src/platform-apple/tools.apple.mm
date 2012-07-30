@@ -6,6 +6,7 @@
  */
 
 #include <sys/time.h>
+#include <et/platform/platform.h>
 #include <et/core/tools.h>
 
 using namespace std;
@@ -71,7 +72,7 @@ std::string et::normalizeFilePath(string s)
 	for (string::iterator i = s.begin(), e = s.end(); i != e; ++i)
 	{
 		if ((*i) == '\\')
-			(*i) = '/';
+			(*i) = pathDelimiter;
 	}
 	
 	return s;
@@ -183,7 +184,12 @@ void et::findSubfolders(const std::string& folder, bool recursive, std::vector<s
 void et::openUrl(const std::string& url)
 {
 	NSURL* aUrl = [NSURL URLWithString:[NSString stringWithCString:url.c_str() encoding:NSASCIIStringEncoding]];
+	
+#if (ET_PLATFORM_IOS)
 	[[UIApplication sharedApplication] openURL:aUrl];
+#else
+	[[NSWorkspace sharedWorkspace] openURL:aUrl];
+#endif
 }
 
 std::string et::unicodeToUtf8(const std::wstring& w)

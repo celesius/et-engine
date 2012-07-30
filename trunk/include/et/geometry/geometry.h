@@ -268,7 +268,7 @@ namespace et
 
 	template <typename T>
 	Triangle<T> operator * (const matrix4<T>& m, const Triangle<T>& t)
-		{ return Triangle<T>(m * t.v1, m * t.v2, m * t.v3); }
+		{ return Triangle<T>(m * t.v1(), m * t.v2(), m * t.v3()); }
 
 	template <typename T>
 	inline matrix4<T> translationMatrix(T x, T y, T z)

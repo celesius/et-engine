@@ -46,7 +46,7 @@ namespace et
 	public:
 		~FramebufferData();
 
-		bool check();
+		bool checkStatus();
 
 		Texture renderTarget(size_t index = 0) const
 			{ return (index < MaxRenderTargets) ? _renderTargets[index] : Texture(); }

@@ -487,11 +487,11 @@ namespace et
 #endif
 	}
 
-	#define ET_VALIDATE_GLFUNC_EXT(F) if (!F) F = F##EXT;
-
 	void validateExtensions()
 	{
-#if (!ET_OPENGLES)
+#if defined(GL_GLEXT_FUNCTION_POINTERS)
+		#define ET_VALIDATE_GLFUNC_EXT(F) if (!F) F = F##EXT;
+		
 		ET_VALIDATE_GLFUNC_EXT(glIsRenderbuffer);
 		ET_VALIDATE_GLFUNC_EXT(glBindRenderbuffer);
 		ET_VALIDATE_GLFUNC_EXT(glDeleteRenderbuffers);
