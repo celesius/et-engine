@@ -31,7 +31,7 @@ namespace et
 			{ }
 
 		Plane(const Triangle<T>& t) : equation(t.normalizedNormal(), 0.0)
-			{ equation.w = dot(equation.xyz(), t.v1); }
+			{ equation.w = dot(equation.xyz(), t.v1()); }
 
 		const vector3<T>& normal() const 
 			{ return equation.xyz(); }

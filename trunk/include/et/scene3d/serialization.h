@@ -23,6 +23,7 @@ namespace et
 		{
 			SceneVersion_1_0_0 = 100,
 			SceneVersion_1_0_1 = 101,
+			SceneVersion_1_0_2 = 102,
 		};
 
 		enum StorageVersion

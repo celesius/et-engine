@@ -165,4 +165,6 @@ namespace et
 		void setParameters(A1 p1, A2 p2)
 			{ (static_cast<Invocation2Target<T, A1, A2>*>(_target.ptr()))->setParameters(p1, p2); }
 	};
+
+	#define ET_INVOKE_THIS_CLASS_METHOD(CLASS, METHOD) Invocation i; i.setTarget(this, &CLASS::METHOD); i.invokeInMainRunLoop();
 }

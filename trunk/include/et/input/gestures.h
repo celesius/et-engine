@@ -26,13 +26,15 @@ namespace et
 
 	public:
 		ET_DECLARE_EVENT1(zoom, float)
-		ET_DECLARE_EVENT2(drag, vec2, PointerType)
 
-		ET_DECLARE_EVENT1(pressed, PointerType)
+		ET_DECLARE_EVENT2(drag, vec2, PointerType)
+		ET_DECLARE_EVENT2(pressed, vec2, PointerType)
+		ET_DECLARE_EVENT2(released, vec2, PointerType)
+
 		ET_DECLARE_EVENT1(click, vec2)
 		ET_DECLARE_EVENT1(doubleClick, vec2)
+
 		ET_DECLARE_EVENT0(hold)
-		ET_DECLARE_EVENT0(released)
 		ET_DECLARE_EVENT0(cancelled)
 
 		ET_DECLARE_EVENT1(pointerPressed, et::PointerInputInfo);

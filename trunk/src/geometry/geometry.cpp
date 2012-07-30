@@ -11,6 +11,8 @@
 
 using namespace et;
 
+static const float fRandMax = static_cast<float>(RAND_MAX);
+
 float et::sign(float s)
 {
 	return (s == 0.0f) ? 0.0f : s / fabs(s); 
@@ -23,17 +25,16 @@ float et::sign_nz(float s)
 
 vec3 et::randVector(float sx, float sy, float sz)
 {
-	float r0 = 2.0f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 1.0f;
-	float r1 = 2.0f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 1.0f;
-	float r2 = 2.0f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX) - 1.0f;
+	float r0 = 2.0f * static_cast<float>(rand()) / fRandMax - 1.0f;
+	float r1 = 2.0f * static_cast<float>(rand()) / fRandMax - 1.0f;
+	float r2 = 2.0f * static_cast<float>(rand()) / fRandMax - 1.0f;
 	return vec3(sx * r0, sy * r1, sz * r2);
 }
 
 float et::randf(float low, float up)
 {
-	return low + (up - low) * static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+	return low + (up - low) * static_cast<float>(rand()) / fRandMax;
 }
-
 
 quaternion et::matrixToQuaternion(const mat3& r)
 {
