@@ -489,9 +489,13 @@ namespace et
 
 	void validateExtensions()
 	{
-#if defined(GL_GLEXT_FUNCTION_POINTERS)
+
+#if (ET_PLATFORM_WIN)
 		#define ET_VALIDATE_GLFUNC_EXT(F) if (!F) F = F##EXT;
-		
+#else
+		#define ET_VALIDATE_GLFUNC_EXT(F)
+#endif
+
 		ET_VALIDATE_GLFUNC_EXT(glIsRenderbuffer);
 		ET_VALIDATE_GLFUNC_EXT(glBindRenderbuffer);
 		ET_VALIDATE_GLFUNC_EXT(glDeleteRenderbuffers);
@@ -512,7 +516,6 @@ namespace et
 		ET_VALIDATE_GLFUNC_EXT(glBlitFramebuffer);
 		ET_VALIDATE_GLFUNC_EXT(glRenderbufferStorageMultisample);
 		ET_VALIDATE_GLFUNC_EXT(glFramebufferTextureLayer);
-#endif
 	}
 
 }
