@@ -59,7 +59,7 @@ void GuiRenderer::alloc(size_t count)
 {
 	if (_renderingElement.valid() && (_renderingElement->_vertexList.currentIndex() + count >= _renderingElement->_vertexList.size()))
 	{
-		size_t newSize = _renderingElement->_vertexList.size() + BlockSize;
+		size_t newSize = _renderingElement->_vertexList.size() + BlockSize * (1 + count / BlockSize);
 		_renderingElement->_vertexList.resize(newSize);
 
 		size_t currentActualSize = _renderingElement->_indexArray->actualSize();
