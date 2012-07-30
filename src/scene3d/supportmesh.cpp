@@ -118,7 +118,21 @@ void SupportMesh::deserialize(std::istream& stream, ElementFactory* factory, Sce
 	_size = deserializeVector<vec3>(stream);
 	_center = deserializeVector<vec3>(stream);
 	_data.resize(deserializeInt(stream));
-	stream.read(_data.binary(), _data.dataSize());
+
+	if (version <= SceneVersion_1_0_1)
+	{
+		for (size_t i = 0, e = _data.size(); i != e; ++i)
+		{
+			vec3 vertices[3];
+			stream.read(reinterpret_cast<char*>(vertices), sizeof(vertices));
+			_data[i] = triangle(vertices[0], vertices[1], vertices[2]);
+		}
+	}
+	else 
+	{
+		stream.read(_data.binary(), _data.dataSize());
+	}
+
 	Mesh::deserialize(stream, factory, version);
 }
 

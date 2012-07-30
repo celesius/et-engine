@@ -22,17 +22,19 @@ namespace et
 		bool sphereOBB(const Sphere& s, const OBB& b);
 		bool aabbAABB(const AABB& a1, const AABB& a2);
 
-		bool sphereTriangle(const vec3& sphereCenter, const float sphereRadius, const triangle& t, vec3* normal, 
-			float* penetration);
-		bool sphereTriangle(const Sphere& s, const triangle& t, vec3* normal,
-			float* penetration);
-		bool sphereTriangles(const Sphere& s, const triangle* triangles, const size_t triangleCount, vec3* normal, 
-			float* penetration);
+		bool sphereTriangle(const vec3& sphereCenter, const float sphereRadius, const triangle& t, vec3& point, 
+			vec3& normal, float& penetration);
 
-		bool sphereTriangle(const Sphere& s, const vec3& sphereVelocity, const triangle& t, vec3* normal, 
-			float* penetration, float* intersectionTime);
-		bool sphereTriangles(const Sphere& s, const vec3& sphereVelocity, const triangle* triangles, const size_t triangleCount, vec3* normal,
-			float* penetration, float* intersectionTime);
+		bool sphereTriangle(const Sphere& s, const triangle& t, vec3& point, vec3& normal, float& penetration);
+
+		bool sphereTriangles(const Sphere& s, const triangle* triangles, const size_t triangleCount, vec3& point, 
+			vec3& normal, float& penetration);
+
+		bool sphereTriangle(const Sphere& s, const vec3& sphereVelocity, const triangle& t, vec3& point, 
+			vec3& normal, float& penetration, float& intersectionTime);
+		
+		bool sphereTriangles(const Sphere& s, const vec3& velocity, const triangle* triangles, const size_t triangleCount, vec3& point, 
+			vec3& normal, float& penetration, float& intersectionTime);
 
 		bool rayTriangle(const ray& r, const triangle& t, vec3* intersection_pt);
 		bool rayTriangles(const ray& r, const triangle* triangles, const size_t triangleCount, vec3* intersection_pt);
@@ -52,6 +54,11 @@ namespace et
 	vec3 closestPointOnTriangle(const vec3& p, const triangle& t);
 
 	bool pointInsideTriangle(const vec3& p, const triangle& t);
+	bool pointInsideTriangle(const vec3& p, const triangle& t, const vec3& n);
 
-	float distanceFromPointToLine(const vec3& p, const vec3& l0, const vec3& l1, vec3& projection);
+	float distanceSquareFromPointToLine(const vec3& p, const vec3& l0, const vec3& l1, vec3& projection);
+
+	inline float distanceFromPointToLine(const vec3& p, const vec3& l0, const vec3& l1, vec3& projection)
+		{ return sqrtf(distanceSquareFromPointToLine(p, l0, l1, projection)); }
+
 }

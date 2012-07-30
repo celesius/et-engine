@@ -9,21 +9,40 @@
 
 using namespace et;
 
-float et::distanceFromPointToLine(const vec3& p, const vec3& l0, const vec3& l1, vec3& projection)
+float et::distanceSquareFromPointToLine(const vec3& p, const vec3& l0, const vec3& l1, vec3& projection)
 {
-	vec3 v = p - l0;
-	vec3 s = l1 - l0;
-	vec3 disp = s * (dot(v, s) / s.dotSelf());
-	projection = l0 + disp;
-	v -= disp;
-	return v.length();
+	vec3 diff = p - l0;
+	vec3 v = l1 - l0;
+
+	float t = dot(v, diff);
+	if (t > 0) 
+	{
+		float dotVV = v.dotSelf();
+		if (t < dotVV) 
+		{
+			t /= dotVV;
+			diff -= t * v;
+		}
+		else 
+		{
+			t = 1.0f;
+			diff -= v;
+		}
+		projection = l0 + t * v;
+	} 
+	else
+	{
+		projection = l0;
+	}
+
+	return diff.dotSelf();
 }
 
 vec2 et::barycentricCoordinates(const vec3& p, const triangle& t)
 {
-	vec3 v0 = t.edge31();
-	vec3 v1 = t.edge21();
-	vec3 v2 = p - t.v1;
+	vec3 v0 = t.edge3to1();
+	vec3 v1 = t.edge2to1();
+	vec3 v2 = p - t.v1();
 	float dot00 = dot(v0, v0);
 	float dot01 = dot(v0, v1);
 	float dot02 = dot(v0, v2);
@@ -35,14 +54,14 @@ vec2 et::barycentricCoordinates(const vec3& p, const triangle& t)
 
 vec3 et::worldCoordinatesFromBarycentric(const vec2& b, const triangle& t)
 {
-	return t.v1 * (1.0f - b.x - b.y) + t.v2 * b.y + t.v3 * b.x;
+	return t.v1() * (1.0f - b.x - b.y) + t.v2() * b.y + t.v3() * b.x;
 }
 
 vec3 et::closestPointOnTriangle(const vec3& sourcePosition, const triangle& triangle)
 {
-	vec3 edge0 = triangle.v2 - triangle.v1;
-	vec3 edge1 = triangle.v3 - triangle.v1;
-	vec3 v0 = triangle.v1 - sourcePosition;
+	vec3 edge0 = triangle.edge2to1(); // .v2 - triangle.v1;
+	vec3 edge1 = triangle.edge3to1(); // .v3 - triangle.v1;
+	vec3 v0 = triangle.v1() - sourcePosition;
 
 	float a = dot(edge0, edge0);
 	float b = dot(edge0, edge1);
@@ -97,9 +116,7 @@ vec3 et::closestPointOnTriangle(const vec3& sourcePosition, const triangle& tria
 			float tmp1 = c+e;
 			if ( tmp1 > tmp0 )
 			{
-				float numer = tmp1 - tmp0;
-				float denom = a-2*b+c;
-				s = clamp( numer/denom, 0.0f, 1.0f );
+				s = clamp((tmp1 - tmp0) / (a - 2*b + c), 0.0f, 1.0f );
 				t = 1-s;
 			}
 			else
@@ -112,9 +129,7 @@ vec3 et::closestPointOnTriangle(const vec3& sourcePosition, const triangle& tria
 		{
 			if ( a+d > b+e )
 			{
-				float numer = c+e-b-d;
-				float denom = a-2*b+c;
-				s = clamp( numer/denom, 0.0f, 1.0f );
+				s = clamp( (c+e-b-d)/(a-2*b+c), 0.0f, 1.0f );
 				t = 1-s;
 			}
 			else
@@ -125,14 +140,12 @@ vec3 et::closestPointOnTriangle(const vec3& sourcePosition, const triangle& tria
 		}
 		else
 		{
-			float numer = c+e-b-d;
-			float denom = a-2*b+c;
-			s = clamp( numer/denom, 0.0f, 1.0f );
+			s = clamp((c+e-b-d)/(a-2*b+c), 0.0f, 1.0f );
 			t = 1.0f - s;
 		}
 	}
 
-	return triangle.v1 + s * edge0 + t * edge1;
+	return triangle.v1() + s * edge0 + t * edge1;
 }
 
 
@@ -140,6 +153,15 @@ bool et::pointInsideTriangle(const vec3& p, const triangle& t)
 {
 	vec2 b = barycentricCoordinates(p, t);
 	return (b.x >= 0) && (b.y >= 0) && (b.x + b.y <= 1.0f);
+}
+
+bool et::pointInsideTriangle(const vec3& p, const triangle& t, const vec3& n)
+{
+	float r1 = dot(t.edge2to1().cross(n), p - t.v1());
+	float r2 = dot(t.edge3to2().cross(n), p - t.v2());
+	float r3 = dot(t.edge3to1().cross(n), t.v3() - p);
+
+	return ((r1 > 0) && (r2 > 0) && (r3 > 0)) || ((r1 <= 0) && (r2 <= 0) && (r3 <= 0));
 }
 
 bool et::intersect::raySphere(const ray& r, const Sphere& s, vec3* intersection_pt)
@@ -153,7 +175,7 @@ bool et::intersect::raySphere(const ray& r, const Sphere& s, vec3* intersection_
 
 	if (intersection_pt)
 	{
-		float sqrt_d = ::sqrt(d);
+		float sqrt_d = sqrtf(d);
 		float t0 = sqrt_d - b;
 		float t1 = -b - sqrt_d;
 		float t = (t0 < t1) ? t0 : t1;
@@ -238,9 +260,9 @@ bool et::intersect::segmentTriangle(const segment& s, const triangle& t, vec3* i
 bool et::intersect::triangleTriangle(const et::triangle& t0, const et::triangle& t1)
 {
 #define ProjectOntoAxis(triangle, axis, fmin, fmax) \
-	dot1 = dot(axis, triangle.v2);					\
-	dot2 = dot(axis, triangle.v3);					\
-	fmin = dot(axis, triangle.v1), fmax = fmin;		\
+	dot1 = dot(axis, triangle.v2());					\
+	dot2 = dot(axis, triangle.v3());					\
+	fmin = dot(axis, triangle.v1()), fmax = fmin;		\
 	if (dot1 < fmin) fmin = dot1; else if (dot1 > fmax) fmax = dot1; \
 	if (dot2 < fmin) fmin = dot2; else if (dot2 > fmax) fmax = dot2;
 
@@ -253,25 +275,26 @@ bool et::intersect::triangleTriangle(const et::triangle& t0, const et::triangle&
 
 	vec3 E0[3] = 
 	{
-		(t0.v2 - t0.v1).normalize(), 
-		(t0.v3 - t0.v2).normalize(), 
-		(t0.v1 - t0.v3).normalize()
+		 normalize(t0.edge2to1()),
+		 normalize(t0.edge3to2()), 
+		-normalize(t0.edge3to1())
 	};
+
 	vec3 N0 = cross(E0[0], E0[1]);
-	float N0dT0V0 = dot(N0, t0.v1);
+	float N0dT0V0 = dot(N0, t0.v1());
 	ProjectOntoAxis(t1, N0, min1, max1);
 	if ((N0dT0V0 < min1) || (N0dT0V0 > max1)) return false;
 
 	vec3 E1[3] = 
 	{
-		(t1.v2 - t1.v1).normalize(), 
-		(t1.v3 - t1.v2).normalize(), 
-		(t1.v1 - t1.v3).normalize()
+		 normalize(t1.edge2to1()), 
+		 normalize(t1.edge3to2()), 
+		-normalize(t1.edge3to1())
 	};
 	vec3 N1 = cross(E1[0], E1[1]);
 	if (cross(N0, N1).dotSelf() >= 1.0e-5)
 	{
-		float N1dT1V0 = dot(N1, t1.v1);
+		float N1dT1V0 = dot(N1, t1.v1());
 		ProjectOntoAxis(t0, N1, min0, max0);
 		if ((N1dT1V0 < min0) || (N1dT1V0 > max0)) return false;
 
@@ -370,62 +393,90 @@ bool et::intersect::aabbAABB(const AABB& a1, const AABB& a2)
 	return true;
 }
 
-bool et::intersect::sphereTriangle(const vec3& sphereCenter, const float sphereRadius, const triangle& t, vec3* normal, float* penetration)
+bool et::intersect::sphereTriangle(const vec3& sphereCenter, const float radius, const triangle& t, 
+								   vec3& point, vec3& normal, float& penetration)
 {
-	float distance = (closestPointOnTriangle(sphereCenter, t) - sphereCenter).dotSelf();
-	if (distance > sqr(sphereRadius)) return false;
+	normal = t.normalizedNormal();
+	float distanceFromPlane = dot(sphereCenter - t.v1(), normal);
+	if (distanceFromPlane < 0.0f)
+	{
+		distanceFromPlane *= -1.0f;
+		normal *= -1.0f;
+	}
 
-	if (normal)
-		*normal = t.normalizedNormal();
+	if (distanceFromPlane >= radius) return false;
 
-	if (penetration)
-		*penetration = sphereRadius - sqrtf(distance);
+	float radiusSqr = sqr(radius);
+	if (pointInsideTriangle(sphereCenter, t, normal)) 
+	{
+		point = sphereCenter - normal * distanceFromPlane;
+	}
+	else if (distanceSquareFromPointToLine(sphereCenter, t.v1(), t.v2(), point) > radiusSqr)
+	{
+			if (distanceSquareFromPointToLine(sphereCenter, t.v2(), t.v3(), point) > radiusSqr)
+			{
+				if (distanceSquareFromPointToLine(sphereCenter, t.v3(), t.v1(), point) > radiusSqr)
+				{
+					return false;
+				}
+			}
+	}
+
+	vec3 contactToCentre = sphereCenter - point;
+	float distanceSqr = contactToCentre.dotSelf();
+	if (distanceSqr > radiusSqr) return false;
+
+	if (distanceSqr > 0.00001f)
+	{
+		normal = contactToCentre.normalize();
+		penetration = radius - sqrtf(distanceSqr);
+	} 
+	else
+	{
+		penetration = radius;
+	}
 
 	return true;
 }
 
-bool et::intersect::sphereTriangle(const Sphere& s, const triangle& t, vec3* normal, float* penetration)
+bool et::intersect::sphereTriangle(const Sphere& s, const triangle& t, vec3& point, vec3& normal, float& penetration)
 {
-	return sphereTriangle(s.center(), s.radius(), t, normal, penetration);
+	return sphereTriangle(s.center(), s.radius(), t, point, normal, penetration);
 }
 
-bool et::intersect::sphereTriangle(const Sphere& s, const vec3& sphereVelocity, const triangle& t, vec3* normal, 
-	float* penetration, float* intersectionTime)
+bool et::intersect::sphereTriangle(const Sphere& s, const vec3& sphereVelocity, const triangle& t, 
+								   vec3& point, vec3& normal, float& penetration, float& intersectionTime)
 {
 	plane p(t);
 	if (p.distanceToPoint(s.center()) <= s.radius())
-		 return sphereTriangle(s, t, normal, penetration);
+		 return sphereTriangle(s, t, point, normal, penetration);
 
 	vec3 triangleNormal = p.normal();
 	float NdotV = dot(triangleNormal, sphereVelocity);
 	if (NdotV >= 0.0f) return false;
 
-	if (intersectionTime)
-	{
-		*intersectionTime = (s.radius() + p.equation.w - dot(triangleNormal, s.center())) / NdotV;
-		vec3 movedCenter = s.center() + *intersectionTime * sphereVelocity;
-		return sphereTriangle(movedCenter, s.radius(), t, normal, penetration);
-	}
-
-	return false;
+	intersectionTime = (s.radius() + p.equation.w - dot(triangleNormal, s.center())) / NdotV;
+	vec3 movedCenter = s.center() + intersectionTime * sphereVelocity;
+	return sphereTriangle(movedCenter, s.radius(), t, point, normal, penetration);
 }
 
-bool et::intersect::sphereTriangles(const Sphere& s, const triangle* triangles, const size_t triangleCount, vec3* normal, float* penetration)
+bool et::intersect::sphereTriangles(const Sphere& s, const triangle* triangles, const size_t triangleCount, 
+									vec3& point, vec3& normal, float& penetration)
 {
 	for (size_t i = 0; i < triangleCount; ++i)
 	{
-		if (sphereTriangle(s.center(), s.radius(), triangles[i], normal, penetration))
+		if (sphereTriangle(s.center(), s.radius(), triangles[i], point, normal, penetration))
 			return true;
 	}
 	return false;
 }
 
 bool et::intersect::sphereTriangles(const Sphere& s, const vec3& sphereVelocity, const triangle* triangles, const size_t triangleCount, 
-								vec3* normal, float* penetration, float* intersectionTime)
+								vec3& point, vec3& normal, float& penetration, float& intersectionTime)
 {
 	for (size_t i = 0; i < triangleCount; ++i)
 	{
-		if (sphereTriangle(s, sphereVelocity, triangles[i], normal, penetration, intersectionTime))
+		if (sphereTriangle(s, sphereVelocity, triangles[i], point, normal, penetration, intersectionTime))
 			return true;
 	}
 

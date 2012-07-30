@@ -43,7 +43,7 @@ void GesturesRecognizer::handlePointersMovement()
 void GesturesRecognizer::onPointerPressed(et::PointerInputInfo pi)
 {
 	_pointers[pi.id] = PointersInputDelta(pi, pi);
-	pressed.invoke(pi.type);
+	pressed.invoke(pi.normalizedPos, pi.type);
 	
 	if (_pointers.size() == 1)
 	{
@@ -95,7 +95,7 @@ void GesturesRecognizer::onPointerMoved(et::PointerInputInfo pi)
 void GesturesRecognizer::onPointerReleased(et::PointerInputInfo pi)
 {
 	_pointers.erase(pi.id);
-	released.invoke();
+	released.invoke(pi.normalizedPos, pi.type);
 	
 	stopWaitingForClicks();
 	pointerReleased.invoke(pi);

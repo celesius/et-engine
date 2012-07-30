@@ -18,9 +18,9 @@ Camera::Camera() : _modelViewMatrix(1.0f), _projectionMatrix(1.0f), _mvpMatrix(1
 
 void Camera::lookAt(const vec3& pos, const vec3& point, const vec3& up)
 {
-	vec3 d = normalize(point - pos);
-	vec3 s = normalize(d.cross(up));
-	vec3 u = normalize(s.cross(d));
+	vec3 d = (point - pos).normalize();
+	vec3 s = d.cross(up).normalize();
+	vec3 u = s.cross(d).normalize();
 	vec3 e(-dot(s, pos), -dot(u, pos), dot(d, pos));
 
 	_modelViewMatrix[0] = vec4(s.x, u.x, -d.x, 0.0);

@@ -12,52 +12,71 @@
 namespace et
 {
 	template <typename T>
-	struct Triangle
+	class Triangle
 	{
-		vector3<T> v1;
-		vector3<T> v2;
-		vector3<T> v3;
-
 	public:
 		Triangle() { }
+
 		Triangle(const vector3<T>& av1, const vector3<T>& av2, const vector3<T>& av3) : 
-			v1(av1), v2(av2), v3(av3) { }
+			_v1(av1), _v2(av2), _v3(av3) { fillSupportData(); }
 
-		vector3<T> edge21() const 
-			{ return v2 - v1; }
+		Triangle(vector3<T>&& av1, vector3<T>&& av2, vector3<T>&& av3) : 
+			_v1(av1), _v2(av2), _v3(av3) { fillSupportData(); }
 
-		vector3<T> edge31() const
-			{ return v3 - v1; }
+		const vector3<T>& v1() const 
+			{ return _v1; }
 
-		vector3<T> normal() const
-			{ return cross(edge21(), edge31()); }
+		const vector3<T>& v2() const
+			{ return _v2; }
 
-		vector3<T> normalizedNormal() const
-			{ return normalize(normal()); }
+		const vector3<T>& v3() const
+			{ return _v3; }
+
+		const vector3<T>& edge2to1() const 
+			{ return _edge2to1; }
+
+		const vector3<T>& edge3to1() const
+			{ return _edge3to1; }
+
+		const vector3<T>& edge3to2() const
+			{ return _edge3to2; }
+
+		const vector3<T>& normalizedNormal() const
+			{ return _normal; }
 
 		T square()
 		{
-			T _one = static_cast<T>(1);
-			matrix3<T> sx(vector3<T>(_one, v1.y, v1.z), vector3<T>(_one, v2.y, v2.z), vector3<T>(_one, v3.y, v3.z));
-			matrix3<T> sy(vector3<T>(v1.x, _one, v1.z), vector3<T>(v2.x, _one, v2.z), vector3<T>(v3.x, _one, v3.z));
-			matrix3<T> sz(vector3<T>(v1.x, v1.y, _one), vector3<T>(v2.x, v2.y, _one), vector3<T>(v3.x, v3.y, _one));
+			T _aOne = static_cast<T>(1);
+			matrix3<T> sx(vector3<T>(_aOne, _v1.y, _v1.z), vector3<T>(_aOne, _v2.y, _v2.z), vector3<T>(_aOne, _v3.y, _v3.z));
+			matrix3<T> sy(vector3<T>(_v1.x, _aOne, _v1.z), vector3<T>(_v2.x, _aOne, _v2.z), vector3<T>(_v3.x, _aOne, _v3.z));
+			matrix3<T> sz(vector3<T>(_v1.x, _v1.y, _aOne), vector3<T>(_v2.x, _v2.y, _aOne), vector3<T>(_v3.x, _v3.y, _aOne));
 			return vector3<T>(sx.determinant(), sy.determinant(), sz.determinant()).length();
 		}
 
 	private:
+/*
 		const vector3<T>& operator[](int i) const
-		{
-			if (i == 1) return v2;
-			if (i == 2) return v3;
-			return v1;
-		}
+			{ return (i == 2) ? v3 : ( (i == 1) ? v2 : v1 ); }
 
 		vector3<T>& operator[](int i)
+			{ return (i == 2) ? v3 : ( (i == 1) ? v2 : v1 ); }
+*/
+		void fillSupportData()
 		{
-			if (i == 1) return v2;
-			if (i == 2) return v3;
-			return v1;
+			_edge2to1 = _v2 - _v1;
+			_edge3to1 = _v3 - _v1;
+			_edge3to2 = _v3 - _v2;
+			_normal = normalize(cross(_edge2to1, _edge3to1));
 		}
+
+	private:
+		vector3<T> _v1;
+		vector3<T> _v2;
+		vector3<T> _v3;
+		vector3<T> _normal;
+		vector3<T> _edge2to1;
+		vector3<T> _edge3to1;
+		vector3<T> _edge3to2;
 	};
 
 }
