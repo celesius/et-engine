@@ -142,7 +142,7 @@ FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const Fr
 #endif
 
 	if (hasColor || hasDepth)
-		check();
+		checkStatus();
 }
 
 FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, GLuint fboId, const std::string& aName) : APIObjectData(aName), 
@@ -175,7 +175,7 @@ FramebufferData::~FramebufferData()
 	_rc->renderState().frameBufferDeleted(_id);
 }
 
-bool FramebufferData::check()
+bool FramebufferData::checkStatus()
 {
 	static const std::string tag = "FramebufferData::check";
 	checkOpenGLError(tag);
@@ -221,7 +221,7 @@ bool FramebufferData::addRenderTarget(const Texture& rt)
 
 	_renderTargets[_numTargets++] = rt;
 
-	return check();
+	return checkStatus();
 }
 
 bool FramebufferData::setDepthTarget(const Texture& rt)
@@ -238,7 +238,7 @@ bool FramebufferData::setDepthTarget(const Texture& rt)
 	checkOpenGLError("Framebuffer::setDepthTarget -> glFramebufferTexture(..., GL_DEPTH_ATTACHMENT " + name());
 
 	_depthBuffer = rt;
-	return check();
+	return checkStatus();
 }
 
 bool FramebufferData::setDepthTarget(const Texture& texture, GLenum target)
@@ -249,7 +249,7 @@ bool FramebufferData::setDepthTarget(const Texture& texture, GLenum target)
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, target, texture->glID(), 0);
 	checkOpenGLError("Framebuffer::setDepthTarget -> glFramebufferTexture2D(..., GL_DEPTH_ATTACHMENT " + name());
 
-	return check();
+	return checkStatus();
 }
 
 void FramebufferData::addSameRendertarget()
@@ -283,7 +283,7 @@ bool FramebufferData::setCurrentRenderTarget(const Texture& texture)
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture->target(), texture->glID(), 0);
 	checkOpenGLError("Framebuffer::setCurrentRenderTarget -> glFramebufferTexture2D(..., GL_COLOR_ATTACHMENT0 " + name());
 
-	return check();
+	return checkStatus();
 }
 
 bool FramebufferData::setCurrentRenderTarget(const Texture& texture, GLenum target)
@@ -301,7 +301,7 @@ bool FramebufferData::setCurrentRenderTarget(const Texture& texture, GLenum targ
 	
 	checkOpenGLError("Framebuffer::setCurrentRenderTarget -> glFramebufferTexture2D(..., GL_COLOR_ATTACHMENT0 " + name());
 
-	return check();
+	return checkStatus();
 }
 
 bool FramebufferData::setCurrentRenderTarget(size_t index)
@@ -315,7 +315,7 @@ void FramebufferData::setDrawBuffersCount(int count)
 	_rc->renderState().bindFramebuffer(_id);
 	glDrawBuffers(count, RENDERBUFFERS_TARGETS);
 	checkOpenGLError("Framebuffer::setDrawBuffersCount -> glDrawBuffers " + name());
-	check();
+	checkStatus();
 #else
 	std::cout << "FramebufferData::setDrawBuffersCount(" << count << ") call in OpenGL ES" << std::endl;
 #endif	
@@ -341,7 +341,7 @@ bool FramebufferData::setCurrentCubemapFace(size_t faceIndex)
 		checkOpenGLError("setCurrentCubemapFace -> depth");
 	}
 
-	return check(); 
+	return checkStatus(); 
 }
 
 void FramebufferData::createColorRenderbuffer(GLenum internalFormat)

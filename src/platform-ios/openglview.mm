@@ -162,7 +162,7 @@ using namespace et;
 	_defaultFramebuffer->forceSize(w, h);
 	_rcNotifier->resized(vec2i(w, h), _rc);
 	
-	_defaultFramebuffer->check();
+	_defaultFramebuffer->checkStatus();
 }
 
 - (void)deleteFramebuffer

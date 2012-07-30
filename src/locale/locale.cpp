@@ -16,13 +16,13 @@ const char KeyChar = '\"';
 
 std::string Locale::localeLanguage(size_t locale)
 {
-	char lang[3] = { locale & 0x000000ff, (locale & 0x0000ff00) >> 8, 0 };
+	char lang[3] = { static_cast<char>(locale & 0x000000ff), static_cast<char>((locale & 0x0000ff00) >> 8), 0 };
 	return std::string(lang);
 }
 
 std::string Locale::localeSubLanguage(size_t locale)
 {
-	char lang[3] = { (locale & 0x00ff0000) >> 16, (locale & 0xff000000) >> 24, 0 };
+	char lang[3] = { static_cast<char>((locale & 0x00ff0000) >> 16), static_cast<char>((locale & 0xff000000) >> 24), 0 };
 	return std::string(lang);
 }
 
