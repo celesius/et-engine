@@ -30,12 +30,16 @@ namespace et
 		
 		void setVelocity(const T& t)
 			{ _velocity = t; }
+
 		void addVelocity(const T& t)
 			{ _velocity += t; }
+
 		void scaleVelocity(const T& t)
 			{ _velocity *= t; }
+
 		void setValue(const T& v)
 			{ _value = v;}
+
 		void addValue(const T& v)
 			{ _value += v;}
 
@@ -45,19 +49,19 @@ namespace et
 			_time = actualTime();
 		}
 
-		InertialValue& operator = (const T& v) 
+		InertialValue<T>& operator = (const T& v) 
 		{
 			_value = v;
 			return *this;
 		}
 
-		InertialValue& operator *= (const T& v)
+		InertialValue<T>& operator *= (const T& v)
 		{
 			_value *= v;
 			return *this;
 		}
 
-		InertialValue& operator += (const T& v)
+		InertialValue<T>& operator += (const T& v)
 		{
 			_value += v;
 			return *this;
