@@ -82,8 +82,9 @@ namespace et
 			{
 				*_value = _to;
 				_delegate->animatorUpdated(this);
-				_delegate->animatorFinished(this);
+
 				cancelUpdates();
+				_delegate->animatorFinished(this);
 			}
 			else 
 			{
