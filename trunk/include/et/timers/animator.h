@@ -65,6 +65,8 @@ namespace et
 		{
 			startUpdates(timerPool().ptr());
 
+			*value = from;
+
 			_from = from;
 			_to = to;
 			_value = value;
@@ -79,6 +81,7 @@ namespace et
 			if (dt >= 1.0f)
 			{
 				*_value = _to;
+				_delegate->animatorUpdated(this);
 				_delegate->animatorFinished(this);
 				cancelUpdates();
 			}
