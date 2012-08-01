@@ -29,7 +29,7 @@ void SupportMesh::setNumIndexes(size_t num)
 	_data.fitToSize(num / 3);
 }
 
-void SupportMesh::fillCollisionData(VertexArrayRef v, IndexArrayRef ind)
+void SupportMesh::fillCollisionData(VertexArray::Pointer v, IndexArray::Pointer ind)
 {
 	RawDataAcessor<vec3> pos = v->chunk(Usage_Position).accessData<vec3>(0);
 

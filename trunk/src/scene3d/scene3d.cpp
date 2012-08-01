@@ -51,7 +51,7 @@ void Scene3d::serialize(std::ostream& stream)
 			(*vi)->serialize(stream);
 		}
 
-		IndexArrayRef ia = s->indexArray();
+		IndexArray::Pointer ia = s->indexArray();
 
 		serializeChunk(stream, HeaderIndexArrays);
 		serializeInt(stream, 1);
@@ -137,7 +137,7 @@ Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, Render
 			size_t numVertexArrays = deserializeInt(stream);
 			for (size_t i = 0; i < numVertexArrays; ++i)
 			{
-				VertexArrayRef va(new VertexArray());
+				VertexArray::Pointer va(new VertexArray());
 				va->tag = deserializeInt(stream);
 				va->deserialize(stream);
 				result->addVertexArray(va);

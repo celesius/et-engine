@@ -23,10 +23,10 @@ Renderer::Renderer(RenderContext* rc) : _rc(rc)
 {
 	checkOpenGLError("Renderer::Renderer");
 
-	IndexArrayRef ib(new IndexArray(IndexArrayFormat_16bit, 4, IndexArrayContentType_TriangleStrips));
+	IndexArray::Pointer ib(new IndexArray(IndexArrayFormat_16bit, 4, IndexArrayContentType_TriangleStrips));
 	ib->linearize();
 	
-	VertexArrayRef vb(new VertexArray(VertexDeclaration(false, Usage_Position, Type_Vec2), 4));
+	VertexArray::Pointer vb(new VertexArray(VertexDeclaration(false, Usage_Position, Type_Vec2), 4));
 	RawDataAcessor<vec2> pos = vb->chunk(Usage_Position).accessData<vec2>(0);
 	pos[0] = vec2(-1.0, -1.0);
 	pos[1] = vec2( 1.0, -1.0);

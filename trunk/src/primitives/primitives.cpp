@@ -43,7 +43,7 @@ void Primitives::createPhotonMap(DataStorage<vec2>& buffer, const vec2i& density
 			buffer.push_back(vec2(j * texel.x, i * texel.y) + dxdy);
 }
 
-void Primitives::createSphere(VertexArrayRef data, float radius, const vec2i& density, const vec3& center, const vec2& hemiSphere)
+void Primitives::createSphere(VertexArray::Pointer data, float radius, const vec2i& density, const vec3& center, const vec2& hemiSphere)
 { 
 	size_t lastIndex = data->size();
 	data->increase(density.square());
@@ -60,10 +60,10 @@ void Primitives::createSphere(VertexArrayRef data, float radius, const vec2i& de
 	bool hasTex = tex.valid();
 
 	float dPhi = hemiSphere.x * DOUBLE_PI / (density.x - 1.0f);
-	float dTheta = -hemiSphere.y * PI / (density.y - 1.0f);
+	float dTheta = hemiSphere.y * PI / (density.y - 1.0f);
 
 	int counter = 0;
-	float theta = HALF_PI;
+	float theta = -HALF_PI;
 	for (int i = 0; i < density.y; ++i)
 	{
 		float phi = 0;
@@ -84,7 +84,7 @@ void Primitives::createSphere(VertexArrayRef data, float radius, const vec2i& de
 	} 
 }
 
-void Primitives::createCylinder(VertexArrayRef data, float radius, float height, const vec2i& density, const vec3& center)
+void Primitives::createCylinder(VertexArray::Pointer data, float radius, float height, const vec2i& density, const vec3& center)
 {
 	size_t lastIndex = data->size();
 	data->increase(density.square());
@@ -132,7 +132,7 @@ void Primitives::createCylinder(VertexArrayRef data, float radius, float height,
 
 }
 
-void Primitives::createPlane(VertexArrayRef data, const vec3& normal, const vec2& size, const vec2i& density, 
+void Primitives::createPlane(VertexArray::Pointer data, const vec3& normal, const vec2& size, const vec2i& density, 
 		const vec3& center, const vec2& texCoordScale, const vec2& texCoordOffset)
 {
 	size_t lastIndex = data->size();
@@ -245,7 +245,7 @@ void Primitives::createPlane(VertexArrayRef data, const vec3& normal, const vec2
 	}
 }
 
-IndexType Primitives::buildTriangleStripIndexes(IndexArrayRef buffer, const vec2i& dim, IndexType index0, size_t offset)
+IndexType Primitives::buildTriangleStripIndexes(IndexArray::Pointer buffer, const vec2i& dim, IndexType index0, size_t offset)
 {
 	size_t k = offset;
 	IndexType rowSize = static_cast<IndexType>(dim.x);
@@ -283,7 +283,7 @@ IndexType Primitives::buildTriangleStripIndexes(IndexArrayRef buffer, const vec2
 	return k; 
 }
 
-IndexType Primitives::buildTrianglesIndexes(IndexArrayRef buffer, const vec2i& dim, IndexType vertexOffset, size_t indexOffset)
+IndexType Primitives::buildTrianglesIndexes(IndexArray::Pointer buffer, const vec2i& dim, IndexType vertexOffset, size_t indexOffset)
 {
 	size_t k = indexOffset;
 	IndexType rowSize = static_cast<IndexType>(dim.x);
@@ -308,7 +308,7 @@ IndexType Primitives::buildTrianglesIndexes(IndexArrayRef buffer, const vec2i& d
 	return k;
 }
 
-void Primitives::calculateNormals(VertexArrayRef data, const IndexArrayRef& buffer, size_t first, size_t last)
+void Primitives::calculateNormals(VertexArray::Pointer data, const IndexArray::Pointer& buffer, size_t first, size_t last)
 {
 	VertexDataChunk posChunk = data->chunk(Usage_Position);
 	VertexDataChunk nrmChunk = data->chunk(Usage_Normal);
@@ -341,7 +341,7 @@ void Primitives::calculateNormals(VertexArrayRef data, const IndexArrayRef& buff
 	}
 }
 
-void Primitives::calculateTangents(VertexArrayRef data, const IndexArrayRef& buffer, size_t first, size_t last)
+void Primitives::calculateTangents(VertexArray::Pointer data, const IndexArray::Pointer& buffer, size_t first, size_t last)
 {
 	VertexDataChunk posChunk = data->chunk(Usage_Position);
 	VertexDataChunk nrmChunk = data->chunk(Usage_Normal);
@@ -411,7 +411,7 @@ void Primitives::calculateTangents(VertexArrayRef data, const IndexArrayRef& buf
 	}
 }
 
-void Primitives::smoothTangents(VertexArrayRef data, const IndexArrayRef&, size_t first, size_t last)
+void Primitives::smoothTangents(VertexArray::Pointer data, const IndexArray::Pointer&, size_t first, size_t last)
 {
 	VertexDataChunk posChunk = data->chunk(Usage_Position);
 	VertexDataChunk tanChunk = data->chunk(Usage_Tangent);

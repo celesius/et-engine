@@ -9,14 +9,14 @@
 
 using namespace et;
 
-VertexBuffer VertexBufferFactory::createVertexBuffer(const std::string& name, VertexArrayRef data, BufferDrawType vertexDrawType)
+VertexBuffer VertexBufferFactory::createVertexBuffer(const std::string& name, VertexArray::Pointer data, BufferDrawType vertexDrawType)
 {
 	VertexBuffer vb(new VertexBufferData(_rs, data->getDesc(), vertexDrawType, name));
 	vb->setSourceTag(reinterpret_cast<size_t>(data.ptr()));
 	return vb;
 }
 
-IndexBuffer VertexBufferFactory::createIndexBuffer(const std::string& name, IndexArrayRef data, BufferDrawType drawType)
+IndexBuffer VertexBufferFactory::createIndexBuffer(const std::string& name, IndexArray::Pointer data, BufferDrawType drawType)
 {
 	IndexBuffer ib(new IndexBufferData(_rs, data, drawType, name));
 	ib->setSourceTag(reinterpret_cast<size_t>(data.ptr()));

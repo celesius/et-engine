@@ -15,6 +15,8 @@ namespace et
 	class VertexArray : public Shared
 	{
 	public:
+		typedef et::IntrusivePtr<VertexArray> Pointer;
+		
 		struct Description
 		{
 			VertexDeclaration declaration;
@@ -55,6 +57,5 @@ namespace et
 		VertexDataChunk _smoothing;
 	};
 	
-	typedef et::IntrusivePtr<VertexArray> VertexArrayRef;
-	typedef std::vector<VertexArrayRef> VertexArrayList;
+	typedef std::vector<VertexArray::Pointer> VertexArrayList;
 }

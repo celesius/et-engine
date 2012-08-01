@@ -38,6 +38,8 @@ namespace et
 	class IndexArray : public Shared
 	{
 	public:
+		typedef IntrusivePtr<IndexArray> Pointer;
+		
 		static const IndexType MaxShortIndex;
 		static const IndexType MaxSmallIndex;
 
@@ -130,6 +132,5 @@ namespace et
 		IndexArrayContentType _contentType;
 	};
 
-	typedef IntrusivePtr<IndexArray> IndexArrayRef;
-	typedef std::vector<IndexArrayRef> IndexArrayList;
+	typedef std::vector<IndexArray::Pointer> IndexArrayList;
 }
