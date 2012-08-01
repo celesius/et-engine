@@ -148,6 +148,9 @@ RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContex
 			NSOpenGLPFADepthSize, 32,
 			NSOpenGLPFAAccelerated,
 			NSOpenGLPFADoubleBuffer,
+			NSOpenGLPFAMultisample,
+			NSOpenGLPFASampleBuffers, 4,
+			NSOpenGLPFASamples, 16,
 			0
 		};
 
