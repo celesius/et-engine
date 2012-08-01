@@ -33,7 +33,7 @@ namespace et
 			VertexArrayList& vertexArrays()
 				{ return _vertexArrays; }
 			
-			IndexArrayRef indexArray()
+			IndexArray::Pointer indexArray()
 				{ return _indexArray; }
 
 			MaterialList& materials()
@@ -48,11 +48,11 @@ namespace et
 			void addMaterial(Material m)
 				{ _materials.push_back(m); }
 
-			void addVertexArray(const VertexArrayRef& va);
-			VertexArrayRef addVertexArrayWithDeclaration(const VertexDeclaration& decl, size_t size);
-			VertexArrayRef vertexArrayWithDeclaration(const VertexDeclaration& decl);
-			VertexArrayRef vertexArrayWithDeclarationForAppendingSize(const VertexDeclaration& decl, size_t size);
-			int indexOfVertexArray(const VertexArrayRef& va);
+			void addVertexArray(const VertexArray::Pointer& va);
+			VertexArray::Pointer addVertexArrayWithDeclaration(const VertexDeclaration& decl, size_t size);
+			VertexArray::Pointer vertexArrayWithDeclaration(const VertexDeclaration& decl);
+			VertexArray::Pointer vertexArrayWithDeclarationForAppendingSize(const VertexDeclaration& decl, size_t size);
+			int indexOfVertexArray(const VertexArray::Pointer& va);
 
 		private:
 			Scene3dStorage* duplicate()
@@ -60,7 +60,7 @@ namespace et
 
 		private:
 			VertexArrayList _vertexArrays;
-			IndexArrayRef _indexArray;
+			IndexArray::Pointer _indexArray;
 			MaterialList _materials;
 			TextureList _textures;
 		};

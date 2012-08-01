@@ -17,18 +17,18 @@ Scene3dStorage::Scene3dStorage(const std::string& name, Element* parent) :
 {
 }
 
-void Scene3dStorage::addVertexArray(const VertexArrayRef& va)
+void Scene3dStorage::addVertexArray(const VertexArray::Pointer& va)
 {
 	_vertexArrays.push_back(va);
 }
 
-VertexArrayRef Scene3dStorage::addVertexArrayWithDeclaration(const VertexDeclaration& decl, size_t size)
+VertexArray::Pointer Scene3dStorage::addVertexArrayWithDeclaration(const VertexDeclaration& decl, size_t size)
 {
-	_vertexArrays.push_back(VertexArrayRef(new VertexArray(decl, size)));
+	_vertexArrays.push_back(VertexArray::Pointer(new VertexArray(decl, size)));
 	return _vertexArrays.back();
 }
 
-VertexArrayRef Scene3dStorage::vertexArrayWithDeclaration(const VertexDeclaration& decl)
+VertexArray::Pointer Scene3dStorage::vertexArrayWithDeclaration(const VertexDeclaration& decl)
 {
 	for (VertexArrayList::iterator i = _vertexArrays.begin(), e = _vertexArrays.end(); i != e; ++i)
 	{
@@ -39,7 +39,7 @@ VertexArrayRef Scene3dStorage::vertexArrayWithDeclaration(const VertexDeclaratio
 	return addVertexArrayWithDeclaration(decl, 0);
 }
 
-VertexArrayRef Scene3dStorage::vertexArrayWithDeclarationForAppendingSize(const VertexDeclaration& decl, size_t size)
+VertexArray::Pointer Scene3dStorage::vertexArrayWithDeclarationForAppendingSize(const VertexDeclaration& decl, size_t size)
 {
 	for (VertexArrayList::iterator i = _vertexArrays.begin(), e = _vertexArrays.end(); i != e; ++i)
 	{
@@ -50,7 +50,7 @@ VertexArrayRef Scene3dStorage::vertexArrayWithDeclarationForAppendingSize(const 
 	return addVertexArrayWithDeclaration(decl, 0);
 }
 
-int Scene3dStorage::indexOfVertexArray(const VertexArrayRef& va)
+int Scene3dStorage::indexOfVertexArray(const VertexArray::Pointer& va)
 {
 	int index = 0;
 

@@ -18,7 +18,7 @@ const IndexType IndexArray::MaxSmallIndex = 256;
 const int IndexArrayId_1 = 'IAV1';
 const int IndexArrayCurrentId = IndexArrayId_1;
 
-IndexArray::IndexArray(IndexArrayFormat format, size_t size,IndexArrayContentType content) : 
+IndexArray::IndexArray(IndexArrayFormat format, size_t size, IndexArrayContentType content) : 
 _data(size * format), _actualSize(0), _format(format), _contentType(content)
 {
 	if (content == IndexArrayContentType_Points)

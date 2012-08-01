@@ -35,7 +35,7 @@ namespace et
 				{ return _data; }
 
 			void setNumIndexes(size_t num);
-			void fillCollisionData(VertexArrayRef v, IndexArrayRef i);
+			void fillCollisionData(VertexArray::Pointer v, IndexArray::Pointer i);
 
 			SupportMesh* duplicate();
 

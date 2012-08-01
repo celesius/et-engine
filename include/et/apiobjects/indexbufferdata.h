@@ -16,7 +16,7 @@ namespace et
 	class IndexBufferData : public APIObjectData
 	{
 	public:
-		IndexBufferData(RenderState& rs, IndexArrayRef i, BufferDrawType drawType, const std::string& name = std::string());
+		IndexBufferData(RenderState& rs, IndexArray::Pointer i, BufferDrawType drawType, const std::string& name = std::string());
 		~IndexBufferData();
 
 		GLenum geometryType() const
@@ -39,11 +39,11 @@ namespace et
 		size_t sourceTag() const
 			{ return _sourceTag; }
 
-		void setData(const IndexArrayRef& i);
+		void setData(const IndexArray::Pointer& i);
 
 	private:
-		void setProperties(const IndexArrayRef& i);
-		void build(const IndexArrayRef& i);
+		void setProperties(const IndexArray::Pointer& i);
+		void build(const IndexArray::Pointer& i);
 
 	private:
 		RenderState& _rs;

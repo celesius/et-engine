@@ -10,7 +10,7 @@
 
 using namespace et;
 
-IndexBufferData::IndexBufferData(RenderState& rs, IndexArrayRef i, BufferDrawType drawType, const std::string& name) : 
+IndexBufferData::IndexBufferData(RenderState& rs, IndexArray::Pointer i, BufferDrawType drawType, const std::string& name) : 
 	APIObjectData(name), _rs(rs), _size(i->actualSize()), _sourceTag(0), _indexBuffer(0), _dataType(0), _geometryType(0), _drawType(drawType)
 {
 	build(i);
@@ -24,7 +24,7 @@ IndexBufferData::~IndexBufferData()
 	_rs.indexBufferDeleted(_indexBuffer);
 }
 
-void IndexBufferData::setProperties(const IndexArrayRef& i)
+void IndexBufferData::setProperties(const IndexArray::Pointer& i)
 {
 	_size = i->actualSize();
 
@@ -76,7 +76,7 @@ void IndexBufferData::setProperties(const IndexArrayRef& i)
 	}
 }
 
-void IndexBufferData::build(const IndexArrayRef& i)
+void IndexBufferData::build(const IndexArray::Pointer& i)
 {
 	setProperties(i);
 
@@ -115,7 +115,7 @@ void* IndexBufferData::indexOffset(size_t offset) const
 	}
 }
 
-void IndexBufferData::setData(const IndexArrayRef& i)
+void IndexBufferData::setData(const IndexArray::Pointer& i)
 {
 	build(i);
 }
