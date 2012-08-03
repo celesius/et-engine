@@ -30,7 +30,7 @@ namespace et
 		private:
 			RenderState& _rs;
 			RenderChunkList _chunks;
-			IndexArrayRef _indexArray;
+			IndexArray::Pointer _indexArray;
 			GuiVertexList _vertexList;
 
 			VertexArrayObject _vao;
