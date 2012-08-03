@@ -79,9 +79,9 @@ void GesturesRecognizer::onPointerMoved(et::PointerInputInfo pi)
 	{
 		const PointerInputInfo& pPrev = _pointers[pi.id].previous; 
 		const PointerInputInfo& pCurr = _pointers[pi.id].current; 
-		vec2 dp = pCurr.normalizedPos - pPrev.normalizedPos;
-		float dt = etMax(0.01f, pCurr.timestamp - pPrev.timestamp);
-		drag.invoke(dp / dt, pi.type);
+
+		moved.invoke(pi.normalizedPos, pi.type);
+		drag.invoke((pCurr.normalizedPos - pPrev.normalizedPos) /etMax(0.01f, pCurr.timestamp - pPrev.timestamp), pi.type);
 	}
 	else
 	{

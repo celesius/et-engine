@@ -27,8 +27,9 @@ namespace et
 	public:
 		ET_DECLARE_EVENT1(zoom, float)
 
-		ET_DECLARE_EVENT2(drag, vec2, PointerType)
 		ET_DECLARE_EVENT2(pressed, vec2, PointerType)
+		ET_DECLARE_EVENT2(drag, vec2, PointerType)
+		ET_DECLARE_EVENT2(moved, vec2, PointerType)
 		ET_DECLARE_EVENT2(released, vec2, PointerType)
 
 		ET_DECLARE_EVENT1(click, vec2)

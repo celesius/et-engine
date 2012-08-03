@@ -20,7 +20,7 @@ RenderingElement::RenderingElement(RenderContext* rc) : _rs(rc->renderState()),
 	std::string nameId = intToStr(reinterpret_cast<size_t>(this));
 
 	_vao = rc->vertexBufferFactory().createVertexArrayObject(nameId + "-vao",
-		rc->vertexBufferFactory().createVertexBuffer(nameId + "-ib", VertexArrayRef(new VertexArray(decl, true)), BufferDrawType_Stream), 
+		rc->vertexBufferFactory().createVertexBuffer(nameId + "-ib", VertexArray::Pointer(new VertexArray(decl, true)), BufferDrawType_Stream), 
 		rc->vertexBufferFactory().createIndexBuffer(nameId + "-vb", _indexArray, BufferDrawType_Static));
 }
 
