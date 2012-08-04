@@ -44,10 +44,9 @@ namespace et
 	typedef Triangle<float> triangle;
 	typedef Plane<float> plane;
 
-	static const vec3 nullVec3(0.0f);
-	static const vec3 unitX(1.0f, 0.0f, 0.0f);
-	static const vec3 unitY(0.0f, 1.0f, 0.0f);
-	static const vec3 unitZ(0.0f, 0.0f, 1.0f);
+	extern const vec3 unitX;
+	extern const vec3 unitY;
+	extern const vec3 unitZ;
 
 	static const mat3 IDENTITY_MATRIX3( 
 		vec3(1.0f, 0.0f, 0.0f),
