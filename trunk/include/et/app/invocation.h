@@ -166,12 +166,21 @@ namespace et
 			{ (static_cast<Invocation2Target<T, A1, A2>*>(_target.ptr()))->setParameters(p1, p2); }
 	};
 
-	#define ET_INVOKE_THIS_CLASS_METHOD(CLASS, METHOD)			\
-		Invocation i; i.setTarget(this, &CLASS::METHOD); i.invokeInMainRunLoop();
+	#define ET_INVOKE_THIS_CLASS_METHOD(CLASS, METHOD)			{ \
+			Invocation _aInvocation; \
+			_aInvocation.setTarget(this, &CLASS::METHOD); \
+			_aInvocation.invokeInMainRunLoop(); \
+		}
 	
-	#define ET_INVOKE_THIS_CLASS_METHOD1(CLASS, METHOD, P1)		\
-		Invocation1 i; i.setTarget(this, &CLASS::METHOD, P1); i.invokeInMainRunLoop();
+	#define ET_INVOKE_THIS_CLASS_METHOD1(CLASS, METHOD, P1)		{ \
+			Invocation1 _aInvocation1; \
+			_aInvocation1.setTarget(this, &CLASS::METHOD, P1); \
+			_aInvocation1.invokeInMainRunLoop(); \
+		}
 	
-	#define ET_INVOKE_THIS_CLASS_METHOD2(CLASS, METHOD, P1, P2)	\
-		Invocation2 i; i.setTarget(this, &CLASS::METHOD, P1, P2); i.invokeInMainRunLoop();
+	#define ET_INVOKE_THIS_CLASS_METHOD2(CLASS, METHOD, P1, P2)	{ \
+			Invocation2 _aInvocation2; \
+			_aInvocation2.setTarget(this, &CLASS::METHOD, P1, P2); \
+			_aInvocation2.invokeInMainRunLoop(); \
+		}
 }

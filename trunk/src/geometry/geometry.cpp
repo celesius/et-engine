@@ -13,6 +13,10 @@ using namespace et;
 
 static const float fRandMax = static_cast<float>(RAND_MAX);
 
+const vec3 et::unitX(1.0f, 0.0f, 0.0f);
+const vec3 et::unitY(0.0f, 1.0f, 0.0f);
+const vec3 et::unitZ(0.0f, 0.0f, 1.0f);
+
 float et::sign(float s)
 {
 	return (s == 0.0f) ? 0.0f : s / fabs(s); 
