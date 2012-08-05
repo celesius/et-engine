@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et/gui/element2d.h>
+#include <et/gui/Element2d.h>
 #include <et/gui/button.h>
 
 namespace et
@@ -22,7 +22,7 @@ namespace et
 			virtual void keyboardDidReturnInElement(Keyboard*, Element*) { /* virtual */ };
 		};
 
-		class Keyboard : public Element2D
+		class Keyboard : public Element2d
 		{
 		public:
 			Keyboard(RenderContext* rc, Font font, TextureCache& cache);

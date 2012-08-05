@@ -14,7 +14,7 @@ using namespace et::gui;
 float deccelerationRate = 10.0f;
 float accelerationRate = 0.5f;
 
-Scroll::Scroll(Element2D* parent) : Element2D(parent), _updateTime(0.0f)
+Scroll::Scroll(Element2d* parent) : Element2d(parent), _updateTime(0.0f)
 {
 	setFlag(ElementFlag_HandlesChildEvents);
 	startUpdates();
@@ -25,21 +25,21 @@ void Scroll::addToRenderQueue(RenderContext*, GuiRenderer& r)
 /*
 	GuiVertexList vertices;
 	r.createColorVertices(vertices, rect(vec2(0.0f), size()), vec4(1.0f, 0.5f, 0.25f, 0.25f), finalTransform(), GuiRenderLayer_Layer0);
-	r.createColorVertices(vertices, rect(vec2(0.0f), size()), vec4(0.25f, 0.5f, 1.0f, 0.25f), Element2D::finalTransform(), GuiRenderLayer_Layer0);
+	r.createColorVertices(vertices, rect(vec2(0.0f), size()), vec4(0.25f, 0.5f, 1.0f, 0.25f), Element2d::finalTransform(), GuiRenderLayer_Layer0);
 	r.addVertices(vertices, Texture(), ElementClass_2d, GuiRenderLayer_Layer0);
 */ 
 }
 
 mat4 Scroll::finalTransform()
 {
-	mat4 e = Element2D::finalTransform();
+	mat4 e = Element2d::finalTransform();
 	e[3] += vec4(_offset, 0.0f, 0.0f);
 	return e;
 }
 
 mat4 Scroll::finalInverseTransform()
 {
-	return Element2D::finalTransform().inverse();
+	return Element2d::finalTransform().inverse();
 }
 
 bool Scroll::pointerPressed(const PointerInputInfo& p)
@@ -62,7 +62,7 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 		_dragPoint = p;
 		
 		invalidateChildren();
-		broadcastCanceled(p);
+		broadcastCancelled(p);
 	}
 	else if (p.type == PointerType_General)
 	{
@@ -77,7 +77,7 @@ bool Scroll::pointerReleased(const PointerInputInfo& p)
 {
 	if (_dragging)
 	{
-		broadcastCanceled(p);
+		broadcastCancelled(p);
 		_dragging = false;
 	}
 	else 
@@ -99,7 +99,7 @@ void Scroll::invalidateChildren()
 
 void Scroll::broadcastPressed(const PointerInputInfo& p)
 {
-	PointerInputInfo globalPos(p.type, Element2D::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
+	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
 	
 	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
 	{
@@ -110,7 +110,7 @@ void Scroll::broadcastPressed(const PointerInputInfo& p)
 
 void Scroll::broadcastReleased(const PointerInputInfo& p)
 {
-	PointerInputInfo globalPos(p.type, Element2D::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
+	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
 	
 	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
 	{
@@ -119,17 +119,17 @@ void Scroll::broadcastReleased(const PointerInputInfo& p)
 	}
 }
 
-void Scroll::broadcastCanceled(const PointerInputInfo& p)
+void Scroll::broadcastCancelled(const PointerInputInfo& p)
 {
-	PointerInputInfo globalPos(p.type, Element2D::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
+	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
 	
 	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
-		(*i)->pointerCanceled(PointerInputInfo(p.type, (*i)->positionInElement(globalPos.pos), globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
+		(*i)->pointerCancelled(PointerInputInfo(p.type, (*i)->positionInElement(globalPos.pos), globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
 }
 
 bool Scroll::containsPoint(const vec2& p, const vec2& np)
 {
-	return Element2D::containsPoint(p, np);
+	return Element2d::containsPoint(p, np);
 }
 
 void Scroll::update(float t)

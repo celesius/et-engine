@@ -7,14 +7,14 @@
 
 #pragma once
 
-#include <et/gui/element2d.h>
+#include <et/gui/Element2d.h>
 #include <et/gui/guirenderer.h>
 
 namespace et
 {
 	namespace gui
 	{
-		class ImageView : public Element2D
+		class ImageView : public Element2d
 		{
 		public:
 			typedef IntrusivePtr<ImageView> Pointer;
@@ -31,9 +31,9 @@ namespace et
 			};
 
 		public:
-			ImageView(const Texture& texture, Element2D* parent);
-			ImageView(const Texture& texture, const ImageDescriptor& i, Element2D* parent);
-			ImageView(const Image&, Element2D* parent);
+			ImageView(const Texture& texture, Element2d* parent);
+			ImageView(const Texture& texture, const ImageDescriptor& i, Element2d* parent);
+			ImageView(const Image&, Element2d* parent);
 
 			void addToRenderQueue(RenderContext*, GuiRenderer&);
 

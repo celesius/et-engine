@@ -11,7 +11,7 @@ using namespace et;
 using namespace et::gui;
 
 Layout::Layout() : 
-	Element2D(0), _currentElement(0), _focusedElement(0), _capturedElement(0), _valid(false), _dragging(false)
+	Element2d(0), _currentElement(0), _focusedElement(0), _capturedElement(0), _valid(false), _dragging(false)
 {
 }
 

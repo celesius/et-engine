@@ -81,7 +81,7 @@ const float yWhitespaceSize = 2.0f * buttonStartOffset + buttonOffset * static_c
 const float switchKeyboardDuration = 0.15f;
 const float showHideDuration = 0.3f;
 
-Keyboard::Keyboard(RenderContext* rc, Font font, TextureCache& cache) : Element2D(0), _delegate(0),
+Keyboard::Keyboard(RenderContext* rc, Font font, TextureCache& cache) : Element2d(0), _delegate(0),
 	_descriptor(vec2(0.0f), vec2(128.0f), ContentOffset(6.0f)), _lastActiveButton(0), _pressedButton(0), _capturedElement(0),
 	_extraButtonsVisible(false), _visible(false), _shift(false), _shiftLocked(false)
 {
@@ -480,7 +480,7 @@ void Keyboard::animatorFinished(BaseAnimator* animator)
 	if (animator == _hideAnimator)
 		_visible = false;
 
-	Element2D::animatorFinished(animator);
+	Element2d::animatorFinished(animator);
 }
 
 void Keyboard::setDelegate(KeyboardDelegate* delegate)

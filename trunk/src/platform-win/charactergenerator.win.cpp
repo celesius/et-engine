@@ -1,7 +1,6 @@
 #include <Windows.h>
 #include <et/geometry/rectplacer.h>
 #include <et/gui/charactergenerator.h>
-#include <et/imaging/imagewriter.h>
 
 using namespace et;
 using namespace et::gui;
@@ -17,6 +16,7 @@ class et::gui::CharacterGeneratorPrivate
 
 		void updateTexture(RenderContext* rc, Texture texture);
 		void renderCharacter(int value, const vec2i& position);
+		void renderBoldCharacter(int value, const vec2i& position);
 
 	public:
 		RectPlacer _placer;
@@ -27,11 +27,19 @@ class et::gui::CharacterGeneratorPrivate
 		HBITMAP _bitmap;
 };
 
-CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face, size_t size) : _rc(rc),
+CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face, const std::string& boldFace, size_t size) : _rc(rc),
 	_private(new CharacterGeneratorPrivate(face, size)), _face(face), _size(size)
 {
 	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(defaultTextureSize), GL_RGBA, GL_UNSIGNED_BYTE, 
 		BinaryDataStorage(), face + "font");
+
+	for (size_t i = 32; i < 128; ++i)
+		generateCharacter(i, false);
+
+	for (size_t i = 32; i < 128; ++i)
+		generateBoldCharacter(i, false);
+
+	_private->updateTexture(rc, _texture);
 }
 
 CharacterGenerator::~CharacterGenerator()
@@ -39,7 +47,7 @@ CharacterGenerator::~CharacterGenerator()
 	delete _private;
 }
 
-CharDescriptor CharacterGenerator::generateCharacter(int value)
+CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTexture)
 {
 	SIZE characterSize = { };
 	wchar_t string[2] = { value, 0 };
@@ -50,9 +58,9 @@ CharDescriptor CharacterGenerator::generateCharacter(int value)
 	rect textureRect;
 	_private->_placer.place(vec2i(characterSize.cx + 2, characterSize.cy + 2), textureRect);
 	_private->renderCharacter(value, vec2i(static_cast<int>(textureRect.left + 1), static_cast<int>(textureRect.top + 1)));
-	_private->updateTexture(_rc, _texture);
 
-	std::cout << "Value for `" << value << "` placed to " << textureRect.origin() << std::endl;
+	if (updateTexture)
+		_private->updateTexture(_rc, _texture);
 
 	CharDescriptor desc(value);
 	desc.origin = textureRect.origin() + vec2(1.0f);
@@ -63,17 +71,29 @@ CharDescriptor CharacterGenerator::generateCharacter(int value)
 	return desc;
 }
 
-CharDescriptor CharacterGenerator::generateBoldCharacter(int value)
+CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateTexture)
 {
-	CharDescriptor desc(value, CharParameter_Bold);
+	SIZE characterSize = { };
+	wchar_t string[2] = { value, 0 };
 
-	rect t;
-	_private->_placer.place(vec2i(10, 10), t);
+	SelectObject(_private->_dc, _private->_boldFont);
+	GetTextExtentPointW(_private->_dc, string, 1, &characterSize);
 
+	rect textureRect;
+	_private->_placer.place(vec2i(characterSize.cx + 2, characterSize.cy + 2), textureRect);
+	_private->renderBoldCharacter(value, vec2i(static_cast<int>(textureRect.left + 1), static_cast<int>(textureRect.top + 1)));
+
+	if (updateTexture)
+		_private->updateTexture(_rc, _texture);
+
+	CharDescriptor desc(value);
+	desc.origin = textureRect.origin() + vec2(1.0f);
+	desc.size = textureRect.size() - vec2(2.0f);
+	desc.uvOrigin = _texture->getTexCoord(textureRect.origin());
+	desc.uvSize = textureRect.size() / _texture->sizeFloat();
 	_boldChars[value] = desc;
 	return desc;
 }
-
 
 /*
  * Private
@@ -134,5 +154,14 @@ void CharacterGeneratorPrivate::renderCharacter(int value, const vec2i& position
 	wchar_t string[2] = { value, 0 };
 
 	SelectObject(_dc, _font);
+	DrawTextW(_dc, string, -1, &r, 0);
+}
+
+void CharacterGeneratorPrivate::renderBoldCharacter(int value, const vec2i& position)
+{
+	RECT r = { position.x, position.y, defaultTextureSize - position.x, defaultTextureSize - position.y };
+	wchar_t string[2] = { value, 0 };
+
+	SelectObject(_dc, _boldFont);
 	DrawTextW(_dc, string, -1, &r, 0);
 }

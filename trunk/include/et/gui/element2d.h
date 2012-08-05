@@ -23,16 +23,16 @@ namespace et
 			ElementAnimatedProperty_max
 		};
 
-		class Element2D : public Element
+		class Element2d : public Element
 		{
 		public:
-			typedef IntrusivePtr<Element2D> Pointer;
+			typedef IntrusivePtr<Element2d> Pointer;
 
 		public:
-			Element2D(Element* parent);
-			Element2D(const rect& frame, Element* parent);
+			Element2d(Element* parent);
+			Element2d(const rect& frame, Element* parent);
 
-			virtual ~Element2D();
+			virtual ~Element2d();
 
 			virtual ElementClass elementClass() const 
 				{ return ElementClass_2d; };
@@ -83,7 +83,7 @@ namespace et
 			mat4 finalInverseTransform();
 			vec2 positionInElement(const vec2& p);
 
-			ET_DECLARE_EVENT2(elementAnimationFinished, Element2D*, ElementAnimatedPropery)
+			ET_DECLARE_EVENT2(elementAnimationFinished, Element2d*, ElementAnimatedPropery)
 
 		protected:
 			void buildFinalTransform();

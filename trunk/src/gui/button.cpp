@@ -11,7 +11,7 @@
 using namespace et;
 using namespace et::gui;
 
-Button::Button(const std::string& title, Font font, Element2D* parent) : Element2D(parent), 
+Button::Button(const std::string& title, Font font, Element2d* parent) : Element2d(parent), 
 	_title(title), _font(font), _textSize(font->measureStringSize(title)), _textColor(vec3(0.0f), 1.0f),
 	_textPressedColor(vec3(0.0f), 1.0f), _type(Button::Type_PushButton), _state(ElementState_Default), 
 	_imageLayout(ImageLayout_Left),	_pressed(false), _hovered(false), _selected(false)
@@ -131,7 +131,7 @@ bool Button::pointerReleased(const PointerInputInfo& p)
 	return true;
 }
 
-bool Button::pointerCanceled(const PointerInputInfo& p)
+bool Button::pointerCancelled(const PointerInputInfo& p)
 {
 	if ((p.type != PointerType_General) || !_pressed) return false;
 	

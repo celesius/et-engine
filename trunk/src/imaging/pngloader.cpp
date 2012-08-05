@@ -46,7 +46,7 @@ void PNGLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 		return;
 	}
 
-	png_set_read_fn(pngPtr, (voidp)&source, userReadData); 
+	png_set_read_fn(pngPtr, (png_voidp)&source, userReadData); 
 	png_set_sig_bytes(pngPtr, PNGSIGSIZE);
 	png_read_info(pngPtr, infoPtr); 
 	parseFormat(desc, pngPtr, infoPtr, 0);
@@ -84,7 +84,7 @@ void PNGLoader::loadFromStream(std::istream& source, TextureDescription& desc)
 
 	png_size_t rowBytes = 0;
 
-	png_set_read_fn(pngPtr, (voidp)&source, userReadData); 
+	png_set_read_fn(pngPtr, (png_voidp)&source, userReadData); 
 	png_set_sig_bytes(pngPtr, PNGSIGSIZE);
 	png_read_info(pngPtr, infoPtr); 
 	parseFormat(desc, pngPtr, infoPtr, &rowBytes);

@@ -10,20 +10,20 @@
 using namespace et;
 using namespace gui;
 
-ImageView::ImageView(const Texture& texture, Element2D* parent) : 	Element2D(parent), 
+ImageView::ImageView(const Texture& texture, Element2d* parent) : 	Element2d(parent), 
 	_texture(texture), _descriptor(ImageDescriptor(texture)), _contentMode(ImageView::ContentMode_Stretch)
 {
 	setSize(_descriptor.size);
 }
 
-ImageView::ImageView(const Texture& texture, const ImageDescriptor& i, Element2D* parent) : 
-	Element2D(parent), _texture(texture), _descriptor(i), _contentMode(ImageView::ContentMode_Stretch)
+ImageView::ImageView(const Texture& texture, const ImageDescriptor& i, Element2d* parent) : 
+	Element2d(parent), _texture(texture), _descriptor(i), _contentMode(ImageView::ContentMode_Stretch)
 {
 	setSize(_descriptor.size, 0.0f);
 }
 
-ImageView::ImageView(const Image& img, Element2D* parent) : 
-	Element2D(parent), _texture(img.texture), _descriptor(img.descriptor), _contentMode(ImageView::ContentMode_Stretch)
+ImageView::ImageView(const Image& img, Element2d* parent) : 
+	Element2d(parent), _texture(img.texture), _descriptor(img.descriptor), _contentMode(ImageView::ContentMode_Stretch)
 {
 	setSize(_descriptor.size, 0.0f);
 }
@@ -63,7 +63,7 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 		if (_descriptor.size.x > _descriptor.size.y)
 			frameSize.y = frameSize.x / _descriptor.size.aspect();
 		else
-			frameSize.x = frameSize.y / _descriptor.size.aspect();
+			frameSize.x = frameSize.y * _descriptor.size.aspect();
 		
 		vec2 origin = 0.5f * (size() - frameSize);
 		

@@ -15,7 +15,7 @@ const short caretChar = '|';
 const short securedChar = '*';
 
 TextField::TextField(const Image& background, const std::string& text, Font font, Element* parent) : 
-	Element2D(parent), _font(font), _background(background), _text(text), _secured(false), _caretVisible(false)
+	Element2d(parent), _font(font), _background(background), _text(text), _secured(false), _caretVisible(false)
 {
 	setFlag(ElementFlag_RequiresKeyboard);
 	_caretBlinkTimer.expired.connect(this, &TextField::onCreateBlinkTimerExpired);

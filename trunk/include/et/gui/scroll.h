@@ -7,19 +7,19 @@
 
 #pragma once 
 
-#include <et/gui/element2d.h>
+#include <et/gui/Element2d.h>
 
 namespace et
 {
 	namespace gui
 	{
-		class Scroll : public Element2D
+		class Scroll : public Element2d
 		{
 		public:
 			typedef IntrusivePtr<Scroll> Pointer;
 			
 		public:
-			Scroll(Element2D* parent);
+			Scroll(Element2d* parent);
 			void addToRenderQueue(RenderContext*, GuiRenderer&);
 			
 			mat4 finalTransform();
@@ -40,7 +40,7 @@ namespace et
 			void invalidateChildren();
 			void broadcastPressed(const PointerInputInfo&);
 			void broadcastReleased(const PointerInputInfo&);
-			void broadcastCanceled(const PointerInputInfo&);
+			void broadcastCancelled(const PointerInputInfo&);
 			
 			void update(float t);
 			void updateOffset(const vec2& dOffset);

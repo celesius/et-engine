@@ -7,20 +7,20 @@
 
 #pragma once
 
-#include <et/gui/element2d.h>
+#include <et/gui/Element2d.h>
 
 namespace et
 {
 	namespace gui
 	{
-		class FullscreenElement : public Element2D
+		class FullscreenElement : public Element2d
 		{
 		public:
 			typedef IntrusivePtr<FullscreenElement> Pointer;
 
 		public:
 			FullscreenElement(et::RenderContext* rc, Element* parent) : 
-				Element2D(parent)
+				Element2d(parent)
 			{
 				setFlag(ElementFlag_TransparentForPointer);
 				layout(rc->size());

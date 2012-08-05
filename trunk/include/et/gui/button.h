@@ -7,14 +7,14 @@
 
 #pragma once 
 
-#include <et/gui/element2d.h>
+#include <et/gui/Element2d.h>
 #include <et/gui/font.h>
 
 namespace et
 {
 	namespace gui
 	{
-		class Button : public Element2D
+		class Button : public Element2d
 		{
 		public:
 			typedef IntrusivePtr<Button> Pointer;
@@ -32,7 +32,7 @@ namespace et
 			};
 
 		public:
-			Button(const std::string& title, Font font, Element2D* parent);
+			Button(const std::string& title, Font font, Element2d* parent);
 
 			void setBackgroundForState(const Texture& tex, const ImageDescriptor& desc, ElementState s);
 			void setBackgroundForState(const Image& img, ElementState s);
@@ -67,7 +67,7 @@ namespace et
 
 			bool pointerPressed(const PointerInputInfo&);
 			bool pointerReleased(const PointerInputInfo&);
-			bool pointerCanceled(const PointerInputInfo&);
+			bool pointerCancelled(const PointerInputInfo&);
 			void pointerEntered(const PointerInputInfo&);
 			void pointerLeaved(const PointerInputInfo&);
 

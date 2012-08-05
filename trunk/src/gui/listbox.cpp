@@ -15,7 +15,7 @@ using namespace et::gui;
 const float popupAppearTime = 0.1f;
 const float textRevealDuration = 0.1f;
 
-ListboxPopup::ListboxPopup(Listbox* owner) : Element2D(owner),
+ListboxPopup::ListboxPopup(Listbox* owner) : Element2d(owner),
 	_owner(owner), _textAlphaAnimator(0), _selectedIndex(-1), _textAlpha(0.0f), _pressed(false)
 {
 	setFlag(ElementFlag_RenderTopmost);
@@ -90,7 +90,7 @@ void ListboxPopup::animatorUpdated(BaseAnimator* a)
 	if (a == _textAlphaAnimator)
 		invalidateContent();
 
-	Element2D::animatorUpdated(a);
+	Element2d::animatorUpdated(a);
 }
 
 void ListboxPopup::animatorFinished(BaseAnimator* a)
@@ -102,7 +102,7 @@ void ListboxPopup::animatorFinished(BaseAnimator* a)
 		_owner->popupDidOpen();
 	}
 	else
-		Element2D::animatorFinished(a);
+		Element2d::animatorFinished(a);
 }
 
 void ListboxPopup::addToRenderQueue(RenderContext*, GuiRenderer& gr)
@@ -161,7 +161,7 @@ void ListboxPopup::pointerLeaved(const PointerInputInfo&)
  * Listbox
  */ 
 
-Listbox::Listbox(Font font, Element2D* parent) : Element2D(parent), _font(font), 
+Listbox::Listbox(Font font, Element2d* parent) : Element2d(parent), _font(font), 
 	_state(ListboxState_Default), _contentOffset(0.0f), _selectedIndex(-1), 
 	_direction(ListboxPopupDirection_Bottom), _popupOpened(false), _popupOpening(false), _popupValid(false)
 {
@@ -237,12 +237,12 @@ bool Listbox::shouldDrawText()
 bool Listbox::containsPoint(const vec2& p, const vec2& np)
 {
 	bool inPopup = _popupOpened && _popup->containsPoint(p, np);
-	return Element2D::containsPoint(p, np) || inPopup;
+	return Element2d::containsPoint(p, np) || inPopup;
 }
 
 BaseAnimator* Listbox::setFrame(const rect& r, float duration)
 {
-	BaseAnimator* value = Element2D::setFrame(r, duration);
+	BaseAnimator* value = Element2d::setFrame(r, duration);
 	configurePopup();
 	return value;
 }
@@ -377,7 +377,7 @@ void Listbox::setSelectedIndex(int value)
 	invalidateContent();
 }
 
-void Listbox::onPopupAnimationFinished(Element2D*, ElementAnimatedPropery)
+void Listbox::onPopupAnimationFinished(Element2d*, ElementAnimatedPropery)
 {
 	_popup->revealText();
 	popupOpened.invoke(this);
