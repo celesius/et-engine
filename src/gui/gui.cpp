@@ -16,7 +16,7 @@ Gui::Gui(RenderContext* rc, TextureCache& texCache) : _rc(rc), _textureCache(tex
 	_renderer(rc, true), 
 	_renderingElementBackground(new RenderingElement(rc)), 
 	_renderingElementKeyboard(new RenderingElement(rc)), 
-	_keyboard(rc, Font(rc, "ui/fonts/main.font", _textureCache), texCache), 
+	_keyboard(rc, Font(CharacterGenerator::Pointer(new CharacterGenerator(rc, "System", "System", 14))), _textureCache),
 	_background(Texture(), 0), _backgroundValid(true)
 {
 	_background.setPivotPoint(vec2(0.5f));

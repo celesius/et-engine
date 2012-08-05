@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et/gui/element2d.h>
+#include <et/gui/Element2d.h>
 #include <et/gui/element3d.h>
 #include <et/gui/keyboard.h>
 
@@ -15,7 +15,7 @@ namespace et
 {
 	namespace gui
 	{
-		class Layout : public Element2D, public KeyboardDelegate
+		class Layout : public Element2d, public KeyboardDelegate
 		{
 		public:
 			typedef IntrusivePtr<Layout> Pointer;

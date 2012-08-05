@@ -195,7 +195,30 @@ void et::openUrl(const std::string& url)
 std::string et::unicodeToUtf8(const std::wstring& w)
 {
 	NSString* s = [[[NSString alloc] initWithBytes:w.c_str() length:w.length() * sizeof(wchar_t) encoding:NSUTF32LittleEndianStringEncoding] autorelease];
-	return std::string([s cStringUsingEncoding:NSUTF8StringEncoding]);
+	
+	if (s == nil)
+	{
+		NSLog(@"Unable to convert wstring to NSString.");
+		return std::string();
+	}
+	
+	if (![s canBeConvertedToEncoding:NSUTF8StringEncoding])
+	{
+		NSLog(@"Unable to convert %@ to NSUTF8StringEncoding", s);
+		return std::string();
+	}
+	
+	NSUInteger actualLength = 0;
+	
+	[s getBytes:0 maxLength:0 usedLength:&actualLength
+	   encoding:NSUTF8StringEncoding options:0 range:NSMakeRange(0, [s length]) remainingRange:0];
+	
+	BinaryDataStorage result(actualLength + sizeof(char), 0);
+	
+	[s getBytes:result.data() maxLength:result.dataSize() usedLength:0
+	   encoding:NSUTF8StringEncoding options:0 range:NSMakeRange(0, [s length]) remainingRange:0];
+	
+	return std::string(reinterpret_cast<const char*>(result.data()));
 }
 
 std::wstring et::utf8ToUnicode(const std::string& mbcs)
@@ -214,5 +237,15 @@ std::wstring et::utf8ToUnicode(const std::string& mbcs)
 		return std::wstring();
 	}
 	
-	return std::wstring(reinterpret_cast<const wchar_t*>([s cStringUsingEncoding:NSUTF32LittleEndianStringEncoding]));
+	NSUInteger actualLength = 0;
+    
+	[s getBytes:0 maxLength:0 usedLength:&actualLength
+	   encoding:NSUTF32LittleEndianStringEncoding options:0 range:NSMakeRange(0, [s length]) remainingRange:0];
+	
+	BinaryDataStorage result(actualLength + sizeof(wchar_t), 0);
+	
+	[s getBytes:result.data() maxLength:result.dataSize() usedLength:0
+	   encoding:NSUTF32LittleEndianStringEncoding options:0 range:NSMakeRange(0, [s length]) remainingRange:0];
+	
+	return std::wstring(reinterpret_cast<const wchar_t*>(result.data()));
 }

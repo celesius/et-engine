@@ -7,14 +7,14 @@
 
 #pragma once
 
-#include <et/gui/element2d.h>
+#include <et/gui/Element2d.h>
 #include <et/gui/font.h>
 
 namespace et
 {
 	namespace gui
 	{
-		class TextField : public Element2D
+		class TextField : public Element2d
 		{
 		public:
 			typedef IntrusivePtr<TextField> Pointer;

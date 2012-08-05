@@ -266,7 +266,7 @@ namespace et
 			virtual bool pointerScrolled(const PointerInputInfo&)
 				{ return !hasFlag(ElementFlag_TransparentForPointer); }
 
-			virtual bool pointerCanceled(const PointerInputInfo&)
+			virtual bool pointerCancelled(const PointerInputInfo&)
 				{ return !hasFlag(ElementFlag_TransparentForPointer); }
 			
 			virtual void pointerEntered(const PointerInputInfo&) { }

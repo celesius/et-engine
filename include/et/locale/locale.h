@@ -40,6 +40,6 @@ namespace et
 		LocaleMap _localeMap;
 	};
 
-	inline std::string localized(const std::string& key)
-		{ return Locale::instance().localizedString(key); }
+	std::string localized(const std::string& key);
+	std::string localizedPrintf(const std::string& key, ...);
 }

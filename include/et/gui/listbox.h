@@ -7,7 +7,7 @@
 
 #pragma once 
 
-#include <et/gui/element2d.h>
+#include <et/gui/Element2d.h>
 #include <et/gui/font.h>
 
 namespace et
@@ -31,7 +31,7 @@ namespace et
 
 		class Listbox;
 
-		class ListboxPopup : public Element2D
+		class ListboxPopup : public Element2d
 		{
 		public:
 			typedef IntrusivePtr<ListboxPopup> Pointer;
@@ -67,13 +67,13 @@ namespace et
 			bool _pressed;
 		};
 
-		class Listbox : public Element2D
+		class Listbox : public Element2d
 		{
 		public:
 			typedef IntrusivePtr<Listbox> Pointer;
 
 		public:
-			Listbox(Font font, Element2D* parent);
+			Listbox(Font font, Element2d* parent);
 
 			void setImage(const Image& img, ListboxState state);
 			void setBackgroundImage(const Image& img);
@@ -120,7 +120,7 @@ namespace et
 			void configurePopup();
 
 			void setState(ListboxState s);
-			void onPopupAnimationFinished(Element2D*, ElementAnimatedPropery);
+			void onPopupAnimationFinished(Element2d*, ElementAnimatedPropery);
 
 			void popupDidOpen();
 

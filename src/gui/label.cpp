@@ -11,9 +11,9 @@
 using namespace et;
 using namespace et::gui;
 
-Label::Label(const std::string& text, Font font, Element2D* parent) : 
-	Element2D(parent), _text(text), _nextText(text), _font(font), _vertices(0),
-	_backgroundColor(0.0f), _textFade(0.0f), _textFadeDuration(0.0f), _textFadeStartTime(0.0f),
+Label::Label(const std::string& text, Font font, Element2d* parent) : 
+	Element2d(parent), _text(text), _nextText(text), _font(font), _vertices(0),
+	_backgroundColor(0.0f), _shadowOffset(1.0f), _textFade(0.0f), _textFadeDuration(0.0f), _textFadeStartTime(0.0f),
 	_horizontalAlignment(ElementAlignment_Near), _verticalAlignment(ElementAlignment_Near),
 	_animatingText(false), _allowFormatting(false)
 {
@@ -36,7 +36,9 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 	vec2 textOffset = size() * vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment));
 	
 	_textSize = _font->measureStringSize(_text, _allowFormatting);
-	_vertices.resize(0);
+	_vertices.setOffset(0);
+
+	bool hasShadow = _shadowColor.w > 0.0f;
 	
 	if (_backgroundColor.w > 0.0f)
 		renderer.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor, transform, GuiRenderLayer_Layer0);
@@ -48,17 +50,34 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 
 		_nextTextSize = _font->measureStringSize(_nextText, _allowFormatting);
 
+		if (hasShadow)
+		{
+			vec2 shadowOffset = textOffset + _shadowOffset;
+			renderer.createStringVertices(_vertices, _font->buildString(_text, _allowFormatting), _horizontalAlignment, _verticalAlignment, 
+				shadowOffset, _shadowColor * vec4(1.0, 1.0, 1.0, color().w * fadeOut), transform, GuiRenderLayer_Layer1);
+
+			renderer.createStringVertices(_vertices, _font->buildString(_nextText, _allowFormatting), _horizontalAlignment, _verticalAlignment, 
+				shadowOffset, _shadowColor * vec4(1.0, 1.0, 1.0, color().w * fadeIn), transform, GuiRenderLayer_Layer1);
+		}
+
 		renderer.createStringVertices(_vertices, _font->buildString(_text, _allowFormatting), _horizontalAlignment, _verticalAlignment, textOffset, 
-									  color() * vec4(1.0, 1.0, 1.0, fadeOut), transform, GuiRenderLayer_Layer1);
-		
+			color() * vec4(1.0, 1.0, 1.0, fadeOut), transform, GuiRenderLayer_Layer1);
+
 		renderer.createStringVertices(_vertices, _font->buildString(_nextText, _allowFormatting), _horizontalAlignment, _verticalAlignment, textOffset, 
-									  color() * vec4(1.0, 1.0, 1.0, fadeIn), transform, GuiRenderLayer_Layer1);
+			color() * vec4(1.0, 1.0, 1.0, fadeIn), transform, GuiRenderLayer_Layer1);
 	}
 	else 
 	{
 		_nextTextSize = _textSize;
+
+		if (hasShadow)
+		{
+			renderer.createStringVertices(_vertices, _font->buildString(_text, _allowFormatting), _horizontalAlignment, _verticalAlignment, 
+				textOffset + _shadowOffset, _shadowColor * vec4(1.0f, 1.0f, 1.0, color().w), transform, GuiRenderLayer_Layer1);
+		}
+
 		renderer.createStringVertices(_vertices, _font->buildString(_text, _allowFormatting), _horizontalAlignment, _verticalAlignment, 
-									  textOffset, color(), transform, GuiRenderLayer_Layer1);
+			textOffset, color(), transform, GuiRenderLayer_Layer1);
 	}
 
 	setContentValid();
@@ -142,5 +161,17 @@ void Label::setHorizontalAlignment(ElementAlignment h)
 void Label::setBackgroundColor(const vec4& color)
 {
 	_backgroundColor = color;
+	invalidateContent();
+}
+
+void Label::setShadowColor(const vec4& color)
+{
+	_shadowColor = color;
+	invalidateContent();
+}
+
+void Label::setShadowOffset(const vec2& offset)
+{
+	_shadowOffset = offset;
 	invalidateContent();
 }

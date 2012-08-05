@@ -6,6 +6,7 @@
 */
 
 #include <fstream>
+#include <stdarg.h>
 #include <et/core/tools.h>
 #include <et/locale/locale.h>
 
@@ -13,6 +14,7 @@ using namespace et;
 
 const char CommentChar = '/';
 const char KeyChar = '\"';
+const char NewLineChar = '\n';
 
 std::string Locale::localeLanguage(size_t locale)
 {
@@ -57,6 +59,15 @@ bool Locale::loadCurrentLanguageFile(const std::string& rootFolder, const std::s
 			parseLanguageFile(fileName);
 			return true;
 		}
+		else
+		{
+			fileName = addTrailingSlash(rootFolder) + "en" + extension;
+			if (fileExists(fileName))
+			{
+				parseLanguageFile(fileName);
+				return true;
+			}
+		}
 	}
 	
 	std::cout << "Unable to locate language file `" << fileName << "` in folder " << rootFolder << std::endl;
@@ -85,7 +96,8 @@ void Locale::parseLanguageFile(const std::string& fileName)
 	bool inQuote = false;
 	while ((i < raw.size()) && raw[i])
 	{
-		if (raw[i] == CommentChar)
+		size_t prevChar = i > 0 ? i - 1 : 0;
+		if ((raw[i] == CommentChar) && (raw[prevChar] == NewLineChar))
 		{
 			inQuote = false;
 			i = parseComment(raw, i+1);
@@ -216,4 +228,26 @@ void Locale::printKeyValues()
 		std::cout << key.size() << " / " << value.size() << " -> " << key << " -> " << value << std::endl;
 		std::cout.flush();
 	}
+}
+
+std::string et::localized(const std::string& key)
+{
+	return Locale::instance().localizedString(key); 
+}
+
+std::string et::localizedPrintf(const std::string& key, ...)
+{
+    va_list list;
+   
+    va_start(list, key);
+    size_t amount = vsnprintf(0, 0, localized(key).c_str(), list);
+    va_end(list);
+    
+	StringDataStorage buffer(amount + 2, 0);
+    
+    va_start(list, key);
+	vsnprintf(buffer.data(), amount + 1, localized(key).c_str(), list);
+    va_end(list);
+    
+	return std::string(buffer.data());
 }

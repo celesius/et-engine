@@ -24,7 +24,7 @@ namespace et
 			typedef et::IntrusivePtr<CharacterGenerator> Pointer;
 
 		public:
-			CharacterGenerator(RenderContext* _rc, const std::string& face, size_t size);
+			CharacterGenerator(RenderContext* _rc, const std::string& face, const std::string& boldFace, size_t size);
 			~CharacterGenerator();
 
 			const Texture& texture() const 
@@ -39,21 +39,21 @@ namespace et
 			CharDescriptor charDescription(int c)
 			{
 				CharDescriptorMap::const_iterator i = _chars.find(c);
-				return (i != _chars.end()) ? i->second : generateCharacter(c);
+				return (i != _chars.end()) ? i->second : generateCharacter(c, true);
 			}
 
 			CharDescriptor boldCharDescription(int c)
 			{
 				CharDescriptorMap::const_iterator i = _boldChars.find(c);
-				return (i != _boldChars.end()) ? i->second : generateBoldCharacter(c);
+				return (i != _boldChars.end()) ? i->second : generateBoldCharacter(c, true);
 			}
 
 			float lineHeight() const
 				{ return _chars.size() ? _chars.begin()->second.size.y : static_cast<float>(_size); }
 
 		private:
-			CharDescriptor generateCharacter(int value);
-			CharDescriptor generateBoldCharacter(int value);
+			CharDescriptor generateCharacter(int value, bool updateTexture);
+			CharDescriptor generateBoldCharacter(int value, bool updateTexture);
 
 		private:
 			RenderContext* _rc;

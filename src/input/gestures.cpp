@@ -42,6 +42,8 @@ void GesturesRecognizer::handlePointersMovement()
 
 void GesturesRecognizer::onPointerPressed(et::PointerInputInfo pi)
 {
+	pointerPressed.invoke(pi);
+
 	_pointers[pi.id] = PointersInputDelta(pi, pi);
 	pressed.invoke(pi.normalizedPos, pi.type);
 	
@@ -64,12 +66,11 @@ void GesturesRecognizer::onPointerPressed(et::PointerInputInfo pi)
 	{
 		cancelWaitingForClicks();
 	}
-
-	pointerPressed.invoke(pi);
 }
 
 void GesturesRecognizer::onPointerMoved(et::PointerInputInfo pi)
 {
+	pointerMoved.invoke(pi);
 	if (_pointers.size() == 0) return;
 
 	_pointers[pi.id].previous = _pointers[pi.id].current;
@@ -89,23 +90,23 @@ void GesturesRecognizer::onPointerMoved(et::PointerInputInfo pi)
 	}
 	
 	cancelWaitingForClicks();
-	pointerMoved.invoke(pi);
 }
 
 void GesturesRecognizer::onPointerReleased(et::PointerInputInfo pi)
 {
+	pointerReleased.invoke(pi);
+
 	_pointers.erase(pi.id);
 	released.invoke(pi.normalizedPos, pi.type);
-	
 	stopWaitingForClicks();
-	pointerReleased.invoke(pi);
 }
 
 void GesturesRecognizer::onPointerCancelled(et::PointerInputInfo pi)
 {
+	pointerCancelled.invoke(pi);
+
 	_pointers.erase(pi.id);
 	cancelled.invoke();
-	
 	cancelWaitingForClicks();
 }
 
