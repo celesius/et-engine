@@ -8,6 +8,7 @@
 #include <sys/time.h>
 #include <et/platform/platform.h>
 #include <et/core/tools.h>
+#include <et/core/containers.h>
 
 using namespace std;
 
