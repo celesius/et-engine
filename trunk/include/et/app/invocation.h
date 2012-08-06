@@ -171,7 +171,13 @@ namespace et
 			_aInvocation.setTarget(this, &CLASS::METHOD); \
 			_aInvocation.invokeInMainRunLoop(); \
 		}
-	
+
+	#define ET_INVOKE_THIS_CLASS_METHOD_DELAYED(CLASS, METHOD, DELAY)	{ \
+			Invocation _aInvocation; \
+			_aInvocation.setTarget(this, &CLASS::METHOD); \
+			_aInvocation.invokeInMainRunLoop(DELAY); \
+		}
+
 	#define ET_INVOKE_THIS_CLASS_METHOD1(CLASS, METHOD, P1)		{ \
 			Invocation1 _aInvocation1; \
 			_aInvocation1.setTarget(this, &CLASS::METHOD, P1); \

@@ -53,16 +53,15 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 		if (hasShadow)
 		{
 			vec2 shadowOffset = textOffset + _shadowOffset;
+
 			renderer.createStringVertices(_vertices, _font->buildString(_text, _allowFormatting), _horizontalAlignment, _verticalAlignment, 
 				shadowOffset, _shadowColor * vec4(1.0, 1.0, 1.0, color().w * fadeOut), transform, GuiRenderLayer_Layer1);
-
 			renderer.createStringVertices(_vertices, _font->buildString(_nextText, _allowFormatting), _horizontalAlignment, _verticalAlignment, 
 				shadowOffset, _shadowColor * vec4(1.0, 1.0, 1.0, color().w * fadeIn), transform, GuiRenderLayer_Layer1);
 		}
 
 		renderer.createStringVertices(_vertices, _font->buildString(_text, _allowFormatting), _horizontalAlignment, _verticalAlignment, textOffset, 
 			color() * vec4(1.0, 1.0, 1.0, fadeOut), transform, GuiRenderLayer_Layer1);
-
 		renderer.createStringVertices(_vertices, _font->buildString(_nextText, _allowFormatting), _horizontalAlignment, _verticalAlignment, textOffset, 
 			color() * vec4(1.0, 1.0, 1.0, fadeIn), transform, GuiRenderLayer_Layer1);
 	}
@@ -174,4 +173,43 @@ void Label::setShadowOffset(const vec2& offset)
 {
 	_shadowOffset = offset;
 	invalidateContent();
+}
+
+void Label::fitToWidth(float w)
+{
+	std::string newText;
+	std::string oldText = _text;
+	std::string latestLine;
+	
+	while (oldText.size())
+	{
+		size_t wsPos = oldText.find_first_of(" \n\t\r");
+		if (wsPos == std::string::npos)
+		{
+			std::string appended = latestLine + oldText;
+			vec2 measuredSize = _font->measureStringSize(appended);
+			newText.append((measuredSize.x < w) ? oldText : "\n" + oldText);
+			break;
+		}
+		
+		std::string word = oldText.substr(0, wsPos);
+		std::string nWord = oldText.substr(0, wsPos+1);
+		std::string appended = latestLine + word;
+		
+		vec2 measuredSize = _font->measureStringSize(appended);
+		if (measuredSize.x < w)
+		{
+			latestLine.append(nWord);
+			newText.append(nWord);
+		}
+		else
+		{
+			newText.append("\n" + nWord);
+			latestLine = nWord;
+		}
+		
+		oldText.erase(0, nWord.size());
+	}
+	
+	setText(newText);
 }

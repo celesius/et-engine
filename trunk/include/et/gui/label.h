@@ -29,6 +29,7 @@ namespace et
 			const std::string& text() const
 				{ return _text; }
 
+			void fitToWidth(float w);
 			void adjustSize();
 			void setAllowFormatting(bool f);
 			
