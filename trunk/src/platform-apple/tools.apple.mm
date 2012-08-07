@@ -81,23 +81,13 @@ std::string et::normalizeFilePath(string s)
 
 bool et::fileExists(const std::string& name)
 {
-    BOOL exists = false;
-    
-    NSString* path = [[NSString alloc] initWithCString:name.c_str() encoding:NSASCIIStringEncoding];
-    exists = [[NSFileManager defaultManager] fileExistsAtPath:path];
-    [path release];
-    
-	return exists;
+	return [[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithUTF8String:name.c_str()]];
 }
 
 bool et::folderExists(const std::string& name)
 {
-	BOOL isDir = false;
-	
-    NSString* path = [[NSString alloc] initWithCString:name.c_str() encoding:NSASCIIStringEncoding];
-	[[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir];
-    [path release];
-	
+	BOOL isDir = NO;
+	[[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithUTF8String:name.c_str()] isDirectory:&isDir];
 	return isDir;
 }
 
