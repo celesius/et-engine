@@ -80,7 +80,7 @@ void TextField::processMessage(const GuiMessage& msg)
 
 		default:
 			{
-				char text[2] = { msg.p1.ucharValues[0], 0 };
+				char text[2] = { static_cast<char>(msg.p1.ucharValues[0]), 0 };
 				_text += text;
 			}
 		}

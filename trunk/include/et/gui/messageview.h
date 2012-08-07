@@ -38,7 +38,8 @@ namespace et
 			void setButtonBackground(const Image& img, ElementState s);
 			void setButtonTextColor(const vec4& color);
 			void setButtonPressedTextColor(const vec4& color);
-			
+			void setText(const std::string& text);
+
 			ET_DECLARE_EVENT2(messageViewButtonSelected, MessageView*, MessageViewButton)
 			
 		private:
@@ -47,6 +48,7 @@ namespace et
 			
 		private:
 			size_t _buttonFlags;
+			ImageView::Pointer _fade;
 			ImageView::Pointer _background;
 			ImageView::Pointer _image;
 			Label::Pointer _text;

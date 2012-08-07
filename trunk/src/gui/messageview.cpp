@@ -5,6 +5,7 @@
  *
  */
 
+#include <et/geometry/geometry.h>
 #include <et/gui/messageview.h>
 
 using namespace et;
@@ -13,7 +14,10 @@ using namespace et::gui;
 MessageView::MessageView(const std::string& text, Font font, const Image& image, size_t buttons,
 						 const std::string& button1title, const std::string& button2title) : _buttonFlags(buttons)
 {
-	_background = ImageView::Pointer(new ImageView(Texture(), this));
+	_fade = ImageView::Pointer(new ImageView(Texture(), this));
+	_fade->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.25f));
+	
+	_background = ImageView::Pointer(new ImageView(Texture(), _fade.ptr()));
 	_background->setPivotPoint(vec2(0.5f));
 	
 	_image = ImageView::Pointer(new ImageView(image, _background.ptr()));
@@ -34,10 +38,19 @@ MessageView::MessageView(const std::string& text, Font font, const Image& image,
 
 void MessageView::layout(const vec2& sz)
 {
-	vec2 bgSize = maxv(_background->imageDescriptor().size, floorv(vec2(0.9f * sz.x, 0.35f * sz.y)));
+	_fade->setFrame(vec2(0.0f), sz);
+	
+	float contentWidth = 0.9f * maxv(_background->imageDescriptor().size, 0.95f * sz).x;
+	_text->fitToWidth(contentWidth);
+	
+	vec2 buttonsSize = 3.5f * maxv(_button1->size(), _button2->size());
+	vec2 textSize = _text->textSize();
+	float contentHeight = (textSize.y + buttonsSize.y);
+	
+	vec2 bgSize = maxv(_background->imageDescriptor().size, floorv(vec2(0.9f * sz.x, contentHeight)));
 	_background->setFrame(floorv(0.5f * sz), bgSize);
-
-	vec2 bOffset = floorv(0.15f * bgSize);
+	
+	vec2 bOffset = floorv(0.1f * bgSize);
 	vec2 b1pos = hasSecondButton() ? vec2(bOffset.x, bgSize.y - bOffset.y) : vec2(0.5f * bgSize.x, bgSize.y - bOffset.y);
 	vec2 b2pos = bgSize - bOffset;
 	
@@ -49,6 +62,11 @@ void MessageView::layout(const vec2& sz)
 	
 	vec2 textPos = vec2(0.5f * bgSize.x, 0.5f * (bgSize.y - topOrigin));
 	_text->setPosition(floorv(textPos));
+}
+
+void MessageView::setText(const std::string& text)
+{
+    _text->setText(text);
 }
 
 void MessageView::setBackgroundImage(const Image& img)
