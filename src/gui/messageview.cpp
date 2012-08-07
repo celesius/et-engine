@@ -20,7 +20,10 @@ MessageView::MessageView(const std::string& text, Font font, const Image& image,
 	_background = ImageView::Pointer(new ImageView(Texture(), _fade.ptr()));
 	_background->setPivotPoint(vec2(0.5f));
 	
-	_image = ImageView::Pointer(new ImageView(image, _background.ptr()));
+	_imgBackground = ImageView::Pointer(new ImageView(image, _background.ptr()));
+	_imgImage = ImageView::Pointer(new ImageView(Texture(), _background.ptr()));
+	_imgImage->setPivotPoint(vec2(0.5f, 0.0f));
+	_imgImage->setContentMode(ImageView::ContentMode_Fit);
 	
 	_text = Label::Pointer(new Label(text, font, _background.ptr()));
 	_text->setPivotPoint(vec2(0.5f, 0.0f));
@@ -44,10 +47,12 @@ void MessageView::layout(const vec2& sz)
 	_text->fitToWidth(contentWidth);
 	
 	vec2 buttonsSize = 3.5f * maxv(_button1->size(), _button2->size());
-	vec2 textSize = _text->textSize();
-	float contentHeight = (textSize.y + buttonsSize.y);
 	
-	vec2 bgSize = maxv(_background->imageDescriptor().size, floorv(vec2(0.9f * sz.x, contentHeight)));
+	float dataHeight = etMax(_text->textSize().y, _imgImage->imageDescriptor().size.y);
+	float contentHeight = etMin(dataHeight + buttonsSize.y, sz.y - buttonsSize.y);
+	
+	vec2 bgSize = maxv(_background->imageDescriptor().size, floorv(vec2(0.95f * sz.x, contentHeight)));
+	
 	_background->setFrame(floorv(0.5f * sz), bgSize);
 	
 	vec2 bOffset = floorv(0.1f * bgSize);
@@ -59,9 +64,11 @@ void MessageView::layout(const vec2& sz)
 	_button2->setFrame(floorv(b2pos), maxButtonSize);
 	
 	float topOrigin = etMin(_button1->origin().y, _button2->origin().y);
+	float verticalCenter = 0.5f * (bgSize.y - topOrigin);
 	
-	vec2 textPos = vec2(0.5f * bgSize.x, 0.5f * (bgSize.y - topOrigin));
-	_text->setPosition(floorv(textPos));
+	_text->setPosition(floorv(vec2(0.5f * bgSize.x, verticalCenter)));
+	_imgImage->setSize(contentWidth, contentHeight - buttonsSize.y);
+	_imgImage->setPosition(0.5f * bgSize.x, verticalCenter);
 }
 
 void MessageView::setText(const std::string& text)
@@ -72,6 +79,11 @@ void MessageView::setText(const std::string& text)
 void MessageView::setBackgroundImage(const Image& img)
 {
 	_background->setImage(img);
+}
+
+void MessageView::setImage(const Image& img)
+{
+	_imgImage->setImage(img);
 }
 
 void MessageView::setButtonBackground(const Image& img, ElementState s)
