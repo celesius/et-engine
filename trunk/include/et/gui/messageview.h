@@ -29,9 +29,10 @@ namespace et
 			typedef IntrusivePtr<MessageView> Pointer;
 
 		public:
-			MessageView(const std::string& text, Font font, const Image& image = Image(), size_t buttons = MessageViewButton_First,
+			MessageView(const std::string& text, Font font, const Image& bgImage = Image(), size_t buttons = MessageViewButton_First,
 						const std::string& button1title = "Close", const std::string& button2title = "Ok");
 
+			void setImage(const Image& img);
 			void setBackgroundImage(const Image& img);
 			void layout(const vec2&);
 			
@@ -50,8 +51,12 @@ namespace et
 			size_t _buttonFlags;
 			ImageView::Pointer _fade;
 			ImageView::Pointer _background;
-			ImageView::Pointer _image;
+			
+			ImageView::Pointer _imgBackground;
+			ImageView::Pointer _imgImage;
+			
 			Label::Pointer _text;
+			
 			Button::Pointer _button1;
 			Button::Pointer _button2;
 		};
