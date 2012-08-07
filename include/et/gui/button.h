@@ -34,15 +34,20 @@ namespace et
 		public:
 			Button(const std::string& title, Font font, Element2d* parent);
 
+			void addToRenderQueue(RenderContext* rc, GuiRenderer& guiRenderer);
+			
+			void setImage(const Image& img);
 			void setBackgroundForState(const Texture& tex, const ImageDescriptor& desc, ElementState s);
 			void setBackgroundForState(const Image& img, ElementState s);
-			void addToRenderQueue(RenderContext* rc, GuiRenderer& guiRenderer);
 
 			void adjustSize(float duration = 0.0f);
 			void adjustSizeForText(const std::string&, float duration = 0.0f);
 			vec2 sizeForText(const std::string&);
 
 			ET_DECLARE_EVENT1(clicked, Button*)
+			
+			const Image& backgroundForState(ElementState state) const
+				{ return _background[state]; }
 
 			bool capturePointer() const;
 
@@ -53,8 +58,7 @@ namespace et
 
 			const Image& image() const
 				{ return _image; }
-			void setImage(const Image& img);
-
+			
 			void setImageLayout(ImageLayout l);
 
 			const vec2& textSize();

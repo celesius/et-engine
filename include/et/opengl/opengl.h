@@ -72,7 +72,7 @@ namespace et
 	#endif
 	
 	#if !defined(glFramebufferTexture)
-		#define glFramebufferTexture(target, attachment, texture, level)	\ 
+		#define glFramebufferTexture(target, attachment, texture, level) \
 			glFramebufferTexture2D(target, attachment, GL_TEXTURE_2D, texture, level)
 	#endif
 	
