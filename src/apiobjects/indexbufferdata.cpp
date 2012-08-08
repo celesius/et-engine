@@ -90,7 +90,7 @@ void IndexBufferData::build(const IndexArray::Pointer& i)
 	}
 
 	_rs.bindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexDataSize, i->raw(), indexDraw);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexDataSize, i->data(), indexDraw);
 	checkOpenGLError("glBufferData(GL_ELEMENT_ARRAY_BUFFER, ....)");
 }
 

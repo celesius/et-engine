@@ -122,7 +122,7 @@ Texture TextureFactory::genNoiseTexture(const vec2i& size, bool norm, const std:
 	desc.layersCount = 1;
     desc.bitsPerPixel = 32;
     
-	memcpy(desc.data.raw(), randata.raw(), randata.dataSize());
+	memcpy(desc.data.data(), randata.data(), randata.dataSize());
 
 	return Texture(new TextureData(renderContext(), desc, id, false));
 }

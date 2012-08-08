@@ -115,7 +115,7 @@ size_t GuiRenderer::addVertices(const GuiVertexList& vertices, const Texture& te
 	if (count)
 	{
 		GuiVertex* v0 = allocateVertices(count, texture, cls, layer);
-		memcpy(v0, vertices.raw(), vertices.dataSize());
+		memcpy(v0, vertices.binary(), vertices.dataSize());
 	}
 	else 
 	{

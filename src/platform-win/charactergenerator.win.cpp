@@ -139,7 +139,7 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, Texture texture
 		data[4*i+2] = 255;
 	}
 
-	texture->updateDataDirectly(rc, vec2i(defaultTextureSize), static_cast<char*>(data.raw()), data.size());
+	texture->updateDataDirectly(rc, vec2i(defaultTextureSize), data.binary(), data.size());
 /* 
 	static int stage = 1;
 	char path[256] = { };
