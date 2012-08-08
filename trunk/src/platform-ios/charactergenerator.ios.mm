@@ -143,7 +143,7 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, Texture texture
 		_data[4*i+1] = 255;
 		_data[4*i+2] = 255;
 	}
-	texture->updateDataDirectly(rc, vec2i(defaultTextureSize), static_cast<char*>(_data.raw()), _data.size());
+	texture->updateDataDirectly(rc, vec2i(defaultTextureSize), _data.binary(), _data.size());
 }
 
 void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i& position, bool bold)
