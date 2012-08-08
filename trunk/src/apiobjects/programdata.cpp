@@ -59,7 +59,7 @@ void ProgramData::setCameraPosition(const vec3& p)
 {                 
 	if (_cam_loc < 0) return;
 
-	glUniform3fv(_cam_loc, 1, p.raw());
+	glUniform3fv(_cam_loc, 1, p.data());
 	checkOpenGLError("SetCameraPosition");
 }
 
@@ -67,7 +67,7 @@ void ProgramData::setPrimaryLightPosition(const vec3 &p)
 {
 	if (_l0_loc < 0) return;
 
-	glUniform3fv(_l0_loc, 1, p.raw());
+	glUniform3fv(_l0_loc, 1, p.data());
 	checkOpenGLError("SetPrimaryLightPosition");
 }
 

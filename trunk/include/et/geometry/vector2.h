@@ -31,10 +31,10 @@ namespace et
 		const T& operator [](int i) const
 			{ return c[i]; }
 
-		T* raw() 
+		T* data() 
 			{ return c; }
 
-		const T* raw() const
+		const T* data() const
 			{ return c; }
 
 		const char* binary() const

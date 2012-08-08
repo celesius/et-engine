@@ -93,7 +93,7 @@ void PNGLoader::loadFromStream(std::istream& source, TextureDescription& desc)
 	png_bytepp rowPtrs = new png_bytep[desc.size.y]; 
 
 	for (int i = 0; i < desc.size.y; i++) 
-		rowPtrs[i] = static_cast<png_bytep>(desc.data.raw()) + (desc.size.y - 1 - i) * rowBytes;   
+		rowPtrs[i] = reinterpret_cast<png_bytep>(desc.data.binary()) + (desc.size.y - 1 - i) * rowBytes;   
 
 	png_read_image(pngPtr, rowPtrs); 
 
@@ -102,7 +102,7 @@ void PNGLoader::loadFromStream(std::istream& source, TextureDescription& desc)
 
 	if (desc.bitsPerPixel / desc.channels == 16)
 	{
-		unsigned short* data_ptr = reinterpret_cast<unsigned short*>(desc.data.raw());
+		unsigned short* data_ptr = reinterpret_cast<unsigned short*>(desc.data.binary());
 		for (size_t i = 0; i < desc.data.dataSize() / 2; ++i)
 		{
 			unsigned short value = data_ptr[i];

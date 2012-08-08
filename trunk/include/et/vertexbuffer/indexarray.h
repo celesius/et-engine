@@ -49,23 +49,35 @@ namespace et
 		IndexArray(IndexArrayFormat format, size_t size, IndexArrayContentType content);
 		void linearize();
 
-		IndexArrayFormat format() const;
-		IndexArrayContentType contentType() const;
-		size_t capacity() const;
-		size_t dataSize() const;
+		const unsigned char* data() const 
+			{ return _data.data(); }
+
+		size_t dataSize() const
+			{ return _data.dataSize(); }
+
+		size_t capacity() const
+			{ return _data.dataSize() / _format; }
+
+		IndexArrayFormat format() const
+			{ return _format; }
+
+		IndexArrayContentType contentType() const
+			{ return _contentType; }
+
+		size_t actualSize() const
+			{ return _actualSize; }
+
+		void setActualSize(size_t value)
+			{ _actualSize = value; }
+
+		size_t primitivesCount() const;
 
 		IndexType getIndex(size_t pos) const;
 		void setIndex(IndexType value, size_t pos);
 		void push_back(IndexType value);
-
-		size_t actualSize() const;
-		size_t primitivesCount() const;
-		void setActualSize(size_t value);
-
 		void resizeToFit(size_t count);
 		void compact();
 
-		const unsigned char* raw() const;
 		void serialize(std::ostream& stream);
 		void deserialize(std::istream& stream);
 

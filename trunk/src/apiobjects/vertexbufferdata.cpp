@@ -14,7 +14,7 @@ VertexBufferData::VertexBufferData(RenderState& rs, const VertexArray::Descripti
 	_dataSize(desc.data.dataSize()), _sourceTag(0), _vertexDrawType(vertexDrawType)
 {
 	glGenBuffers(1, &_vertexBuffer);
-	setData(desc.data.raw(), desc.data.dataSize());
+	setData(desc.data.data(), desc.data.dataSize());
 }
 
 VertexBufferData::VertexBufferData(RenderState& rs, const VertexDeclaration& decl, const void* vertexData, size_t vertexDataSize, 

@@ -571,7 +571,7 @@ RenderState::State RenderState::currentState()
 		s.lastCull = CullState_None;
 
 	vec4i vp;
-	glGetIntegerv(GL_VIEWPORT, vp.raw());
+	glGetIntegerv(GL_VIEWPORT, vp.data());
 	s.viewportSize = vec2i(vp.z, vp.w);
 	s.viewportSizeFloat = vec2(static_cast<float>(s.viewportSize.x), static_cast<float>(s.viewportSize.y));
 	s.mainViewportSize = s.viewportSize;

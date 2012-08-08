@@ -29,10 +29,10 @@ namespace et
 		vector3(T i_x, T i_y, T i_z) : x(i_x), y(i_y), z(i_z) { }
 		vector3(vector2<T>i_xy, T i_z) : x(i_xy.x), y(i_xy.y), z(i_z) { }
 
-		T* raw() 
+		T* data() 
 			{ return c; }
 
-		const T* raw() const
+		const T* data() const
 			{ return c; }
 
 		const char* binary() const

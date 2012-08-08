@@ -20,9 +20,6 @@ namespace et
 
 		virtual void fill(int) = 0;
 
-		virtual void* raw() = 0;
-		virtual const void* raw() const = 0;
-
 		virtual char* binary() = 0;
 		virtual const char* binary() const = 0;
 
@@ -51,20 +48,11 @@ namespace et
 		const T& operator [](int i) const
 			{ return data[i]; }
 
-		T* ptr()
-			{ return data; }
-
-		void* raw()
-			{ return data; }
-		
-		const void* raw() const
-			{ return data; };
-
 		char* binary()
-			{ return (char*)data; }
+			{ return reinterpret_cast<char*>(data); }
 		
 		const char* binary() const
-			{ return (char*)data; }
+			{ return reinterpret_cast<const char*>(data); }
 
 		const size_t size() const
 			{ return count; }
@@ -184,17 +172,11 @@ namespace et
 		const T& operator [](size_t i) const 
 			{ assert(i < _size); return _data[i]; } 
 
-		void* raw() 
-			{ return static_cast<void*>(_data); }
-
-		const void* raw() const
-			{ return static_cast<const void*>(_data); }
-
 		char* binary()
-			{ return (char*)(_data); }
+			{ return reinterpret_cast<char*>(_data); }
 
 		const char* binary() const
-			{ return (const char*)(_data); }
+			{ return reinterpret_cast<char*>(_data); }
 
 		void fitToSize(size_t size)
 		{
@@ -260,9 +242,6 @@ namespace et
 
 		void fill(int v)
 			{ memset(_data, v, _dataSize); }
-
-		void* raw() { return _data; }
-		const void* raw() const { return _data; }
 
 		char* binary() { return (char*)_data; };
 		const char* binary() const  { return (char*)_data; };

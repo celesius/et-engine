@@ -68,6 +68,7 @@ int Application::run(int argc, char* argv[])
 	_renderContext->init();
 
 	_delegate->applicationDidLoad(_renderContext);
+	_delegate->applicationWillResizeContext(_renderContext->sizei());
 
 	enterRunLoop(); 
 

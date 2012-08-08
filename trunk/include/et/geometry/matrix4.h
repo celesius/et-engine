@@ -85,16 +85,16 @@ namespace et
 			return *this;
 		}
 		
+		T* data()
+			{ return mat[0].data(); }  
+
 		const T* data() const
 			{ return mat[0].data(); }  
 
-		const void* raw() const
-			{ return mat[0].raw(); }  
-
-		const char* binary() const
+		char* binary()
 			{ return mat[0].binary(); }  
 
-		char* binary()
+		const char* binary() const
 			{ return mat[0].binary(); }  
 
 		T& operator ()(int i) 

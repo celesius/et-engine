@@ -31,26 +31,6 @@ void IndexArray::linearize()
 		setIndex(i, i);
 }
 
-IndexArrayFormat IndexArray::format() const
-{
-	return _format;
-}
-
-IndexArrayContentType IndexArray::contentType() const
-{
-	return _contentType;
-}
-
-size_t IndexArray::capacity() const
-{
-	return _data.dataSize() / _format;
-}
-
-size_t IndexArray::dataSize() const
-{
-	return _data.dataSize();
-}
-
 IndexType IndexArray::getIndex(size_t pos) const
 {
 	const unsigned char* ptr = _data.element_ptr(pos * _format);
@@ -99,11 +79,6 @@ void IndexArray::push_back(IndexType value)
 	setIndex(value, _actualSize++);
 }
 
-size_t IndexArray::actualSize() const
-{
-	return _actualSize;
-}
-
 size_t IndexArray::primitivesCount() const
 {
 	switch (_contentType)
@@ -135,16 +110,6 @@ void IndexArray::resizeToFit(size_t count)
 void IndexArray::compact()
 {
 	_data.resize(_actualSize * _format);
-}
-
-void IndexArray::setActualSize(size_t value)
-{
-	_actualSize = value;
-}
-
-const unsigned char* IndexArray::raw() const
-{
-	return _data.data();
 }
 
 IndexArray::PrimitiveIterator IndexArray::begin() const
