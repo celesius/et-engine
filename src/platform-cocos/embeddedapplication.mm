@@ -68,6 +68,13 @@ static etApplication* _sharedInstance = nil;
 	_loaded = YES;
 }
 
+- (void)unloadedInViewController:(UIViewController*)viewController
+{
+	application().quit();
+	delete _notifier, _notifier = 0;
+    _loaded = NO;
+}
+
 - (void)dealloc
 {
 	application().quit();
