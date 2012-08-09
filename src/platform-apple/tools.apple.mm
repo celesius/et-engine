@@ -46,8 +46,7 @@ std::string et::applicationPath()
     CFRelease(bUrl);
     
     size_t i = 0;
-    while ((
-            i < 256) && result[++i]) { };
+    while ((i < 256) && result[++i]) { };
     result[i] = '/';
     
     return std::string(result);
