@@ -65,6 +65,7 @@ void TextureCache::flush()
 		if (i->second->referenceCount() == 1)
 		{
 			TextureMap::iterator toErase = i;
+			std::cout << "Texture: " << toErase->first << " flushed." << std::endl;
 			++i;
 			_textures.erase(toErase);
 		}

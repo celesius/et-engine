@@ -96,6 +96,7 @@ void MaterialData::serialize(std::ostream& stream) const
 	for (TextureParameters::const_iterator i = _textureParameters.begin(), e = _textureParameters.end(); i != e; ++i)
 	{
 		std::string path = i->second.valid() ? i->second->name() : std::string();
+		std::cout << "Texture: `" << path << "`" << std::endl;
 		serializeInt(stream, i->first);
 		serializeString(stream, path);
 	}
