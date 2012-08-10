@@ -74,3 +74,51 @@ void Scene3dStorage::deserialize(std::istream& stream, ElementFactory*, SceneVer
 	assert(value == 0);
 	(void)(value);
 }
+
+void Scene3dStorage::flush()
+{
+	VertexArrayList::iterator vi = _vertexArrays.begin();
+	while (vi != _vertexArrays.end())
+	{
+		VertexArray* ptr = vi->ptr();
+		if (ptr->referenceCount() == 1)
+		{
+			vi = _vertexArrays.erase(vi);
+		}
+		else
+		{
+			++vi;
+		}
+	}
+	
+	MaterialList::iterator mi = _materials.begin();
+	while (mi != _materials.end())
+	{
+		MaterialData* ptr = mi->ptr();
+		if (ptr->referenceCount() == 1)
+		{
+			mi = _materials.erase(mi);
+		}
+		else
+		{
+			++mi;
+		}
+	}
+	
+	TextureList::iterator ti = _textures.begin();
+	while (ti != _textures.end())
+	{
+		TextureData* ptr = ti->ptr();
+		if (ptr->referenceCount() == 1)
+		{
+			ti = _textures.erase(ti);
+		}
+		else
+		{
+			++ti;
+		}
+	}
+
+	if (_indexArray.valid() && (_indexArray->referenceCount() == 1))
+		_indexArray = IndexArray::Pointer();
+}
