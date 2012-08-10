@@ -230,10 +230,16 @@ Element::Pointer Scene3d::createElementOfType(size_t type, Element* parent)
 
 Material Scene3d::materialWithId(int id)
 {
-	Scene3dStorage::Pointer s = childrenOfType(ElementType_Storage).front();
-	
-	for (MaterialList::iterator i = s->materials().begin(), e = s->materials().end(); i != e; ++i)
-		if ((*i)->tag == id) return *i;
+	Element::List storages = childrenOfType(ElementType_Storage);
+	for (Element::List::iterator si = storages.begin(), se = storages.end(); si != se; ++si)
+	{
+		Scene3dStorage* storage = static_cast<Scene3dStorage*>(si->ptr());
+		for (MaterialList::const_iterator i = storage->materials().begin(), e = storage->materials().end(); i != e; ++i)
+		{
+			const Material& data = *i;
+			if (data->tag == id) return data;
+		}
+	}
 	
 	return Material();
 }

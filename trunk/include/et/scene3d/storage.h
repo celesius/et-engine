@@ -53,6 +53,8 @@ namespace et
 			VertexArray::Pointer vertexArrayWithDeclaration(const VertexDeclaration& decl);
 			VertexArray::Pointer vertexArrayWithDeclarationForAppendingSize(const VertexDeclaration& decl, size_t size);
 			int indexOfVertexArray(const VertexArray::Pointer& va);
+			
+			void flush();
 
 		private:
 			Scene3dStorage* duplicate()
