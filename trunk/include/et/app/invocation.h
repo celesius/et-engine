@@ -183,10 +183,22 @@ namespace et
 			_aInvocation1.setTarget(this, &CLASS::METHOD, P1); \
 			_aInvocation1.invokeInMainRunLoop(); \
 		}
-	
+
+	#define ET_INVOKE_THIS_CLASS_METHOD1_DELAYED(CLASS, METHOD, P1, DELAY)		{ \
+			Invocation1 _aInvocation1; \
+			_aInvocation1.setTarget(this, &CLASS::METHOD, P1); \
+			_aInvocation1.invokeInMainRunLoop(DELAY); \
+		}
+
 	#define ET_INVOKE_THIS_CLASS_METHOD2(CLASS, METHOD, P1, P2)	{ \
 			Invocation2 _aInvocation2; \
 			_aInvocation2.setTarget(this, &CLASS::METHOD, P1, P2); \
 			_aInvocation2.invokeInMainRunLoop(); \
+		}
+
+	#define ET_INVOKE_THIS_CLASS_METHOD2_DELAYED(CLASS, METHOD, P1, P2, DELAY)	{ \
+			Invocation2 _aInvocation2; \
+			_aInvocation2.setTarget(this, &CLASS::METHOD, P1, P2); \
+			_aInvocation2.invokeInMainRunLoop(DELAY); \
 		}
 }
