@@ -39,7 +39,7 @@ void FontGenerator::fillCharacterDescriptors(const std::string& face, int size, 
 	for (CharacterRange::const_iterator i = range.begin(), e = range.end(); i != e; ++i)
 	{
 		SIZE charSize = { };
-		wchar_t wStr[2] = { *i, 0 };
+		wchar_t wStr[2] = { static_cast<wchar_t>(*i), 0 };
 		GetTextExtentPointW(dc, wStr, 1, &charSize);
 
 		CharDescriptor desc = CharDescriptor(*i, bold ? CharParameter_Bold : 0);
@@ -148,7 +148,7 @@ FontGeneratorResult FontGenerator::generate(ImageFormat fmt)
 
 	for (CharDescriptorList::iterator i = chars.begin(), e = chars.end(); i != e; ++i)
 	{
-		wchar_t wStr[2] = { i->value };
+		wchar_t wStr[2] = { static_cast<wchar_t>(i->value), 0 };
 		SelectObject(dc, reinterpret_cast<HFONT>(i->extra.z));
 
 		TextOutW(dc, static_cast<int>(i->origin.x) + i->extra.x, 	static_cast<int>(i->origin.y) + i->extra.y, wStr, 1);
