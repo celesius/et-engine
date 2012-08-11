@@ -297,7 +297,7 @@ png_inflate(png_structp png_ptr, png_bytep data, png_size_t size,
    /* avail_in is set below from 'size' */
    png_ptr->zstream.avail_in = 0;
 
-   while (1)
+   for (;;)
    {
       int ret, avail;
 

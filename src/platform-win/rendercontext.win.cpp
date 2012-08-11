@@ -426,7 +426,7 @@ bool RenderContextPrivate::initOpenGL(const RenderContextParameters& params)
 		if (primaryContext.hGLRC == 0)
 		{
 			DWORD lastError = GetLastError();
-			if (lastError = ERROR_INVALID_VERSION_ARB)
+			if (lastError == ERROR_INVALID_VERSION_ARB)
 				std::cout << "Error creating context: ERROR_INVALID_VERSION_ARB. Requested: " << params.openGLMaxVersion << std::endl;
 			else if (lastError == ERROR_INVALID_PROFILE_ARB)
 				std::cout << "Error creating context: ERROR_INVALID_PROFILE_ARB" << std::endl;
@@ -456,7 +456,7 @@ bool RenderContextPrivate::initOpenGL(const RenderContextParameters& params)
 			if (primaryContext.hGLRC == 0)
 			{
 				DWORD lastError = GetLastError();
-				if (lastError = ERROR_INVALID_VERSION_ARB)
+				if (lastError == ERROR_INVALID_VERSION_ARB)
 					std::cout << "Error creating context: ERROR_INVALID_VERSION_ARB. " <<
 								 "Requested: " << attrib_list[1] << "." << attrib_list[3] << std::endl;
 				else if (lastError == ERROR_INVALID_PROFILE_ARB)
