@@ -46,6 +46,10 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
 			if (async)
 			{
 				_loadingThread->addRequest(desc.source, renderContext()->screenScaleFactor(), texture, delegate);
+
+				Invocation1 i;
+				i.setTarget(delegate, &TextureLoaderDelegate::textureDidStartLoading, texture);
+				i.invokeInMainRunLoop();
 			}
 			else if (calledFromAnotherThread)
 			{
@@ -57,6 +61,10 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
 	else if (async && delegate)
 	{
 		Invocation1 i;
+
+		i.setTarget(delegate, &TextureLoaderDelegate::textureDidStartLoading, texture);
+		i.invokeInMainRunLoop();
+
 		i.setTarget(delegate, &TextureLoaderDelegate::textureDidLoad, texture);
 		i.invokeInMainRunLoop();
 	}
