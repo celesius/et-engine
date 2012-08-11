@@ -24,6 +24,7 @@ namespace et
 	public:
 		virtual ~TextureLoaderDelegate();
 
+		virtual void textureDidStartLoading(Texture t) = 0;
 		virtual void textureDidLoad(Texture t) = 0;
 
 	private:
