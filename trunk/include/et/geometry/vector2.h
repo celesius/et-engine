@@ -37,8 +37,11 @@ namespace et
 		const T* data() const
 			{ return c; }
 
+		char* binary()
+			{ return reinterpret_cast<char*>(c); }
+
 		const char* binary() const
-			{ return (const char*)(c); }
+			{ return reinterpret_cast<const char*>(c); }
 
 		bool operator == (const vector2& value) const
 			{ return (value.x == x) && (value.y == y); }

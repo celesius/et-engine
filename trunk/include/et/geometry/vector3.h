@@ -35,11 +35,11 @@ namespace et
 		const T* data() const
 			{ return c; }
 
-		const char* binary() const
-			{ return reinterpret_cast<const char*>(c); }
-
 		char* binary() 
 			{ return reinterpret_cast<char*>(c); }
+
+		const char* binary() const
+			{ return reinterpret_cast<const char*>(c); }
 
 		T& operator [] (int i)
 			{ return c[i]; }
