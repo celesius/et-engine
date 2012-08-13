@@ -18,11 +18,15 @@ namespace et
 {
 	inline void serializeInt(std::ostream& stream, int value)
 	{
+		assert(stream.good());
+
 		stream.write(reinterpret_cast<const char*>(&value), sizeof(value));
 	}
 
 	inline int deserializeInt(std::istream& stream)
 	{
+		assert(stream.good());
+
 		int value = 0;
 		stream.read(reinterpret_cast<char*>(&value), sizeof(value)); 
 		return value;
@@ -30,6 +34,8 @@ namespace et
 
 	inline void serializeString(std::ostream& stream, const std::string& s)
 	{
+		assert(stream.good());
+
 		serializeInt(stream, s.size());
 		if (s.size())
 			stream.write(s.c_str(), s.size());
@@ -37,6 +43,8 @@ namespace et
 
 	inline std::string deserializeString(std::istream& stream)
 	{
+		assert(stream.good());
+
 		int size = deserializeInt(stream);
 		DataStorage<char> value(size + 1, 0);
 		stream.read(value.binary(), size);
@@ -45,11 +53,15 @@ namespace et
 
 	inline void serializeFloat(std::ostream& stream, float value)
 	{
+		assert(stream.good());
+
 		stream.write(reinterpret_cast<const char*>(&value), sizeof(value));
 	}
 
 	inline float deserializeFloat(std::istream& stream)
 	{
+		assert(stream.good());
+
 		float value = 0;
 		stream.read(reinterpret_cast<char*>(&value), sizeof(value)); 
 		return value;
@@ -57,11 +69,17 @@ namespace et
 
 	template <typename T>
 	inline void serializeVector(std::ostream& stream, const T& value)
-		{ stream.write(value.binary(), sizeof(value)); }
+	{
+		assert(stream.good());
+
+		stream.write(value.binary(), sizeof(value)); 
+	}
 
 	template <typename T>
 	inline T deserializeVector(std::istream& stream)
 	{
+		assert(stream.good());
+
 		T value;
 		stream.read(value.binary(), sizeof(value)); 
 		return value;
@@ -69,12 +87,16 @@ namespace et
 
 	inline void serializeQuaternion(std::ostream& stream, const quaternion& value)
 	{
+		assert(stream.good());
+
 		serializeFloat(stream, value.scalar);
 		serializeVector(stream, value.vector);
 	}
 
 	inline quaternion deserializeQuaternion(std::istream& stream)
 	{
+		assert(stream.good());
+
 		quaternion result;
 		result.scalar = deserializeFloat(stream);
 		result.vector = deserializeVector<vec3>(stream);
@@ -83,11 +105,15 @@ namespace et
 
 	inline void serializeMatrix(std::ostream& stream, const mat4& value)
 	{
+		assert(stream.good());
+
 		stream.write(value.binary(), sizeof(value));
 	}
 
 	inline mat4 deserializeMatrix(std::istream& stream)
 	{
+		assert(stream.good());
+
 		mat4 value;
 		stream.read(value.binary(), sizeof(value));
 		return value;
