@@ -119,7 +119,7 @@ bool Button::pointerReleased(const PointerInputInfo& p)
 	if ((p.type != PointerType_General) || !_pressed) return false;
 
 	_pressed = false;
-	ElementState newState = newState = _selected ? ElementState_Selected : ElementState_Default;
+	ElementState newState = _selected ? ElementState_Selected : ElementState_Default;
 
 	if (containLocalPoint(p.pos))
 	{
