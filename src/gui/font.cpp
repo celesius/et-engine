@@ -127,7 +127,7 @@ CharDescriptor FontData::charDescription(int c)
 CharDescriptor FontData::boldCharDescription(int c)
 {
 	if (_generator.valid())
-		return _generator->charDescription(c);
+		return _generator->boldCharDescription(c);
 
 	CharDescriptorMap::const_iterator i = _boldChars.find(c);
 	return (i != _boldChars.end()) ? i->second : CharDescriptor(c, CharParameter_Bold, _biggestBoldChar * vec2(0.0f, 1.0f));
