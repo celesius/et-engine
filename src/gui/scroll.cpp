@@ -14,7 +14,8 @@ using namespace et::gui;
 float deccelerationRate = 10.0f;
 float accelerationRate = 0.5f;
 
-Scroll::Scroll(Element2d* parent) : Element2d(parent), _updateTime(0.0f)
+Scroll::Scroll(Element2d* parent) : Element2d(parent), _updateTime(0.0f),
+	_pointerCaptured(false), _manualScrolling(false)
 {
 	setFlag(ElementFlag_HandlesChildEvents);
 	startUpdates();
@@ -45,46 +46,61 @@ mat4 Scroll::finalInverseTransform()
 bool Scroll::pointerPressed(const PointerInputInfo& p)
 {
 	if (p.type == PointerType_General)
-		_dragging = false;
-	
+	{
+		_previousPointer = p;
+		_currentPointer = p;
+		_manualScrolling = false;
+		_pointerCaptured = false;
+		_velocity = vec2(0.0f);
+	}
+
 	broadcastPressed(p);
 	return true;
 }
 
 bool Scroll::pointerMoved(const PointerInputInfo& p)
 {
-	if (_dragging)
+	if (p.type == PointerType_General)
 	{
-		vec2 dp = p.pos - _dragPoint.pos;
-		float dt = etMax(0.01f, p.timestamp - _dragPoint.timestamp);
-		_velocity += accelerationRate * (dp / dt);
-		_velocity.x = 0.0f;
-		_dragPoint = p;
-		
-		invalidateChildren();
-		broadcastCancelled(p);
+		if (_manualScrolling)
+		{
+			applyOffset(p.pos - _currentPointer.pos);
+		}
+		else if (!_pointerCaptured)
+		{
+			_manualScrolling = true;
+			_pointerCaptured = true;
+			broadcastCancelled(p);
+		}
+		_previousPointer = _currentPointer;
+		_currentPointer = p;
 	}
-	else if (p.type == PointerType_General)
-	{
-		_dragging = true;
-		_dragPoint = p;
-	}
-	
+
 	return true;
 }
 
 bool Scroll::pointerReleased(const PointerInputInfo& p)
 {
-	if (_dragging)
+	if (p.type == PointerType_General)
 	{
-		broadcastCancelled(p);
-		_dragging = false;
+		if (!_pointerCaptured)
+			broadcastReleased(p);
+
+		_pointerCaptured = false;
+		_manualScrolling = false;
 	}
 	else 
 	{
 		broadcastReleased(p);
 	}
-	
+
+	return true;
+}
+
+bool Scroll::pointerCancelled(const PointerInputInfo& p)
+{
+	_pointerCaptured = false;
+	broadcastCancelled(p);
 	return true;
 }
 
@@ -108,15 +124,20 @@ void Scroll::broadcastPressed(const PointerInputInfo& p)
 	}
 }
 
+void Scroll::broadcastMoved(const PointerInputInfo& p)
+{
+	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
+	
+	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
+		(*i)->pointerMoved(PointerInputInfo(p.type, (*i)->positionInElement(globalPos.pos), globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
+}
+
 void Scroll::broadcastReleased(const PointerInputInfo& p)
 {
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
 	
 	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
-	{
-		if ((*i)->containsPoint(globalPos.pos, globalPos.normalizedPos))
-			(*i)->pointerReleased(PointerInputInfo(p.type, (*i)->positionInElement(globalPos.pos), globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
-	}
+		(*i)->pointerReleased(PointerInputInfo(p.type, (*i)->positionInElement(globalPos.pos), globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
 }
 
 void Scroll::broadcastCancelled(const PointerInputInfo& p)
@@ -134,22 +155,37 @@ bool Scroll::containsPoint(const vec2& p, const vec2& np)
 
 void Scroll::update(float t)
 {
-	float dt = (_updateTime == 0.0f) ? 0.0f : (t - _updateTime);
+	if (_updateTime == 0.0f)
+		_updateTime = t;
+
+	float deltaTime = t - _updateTime;
+
 	_updateTime = t;
-	
-	float dv = etMin(1.0f, dt * deccelerationRate);
-	_velocity -= dv * _velocity;
-	
-	vec2 dp = _velocity * dt;
-	if (dp.dotSelf() > 1.0e-6)
+
+	if (_manualScrolling)
 	{
-		updateOffset(dp);
+		float dt = _currentPointer.timestamp - _previousPointer.timestamp;
+		if (dt > 1.0e-2)
+		{
+			vec2 dp = _currentPointer.pos - _previousPointer.pos;
+			_velocity = mix(_velocity, dp * (accelerationRate / dt), 0.5f);
+		}
+		return;
 	}
+
+	float dt = etMin(1.0f, deltaTime * deccelerationRate);
+	_velocity -= _velocity * dt;
+
+	if (_velocity.dotSelf() < 1.0f)
+		_velocity = vec2(0.0f);
+
+	vec2 dp = _velocity * deltaTime;
+	if (dp.dotSelf() > 1.0e-6)
+		applyOffset(dp);
 }
 
 void Scroll::setContentSize(const vec2& cs)
 {
-	std::cout << "Content size: " << cs << std::endl;
 	_contentSize = cs;
 }
 
@@ -168,22 +204,23 @@ void Scroll::adjustContentSize()
 	setContentSize(size);
 }
 
-void Scroll::updateOffset(const vec2& dOffset)
+void Scroll::applyOffset(const vec2& dOffset)
 {
-	_offset += dOffset;
+	_offset += dOffset * vec2(0.0f, 1.0f);
+
 	vec2 actualOffset = -_offset;
-	
+
 	if (actualOffset.y < 0.0f)
+	{
 		_offset.y = 0.0f;
-	
+		_velocity.y = 0.0f;
+	}
+
 	if (actualOffset.y + size().y > _contentSize.y)
+	{
 		_offset.y = -_contentSize.y + size().y;
-/*
-	if (actualOffset.x < 0.0f)
-		_offset.x = 0.0f;
-	
-	if (actualOffset.x + size().x > _contentSize.x)
-		_offset.x = -_contentSize.x + size().x;
-*/	
+		_velocity.y = 0.0f;
+	}
+
 	invalidateChildren();
 }

@@ -28,6 +28,7 @@ namespace et
 			bool pointerPressed(const PointerInputInfo&);			
 			bool pointerMoved(const PointerInputInfo&);			
 			bool pointerReleased(const PointerInputInfo&);
+			bool pointerCancelled(const PointerInputInfo&);
 			bool containsPoint(const vec2& p, const vec2& np);
 			
 			const vec2& contentSize() const
@@ -39,19 +40,22 @@ namespace et
 		private:
 			void invalidateChildren();
 			void broadcastPressed(const PointerInputInfo&);
+			void broadcastMoved(const PointerInputInfo&);
 			void broadcastReleased(const PointerInputInfo&);
 			void broadcastCancelled(const PointerInputInfo&);
 			
 			void update(float t);
-			void updateOffset(const vec2& dOffset);
+			void applyOffset(const vec2& dOffset);
 			
 		private:
+			PointerInputInfo _currentPointer;
+			PointerInputInfo _previousPointer;
 			vec2 _contentSize;
-			vec2 _velocity;
 			vec2 _offset;
-			PointerInputInfo _dragPoint;
+			vec2 _velocity;
 			float _updateTime;
-			bool _dragging;
+			bool _pointerCaptured;
+			bool _manualScrolling;
 		};
 
 	}

@@ -11,7 +11,7 @@ const int defaultTextureSize = 1024;
 class et::gui::CharacterGeneratorPrivate
 {
 	public:
-		CharacterGeneratorPrivate(const std::string& face, size_t size);
+		CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size);
 		~CharacterGeneratorPrivate();
 
 		void updateTexture(RenderContext* rc, Texture texture);
@@ -28,10 +28,10 @@ class et::gui::CharacterGeneratorPrivate
 };
 
 CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face, const std::string& boldFace, size_t size) : _rc(rc),
-	_private(new CharacterGeneratorPrivate(face, size)), _face(face), _size(size)
+	_private(new CharacterGeneratorPrivate(face, boldFace, size)), _face(face), _boldFace(boldFace), _size(size)
 {
-	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(defaultTextureSize), GL_RGBA, GL_UNSIGNED_BYTE, 
-		BinaryDataStorage(), face + "font");
+	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(defaultTextureSize), GL_RGBA, 
+		GL_UNSIGNED_BYTE, BinaryDataStorage(), face + "font");
 
 	for (size_t i = 32; i < 128; ++i)
 		generateCharacter(i, false);
@@ -99,7 +99,7 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateT
  * Private
  */
 
-CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face, size_t size) : 
+CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size) : 
 	_placer(vec2i(defaultTextureSize), true)
 {
 	_dc = CreateCompatibleDC(0);
@@ -111,7 +111,7 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face, si
 	_font = CreateFont(pointsSize, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, OUT_CHARACTER_PRECIS, 
 		CLIP_CHARACTER_PRECIS, CLEARTYPE_NATURAL_QUALITY, FF_DONTCARE, face.c_str());
 	_boldFont = CreateFont(pointsSize, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, 
-		CLIP_DEFAULT_PRECIS, CLEARTYPE_NATURAL_QUALITY, FF_DONTCARE, face.c_str());
+		CLIP_DEFAULT_PRECIS, CLEARTYPE_NATURAL_QUALITY, FF_DONTCARE, boldFace.c_str());
 
 	SetTextColor(_dc, 0xffffff);
 	SetBkMode(_dc, TRANSPARENT);
@@ -130,7 +130,7 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, Texture texture
 
 	BinaryDataStorage data(bm.bmiHeader.biSizeImage);
 	GetDIBits(_dc, _bitmap, 0, defaultTextureSize, data.data(), &bm, DIB_RGB_COLORS);
-
+/*
 	for (size_t i = 0; i < data.dataSize() / 4; ++i)
 	{
 		data[4*i+3] = (76 * data[4*i+0] + 151 * data[4*i+1] + 28 * data[4*i+2]) / 255;
@@ -138,7 +138,7 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, Texture texture
 		data[4*i+1] = 255;
 		data[4*i+2] = 255;
 	}
-
+*/
 	texture->updateDataDirectly(rc, vec2i(defaultTextureSize), data.binary(), data.size());
 /* 
 	static int stage = 1;

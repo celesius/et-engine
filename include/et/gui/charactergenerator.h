@@ -64,6 +64,8 @@ namespace et
 			CharDescriptorMap _boldChars;
 
 			std::string _face;
+			std::string _boldFace;
+
 			size_t _size;
 		};
 
