@@ -212,8 +212,14 @@ bool Layout::pointerScrolled(const et::PointerInputInfo& p)
 
 Element* Layout::activeElement(const PointerInputInfo& p)
 {
-	Element* active = 0;
+	if (!_valid)
+	{
+		_topmostElements.clear();
+		for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
+			collectTopmostElements(i->ptr());
+	}
 
+	Element* active = 0;
 	for (Element::List::reverse_iterator i = _topmostElements.rbegin(), e = _topmostElements.rend(); i != e; ++i)
 	{
 		active = getActiveElement(p, i->ptr());
@@ -309,10 +315,6 @@ void Layout::setActiveElement(Element* e)
 void Layout::setInvalid()
 {
 	_valid = false;
-	_topmostElements.clear();
-
-	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
-		collectTopmostElements(i->ptr());
 }
 
 void Layout::collectTopmostElements(Element* element)

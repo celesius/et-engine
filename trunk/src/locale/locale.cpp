@@ -6,6 +6,7 @@
 */
 
 #include <fstream>
+#include <stdio.h>
 #include <stdarg.h>
 #include <et/core/tools.h>
 #include <et/locale/locale.h>
@@ -234,20 +235,32 @@ std::string et::localized(const std::string& key)
 {
 	return Locale::instance().localizedString(key); 
 }
-
+/*
 std::string et::localizedPrintf(const std::string& key, ...)
 {
     va_list list;
-   
+	std::string localizedKey = localized(key);
+
+#if (ET_PLATFORM_WIN)
+	StringDataStorage buffer(2048, 0);
+	const char* format = localizedKey.c_str();
     va_start(list, key);
-    size_t amount = vsnprintf(0, 0, localized(key).c_str(), list);
+	int i0 = va
+	vsprintf(buffer.data(), format, list);
+	va_end(list);
+
+#else
+    va_start(list, key);
+    size_t amount = vsnprintf(0, 0, localizedKey.c_str(), list);
     va_end(list);
     
 	StringDataStorage buffer(amount + 2, 0);
     
     va_start(list, key);
-	vsnprintf(buffer.data(), amount + 1, localized(key).c_str(), list);
+	vsnprintf(buffer.data(), amount + 1, localizedKey.c_str(), list);
     va_end(list);
-    
+#endif
+
 	return std::string(buffer.data());
 }
+*/

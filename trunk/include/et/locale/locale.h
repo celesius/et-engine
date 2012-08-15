@@ -41,5 +41,6 @@ namespace et
 	};
 
 	std::string localized(const std::string& key);
-	std::string localizedPrintf(const std::string& key, ...);
+
+	#include <et/locale/locale.ext.h>
 }
