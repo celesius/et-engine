@@ -19,6 +19,7 @@ namespace et
 		Blend_Disabled,
 		Blend_Current,
 		Blend_Default,
+		Blend_AlphaPremultiplied,
 		Blend_Additive,
 		Blend_AlphaAdditive,
 		Blend_ColorAdditive
