@@ -56,7 +56,9 @@ void RenderState::setMainViewportSize(const vec2i& sz, bool force)
 	_currentState.mainViewportSize = sz;
 	_currentState.mainViewportSizeFloat = vec2(static_cast<float>(sz.x), static_cast<float>(sz.y));
 
-	bool shouldSetViewport = (_currentState.boundFramebuffer == 0) || (_defaultFramebuffer.valid() && (_currentState.boundFramebuffer == _defaultFramebuffer->glID()));
+	bool shouldSetViewport = (_currentState.boundFramebuffer == 0) ||
+		(_defaultFramebuffer.valid() && (_currentState.boundFramebuffer == _defaultFramebuffer->glID()));
+	
 	if (shouldSetViewport)
 		etViewport(0, 0, _currentState.mainViewportSize.x, _currentState.mainViewportSize.y);
 }
@@ -325,6 +327,12 @@ void RenderState::setBlend(bool enable, BlendState blend)
 				glBlendFunc(GL_SRC_ALPHA, GL_ONE); 
 				break;
 			}
+				
+		case Blend_AlphaPremultiplied:
+			{
+				glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+				break;
+			}
 
 		case Blend_ColorAdditive: 
 			{
@@ -332,7 +340,8 @@ void RenderState::setBlend(bool enable, BlendState blend)
 				break;
 			}
 
-		default: { }
+		default:
+			break;
 		}
 	}
 }
@@ -546,7 +555,6 @@ RenderState::State RenderState::currentState()
 	glGetIntegerv(GL_CURRENT_PROGRAM, &value);
 	s.boundProgram = value;
 
-	s.blendEnabled = glIsEnabled(GL_BLEND) != 0;
 	s.depthTestEnabled = glIsEnabled(GL_DEPTH_TEST) != 0;
 	s.polygonOffsetFillEnabled = glIsEnabled(GL_POLYGON_OFFSET_FILL) != 0;
 	
@@ -589,7 +597,48 @@ RenderState::State RenderState::currentState()
 
 	// TODO: get this from state, too lazy now.
 	s.wireframe = false;
-	s.lastBlend = s.blendEnabled ? Blend_Default : Blend_Disabled;
+	
+	value = 0;
+	glGetIntegerv(GL_BLEND, &value);
+	s.blendEnabled = value != 0;
+	
+	int blendDest = 0;
+	glGetIntegerv(GL_BLEND_DST_RGB, &blendDest);
+	
+	int blendSource = 0;
+	glGetIntegerv(GL_BLEND_SRC_RGB, &blendSource);
+
+	if ((blendSource == GL_SRC_ALPHA) && (blendDest == GL_ONE_MINUS_SRC_ALPHA))
+	{
+		s.lastBlend = Blend_Default;
+	}
+	else if ((blendSource == GL_ONE) && (blendDest == GL_ONE_MINUS_SRC_ALPHA))
+	{
+		s.lastBlend = Blend_AlphaPremultiplied;
+	}
+	else if ((blendSource == GL_ONE) && (blendDest == GL_ZERO))
+	{
+		s.lastBlend = Blend_Disabled;
+	}
+	else if ((blendSource == GL_ONE) && (blendDest == GL_ONE))
+	{
+		s.lastBlend = Blend_Additive;
+	}
+	else if ((blendSource == GL_SRC_ALPHA) && (blendDest == GL_ONE))
+	{
+		s.lastBlend = Blend_AlphaAdditive;
+	}
+	else if ((blendSource == GL_SRC_COLOR) && (blendDest == GL_ONE))
+	{
+		s.lastBlend = Blend_ColorAdditive;
+	}
+	else
+	{
+		std::cout << "Unsupported blend combination: " << glBlendFuncToString(blendSource) <<
+						", " << glBlendFuncToString(blendDest) << std::endl;
+		
+		assert("Unsupported blend combination" && 0);
+	}
 
 	checkOpenGLError(keyCurrentStateEnd);
 	

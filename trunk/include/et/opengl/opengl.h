@@ -132,6 +132,7 @@ namespace et
 	std::string glTexTargetToString(int target);
 	std::string glInternalFormatToString(int format);
 	std::string glTypeToString(int type);
+	std::string glBlendFuncToString(int value);
 
 	void validateExtensions();
 
