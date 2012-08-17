@@ -12,7 +12,7 @@ using namespace et;
 using namespace et::gui;
 
 Button::Button(const std::string& title, Font font, Element2d* parent) : Element2d(parent), 
-	_title(title), _font(font), _textSize(font->measureStringSize(title)), _textColor(vec3(0.0f), 1.0f),
+	_title(title), _font(font), _textSize(font->measureStringSize(title, true)), _textColor(vec3(0.0f), 1.0f),
 	_textPressedColor(vec3(0.0f), 1.0f), _type(Button::Type_PushButton), _state(ElementState_Default), 
 	_imageLayout(ImageLayout_Left),	_pressed(false), _hovered(false), _selected(false)
 {
@@ -77,7 +77,7 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 		vec4 aColor = _state == ElementState_Pressed ? _textPressedColor : _textColor;
 		if (aColor.w > 0.0f)
 		{
-			gr.createStringVertices(_textVertices, _font->buildString(_title), ElementAlignment_Near, ElementAlignment_Near,
+			gr.createStringVertices(_textVertices, _font->buildString(_title, true), ElementAlignment_Near, ElementAlignment_Near,
 				textOrigin, aColor * alphaScaleColor, transform, GuiRenderLayer_Layer1);
 		}
 	}
@@ -192,7 +192,7 @@ void Button::setTitle(const std::string& t)
 	if (_title == t) return;
 
 	_title = t;
-	_textSize = _font->measureStringSize(_title);
+	_textSize = _font->measureStringSize(_title, true);
 	invalidateContent();
 }
 
@@ -230,7 +230,7 @@ void Button::adjustSizeForText(const std::string& text, float duration)
 
 vec2 Button::sizeForText(const std::string& text)
 {
-	vec2 textSize = _font->measureStringSize("AA" + text + "AA");
+	vec2 textSize = _font->measureStringSize("AA" + text + "AA", true);
 	
 	for (size_t i = 0; i < ElementState_max; ++i)
 		textSize = maxv(textSize, _background[i].descriptor.size);

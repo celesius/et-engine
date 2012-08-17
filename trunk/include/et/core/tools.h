@@ -38,11 +38,17 @@ namespace et
 	std::string unicodeToUtf8(const std::wstring& w);
 	std::wstring utf8ToUnicode(const std::string& mbcs);
 
-	// common code
+	/*
+	 * Common code
+	 */
+	inline bool isNewLineChar(char c)
+		{ return (c == 13) || (c == 10); }
 	inline bool isWhitespaceChar(char c)
 		{ return (c == 32) || (c == 13) || (c == 10) || (c == 9); }
 	inline bool isWhitespaceChar(wchar_t c)
 		{ return (c == 32) || (c == 13) || (c == 10) || (c == 9); }
+	inline bool isNewLineChar(wchar_t c)
+		{ return (c == 13) || (c == 10); }
 
 	inline void lowercase(std::string& str)
 	{

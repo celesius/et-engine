@@ -44,7 +44,8 @@ void MessageView::layout(const vec2& sz)
 	_fade->setFrame(vec2(0.0f), sz);
 	
 	float contentWidth = 0.9f * maxv(_background->imageDescriptor().size, 0.95f * sz).x;
-	_text->fitToWidth(contentWidth);
+	if (_text->textSize().x > contentWidth)
+		_text->fitToWidth(contentWidth);
 	
 	vec2 buttonsSize = 3.5f * maxv(_button1->size(), _button2->size());
 	
