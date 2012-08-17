@@ -11,7 +11,7 @@
 using namespace et;
 using namespace et::gui;
 
-Label::Label(const std::string& text, Font font, Element2d* parent) : 
+Label::Label(const std::string& text, Font font, Element2d* parent) :
 	Element2d(parent), _text(text), _nextText(text), _font(font), _vertices(0),
 	_backgroundColor(0.0f), _shadowOffset(1.0f), _textFade(0.0f), _textFadeDuration(0.0f), _textFadeStartTime(0.0f),
 	_horizontalAlignment(ElementAlignment_Near), _verticalAlignment(ElementAlignment_Near),
@@ -35,7 +35,6 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 
 	vec2 textOffset = size() * vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment));
 	
-	_textSize = _font->measureStringSize(_text, _allowFormatting);
 	_vertices.setOffset(0);
 
 	bool hasShadow = _shadowColor.w > 0.0f;
@@ -47,8 +46,6 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 	{
 		float fadeIn = sqrt(_textFade);
 		float fadeOut = 1.0f - sqr(_textFade);
-
-		_nextTextSize = _font->measureStringSize(_nextText, _allowFormatting);
 
 		if (hasShadow)
 		{
@@ -89,6 +86,7 @@ void Label::setText(const std::string& text, float duration)
 	if (duration == 0.0f)
 	{
 		_text = text;
+		_textSize = _font->measureStringSize(_text, _allowFormatting);
 		adjustSize();
 	}
 	else 
@@ -96,9 +94,14 @@ void Label::setText(const std::string& text, float duration)
 		startUpdates();
 
 		if (_animatingText)
+		{
 			_text = _nextText;
-
+			_textSize = _font->measureStringSize(_text, _allowFormatting);
+		}
+		
 		_nextText = text;
+		_nextTextSize = _font->measureStringSize(_nextText, _allowFormatting);
+		
 		_textFade = 0.0f;
 		_animatingText = true;
 		_textFadeStartTime = actualTime();
@@ -128,8 +131,13 @@ void Label::update(float t)
 	{
 		_textFade = 0.0f;
 		_animatingText = false;
+		
 		_text = _nextText;
+		_textSize = _font->measureStringSize(_text, _allowFormatting);
+		
 		_nextText = std::string();
+		_nextTextSize = vec2(0.0f);
+		
 		adjustSize();
 		cancelUpdates();
 	}
@@ -181,9 +189,12 @@ void Label::fitToWidth(float w)
 	std::string oldText = _text;
 	std::string latestLine;
 	
+	const std::string dividers(" \n\t\r");
+	
 	while (oldText.size())
 	{
-		size_t wsPos = oldText.find_first_of(" \n\t\r");
+		size_t wsPos = oldText.find_first_of(dividers);
+		
 		if (wsPos == std::string::npos)
 		{
 			std::string appended = latestLine + oldText;
@@ -193,22 +204,43 @@ void Label::fitToWidth(float w)
 		}
 		
 		std::string word = oldText.substr(0, wsPos);
-		std::string nWord = oldText.substr(0, wsPos+1);
-		std::string appended = latestLine + word;
 		
-		vec2 measuredSize = _font->measureStringSize(appended);
-		if (measuredSize.x < w)
+		char nextCharStr[] = { oldText[wsPos++], 0 };
+		oldText.erase(0, wsPos);
+		
+		std::string appended = latestLine + word;
+		if (!isNewLineChar(nextCharStr[0]))
+			appended.append(nextCharStr);
+		
+		if (_font->measureStringSize(appended).x < w)
 		{
-			latestLine.append(nWord);
-			newText.append(nWord);
+			newText.append(word);
+			latestLine.append(word);
+			if (isNewLineChar(nextCharStr[0]))
+			{
+				latestLine = std::string();
+				newText.append("\n");
+			}
+			else
+			{
+				newText.append(nextCharStr);
+				latestLine.append(nextCharStr);
+			}
 		}
 		else
 		{
-			newText.append("\n" + nWord);
-			latestLine = nWord;
+			newText.append("\n" + word);
+			if (isNewLineChar(nextCharStr[0]))
+			{
+				latestLine = std::string();
+				newText.append("\n");
+			}
+			else
+			{
+				newText.append(nextCharStr);
+				latestLine = word + nextCharStr;
+			}
 		}
-		
-		oldText.erase(0, nWord.size());
 	}
 	
 	setText(newText);
