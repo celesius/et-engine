@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <et/geometry/rectplacer.h>
 #include <et/gui/charactergenerator.h>
+#include <et/imaging/imagewriter.h>
 
 using namespace et;
 using namespace et::gui;
@@ -19,6 +20,10 @@ class et::gui::CharacterGeneratorPrivate
 		void renderBoldCharacter(int value, const vec2i& position);
 
 	public:
+		size_t _size;		
+		std::string _face;
+		std::string _boldFace;
+
 		RectPlacer _placer;
 
 		HDC _dc;
@@ -100,7 +105,7 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateT
  */
 
 CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size) : 
-	_placer(vec2i(defaultTextureSize), true)
+	_size(size), _face(face), _boldFace(boldFace), _placer(vec2i(defaultTextureSize), true)
 {
 	_dc = CreateCompatibleDC(0);
 	_bitmap = CreateBitmap(defaultTextureSize, defaultTextureSize, 1, 32, 0);
@@ -130,27 +135,28 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, Texture texture
 
 	BinaryDataStorage data(bm.bmiHeader.biSizeImage);
 	GetDIBits(_dc, _bitmap, 0, defaultTextureSize, data.data(), &bm, DIB_RGB_COLORS);
-/*
-	for (size_t i = 0; i < data.dataSize() / 4; ++i)
+
+	for (size_t i = 0, e = data.dataSize() / 4; i != e; ++i)
 	{
-		data[4*i+3] = (76 * data[4*i+0] + 151 * data[4*i+1] + 28 * data[4*i+2]) / 255;
-		data[4*i+0] = 255;
-		data[4*i+1] = 255;
-		data[4*i+2] = 255;
+		size_t index = 4 * i;
+		data[index+3] = (76 * data[index] + 151 * data[index+1] + 28 * data[index+2]) / 255;
+		data[index+0] = 255;
+		data[index+1] = 255;
+		data[index+2] = 255;
 	}
-*/
+
 	texture->updateDataDirectly(rc, vec2i(defaultTextureSize), data.binary(), data.size());
-/* 
+/*  *
 	static int stage = 1;
 	char path[256] = { };
-	sprintf(path, "d:\\test-%02d.png", stage++);
+	sprintf(path, "d:\\fonts\\%s (%s) - %u - stage %02d.png", _face.c_str(), _boldFace.c_str(), _size, stage++);
 	ImageWriter::writeImageToFile(path, data, vec2i(defaultTextureSize), 4, 8, ImageFormat_PNG);
 // */
 }
 
 void CharacterGeneratorPrivate::renderCharacter(int value, const vec2i& position)
 {
-	RECT r = { position.x, position.y, defaultTextureSize - position.x, defaultTextureSize - position.y };
+	RECT r = { position.x, position.y, defaultTextureSize, defaultTextureSize };
 	wchar_t string[2] = { value, 0 };
 
 	SelectObject(_dc, _font);
@@ -159,7 +165,7 @@ void CharacterGeneratorPrivate::renderCharacter(int value, const vec2i& position
 
 void CharacterGeneratorPrivate::renderBoldCharacter(int value, const vec2i& position)
 {
-	RECT r = { position.x, position.y, defaultTextureSize - position.x, defaultTextureSize - position.y };
+	RECT r = { position.x, position.y, defaultTextureSize, defaultTextureSize };
 	wchar_t string[2] = { value, 0 };
 
 	SelectObject(_dc, _boldFont);
