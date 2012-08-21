@@ -227,15 +227,14 @@ void Element2d::animatorUpdated(BaseAnimator* a)
 
 void Element2d::animatorFinished(BaseAnimator* a)
 {
-	if (_animations.size())
-	{
-		AnimatorList::iterator i = find(_animations.begin(), _animations.end(), a);
-		if (i != _animations.end())
-			_animations.erase(i);
-	}
-
 	elementAnimationFinished.invoke(this, ElementAnimatedPropery(a->tag));
-	a->destroy();
+	
+	AnimatorList::iterator i = find(_animations.begin(), _animations.end(), a);
+	if (i != _animations.end())
+	{
+		_animations.erase(i);
+		a->destroy();
+	}
 }
 
 bool Element2d::containsPoint(const vec2& p, const vec2&) 
