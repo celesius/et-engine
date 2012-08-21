@@ -49,7 +49,6 @@ namespace et
 			
 		private:
 			size_t _buttonFlags;
-			ImageView::Pointer _fade;
 			ImageView::Pointer _background;
 			
 			ImageView::Pointer _imgBackground;

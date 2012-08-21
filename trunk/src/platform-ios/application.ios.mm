@@ -23,7 +23,7 @@ using namespace et;
 IApplicationDelegate* et::Application::_delegate = 0;
 
 Application::Application() : 
-_renderContext(0), _running(false), _exitCode(0), _lastQueuedTime(queryTime())
+	_renderContext(0), _running(false), _exitCode(0), _lastQueuedTime(queryTime())
 {
 }
 

@@ -332,6 +332,12 @@ void Layout::collectTopmostElements(Element* element)
  * Modal Layout
  */
 
+ModalLayout::ModalLayout()
+{
+	_backgroundFade = ImageView::Pointer(new ImageView(Texture(), this));
+	_backgroundFade->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.25f));
+}
+
 bool ModalLayout::pointerPressed(const et::PointerInputInfo& p)
 {
 	Layout::pointerPressed(p);
