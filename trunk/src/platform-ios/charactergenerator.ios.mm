@@ -126,6 +126,8 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face, co
 	CGContextSetFillColorWithColor(_context, [[UIColor whiteColor] CGColor]);
 	CGContextSetShouldAntialias(_context, YES);
 	CGContextSetShouldSmoothFonts(_context, YES);
+	CGContextSetShouldSubpixelPositionFonts(_context, YES);
+	CGContextSetShouldSubpixelQuantizeFonts(_context, NO);
 }
 
 CharacterGeneratorPrivate::~CharacterGeneratorPrivate()

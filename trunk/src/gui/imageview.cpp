@@ -59,14 +59,20 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 	else if (_contentMode == ContentMode_Fit)
 	{
 		vec2 frameSize = size();
-
-		float imageAspect = _descriptor.size.aspect();
-		float frameAspect = frameSize.aspect();
 		
-		if (frameAspect > 1.0f)
-			frameSize.x = frameSize.x * imageAspect / frameAspect;
+		if ((_descriptor.size.x > frameSize.x) || (_descriptor.size.y > frameSize.y))
+		{
+			float imageAspect = _descriptor.size.aspect();
+			float frameAspect = frameSize.aspect();
+			if (frameAspect > 1.0f)
+				frameSize.x = frameSize.x * imageAspect / frameAspect;
+			else
+				frameSize.y = frameSize.y / imageAspect * frameAspect;
+		}
 		else
-			frameSize.y = frameSize.y / imageAspect * frameAspect;
+		{
+			frameSize = _descriptor.size;
+		}
 		
 		vec2 origin = 0.5f * (size() - frameSize);
 		g.createImageVertices(_vertices, _texture, _descriptor, rect(origin, frameSize), color(), transform, GuiRenderLayer_Layer0);
