@@ -39,6 +39,7 @@ namespace et
 			CharDescriptorList buildString(const std::wstring& s, bool formatted = false);
 
 			vec2 measureStringSize(const std::string& s, bool formatted = false);
+			vec2 measureStringSize(const std::wstring& s, bool formatted = false);
 			vec2 measureStringSize(const CharDescriptorList& s);
 
 		private:

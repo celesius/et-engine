@@ -174,6 +174,11 @@ vec2 FontData::measureStringSize(const std::string& s, bool formatted)
 	return measureStringSize(formatted ? parseString(s) : buildString(s, formatted));
 }
 
+vec2 FontData::measureStringSize(const std::wstring& s, bool formatted)
+{
+	return measureStringSize(formatted ? parseString(s) : buildString(s, formatted));
+}
+
 CharDescriptorList FontData::buildString(const std::string& s, bool formatted)
 {
 	if (isUtf8String(s))
