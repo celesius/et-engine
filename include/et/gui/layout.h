@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <et/gui/Element2d.h>
-#include <et/gui/element3d.h>
+#include <et/gui/element2d.h>
 #include <et/gui/keyboard.h>
+#include <et/gui/imageview.h>
 
 namespace et
 {
@@ -73,11 +73,20 @@ namespace et
 
 		class ModalLayout : public Layout
 		{
+		public:
+			ModalLayout();
+						
 		protected:
+			ImageView::Pointer backgroundFade()
+				{ return _backgroundFade; }
+
 			bool pointerPressed(const et::PointerInputInfo&);
 			bool pointerMoved(const et::PointerInputInfo&);
 			bool pointerReleased(const et::PointerInputInfo&);
 			bool pointerScrolled(const et::PointerInputInfo&);
+			
+		private:
+			ImageView::Pointer _backgroundFade;
 		};
 	}
 }

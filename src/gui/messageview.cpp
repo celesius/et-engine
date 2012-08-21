@@ -14,10 +14,7 @@ using namespace et::gui;
 MessageView::MessageView(const std::string& text, Font font, const Image& image, size_t buttons,
 						 const std::string& button1title, const std::string& button2title) : _buttonFlags(buttons)
 {
-	_fade = ImageView::Pointer(new ImageView(Texture(), this));
-	_fade->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.25f));
-	
-	_background = ImageView::Pointer(new ImageView(Texture(), _fade.ptr()));
+	_background = ImageView::Pointer(new ImageView(Texture(), backgroundFade().ptr()));
 	_background->setPivotPoint(vec2(0.5f));
 	
 	_imgBackground = ImageView::Pointer(new ImageView(image, _background.ptr()));
@@ -41,7 +38,7 @@ MessageView::MessageView(const std::string& text, Font font, const Image& image,
 
 void MessageView::layout(const vec2& sz)
 {
-	_fade->setFrame(vec2(0.0f), sz);
+	backgroundFade()->setFrame(vec2(0.0f), sz);
 	
 	float contentWidth = 0.9f * maxv(_background->imageDescriptor().size, 0.95f * sz).x;
 	if (_text->textSize().x > contentWidth)
