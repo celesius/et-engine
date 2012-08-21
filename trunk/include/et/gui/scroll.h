@@ -33,8 +33,14 @@ namespace et
 			
 			const vec2& contentSize() const
 				{ return _contentSize; }
+			const vec2& offset() const
+				{ return _offset; }
 			
 			void setContentSize(const vec2& cs);
+			
+			void setOffset(const vec2& aOffset, float duration = 0.0f);
+			void applyOffset(const vec2& dOffset, float duration = 0.0f);
+			
 			void adjustContentSize();
 			
 		private:
@@ -45,9 +51,14 @@ namespace et
 			void broadcastCancelled(const PointerInputInfo&);
 			
 			void update(float t);
-			void applyOffset(const vec2& dOffset);
+			
+			void animatorUpdated(BaseAnimator*);
+			void animatorFinished(BaseAnimator*);
+			
+			void internal_setOffset(const vec2& o);
 			
 		private:
+			Vector2Animator _offsetAnimator;
 			PointerInputInfo _currentPointer;
 			PointerInputInfo _previousPointer;
 			vec2 _contentSize;

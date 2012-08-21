@@ -5,6 +5,7 @@
  *
  */
 
+#include <et/app/application.h>
 #include <et/gui/scroll.h>
 #include <et/gui/guirenderer.h>
 
@@ -14,9 +15,10 @@ using namespace et::gui;
 float deccelerationRate = 10.0f;
 float accelerationRate = 0.5f;
 
-Scroll::Scroll(Element2d* parent) : Element2d(parent), _updateTime(0.0f),
-	_pointerCaptured(false), _manualScrolling(false)
+Scroll::Scroll(Element2d* parent) : Element2d(parent), _offsetAnimator(0, 0, mainTimerPool()),
+	_updateTime(0.0f), _pointerCaptured(false), _manualScrolling(false)
 {
+	_offsetAnimator.setDelegate(this);
 	setFlag(ElementFlag_HandlesChildEvents);
 	startUpdates();
 }
@@ -191,36 +193,66 @@ void Scroll::setContentSize(const vec2& cs)
 
 void Scroll::adjustContentSize()
 {
-	if (children().size() == 0)
-	{
-		setContentSize(vec2(0.0f));
-		return;
-	}
+	vec2 size;
 	
-	vec2 size = children().front()->origin() + children().front()->size();
 	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
-		size = maxv(size, (*i)->origin() + (*i)->size());
+	{
+		Element* ptr = i->ptr();
+		if (ptr->visible())
+			size = maxv(size, ptr->origin() + ptr->size());
+	}
 	
 	setContentSize(size);
 }
 
-void Scroll::applyOffset(const vec2& dOffset)
+void Scroll::applyOffset(const vec2& dOffset, float duration)
 {
-	_offset += dOffset * vec2(0.0f, 1.0f);
+	setOffset(_offset + dOffset, duration);
+}
 
+void Scroll::setOffset(const vec2& aOffset, float duration)
+{
+	_offsetAnimator.cancelUpdates();
+	
+	if (duration == 0.0f)
+	{
+		internal_setOffset(aOffset);
+	}
+	else
+	{
+		_offsetAnimator.animate(&_offset, _offset, aOffset, duration);
+	}
+}
+
+void Scroll::internal_setOffset(const vec2& o)
+{
+	_offset = o * vec2(0.0f, 1.0f);
 	vec2 actualOffset = -_offset;
-
+	
 	if (actualOffset.y < 0.0f)
 	{
 		_offset.y = 0.0f;
 		_velocity.y = 0.0f;
 	}
-
+	
 	if (actualOffset.y + size().y > _contentSize.y)
 	{
 		_offset.y = -_contentSize.y + size().y;
 		_velocity.y = 0.0f;
 	}
-
+	
 	invalidateChildren();
+}
+
+void Scroll::animatorUpdated(BaseAnimator* a)
+{
+	if (a == &_offsetAnimator)
+		internal_setOffset(_offset);
+	
+	Element2d::animatorUpdated(a);
+}
+
+void Scroll::animatorFinished(BaseAnimator* a)
+{
+	Element2d::animatorFinished(a);
 }
