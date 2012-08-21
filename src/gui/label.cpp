@@ -86,7 +86,6 @@ void Label::setText(const std::string& text, float duration)
 	if (duration == 0.0f)
 	{
 		_text = text;
-		_textSize = _font->measureStringSize(_text, _allowFormatting);
 		adjustSize();
 	}
 	else 
