@@ -11,72 +11,151 @@
 using namespace et;
 using namespace et::gui;
 
-MessageView::MessageView(const std::string& text, Font font, const Image& image, size_t buttons,
-						 const std::string& button1title, const std::string& button2title) : _buttonFlags(buttons)
+MessageView::MessageView(const std::string& title, const std::string& text, Font font, const Image& bgImage,
+						 const std::string& button1title, const std::string& button2title)
 {
-	_background = ImageView::Pointer(new ImageView(Texture(), backgroundFade().ptr()));
-	_background->setPivotPoint(vec2(0.5f));
+	_imgBackground = ImageView::Pointer(new ImageView(bgImage, backgroundFade().ptr()));
 	
-	_imgBackground = ImageView::Pointer(new ImageView(image, _background.ptr()));
-	_imgImage = ImageView::Pointer(new ImageView(Texture(), _background.ptr()));
+	_imgImage = ImageView::Pointer(new ImageView(Texture(), _imgBackground.ptr()));
+	_text = Label::Pointer(new Label(text, font, _imgBackground.ptr()));
+	_title = Label::Pointer(new Label("<b>" + title + "</b>", font, _imgBackground.ptr()));
+	_button1 = Button::Pointer(new Button(button1title, font, _imgBackground.ptr()));
+	_button2 = Button::Pointer(new Button(button2title, font, _imgBackground.ptr()));
+	_buttonCommon = Button::Pointer(new Button(std::string(), font, backgroundFade().ptr()));
+	
+	_imgBackground->setPivotPoint(vec2(0.5f));
+	
 	_imgImage->setPivotPoint(vec2(0.5f, 0.0f));
 	_imgImage->setContentMode(ImageView::ContentMode_Fit);
 	
-	_text = Label::Pointer(new Label(text, font, _background.ptr()));
 	_text->setPivotPoint(vec2(0.5f, 0.0f));
 	_text->setHorizontalAlignment(ElementAlignment_Center);
+	_text->setShadowColor(vec4(0.0f, 0.0f, 0.0f, 0.75f));
+
+	_title->setPivotPoint(vec2(0.5f, 0.0f));
+	_title->setHorizontalAlignment(ElementAlignment_Center);
+	_title->setAllowFormatting(true);
+	_title->setShadowColor(vec4(0.0f, 0.0f, 0.0f, 0.75f));
 	
-	_button1 = Button::Pointer(new Button(button1title, font, _background.ptr()));
-	_button1->clicked.connect(this, &MessageView::buttonClicked);
-	_button1->setPivotPoint(hasSecondButton() ? vec2(0.0f, 1.0f) : vec2(0.5f, 1.0f));
-	
-	_button2 = Button::Pointer(new Button(button2title, font, _background.ptr()));
 	_button2->clicked.connect(this, &MessageView::buttonClicked);
-	_button2->setPivotPoint(vec2(1.0f, 1.0f));
-	_button2->setVisible(hasSecondButton());
+	_button1->clicked.connect(this, &MessageView::buttonClicked);
+	_buttonCommon->clicked.connect(this, &MessageView::buttonClicked);
 }
 
 void MessageView::layout(const vec2& sz)
 {
+	_button1->setPivotPoint(hasSecondButton() ? vec2(0.0f, 1.0f) : vec2(0.5f, 1.0f));
+	_button2->setPivotPoint(vec2(1.0f, 1.0f));
+	_buttonCommon->setVisible(!(hasFirstButton() || hasSecondButton()));
+
+	_button1->setVisible(hasFirstButton());
+	_button2->setVisible(hasSecondButton());
+	
 	backgroundFade()->setFrame(vec2(0.0f), sz);
+	_buttonCommon->setFrame(vec2(0.0f), sz);
 	
-	float contentWidth = 0.9f * maxv(_background->imageDescriptor().size, 0.95f * sz).x;
-	if (_text->textSize().x > contentWidth)
-		_text->fitToWidth(contentWidth);
+	vec2 textSize = _text->textSize();
+	if (textSize.x > 0.81f * sz.x)
+		_text->fitToWidth(0.81f * sz.x);
 	
-	vec2 buttonsSize = 3.5f * maxv(_button1->size(), _button2->size());
+	bool hasTitle = _title->textSize().dotSelf() > 0.0f;
+	bool hasText = _text->textSize().dotSelf() > 0.0f;
+	bool hasImage = _imgImage->texture().valid();
+	bool hasButtons = hasFirstButton() || hasSecondButton();
 	
-	float dataHeight = etMax(_text->textSize().y, _imgImage->imageDescriptor().size.y);
-	float contentHeight = etMin(dataHeight + buttonsSize.y, sz.y - buttonsSize.y);
+	assert(!(hasText && hasImage) && "Unsupported MessageView parameters specified");
 	
-	vec2 bgSize = maxv(_background->imageDescriptor().size, floorv(vec2(0.95f * sz.x, contentHeight)));
+	float extraElements = static_cast<float>(hasTitle) + static_cast<float>(hasText || hasImage) + static_cast<float>(hasButtons);
+	float gapsOffset = 2.0f + 0.5f * etMax(0.0f, extraElements - 1.0f);
+
+	vec2 edgeOffset = _title->font()->measureStringSize("A");
+	vec2 contentSize = _title->textSize() + vec2(0.0f, gapsOffset * edgeOffset.y);
+
+	float gap = edgeOffset.y;
+	float halfGap = 0.5f * edgeOffset.y;
 	
-	_background->setFrame(floorv(0.5f * sz), bgSize);
+	contentSize += vec2(_imgImage->imageDescriptor().size.x + _text->textSize().x,
+						etMax(_imgImage->imageDescriptor().size.y, _text->textSize().y));
 	
-	vec2 bOffset = floorv(0.1f * bgSize);
-	vec2 b1pos = hasSecondButton() ? vec2(bOffset.x, bgSize.y - bOffset.y) : vec2(0.5f * bgSize.x, bgSize.y - bOffset.y);
-	vec2 b2pos = bgSize - bOffset;
+	if (hasFirstButton() || hasSecondButton())
+	{
+		contentSize.x = etMax(contentSize.x, (hasFirstButton() ? _button1->size().x : 0.0f) +
+							  (hasSecondButton() ? _button2->size().x : 0.0f));
+		contentSize.y += etMax(_button1->size().y, _button2->size().y);
+	}
 	
-	vec2 maxButtonSize = maxv(_button1->size(), _button2->size());
-	_button1->setFrame(floorv(b1pos), maxButtonSize);
-	_button2->setFrame(floorv(b2pos), maxButtonSize);
+	contentSize.x += 2.0f * edgeOffset.x;
 	
-	float topOrigin = etMin(_button1->origin().y, _button2->origin().y);
-	float verticalCenter = 0.5f * (bgSize.y - topOrigin);
+	contentSize.x = clamp(contentSize.x, _imgBackground->imageDescriptor().size.x, 0.9f * sz.x);
+	contentSize.y = clamp(contentSize.y, _imgBackground->imageDescriptor().size.y, 0.9f * sz.y);
+
+	_imgBackground->setPosition(floorv(0.5f * sz + _contentOffset));
+	_imgBackground->setSize(contentSize);
 	
-	_text->setPosition(floorv(vec2(0.5f * bgSize.x, verticalCenter)));
-	_imgImage->setSize(contentWidth, contentHeight - buttonsSize.y);
-	_imgImage->setPosition(0.5f * bgSize.x, verticalCenter);
+	vec2 button1Pos(0.0f, contentSize.y - edgeOffset.y);
+	vec2 button2Pos(0.0f, contentSize.y - edgeOffset.y);
+	vec2 buttonsSize(0.0f, etMax(_button1->size().y, _button2->size().y));
+	
+	if (hasFirstButton())
+	{
+		if (hasSecondButton())
+		{
+			_button1->setPivotPoint(vec2(0.0f, 1.0f));
+			_button2->setPivotPoint(vec2(1.0f, 1.0f));
+			button1Pos.x = edgeOffset.x;
+			button2Pos.x = contentSize.x - edgeOffset.x;
+			buttonsSize.x = 0.5f * (contentSize.x - 3.0f * edgeOffset.x);
+		}
+		else
+		{
+			_button1->setPivotPoint(vec2(0.5f, 1.0f));
+			button1Pos.x = 0.5f * contentSize.x;
+			buttonsSize.x = contentSize.x - 2.0f * edgeOffset.x;
+		}
+	}
+	else if (hasSecondButton())
+	{
+		_button2->setPivotPoint(vec2(0.5f, 1.0f));
+		button2Pos.x = 0.5f * contentSize.x;
+		buttonsSize.x = contentSize.x - 2.0f * edgeOffset.x;
+	}
+	
+	_button1->setFrame(button1Pos - _contentOffset, buttonsSize);
+	_button2->setFrame(button2Pos - _contentOffset, buttonsSize);
+	
+	float yPosition = gap;
+	_title->setPosition(vec2(0.5f * contentSize.x, yPosition) - _contentOffset);
+	
+	yPosition += hasTitle ? halfGap + _title->textSize().y : 0.0f;
+	if (hasText)
+	{
+		_text->setPosition(vec2(0.5f * contentSize.x, yPosition) - _contentOffset);
+	}
+	else if (hasImage)
+	{
+		vec2 imageSize(contentSize.x - 2.0f * edgeOffset.x, contentSize.y - yPosition - gap);
+		
+		if (hasButtons)
+			imageSize.y -= gap + buttonsSize.y;
+		
+		_imgImage->setPosition(vec2(0.5f * contentSize.x, yPosition) - _contentOffset);
+		_imgImage->setSize(imageSize);
+	}
 }
 
-void MessageView::setText(const std::string& text)
+void MessageView::setText(const std::string& aText)
 {
-    _text->setText(text);
+    _text->setText(aText);
+}
+
+void MessageView::setTitle(const std::string& aTitle)
+{
+    _title->setText("<b>" + aTitle + "</b>");
 }
 
 void MessageView::setBackgroundImage(const Image& img)
 {
-	_background->setImage(img);
+	_imgBackground->setImage(img);
 }
 
 void MessageView::setImage(const Image& img)
@@ -84,7 +163,7 @@ void MessageView::setImage(const Image& img)
 	_imgImage->setImage(img);
 }
 
-void MessageView::setButtonBackground(const Image& img, ElementState s)
+void MessageView::setButtonsBackground(const Image& img, ElementState s)
 {
 	_button1->setBackgroundForState(img, s);
 	_button2->setBackgroundForState(img, s);
@@ -93,21 +172,26 @@ void MessageView::setButtonBackground(const Image& img, ElementState s)
 	_button2->adjustSize();
 }
 
-void MessageView::setButtonTextColor(const vec4& color)
+void MessageView::setButtonsTextColor(const vec4& color)
 {
 	_button1->setTextColor(color);
 	_button2->setTextColor(color);
 }
 
-void MessageView::setButtonPressedTextColor(const vec4& color)
+void MessageView::setButtonsPressedTextColor(const vec4& color)
 {
 	_button1->setTextPressedColor(color);
 	_button2->setTextPressedColor(color);
 }
 
+bool MessageView::hasFirstButton() const
+{
+	return _button1->title().size() > 0;
+}
+
 bool MessageView::hasSecondButton() const
 {
-	return (_buttonFlags & MessageViewButton_Second) == MessageViewButton_Second;
+	return _button2->title().size() > 0;
 }
 
 void MessageView::buttonClicked(Button* btn)
@@ -124,4 +208,14 @@ void MessageView::buttonClicked(Button* btn)
 	{
 		messageViewButtonSelected.invokeInMainRunLoop(this, MessageViewButton_Any);
 	}
+}
+
+void MessageView::setButton1Title(const std::string& t)
+{
+	_button1->setTitle(t);
+}
+
+void MessageView::setButton2Title(const std::string& t)
+{
+	_button2->setTitle(t);
 }

@@ -18,8 +18,8 @@ namespace et
 	{
 		enum MessageViewButton
 		{
-			MessageViewButton_First = 0x00,
-			MessageViewButton_Second = 0x01,
+			MessageViewButton_First = 0x01,
+			MessageViewButton_Second = 0x02,
 			MessageViewButton_Any = 0xf0,
 		};
 		
@@ -29,35 +29,43 @@ namespace et
 			typedef IntrusivePtr<MessageView> Pointer;
 
 		public:
-			MessageView(const std::string& text, Font font, const Image& bgImage = Image(), size_t buttons = MessageViewButton_First,
+			MessageView(const std::string& title, const std::string& text, Font font, const Image& bgImage = Image(),
 						const std::string& button1title = "Close", const std::string& button2title = "Ok");
 
+			void setContentOffset(const vec2& offset)
+				{ _contentOffset = offset; }
+			
 			void setImage(const Image& img);
 			void setBackgroundImage(const Image& img);
 			void layout(const vec2&);
 			
-			void setButtonBackground(const Image& img, ElementState s);
-			void setButtonTextColor(const vec4& color);
-			void setButtonPressedTextColor(const vec4& color);
 			void setText(const std::string& text);
+			void setTitle(const std::string& text);
+			
+			void setButton1Title(const std::string&);
+			void setButton2Title(const std::string&);
+			void setButtonsBackground(const Image& img, ElementState s);
+			void setButtonsTextColor(const vec4& color);
+			void setButtonsPressedTextColor(const vec4& color);
 
 			ET_DECLARE_EVENT2(messageViewButtonSelected, MessageView*, MessageViewButton)
 			
 		private:
 			void buttonClicked(Button* btn);
+			
+			bool hasFirstButton() const;
 			bool hasSecondButton() const;
 			
 		private:
-			size_t _buttonFlags;
-			ImageView::Pointer _background;
-			
 			ImageView::Pointer _imgBackground;
 			ImageView::Pointer _imgImage;
-			
+			Label::Pointer _title;
 			Label::Pointer _text;
-			
 			Button::Pointer _button1;
 			Button::Pointer _button2;
+			Button::Pointer _buttonCommon;
+			
+			vec2 _contentOffset;
 		};
 	}
 }

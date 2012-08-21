@@ -450,10 +450,10 @@ void Gui::LayoutEntryObject::animatorFinished(BaseAnimator* a)
 	owner->layoutEntryTransitionFinished(this);
 }
 
-void Gui::showMessageView(MessageView::Pointer mv)
+void Gui::showMessageView(MessageView::Pointer mv, size_t animationFlags, float duration)
 {
 	mv->messageViewButtonSelected.connect(this, &Gui::onMessageViewButtonClicked);
-	pushLayout(mv);
+	pushLayout(mv, animationFlags, duration);
 }
 
 void Gui::onMessageViewButtonClicked(MessageView* view, MessageViewButton button)
