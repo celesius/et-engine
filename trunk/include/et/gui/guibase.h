@@ -314,6 +314,9 @@ namespace et
 			virtual void didDisappear() { }
 			virtual void willAppear() { }
 			virtual void willDisappear() { }
+			
+			void bringToFront(Element* c);
+			void sendToBack(Element* c);
 
 			/*
 			 * Required Methods
