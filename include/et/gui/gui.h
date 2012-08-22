@@ -29,6 +29,9 @@ namespace et
 		class Gui : public Shared, public EventReceiver
 		{
 		public:
+			typedef IntrusivePtr<Gui> Pointer;
+			
+		public:
 			Gui(RenderContext* rc, TextureCache& texCache);
 
 			void layout(const vec2& size);
@@ -53,6 +56,7 @@ namespace et
 			bool pointerPressed(const et::PointerInputInfo&);
 			bool pointerMoved(const et::PointerInputInfo&);
 			bool pointerReleased(const et::PointerInputInfo&);
+			bool pointerCancelled(const et::PointerInputInfo&);
 			bool pointerScrolled(const et::PointerInputInfo&);
 			
 			void showMessageView(MessageView::Pointer mv, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
@@ -151,6 +155,5 @@ namespace et
 			bool _backgroundValid;
 		};
 
-		typedef IntrusivePtr<Gui> GuiRef;
 	}
 }

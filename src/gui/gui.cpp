@@ -78,6 +78,23 @@ bool Gui::pointerReleased(const et::PointerInputInfo& p)
 	return processed;
 }
 
+bool Gui::pointerCancelled(const et::PointerInputInfo& p)
+{
+	if (animatingTransition()) return true;
+	
+	bool processed = _keyboard.visible() && _keyboard.pointerCancelled(p);
+	if (!processed)
+	{
+		for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
+		{
+			if ((*i)->layout->pointerCancelled(p))
+				return true;
+		}
+	}
+	
+	return processed;
+}
+
 bool Gui::pointerScrolled(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
