@@ -98,3 +98,15 @@ void Element::layoutChildren()
 	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
 		(*i)->layout(size());
 }
+
+void Element::bringToFront(Element* c)
+{
+	ElementHierarchy::bringToFront(c);
+	invalidateContent();
+}
+
+void Element::sendToBack(Element* c)
+{
+	ElementHierarchy::sendToBack(c);
+	invalidateContent();
+}
