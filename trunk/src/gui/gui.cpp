@@ -219,44 +219,39 @@ void Gui::getAnimationParams(size_t flags, vec3* nextSrc, vec3* nextDst, vec3* c
 		*currDst = vec3(1.0f * fromLeft - 1.0f * fromRight, -1.0f * fromTop + 1.0f * fromBottom, 1.0f - fade);
 }
 
-void Gui::replaceTopmostLayout(Layout::Pointer newLayout, size_t animationFlags, float duration)
+void Gui::internal_replaceTopmostLayout(Layout::Pointer newLayout, AnimationDescriptor desc)
 {
-	removeLayout(topmostLayout(), animationFlags, duration);
-	pushLayout(newLayout, animationFlags, duration);
+	removeLayout(topmostLayout(), desc.flags, desc.duration);
+	pushLayout(newLayout, desc.flags, desc.duration);
 }
 
-void Gui::popTopmostLayout(size_t animationFlags, float duration)
-{
-	removeLayout(topmostLayout(), animationFlags, duration);
-}
-
-void Gui::replaceLayout(Layout::Pointer oldLayout, Layout::Pointer newLayout, size_t animationFlags, float duration)
+void Gui::internal_replaceLayout(LayoutPair l, AnimationDescriptor desc)
 {
 	LayoutEntryStack::iterator i = _layouts.begin();
 	while (i != _layouts.end())
 	{
-		if ((*i)->layout == oldLayout)
+		if ((*i)->layout == l.oldLayout)
 			break;
 
 		++i;
 	}
 
-	removeLayout(oldLayout, animationFlags, duration);
+	removeLayout(l.oldLayout, desc.flags, desc.duration);
 
 	if (i == _layouts.end())
 	{
-		pushLayout(newLayout, animationFlags, duration);
+		pushLayout(l.newLayout, desc.flags, desc.duration);
 	}
 	else 
 	{
-		LayoutEntry newEntry(new LayoutEntryObject(this, _rc, newLayout));
+		LayoutEntry newEntry(new LayoutEntryObject(this, _rc, l.newLayout));
 		_layouts.insert(i, newEntry);
 
-		animateLayoutAppearing(newLayout, newEntry.ptr(), animationFlags, duration);
+		animateLayoutAppearing(l.newLayout, newEntry.ptr(), desc.flags, desc.duration);
 	}
 }
 
-void Gui::removeLayout(Layout::Pointer oldLayout, size_t animationFlags, float duration)
+void Gui::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor desc)
 {
 	LayoutEntryObject* entry = entryForLayout(oldLayout);
 	if (entry == 0) return;
@@ -266,7 +261,7 @@ void Gui::removeLayout(Layout::Pointer oldLayout, size_t animationFlags, float d
 	oldLayout->layoutDoesntNeedKeyboard.disconnect(this);
 	oldLayout->layoutRequiresKeyboard.disconnect(this);
 
-	if ((animationFlags == AnimationFlag_None) || (fabsf(duration) < 0.001f))
+	if ((desc.flags == AnimationFlag_None) || (fabsf(desc.duration) < 0.001f))
 	{
 		oldLayout->didDisappear();
 		removeLayoutFromList(oldLayout);
@@ -274,17 +269,17 @@ void Gui::removeLayout(Layout::Pointer oldLayout, size_t animationFlags, float d
 	else 
 	{
 		vec3 destOffsetAlpha;
-		getAnimationParams(animationFlags, 0, 0, &destOffsetAlpha);
-		entry->animateTo(destOffsetAlpha, fabsf(duration), Gui::LayoutEntryObject::State_Disappear);
+		getAnimationParams(desc.flags, 0, 0, &destOffsetAlpha);
+		entry->animateTo(destOffsetAlpha, fabsf(desc.duration), Gui::LayoutEntryObject::State_Disappear);
 	}
 }
 
-void Gui::pushLayout(Layout::Pointer newLayout, size_t animationFlags, float duration)
+void Gui::internal_pushLayout(Layout::Pointer newLayout, AnimationDescriptor desc)
 {
 	if (!newLayout.valid()) return;
 
 	_layouts.push_back(LayoutEntry(new LayoutEntryObject(this, _rc, newLayout)));
-	animateLayoutAppearing(newLayout, _layouts.back().ptr(), animationFlags, duration);
+	animateLayoutAppearing(newLayout, _layouts.back().ptr(), desc.flags, desc.duration);
 }
 
 void Gui::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntryObject* newEntry, size_t animationFlags, float duration)
@@ -460,3 +455,29 @@ void Gui::onMessageViewButtonClicked(MessageView* view, MessageViewButton button
 {
 	removeLayout(Layout::Pointer(view));
 }
+
+void Gui::replaceTopmostLayout(Layout::Pointer newLayout, size_t animationFlags, float duration)
+{
+	ET_INVOKE_THIS_CLASS_METHOD2(Gui, internal_replaceTopmostLayout, newLayout, AnimationDescriptor(animationFlags, duration))
+}
+
+void Gui::popTopmostLayout(size_t animationFlags, float duration)
+{
+	ET_INVOKE_THIS_CLASS_METHOD2(Gui, internal_removeLayout, topmostLayout(), AnimationDescriptor(animationFlags, duration))
+}
+
+void Gui::replaceLayout(Layout::Pointer oldLayout, Layout::Pointer newLayout, size_t animationFlags, float duration)
+{
+	ET_INVOKE_THIS_CLASS_METHOD2(Gui, internal_replaceLayout, LayoutPair(oldLayout, newLayout), AnimationDescriptor(animationFlags, duration))
+}
+
+void Gui::removeLayout(Layout::Pointer oldLayout, size_t animationFlags, float duration)
+{
+	ET_INVOKE_THIS_CLASS_METHOD2(Gui, internal_removeLayout, oldLayout, AnimationDescriptor(animationFlags, duration))
+}
+
+void Gui::pushLayout(Layout::Pointer newLayout, size_t animationFlags, float duration)
+{
+	ET_INVOKE_THIS_CLASS_METHOD2(Gui, internal_pushLayout, newLayout, AnimationDescriptor(animationFlags, duration))
+}
+

@@ -26,16 +26,6 @@ namespace et
 {
 	namespace gui
 	{
-		enum AnimationFlags
-		{
-			AnimationFlag_None = 0x0,
-			AnimationFlag_Fade = 0x01,
-			AnimationFlag_FromLeft = 0x02,
-			AnimationFlag_FromRight = 0x04,
-			AnimationFlag_FromTop = 0x08,
-			AnimationFlag_FromBottom = 0x10
-		};
-
 		class Gui : public Shared, public EventReceiver
 		{
 		public:
@@ -51,6 +41,7 @@ namespace et
 				{ return _layouts.size() ? _layouts.back()->layout : Layout::Pointer(); }
 
 			bool hasLayout(Layout::Pointer aLayout);
+			
 			void replaceTopmostLayout(Layout::Pointer newLayout, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
 			void popTopmostLayout(size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
 			void replaceLayout(Layout::Pointer oldLayout, Layout::Pointer newLayout, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
@@ -73,6 +64,15 @@ namespace et
 
 		private:
 			class LayoutEntryObject;
+			
+			struct LayoutPair
+			{
+				Layout::Pointer oldLayout;
+				Layout::Pointer newLayout;
+				
+				LayoutPair(Layout::Pointer o, Layout::Pointer n) :
+					oldLayout(o), newLayout(n) { }
+			};
 
 			void buildLayoutVertices(RenderContext* rc, RenderingElementRef& element, Layout::Pointer layout);
 			void buildBackgroundVertices(RenderContext* rc);
@@ -86,12 +86,19 @@ namespace et
 			void removeLayoutFromList(Layout::Pointer);
 			void removeLayoutEntryFromList(LayoutEntryObject*);
 			void layoutEntryTransitionFinished(LayoutEntryObject*);
+			
 			LayoutEntryObject* entryForLayout(Layout::Pointer);
 			bool animatingTransition();
-			void animateLayoutAppearing(Layout::Pointer, LayoutEntryObject* newEntry, size_t animationFlags, float duration);
 			
+			void animateLayoutAppearing(Layout::Pointer, LayoutEntryObject* newEntry, size_t animationFlags, float duration);
 			void onMessageViewButtonClicked(MessageView* view, MessageViewButton);
 
+			void internal_replaceTopmostLayout(Layout::Pointer, AnimationDescriptor);
+			void internal_popTopmostLayout(AnimationDescriptor desc);
+			void internal_replaceLayout(LayoutPair, AnimationDescriptor);
+			void internal_removeLayout(Layout::Pointer, AnimationDescriptor);
+			void internal_pushLayout(Layout::Pointer, AnimationDescriptor);
+			
 		private:
 			class LayoutEntryObject : public Shared, public AnimatorDelegate
 			{

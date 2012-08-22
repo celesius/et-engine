@@ -9,6 +9,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <et/core/constants.h>
 #include <et/geometry/vector4.h>
 #include <et/geometry/matrix3.h>
 #include <et/geometry/matrix4.h>
@@ -439,6 +440,12 @@ namespace et
 
 	inline vec2i operator * (const mat4i& m, const vec2i& v)
 		{ return vec2i(m[0][0] * v.x + m[1][0] * v.y + m[3][0], m[0][1] * v.x + m[1][1] * v.y + m[3][1]); }
+	
+	inline void normalizeAngle(float& angle)
+	{
+		while (angle > DOUBLE_PI) angle -= DOUBLE_PI;
+		while (angle < DOUBLE_PI) angle += DOUBLE_PI;
+	}
 	
 	quaternion matrixToQuaternion(const mat3& m);
 	void decomposeMatrix(mat4 mat, vec3& translation, quaternion& rotation, vec3& scale);

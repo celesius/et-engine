@@ -33,17 +33,16 @@ namespace et
 			ElementState_max
 		};
 
-		inline bool elementIsSelected(ElementState s)
-			{ return (s >= ElementState_Selected) && (s < ElementState_max); }
-
-		inline ElementState adjustElementState(ElementState s)
+		enum AnimationFlags
 		{
-			if (!input().canGetCurrentPointerInfo() && ((s == ElementState_Hovered) || (s == ElementState_SelectedHovered)))
-				return static_cast<ElementState>(s - 1);
-			
-			return s;
-		}
-
+			AnimationFlag_None = 0x0,
+			AnimationFlag_Fade = 0x01,
+			AnimationFlag_FromLeft = 0x02,
+			AnimationFlag_FromRight = 0x04,
+			AnimationFlag_FromTop = 0x08,
+			AnimationFlag_FromBottom = 0x10
+		};
+		
 		enum ElementClass
 		{
 			ElementClass_2d,
@@ -75,15 +74,29 @@ namespace et
 			ElementAlignment_max,
 		};
 		
-		float alignmentFactor(ElementAlignment a);
+		struct AnimationDescriptor
+		{
+		public:
+			size_t flags;
+			float duration;
+			
+		public:
+			AnimationDescriptor() :
+				flags(AnimationFlag_None), duration(0.0f) { }
+			
+			AnimationDescriptor(size_t aFlags, float aDuration) :
+				flags(aFlags), duration(aDuration) { }
+	};
 		
 		struct ContentOffset
 		{
+		public:
 			float left;
 			float top;
 			float right;
 			float bottom;
 
+		public:
 			ContentOffset(float value = 0.0f) :
 				left(value), top(value), right(value), bottom(value) { }
 
@@ -377,5 +390,10 @@ namespace et
 			bool _contentValid;
 		};
 
+		inline bool elementIsSelected(ElementState s)
+			{ return (s >= ElementState_Selected) && (s < ElementState_max); }
+		
+		ElementState adjustElementState(ElementState s);
+		float alignmentFactor(ElementAlignment a);
 	}
 }
