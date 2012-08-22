@@ -11,10 +11,19 @@
 using namespace et;
 using namespace et::gui;
 
-static float alignmentValues[ElementAlignment_max] = { 0.0f, 0.5f, 1.0f };
-
 float et::gui::alignmentFactor(ElementAlignment a)
-	{ return alignmentValues[a]; }
+{
+	static float alignmentValues[ElementAlignment_max] = { 0.0f, 0.5f, 1.0f };
+	return alignmentValues[a];
+}
+
+ElementState et::gui::adjustElementState(ElementState s)
+{
+	if (!input().canGetCurrentPointerInfo() && ((s == ElementState_Hovered) || (s == ElementState_SelectedHovered)))
+		return static_cast<ElementState>(s - 1);
+	
+	return s;
+}
 
 Element::Element(Element* parent) : ElementHierarchy(parent), tag(0),
 	_enabled(true), _transformValid(false), _inverseTransformValid(false), _contentValid(false)
