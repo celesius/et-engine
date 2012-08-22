@@ -13,11 +13,6 @@
 #import <et/platform-ios/openglview.h>
 
 @interface etOpenGLViewController : UIViewController
-{
-	EAGLContext* _context;
-	etOpenGLView* _glView;
-	et::RenderContextParameters _params;
-}
 
 - (id)initWithParameters:(et::RenderContextParameters)params;
 - (void)setRenderContext:(et::RenderContext*)rc;

@@ -121,7 +121,7 @@ void Application::idle()
     _lastQueuedTime = queryTime();
     _runLoop->update(_lastQueuedTime);
     
-    if (_running)
+    if (_running && _active)
     {
         _delegate->idle(_lastQueuedTime);
         performRendering();
@@ -146,6 +146,7 @@ void Application::setActive(bool active)
 	if (_active == active) return;
 	
 	_active = active;
+	
 	if (_active)
 		_delegate->applicationWillActivate();
 	else

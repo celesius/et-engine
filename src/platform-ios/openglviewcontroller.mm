@@ -7,8 +7,19 @@
 
 #import <QuartzCore/QuartzCore.h>
 #import <et/platform-ios/openglviewcontroller.h>
+#import <et/app/applicationnotifier.h>
 
 using namespace et;
+
+@interface etOpenGLViewController()
+{
+	EAGLContext* _context;
+	etOpenGLView* _glView;
+	et::RenderContextParameters _params;
+	et::ApplicationNotifier _notifier;
+}
+
+@end
 
 @implementation etOpenGLViewController
 
@@ -90,6 +101,18 @@ using namespace et;
 - (void)endRender
 {
 	[_glView endRender];
+}
+
+- (void)presentModalViewController:(UIViewController *)modalViewController animated:(BOOL)animated
+{
+	_notifier.notifyDeactivated();
+	[super presentModalViewController:modalViewController animated:animated];
+}
+
+- (void)dismissModalViewControllerAnimated:(BOOL)animated
+{
+	[super dismissModalViewControllerAnimated:animated];
+	_notifier.notifyActivated();
 }
 
 @end
