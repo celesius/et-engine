@@ -60,7 +60,13 @@ int Application::run(int argc, char* argv[])
 
 void Application::loaded()
 {
+	UIWindow* mainWindow = [[[UIApplication sharedApplication] delegate] window];
+	float scaleFactor = [[UIScreen mainScreen] scale];
+	
 	RenderContextParameters params;
+	params.contextSize = vec2i(static_cast<int>(mainWindow.frame.size.width * scaleFactor),
+							   static_cast<int>(mainWindow.frame.size.height * scaleFactor));
+	
 	delegate()->setRenderContextParameters(params);
 	
 	_renderContext = new RenderContext(params, this);
@@ -76,7 +82,6 @@ void Application::loaded()
     enterRunLoop();
     
 #else    
-	UIWindow* mainWindow = [[[UIApplication sharedApplication] delegate] window];
 	[mainWindow setRootViewController:(etOpenGLViewController*)_renderingContextHandle];
 	[mainWindow makeKeyAndVisible];
     

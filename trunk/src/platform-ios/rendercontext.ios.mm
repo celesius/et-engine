@@ -52,12 +52,13 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 	_framebufferFactory = new FramebufferFactory(this, _textureFactory);
 	_vertexBufferFactory = new VertexBufferFactory(_renderState);
 	
-	CGSize screenSize = [[[UIScreen mainScreen] currentMode] size];
-	int w = static_cast<int>(screenSize.width);
-	int h = static_cast<int>(screenSize.height);
+	CGSize screenSize = [[[UIApplication sharedApplication] delegate] window].frame.size;
+	float screenScale = [[UIScreen mainScreen] scale];
 	
-	_screenScaleFactor = (w - 1) / (3 * params.baseContextSize.x / 2) + 1;
-	_renderState.setMainViewportSize(vec2i(w, h));
+	vec2i contextSize(static_cast<int>(screenScale * screenSize.width), static_cast<int>(screenScale * screenSize.height));
+	
+	updateScreenScale(contextSize);
+	_renderState.setMainViewportSize(contextSize);
 }
 
 RenderContext::~RenderContext()
@@ -133,7 +134,10 @@ void RenderContext::resized(const vec2i& sz)
 
 void RenderContext::updateScreenScale(const vec2i& screenSize)
 {
-	size_t newScale = (screenSize.x - 1) / (3 * _params.baseContextSize.x / 2) + 1;
+	int maxDimension = etMax(screenSize.x, screenSize.y);
+	int maxBaseSize = etMax(_params.baseContextSize.x, _params.baseContextSize.y);
+	
+	size_t newScale = (maxDimension - 1) / (3 * maxBaseSize / 2) + 1;
 	if (newScale == _screenScaleFactor) return;
 	
 	_screenScaleFactor = newScale;
