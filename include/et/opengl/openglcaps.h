@@ -48,35 +48,30 @@ namespace et
 
 		const std::string& glslVersion() const
 			{ return _glslVersion; }
-		
+
+		const std::string& glslVersionString() const
+			{ return _glslVersionString; }
+
 		void checkCaps()
 		{
-			char ptr[4] = { };
 			const char* glv = reinterpret_cast<const char*>(glGetString(GL_VERSION));
 			const char* glslv = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
 															  
 			_openGlVersion = std::string(glv ? glv : "<Unknown OpenGL version>");
-			_glslVersion = std::string(glslv ? glslv : "<Unknown GLSL version>");
+			_glslVersionString = std::string(glslv ? glslv : "<Unknown GLSL version>");
 			
-			
-			size_t offset = 0;
-			for (std::string::const_iterator i = _openGlVersion.begin(), e = _openGlVersion.end(); i != e; ++i)
+			const char* ptr = glslv;
+			do
 			{
-				char c = *i;
-				if ((c >= '0') && (c <= '9'))
-				{
-					ptr[offset++] = c;
-					if (offset >= 3) break;
-				}
-				else
-				{
-					if (c == ' ') break;
-				}
+				if ((*ptr >= '0') && (*ptr <= '9'))
+					_glslVersion.push_back(*ptr);
 			}
+			while (*ptr++);
+
 			_version = strToInt(_glslVersion) < 130 ? OpenGLVersion_Old : OpenGLVersion_New;
 			
 			std::cout << "OpenGL version: " << _openGlVersion << std::endl <<
-							"GLSL version: " << _glslVersion << std::endl;
+				"GLSL version: " << _glslVersionString << " (" << _glslVersion << ")" << std::endl;
 
 #if (ET_OPENGLES)
 			_drawelements_basevertex = false;
@@ -91,8 +86,9 @@ namespace et
 		
 	private:
 		std::string _openGlVersion;
+		std::string _glslVersionString;
 		std::string _glslVersion;
-		
+
 		OpenGLVersion _version;
 		bool _mipmap_generation;
 		bool _shaders;
