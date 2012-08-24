@@ -15,8 +15,8 @@ using namespace et;
 std::string Locale::time()
 {
 	NSDateFormatter* formatter = [[[NSDateFormatter alloc] init] autorelease];
-	[formatter setTimeStyle:kCFDateFormatterMediumStyle];
-	[formatter setDateStyle:kCFDateFormatterNoStyle];
+	[formatter setTimeStyle:NSDateFormatterMediumStyle];
+	[formatter setDateStyle:NSDateFormatterNoStyle];
 	[formatter setLocale:[NSLocale currentLocale]];
 	return std::string([[formatter stringFromDate:[NSDate date]] cStringUsingEncoding:NSUTF8StringEncoding]);
 }
@@ -24,8 +24,8 @@ std::string Locale::time()
 std::string Locale::date()
 {
 	NSDateFormatter* formatter = [[[NSDateFormatter alloc] init] autorelease];
-	[formatter setTimeStyle:kCFDateFormatterNoStyle];
-	[formatter setDateStyle:kCFDateFormatterMediumStyle];
+	[formatter setTimeStyle:NSDateFormatterNoStyle];
+	[formatter setDateStyle:NSDateFormatterMediumStyle];
 	[formatter setLocale:[NSLocale currentLocale]];
 	return std::string([[formatter stringFromDate:[NSDate date]] cStringUsingEncoding:NSUTF8StringEncoding]);
 }
