@@ -115,17 +115,17 @@ namespace et
 		vector4& operator = (vector4&& value)
 			{ x = value.x; y = value.y; z = value.z; w = value.w; return *this; }
 
-		vector3<T>& xyz()
-			{ return *(vector3<T>*)c; }
-
-		const vector3<T>& xyz() const
-			{ return *(vector3<T>*)c; }
-
 		vector2<T>& xy()
-			{ return *(vector2<T>*)c; }
+			{ return *(reinterpret_cast<vector2<T>*>(c)); }
+
+		vector3<T>& xyz()
+			{ return *(reinterpret_cast<vector3<T>*>(c)); }
 
 		const vector2<T>& xy() const
-			{ return *(vector2<T>*)c; }
+			{ return *(reinterpret_cast<const vector2<T>*>(c)); }
+
+		const vector3<T>& xyz() const
+			{ return *(reinterpret_cast<const vector3<T>*>(c)); }
 
 		T dot(const vector4<T>& vector) const
 			{ return x*vector.x + y*vector.y + z*vector.z + w*vector.w; }
