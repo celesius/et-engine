@@ -479,6 +479,12 @@ void RenderState::setWireframeRendering(bool wire)
 	}
 }
 
+void RenderState::setClearColor(const vec4& color)
+{
+	_currentState.clearColor = color;
+	glClearColor(color.x, color.y, color.z, color.w);
+}
+
 void RenderState::reset()
 {
 	applyState(RenderState::State());
@@ -594,6 +600,8 @@ RenderState::State RenderState::currentState()
 		s.lastDepthFunc = DepthFunc_Equal;
 	else if (value == GL_ALWAYS)
 		s.lastDepthFunc = DepthFunc_Always;
+
+	glGetFloatv(GL_COLOR_CLEAR_VALUE, s.clearColor.data());
 
 	// TODO: get this from state, too lazy now.
 	s.wireframe = false;

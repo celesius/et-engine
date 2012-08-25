@@ -126,6 +126,7 @@ namespace et
 	#define checkOpenGLError(tag)
 #endif
 
+	void checkOpenGLErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const char* tag);
 	void checkOpenGLErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const std::string& tag);
 
 	std::string glErrorToString(GLenum error);

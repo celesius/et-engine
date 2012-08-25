@@ -58,16 +58,31 @@ namespace et
 		}
 	}
 
-	void checkOpenGLErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const std::string& tag)
+	void checkOpenGLErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const char* tag)
 	{
-		GLenum err = glGetError();
-		if (err != GL_NO_ERROR)
+		GLenum error = glGetError();
+		if (error != GL_NO_ERROR)
 		{
-			std::string out = std::string(sourceFile) + " (" + lineNumber + ") " + caller + " OpenGL error:\n" +
-				glErrorToString(err) + (tag.length() ? " at " + tag + "\n": "\n");
-			std::cout << out;
+			static const char* formatStr = "[%s:%s] %s, %s\n%s\n";
+			static const size_t formatStrLength = strlen(formatStr);
+
+			std::string errorStr = glErrorToString(error);
+
+			size_t outputLength = formatStrLength + strlen(sourceFile) + strlen(lineNumber) + strlen(caller) + strlen(tag);
+
+			char* buffer = new char[2 * outputLength];
+			memset(buffer, 0, outputLength);
+
+			sprintf(buffer, formatStr, sourceFile, lineNumber, caller, tag, errorStr.c_str());
+			printf(buffer);
+			fflush(stdout);
+
+			delete [] buffer;
 		}
 	}
+
+	void checkOpenGLErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const std::string& tag)
+		{ checkOpenGLErrorEx(caller, sourceFile, lineNumber, tag.c_str()); }
 
 	size_t primitiveCount(GLenum mode, GLsizei count)
 	{

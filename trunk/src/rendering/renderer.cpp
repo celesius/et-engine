@@ -65,11 +65,6 @@ void Renderer::clear(bool color, bool depth)
 		glClear(mask);
 }
 
-void Renderer::setClearColor(const vec4& color)
-{
-	glClearColor(color.x, color.y, color.z, color.w);
-}
-
 void Renderer::fullscreenPass()
 {
 	const IndexBuffer& ib = _fullscreenQuadVao->indexBuffer();

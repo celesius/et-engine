@@ -23,7 +23,6 @@ namespace et
 		~Renderer();
 
 		void clear(bool color = true, bool depth = true);
-		void setClearColor(const vec4& color);
 
 		void fullscreenPass();
 		void renderFullscreenTexture(const Texture&);

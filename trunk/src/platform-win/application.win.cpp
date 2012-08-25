@@ -70,6 +70,7 @@ int Application::run(int argc, char* argv[])
 	_delegate->applicationDidLoad(_renderContext);
 	_delegate->applicationWillResizeContext(_renderContext->sizei());
 
+	_lastQueuedTime = queryTime();
 	enterRunLoop(); 
 
 	_delegate->applicationWillTerminate();
