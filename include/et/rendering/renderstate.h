@@ -69,6 +69,8 @@ namespace et
 			vec2i viewportSize;
 			vec2 mainViewportSizeFloat;
 			vec2 viewportSizeFloat;
+
+			vec4 clearColor;
 			
 			float polygonOffsetFactor;
 			float polygonOffsetUnits;
@@ -170,6 +172,7 @@ namespace et
 		void setDepthMask(bool enable);
 		void setPolygonOffsetFill(bool enabled, float factor = 0.0f, float units = 0.0f);
 		void setWireframeRendering(bool wire);
+		void setClearColor(const vec4& color);
 
 		/*
 		 * Deletion handlers
