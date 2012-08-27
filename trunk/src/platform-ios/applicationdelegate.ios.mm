@@ -13,6 +13,16 @@
 
 using namespace et;
 
+@interface etApplicationDelegate()
+{
+	et::ApplicationNotifier _notifier;
+	UIWindow* _window;
+	CADisplayLink* _displayLink;
+	BOOL _updating;
+}
+
+@end
+
 @implementation etApplicationDelegate
 
 @synthesize window = _window;
@@ -22,27 +32,25 @@ using namespace et;
 	self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
 	
 	_updating = NO;
-	_notifier = new ApplicationNotifier();
-	_notifier->notifyLoaded();
+	_notifier.notifyLoaded();
 	
     return YES;
 }
 
 - (void)dealloc
 {
-	delete _notifier;
     [_window release];
     [super dealloc];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-	_notifier->notifyDeactivated();
+	_notifier.notifyDeactivated();
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-	_notifier->notifyActivated();
+	_notifier.notifyActivated();
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -52,17 +60,17 @@ using namespace et;
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-	_notifier->notifyDeactivated();
+	_notifier.notifyDeactivated();
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-	_notifier->notifyActivated();
+	_notifier.notifyActivated();
 }
 
 - (void)tick
 {
-	_notifier->notifyIdle();
+	_notifier.notifyIdle();
 }
 
 - (void)beginUpdates

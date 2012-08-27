@@ -13,7 +13,7 @@ using namespace et;
 
 @interface etApplication()
 {
-	ApplicationNotifier* _notifier;
+	ApplicationNotifier _notifier;
 	BOOL _loaded;
 }
 
@@ -44,7 +44,6 @@ static etApplication* _sharedInstance = nil;
 	self = [super init];
 	if (self)
 	{
-		_notifier = new ApplicationNotifier();
 		_loaded = NO;
 	}
 	return self;
@@ -55,16 +54,17 @@ static etApplication* _sharedInstance = nil;
 	NSAssert(_loaded == NO, @"Method [etApplication loadedInViewController:] should be called once.");
 	
 	RenderState::State state = RenderState::currentState();
-	application().run(0, 0);
 	
 	GLint defaultFrameBufferId = 0;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFrameBufferId);
 	
+	application().run(0, 0);
+	
 	Framebuffer defaultFrameBuffer = [self renderContext]->framebufferFactory().createFramebufferWrapper(defaultFrameBufferId);
 	defaultFrameBuffer->forceSize(viewController.view.bounds.size.width, viewController.view.bounds.size.height);
-	
-	_notifier->accessRenderContext()->renderState().setDefaultFramebuffer(defaultFrameBuffer);
-	_notifier->accessRenderContext()->renderState().applyState(state);
+
+	_notifier.accessRenderContext()->renderState().setDefaultFramebuffer(defaultFrameBuffer);
+	_notifier.accessRenderContext()->renderState().applyState(state);
 
 	_loaded = YES;
 }
@@ -80,13 +80,12 @@ static etApplication* _sharedInstance = nil;
 - (void)dealloc
 {
 	application().quit();
-	delete _notifier;
 	[super dealloc];
 }
 
 - (et::RenderContext*)renderContext
 {
-	return _notifier->accessRenderContext();
+	return _notifier.accessRenderContext();
 }
 
 - (et::IApplicationDelegate*)applicationDelegate

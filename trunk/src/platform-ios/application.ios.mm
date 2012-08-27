@@ -94,6 +94,10 @@ void Application::loaded()
 
 void Application::enterRunLoop()
 {
+#if defined(ET_EMBEDDED_APPLICATION)
+	_active = true;
+#endif
+	
 	_running = true;
 	delegate()->applicationDidLoad(_renderContext);
 }
@@ -101,17 +105,24 @@ void Application::enterRunLoop()
 void Application::quit(int exitCode)
 {
 	_running = false;
+	
 #if defined(ET_EMBEDDED_APPLICATION)
+	
+	_active = false;
 	_delegate->applicationWillTerminate();
+	
 	delete _delegate;
 	delete _renderContext;
 	
 	_delegate = 0;
 	_renderContext = 0;
 	_runLoop.reset(0);
+	
 #else	
+	
 	exit(exitCode);
-#endif	
+	
+#endif
 }
 
 void Application::performRendering()
