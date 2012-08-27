@@ -16,13 +16,6 @@ namespace et
 }
 
 @interface etApplicationDelegate : UIResponder <UIApplicationDelegate> 
-{
-@private	
-	et::ApplicationNotifier* _notifier;
-	UIWindow* _window;
-	CADisplayLink* _displayLink;
-	BOOL _updating;
-}
 
 @property (nonatomic, retain) UIWindow* window;
 
