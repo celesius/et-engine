@@ -56,7 +56,8 @@ namespace et
 		{
 			const char* glv = reinterpret_cast<const char*>(glGetString(GL_VERSION));
 			const char* glslv = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
-															  
+					
+			_glslVersion = std::string();
 			_openGlVersion = std::string(glv ? glv : "<Unknown OpenGL version>");
 			_glslVersionString = std::string(glslv ? glslv : "<Unknown GLSL version>");
 			
