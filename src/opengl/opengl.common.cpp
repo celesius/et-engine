@@ -74,7 +74,7 @@ namespace et
 			memset(buffer, 0, outputLength);
 
 			sprintf(buffer, formatStr, sourceFile, lineNumber, caller, tag, errorStr.c_str());
-			printf(buffer);
+			puts(buffer);
 			fflush(stdout);
 
 			delete [] buffer;

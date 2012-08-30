@@ -54,9 +54,16 @@ void MessageView::layout(const vec2& sz)
 	backgroundFade()->setFrame(vec2(0.0f), sz);
 	_buttonCommon->setFrame(vec2(0.0f), sz);
 	
+	float maxMessageViewSize = 0.9f * sz.x;
+	float maxTextWidth = 0.9f * maxMessageViewSize;
+	
 	vec2 textSize = _text->textSize();
-	if (textSize.x > 0.81f * sz.x)
-		_text->fitToWidth(0.81f * sz.x);
+	if (textSize.x > maxTextWidth)
+		_text->fitToWidth(maxTextWidth);
+	
+	vec2 titleSize = _title->textSize();
+	if (titleSize.x > maxTextWidth)
+		_title->fitToWidth(maxTextWidth);
 	
 	bool hasTitle = _title->textSize().dotSelf() > 0.0f;
 	bool hasText = _text->textSize().dotSelf() > 0.0f;
@@ -69,13 +76,13 @@ void MessageView::layout(const vec2& sz)
 	float gapsOffset = 2.0f + 0.5f * etMax(0.0f, extraElements - 1.0f);
 
 	vec2 edgeOffset = _title->font()->measureStringSize("A");
-	vec2 contentSize = _title->textSize() + vec2(0.0f, gapsOffset * edgeOffset.y);
-
 	float gap = edgeOffset.y;
 	float halfGap = 0.5f * edgeOffset.y;
 	
-	contentSize += vec2(_imgImage->imageDescriptor().size.x + _text->textSize().x,
-						etMax(_imgImage->imageDescriptor().size.y, _text->textSize().y));
+	vec2 contentSize(0.0f, _title->textSize().y + gapsOffset * edgeOffset.y);
+	
+	contentSize.x += etMax(_title->textSize().x, _imgImage->imageDescriptor().size.x + _text->textSize().x);
+	contentSize.y += etMax(_imgImage->imageDescriptor().size.y, _text->textSize().y);
 	
 	if (hasFirstButton() || hasSecondButton())
 	{
@@ -86,7 +93,7 @@ void MessageView::layout(const vec2& sz)
 	
 	contentSize.x += 2.0f * edgeOffset.x;
 	
-	contentSize.x = clamp(contentSize.x, _imgBackground->imageDescriptor().size.x, 0.9f * sz.x);
+	contentSize.x = clamp(contentSize.x, _imgBackground->imageDescriptor().size.x, maxMessageViewSize);
 	contentSize.y = clamp(contentSize.y, _imgBackground->imageDescriptor().size.y, 0.9f * sz.y);
 
 	_imgBackground->setPosition(floorv(0.5f * sz + _contentOffset));

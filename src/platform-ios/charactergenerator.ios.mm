@@ -16,7 +16,7 @@ class et::gui::CharacterGeneratorPrivate
 		~CharacterGeneratorPrivate();
 
 		void updateTexture(RenderContext* rc, Texture texture);
-		void renderCharacter(NSString* value, const vec2i& position, bool bold);
+		void renderCharacter(NSString* value, const vec2i& position, const vec2i& size, bool bold);
 
 	public:
 		std::string _fontFace;
@@ -56,10 +56,11 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTextu
 	wchar_t string[2] = { value, 0 };
     NSString* wString = [[NSString alloc] initWithBytes:string length:sizeof(string) encoding:NSUTF32LittleEndianStringEncoding];
     CGSize characterSize = [wString sizeWithFont:_private->_font];
-
+	vec2i charSize = vec2i(characterSize.width, characterSize.height);
+	
 	rect textureRect;
-	_private->_placer.place(vec2i(characterSize.width + 2, characterSize.height + 2), textureRect);
-	_private->renderCharacter(wString, vec2i(static_cast<int>(textureRect.left + 1), static_cast<int>(textureRect.top + 1)), false);
+	_private->_placer.place(charSize + vec2i(2), textureRect);
+	_private->renderCharacter(wString, vec2i(static_cast<int>(textureRect.left + 1.0f), static_cast<int>(textureRect.top + 1.0f)), charSize, false);
 	
 	if (updateTexture)
 		_private->updateTexture(_rc, _texture);
@@ -70,8 +71,8 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTextu
 	
 	desc.origin = textureRect.origin() + vec2(1.0f);
 	desc.size = textureRect.size() - vec2(2.0f);
-	desc.uvOrigin = _texture->getTexCoord(textureRect.origin());
-	desc.uvSize = textureRect.size() / _texture->sizeFloat();
+	desc.uvOrigin = _texture->getTexCoord(desc.origin);
+	desc.uvSize = desc.size / _texture->sizeFloat();
 	
 	_chars[value] = desc;
 	return desc;
@@ -82,10 +83,11 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateT
 	wchar_t string[2] = { value, 0 };
     NSString* wString = [[NSString alloc] initWithBytes:string length:sizeof(string) encoding:NSUTF32LittleEndianStringEncoding];
     CGSize characterSize = [wString sizeWithFont:_private->_boldFont];
+	vec2i charSize = vec2i(characterSize.width, characterSize.height);
 	
 	rect textureRect;
-	_private->_placer.place(vec2i(characterSize.width + 2, characterSize.height + 2), textureRect);
-	_private->renderCharacter(wString, vec2i(static_cast<int>(textureRect.left + 1), static_cast<int>(textureRect.top + 1)), true);
+	_private->_placer.place(charSize + vec2i(2), textureRect);
+	_private->renderCharacter(wString, vec2i(static_cast<int>(textureRect.left + 1.0f), static_cast<int>(textureRect.top + 1.0f)), charSize, true);
 	
 	if (updateTexture)
 		_private->updateTexture(_rc, _texture);
@@ -96,8 +98,8 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateT
 	
 	desc.origin = textureRect.origin() + vec2(1.0f);
 	desc.size = textureRect.size() - vec2(2.0f);
-	desc.uvOrigin = _texture->getTexCoord(textureRect.origin());
-	desc.uvSize = textureRect.size() / _texture->sizeFloat();
+	desc.uvOrigin = _texture->getTexCoord(desc.origin);
+	desc.uvSize = desc.size / _texture->sizeFloat();
 	
 	_boldChars[value] = desc;
 	return desc;
@@ -139,16 +141,16 @@ CharacterGeneratorPrivate::~CharacterGeneratorPrivate()
 
 void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, Texture texture)
 {
-	for (size_t i = 0; i < _data.size() / 4; ++i)
-	{
-		_data[4*i+0] = 255;
-		_data[4*i+1] = 255;
-		_data[4*i+2] = 255;
-	}
+	unsigned int* ptr = reinterpret_cast<unsigned int*>(_data.data());
+	unsigned int* endPtr = ptr + _data.dataSize() / 4;
+	
+	while (ptr != endPtr)
+		*ptr++ |= 0x00FFFFFF;
+	
 	texture->updateDataDirectly(rc, vec2i(defaultTextureSize), _data.binary(), _data.size());
 }
 
-void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i& position, bool bold)
+void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i& position, const vec2i& size, bool bold)
 {
 	UIGraphicsPushContext(_context);
 	[value drawAtPoint:CGPointMake(position.x, position.y) withFont:(bold ? _boldFont : _font)];

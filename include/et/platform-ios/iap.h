@@ -38,6 +38,8 @@ namespace et
         ~PurchasesManager();
         
         void checkAvailableProducts(const ProductsSet& products, PurchasesManagerDelegate* delegate);
+		void restoreTransactions(PurchasesManagerDelegate* delegate);
+		
         bool purchaseProduct(const std::string& product, PurchasesManagerDelegate* delegate);
     };
 }

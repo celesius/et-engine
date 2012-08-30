@@ -228,7 +228,16 @@ void Label::fitToWidth(float w)
 		}
 		else
 		{
-			newText.append("\n" + word);
+			if (isWhitespaceChar(newText.back()) && !isNewLineChar(newText.back()))
+			{
+				newText.back() = '\n';
+				newText.append(word);
+			}
+			else
+			{
+				newText.append("\n" + word);
+			}
+			
 			if (isNewLineChar(nextCharStr[0]))
 			{
 				latestLine = std::string();
