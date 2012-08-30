@@ -452,3 +452,8 @@ bool PurchasesManager::purchaseProduct(const std::string& product, PurchasesMana
     NSString* objcString = [NSString stringWithCString:product.c_str() encoding:NSASCIIStringEncoding];
     return [[ObjCPurchasesManager sharedManager] purchaseProduct:objcString delegate:delegate];
 }
+
+void PurchasesManager::restoreTransactions(PurchasesManagerDelegate* delegate)
+{
+    return [[ObjCPurchasesManager sharedManager] restorePurchasesWithDelegate:delegate];
+}
