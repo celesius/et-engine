@@ -5,8 +5,8 @@
  *
  */
 
-#include <et/gui/label.h>
 #include <et/gui/guirenderer.h>
+#include <et/gui/label.h>
 
 using namespace et;
 using namespace et::gui;
@@ -228,9 +228,11 @@ void Label::fitToWidth(float w)
 		}
 		else
 		{
-			if (isWhitespaceChar(newText.back()) && !isNewLineChar(newText.back()))
+			size_t lastCharPos = newText.size() - 1;
+			char lastChar = newText.at(lastCharPos);
+			if (isWhitespaceChar(lastChar) && !isNewLineChar(lastChar))
 			{
-				newText.back() = '\n';
+				newText[lastCharPos] = '\n';
 				newText.append(word);
 			}
 			else
