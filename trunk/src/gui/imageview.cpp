@@ -85,9 +85,8 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 	{
 		int repeatsWidth = static_cast<int>(size().x / imageWidth);
 		int repeatsHeight = static_cast<int>(size().y / imageHeight);
-		int verticesPerImage = g.measuseVerticesCountForImageDescriptor(_descriptor);
 		
-		_vertices.resize(repeatsWidth * repeatsHeight * verticesPerImage);
+		_vertices.fitToSize(repeatsWidth * repeatsHeight * g.measuseVerticesCountForImageDescriptor(_descriptor));
 		_vertices.setOffset(0);
 		
 		for (int v = 0; v < repeatsHeight; ++v)

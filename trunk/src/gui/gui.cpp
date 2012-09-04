@@ -12,16 +12,13 @@ using namespace et;
 using namespace et::gui;
 
 
-Gui::Gui(RenderContext* rc, TextureCache& texCache) : _rc(rc), _textureCache(texCache), 
-	_renderer(rc, true), 
-	_renderingElementBackground(new RenderingElement(rc)), 
-	_renderingElementKeyboard(new RenderingElement(rc)), 
+Gui::Gui(RenderContext* rc, TextureCache& texCache) : _rc(rc), _textureCache(texCache), _renderer(rc, true), 
+	_renderingElementBackground(new RenderingElement(rc)), _renderingElementKeyboard(new RenderingElement(rc)), 
 	_keyboard(rc, Font(CharacterGenerator::Pointer(new CharacterGenerator(rc, "System", "System", 14))), _textureCache),
 	_background(Texture(), 0), _backgroundValid(true)
 {
 	_background.setPivotPoint(vec2(0.5f));
 	_background.setContentMode(ImageView::ContentMode_Stretch);
-	
 	layout(rc->size());
 }
 
@@ -112,7 +109,7 @@ bool Gui::pointerScrolled(const et::PointerInputInfo& p)
 	return processed;
 }
 
-void Gui::buildLayoutVertices(RenderContext* rc, RenderingElementRef& element, Layout::Pointer layout)
+void Gui::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer& element, Layout::Pointer layout)
 {
 	_renderer.setRendernigElement(element);
 

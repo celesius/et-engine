@@ -46,6 +46,12 @@ namespace et
 		const vector2<T>& size() const 
 			{ return *(reinterpret_cast<const vector2<T>*>(c+2)); }
 
+		T* data()
+			{ return c; }
+
+		const T* data() const
+			{ return c; }
+
 		T right() const 
 			{ return left + width; }
 
@@ -96,6 +102,12 @@ namespace et
 
 		T aspect() const
 			{ return width / height; }
+
+		bool operator == (const Rect<T>& r) const
+			{ return (left == r.left) && (top == r.top) && (width == r.width) && (height == r.height); }
+
+		bool operator != (const Rect<T>& r) const
+			{ return (left != r.left) || (top != r.top) || (width != r.width) || (height != r.height); }
 	};
 
 }

@@ -65,6 +65,7 @@ namespace et
 			GLuint boundVertexArrayObject;
 			GLuint boundProgram;
 			
+			recti clipRect;
 			vec2i mainViewportSize;
 			vec2i viewportSize;
 			vec2 mainViewportSizeFloat;
@@ -80,6 +81,8 @@ namespace et
 			bool depthMaskEnabled;
 			bool polygonOffsetFillEnabled;
 			bool wireframe;
+			bool clipEnabled;
+
 			BlendState lastBlend;
 			CullState lastCull;
 			DepthFunc lastDepthFunc;		
@@ -103,6 +106,7 @@ namespace et
 			{ return _currentState.mainViewportSizeFloat; }
 		const vec2& viewportSizeFloat() const
 			{ return _currentState.viewportSizeFloat; }
+
 		void setMainViewportSize(const vec2i& sz, bool force = false);
 		void setViewportSize(const vec2i& sz, bool force = false);
 
@@ -165,6 +169,12 @@ namespace et
 		bool wireframeRendering() const 
 			{ return _currentState.wireframe; }
 
+		bool clipEnabled() const 
+			{ return _currentState.clipEnabled; }
+
+		const recti& clipRect() const 
+			{ return _currentState.clipRect; }
+
 		void setBlend(bool enable, BlendState blend = Blend_Current);
 		void setCulling(CullState cull);
 		void setDepthTest(bool enable);
@@ -173,6 +183,7 @@ namespace et
 		void setPolygonOffsetFill(bool enabled, float factor = 0.0f, float units = 0.0f);
 		void setWireframeRendering(bool wire);
 		void setClearColor(const vec4& color);
+		void setClip(bool enable, const recti& clip);
 
 		/*
 		 * Deletion handlers
@@ -187,7 +198,6 @@ namespace et
 		/*
 		 * Service
 		 */
-
 		static State currentState();
 
 	private:

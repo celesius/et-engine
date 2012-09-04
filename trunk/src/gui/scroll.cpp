@@ -20,6 +20,7 @@ Scroll::Scroll(Element2d* parent) : Element2d(parent), _offsetAnimator(0, 0, mai
 {
 	_offsetAnimator.setDelegate(this);
 	setFlag(ElementFlag_HandlesChildEvents);
+	setFlag(ElementFlag_ClipToBounds);
 	startUpdates();
 }
 
