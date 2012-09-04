@@ -23,14 +23,22 @@ Scroll::Scroll(Element2d* parent) : Element2d(parent), _offsetAnimator(0, 0, mai
 	startUpdates();
 }
 
-void Scroll::addToRenderQueue(RenderContext*, GuiRenderer& r)
+void Scroll::addToRenderQueue(RenderContext* rc, GuiRenderer& r)
 {
-/*
-	GuiVertexList vertices;
-	r.createColorVertices(vertices, rect(vec2(0.0f), size()), vec4(1.0f, 0.5f, 0.25f, 0.25f), finalTransform(), GuiRenderLayer_Layer0);
-	r.createColorVertices(vertices, rect(vec2(0.0f), size()), vec4(0.25f, 0.5f, 1.0f, 0.25f), Element2d::finalTransform(), GuiRenderLayer_Layer0);
-	r.addVertices(vertices, Texture(), ElementClass_2d, GuiRenderLayer_Layer0);
-*/ 
+	if (!contentValid())
+		buildVertices(r);
+	
+	if (_backgroundColor.w > 0.0f)
+		r.addVertices(_vertices, Texture(), ElementClass_2d, GuiRenderLayer_Layer0);
+}
+
+void Scroll::buildVertices(GuiRenderer& r)
+{
+	_vertices.setOffset(0);
+	r.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor,
+		Element2d::finalTransform(), GuiRenderLayer_Layer0);
+	
+	setContentValid();
 }
 
 mat4 Scroll::finalTransform()
@@ -255,4 +263,10 @@ void Scroll::animatorUpdated(BaseAnimator* a)
 void Scroll::animatorFinished(BaseAnimator* a)
 {
 	Element2d::animatorFinished(a);
+}
+
+void Scroll::setBackgroundColor(const vec4& color)
+{
+	_backgroundColor = color;
+	invalidateContent();
 }
