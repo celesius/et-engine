@@ -464,8 +464,16 @@ void Gui::LayoutEntryObject::animatorFinished(BaseAnimator* a)
 
 void Gui::showMessageView(MessageView::Pointer mv, size_t animationFlags, float duration)
 {
-	mv->messageViewButtonSelected.connect(this, &Gui::onMessageViewButtonClicked);
-	pushLayout(mv, animationFlags, duration);
+	if (hasLayout(mv))
+	{
+		internal_removeLayout(mv, AnimationDescriptor());
+		internal_pushLayout(mv, AnimationDescriptor());
+	}
+	else
+	{
+		mv->messageViewButtonSelected.connect(this, &Gui::onMessageViewButtonClicked);
+		pushLayout(mv, animationFlags, duration);
+	}
 }
 
 void Gui::onMessageViewButtonClicked(MessageView* view, MessageViewButton button)
