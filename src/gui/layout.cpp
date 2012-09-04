@@ -10,8 +10,8 @@
 using namespace et;
 using namespace et::gui;
 
-Layout::Layout() : 
-	Element2d(0), _currentElement(0), _focusedElement(0), _capturedElement(0), _valid(false), _dragging(false)
+Layout::Layout() : Element2d(0), _currentElement(0), _focusedElement(0), 
+	_capturedElement(0), _valid(false), _dragging(false)
 {
 }
 
@@ -27,12 +27,24 @@ void Layout::resetVerticalOffset() { }
 void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, GuiRenderer& gr)
 {
 	if (!element->visible()) return;
-	
-	if (!element->hasFlag(ElementFlag_RenderTopmost))
-		element->addToRenderQueue(rc, gr);
 
+	if (element->hasFlag(ElementFlag_ClipToBounds))
+	{
+		mat4 parentTransform = element->parent()->finalTransform();
+		vec2 eSize = multiplyWithoutTranslation(element->size(), parentTransform);
+		vec2 eOrigin = parentTransform * element->origin();
+		gr.pushClipRect(recti(vec2i(static_cast<int>(eOrigin.x), static_cast<int>(rc->size().y - eOrigin.y - eSize.y)), 
+			vec2i(static_cast<int>(eSize.x), static_cast<int>(eSize.y))));
+	}
+	
+	element->addToRenderQueue(rc, gr);
 	for (Element::List::iterator i = element->children().begin(), e = element->children().end(); i != e; ++i)
 		addElementToRenderQueue(i->ptr(), rc, gr);
+
+	if (element->hasFlag(ElementFlag_ClipToBounds))
+	{
+		gr.popClipRect();
+	}
 }
 
 void Layout::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
@@ -46,7 +58,11 @@ void Layout::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 			setCurrentElement(p, e);
 	}
 	else 
+	{
 		setCurrentElement(p, e);
+	}
+
+	gr.resetClipRect();
 
 	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
 		addElementToRenderQueue(i->ptr(), rc, gr);

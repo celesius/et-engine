@@ -2,6 +2,7 @@
 #include <et/geometry/rectplacer.h>
 #include <et/gui/charactergenerator.h>
 #include <et/imaging/imagewriter.h>
+#include <et/timers/intervaltimer.h>
 
 using namespace et;
 using namespace et::gui;
@@ -136,13 +137,12 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, Texture texture
 	BinaryDataStorage data(bm.bmiHeader.biSizeImage);
 	GetDIBits(_dc, _bitmap, 0, defaultTextureSize, data.data(), &bm, DIB_RGB_COLORS);
 
-	for (size_t i = 0, e = data.dataSize() / 4; i != e; ++i)
+	unsigned int* ptr = reinterpret_cast<unsigned int*>(data.data());
+	unsigned int* ptrEnd = reinterpret_cast<unsigned int*>(data.data() + data.dataSize());
+	while (ptr != ptrEnd)
 	{
-		size_t index = 4 * i;
-		data[index+3] = (76 * data[index] + 151 * data[index+1] + 28 * data[index+2]) / 255;
-		data[index+0] = 255;
-		data[index+1] = 255;
-		data[index+2] = 255;
+		unsigned int& value = *ptr++;
+		value |= 0x00ffffff | ((((value & 0x000000ff) + ((value & 0x0000ff00) >> 8) + ((value & 0x00ff0000) >> 16) ) / 3) << 24);
 	}
 
 	texture->updateDataDirectly(rc, vec2i(defaultTextureSize), data.binary(), data.size());

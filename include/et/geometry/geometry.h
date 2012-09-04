@@ -414,6 +414,14 @@ namespace et
 		return result;
 	}	
 
+	template <typename T>
+	inline vector2<T> multiplyWithoutTranslation(const vector2<T>& v, const matrix4<T>& m)
+		{ return vector2<T>(m[0][0] * v.x + m[1][0] * v.y, m[0][1] * v.x + m[1][1] * v.y); }
+
+	template <typename T>
+	inline vector2<T> operator * (const matrix4<T>& m, const vector2<T>& v)
+		{ return vector2<T>(m[0][0] * v.x + m[1][0] * v.y + m[3][0], m[0][1] * v.x + m[1][1] * v.y + m[3][1] ); }
+
 	inline mat4 translationMatrix(const vec3& v)
 		{ return translationMatrix<float>(v.x, v.y, v.z); }
 
@@ -435,12 +443,6 @@ namespace et
 	inline mat4 transformYXZMatrix(vec3 translate, vec3 rotate) 
 		{ return transformYXZMatrix<float>(translate.x, translate.y, translate.z, rotate.x, rotate.y, rotate.z); }
 
-	inline vec2 operator * (const mat4& m, const vec2& v)
-		{ return vec2(m[0][0] * v.x + m[1][0] * v.y + m[3][0], m[0][1] * v.x + m[1][1] * v.y + m[3][1] ); }
-
-	inline vec2i operator * (const mat4i& m, const vec2i& v)
-		{ return vec2i(m[0][0] * v.x + m[1][0] * v.y + m[3][0], m[0][1] * v.x + m[1][1] * v.y + m[3][1]); }
-	
 	inline void normalizeAngle(float& angle)
 	{
 		while (angle > DOUBLE_PI) angle -= DOUBLE_PI;

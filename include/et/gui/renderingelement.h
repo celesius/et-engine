@@ -19,6 +19,9 @@ namespace et
 		class RenderingElement : public Shared
 		{
 		public:
+			typedef IntrusivePtr<RenderingElement> Pointer;
+
+		public:
 			RenderingElement(RenderContext* rc);
 			void clear();
 
@@ -37,7 +40,5 @@ namespace et
 
 			bool _changed;
 		};
-
-		typedef IntrusivePtr<RenderingElement> RenderingElementRef;
 	}
 }

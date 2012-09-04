@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <stack>
 #include <et/core/containers.h>
 #include <et/camera/camera.h>
 #include <et/gui/font.h>
@@ -20,19 +21,19 @@ namespace et
 		{
 		public:
 			GuiRenderer(RenderContext* rc, bool saveFillRate);
-			void setProjectionMatrices(const vec2& contextSize);
-			
-			void setRendernigElement(const RenderingElementRef& r);
-			
+
 			void beginRender(RenderContext* rc);
 			void render(RenderContext* rc);
 			void endRender(RenderContext* rc);
-			
-			const Camera& camera3d() const 
-				{ return _guiCamera; }
-			
-			size_t addVertices(const GuiVertexList& vertices, const Texture& texture, 
-							   ElementClass cls, GuiRenderLayer layer);
+
+			void resetClipRect();
+			void pushClipRect(const recti&);
+			void popClipRect();
+
+			void setProjectionMatrices(const vec2& contextSize);
+			void setRendernigElement(const RenderingElement::Pointer& r);
+
+			size_t addVertices(const GuiVertexList& vertices, const Texture& texture, ElementClass cls, GuiRenderLayer layer);
 			
 			int measuseVerticesCountForImageDescriptor(const ImageDescriptor& desc);
 			
@@ -55,6 +56,9 @@ namespace et
 			void setCustomAlpha(float alpha)
 				{ _customAlpha = alpha; }
 			
+			const Camera& camera3d() const 
+				{ return _guiCamera; }
+
 		private:
 			void init(RenderContext* rc);
 			void alloc(size_t count);
@@ -64,7 +68,8 @@ namespace et
 				{ return *this; }
 			
 		private:
-			RenderingElementRef _renderingElement;
+			RenderContext* _rc;
+			RenderingElement::Pointer _renderingElement;
 			Texture _lastTextures[GuiRenderLayer_max];
 			
 			Program _guiProgram;
@@ -74,7 +79,8 @@ namespace et
 			GLint _guiCustomAlphaUniform;
 			
 			Camera _guiCamera;
-			
+
+			std::stack<recti> _clip;
 			vec2 _customOffset;
 			float _customAlpha;
 	

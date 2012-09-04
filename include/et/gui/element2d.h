@@ -59,7 +59,7 @@ namespace et
 			virtual BaseAnimator* setFrame(const rect& r, float duration = 0.0f);
 			virtual BaseAnimator* setFrame(const vec2& origin, const vec2& size, float duration = 0.0f);
 
-			inline const vec2& pivotPoint() const 
+			const vec2& pivotPoint() const 
 				{ return _pivotPoint; }
 
 			virtual void setPivotPoint(const vec2& p, bool preservePosition = true);

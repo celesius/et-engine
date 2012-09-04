@@ -5,13 +5,13 @@
  *
  */
 
-#include <et/rendering/rendercontext.h>
-#include <et/rendering/renderstate.h>
 #include <et/vertexbuffer/vertexdeclaration.h>
 #include <et/apiobjects/program.h>
 #include <et/apiobjects/texture.h>
 #include <et/apiobjects/framebuffer.h>
 #include <et/apiobjects/vertexarrayobject.h>
+#include <et/rendering/rendercontext.h>
+#include <et/rendering/renderstate.h>
 
 using namespace et;
 
@@ -247,11 +247,7 @@ void RenderState::setDepthTest(bool enable)
 	if (enable != _currentState.depthTestEnabled)
 	{
 		_currentState.depthTestEnabled = enable;
-
-		if (enable)
-			glEnable(GL_DEPTH_TEST);
-		else
-			glDisable(GL_DEPTH_TEST);
+		(enable ? glEnable : glDisable)(GL_DEPTH_TEST);
 	}
 }
 
@@ -293,10 +289,7 @@ void RenderState::setBlend(bool enable, BlendState blend)
 	if (_currentState.blendEnabled != enable)
 	{
 		_currentState.blendEnabled = enable;
-		if (enable)
-			glEnable(GL_BLEND);
-		else
-			glDisable(GL_BLEND);
+		(enable ? glEnable : glDisable)(GL_BLEND);
 	}
 
 	if ((blend != Blend_Current) && (_currentState.lastBlend != blend))
@@ -428,6 +421,7 @@ void RenderState::setCulling(CullState cull)
 			glDisable(GL_CULL_FACE);
 			break;
 		}
+
 	case CullState_Back:
 		{
 			if (_currentState.lastCull == CullState_None)
@@ -436,6 +430,7 @@ void RenderState::setCulling(CullState cull)
 			glCullFace(GL_BACK);
 			break;
 		}
+
 	case CullState_Front:
 		{
 			if (_currentState.lastCull == CullState_None)
@@ -446,7 +441,7 @@ void RenderState::setCulling(CullState cull)
 		}
 
 	default: 
-		return; // error occured
+		assert(0 && "Unsupported CullState value.");
 	};
 
 	_currentState.lastCull = cull;
@@ -457,10 +452,7 @@ void RenderState::setPolygonOffsetFill(bool enabled, float factor, float units)
 	if (_currentState.polygonOffsetFillEnabled != enabled)
 	{
 		_currentState.polygonOffsetFillEnabled = enabled;
-		if (enabled)
-			glEnable(GL_POLYGON_OFFSET_FILL);
-		else
-			glDisable(GL_POLYGON_OFFSET_FILL);
+		(enabled ? glEnable : glDisable)(GL_POLYGON_OFFSET_FILL);
 	}
 
 	_currentState.polygonOffsetFactor = factor;
@@ -483,6 +475,21 @@ void RenderState::setClearColor(const vec4& color)
 {
 	_currentState.clearColor = color;
 	glClearColor(color.x, color.y, color.z, color.w);
+}
+
+void RenderState::setClip(bool enable, const recti& clip)
+{
+	if (enable != _currentState.clipEnabled)
+	{
+		_currentState.clipEnabled = enable;
+		(_currentState.clipEnabled ? glEnable : glDisable)(GL_SCISSOR_TEST);
+	}
+
+	if (clip != _currentState.clipRect)
+	{
+		_currentState.clipRect = clip;
+		glScissor(clip.left, clip.top, clip.width, clip.height);
+	}
 }
 
 void RenderState::reset()
@@ -561,6 +568,8 @@ RenderState::State RenderState::currentState()
 	glGetIntegerv(GL_CURRENT_PROGRAM, &value);
 	s.boundProgram = value;
 
+	glGetIntegerv(GL_SCISSOR_BOX, s.clipRect.data());
+
 	s.depthTestEnabled = glIsEnabled(GL_DEPTH_TEST) != 0;
 	s.polygonOffsetFillEnabled = glIsEnabled(GL_POLYGON_OFFSET_FILL) != 0;
 	
@@ -570,6 +579,9 @@ RenderState::State RenderState::currentState()
 	unsigned char bValue = 0;
 	glGetBooleanv(GL_DEPTH_WRITEMASK, &bValue);
 	s.depthMaskEnabled = bValue > 0;
+
+	glGetBooleanv(GL_SCISSOR_TEST, &bValue);
+	s.clipEnabled = bValue > 0;
 
 	value = 0;
 	glGetIntegerv(GL_CULL_FACE_MODE, &value);

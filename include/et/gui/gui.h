@@ -78,7 +78,7 @@ namespace et
 					oldLayout(o), newLayout(n) { }
 			};
 
-			void buildLayoutVertices(RenderContext* rc, RenderingElementRef& element, Layout::Pointer layout);
+			void buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer& element, Layout::Pointer layout);
 			void buildBackgroundVertices(RenderContext* rc);
 			void buildKeyboardVertices(RenderContext* rc);
 
@@ -129,7 +129,7 @@ namespace et
 
 			public:
 				Gui* owner;
-				RenderingElementRef renderingElement;
+				RenderingElement::Pointer renderingElement;
 				Layout::Pointer layout;
 				AutoPtr<Vector3Animator> animator;
 				vec3 offsetAlpha;
@@ -144,10 +144,10 @@ namespace et
 			TextureCache& _textureCache;
 			GuiRenderer _renderer;
 
-			RenderingElementRef _renderingElementBackground;
+			RenderingElement::Pointer _renderingElementBackground;
 			ImageView _background;
 
-			RenderingElementRef _renderingElementKeyboard;
+			RenderingElement::Pointer _renderingElementKeyboard;
 			Keyboard _keyboard;
 
 			LayoutEntryStack _layouts;

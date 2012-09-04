@@ -226,7 +226,7 @@ void Listbox::addToRenderQueue(RenderContext*, GuiRenderer& gr)
 		gr.addVertices(_backgroundVertices, _images[_state].texture, ElementClass_2d, GuiRenderLayer_Layer0);
 
 	if (shouldDrawText())
-		gr.addVertices(_textVertices, _font->texture(), ElementClass_2d, GuiRenderLayer_Layer1);
+		gr.addVertices(_textVertices, _font->texture(),  ElementClass_2d, GuiRenderLayer_Layer1);
 }
 
 bool Listbox::shouldDrawText()

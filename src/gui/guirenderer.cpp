@@ -18,8 +18,10 @@ extern std::string gui_default_frag_src;
 extern std::string gui_savefillrate_vertex_src;
 extern std::string gui_savefillrate_frag_src;
 
-GuiRenderer::GuiRenderer(RenderContext* rc, bool saveFillRate) : _customAlpha(1.0f), _saveFillRate(saveFillRate)
+GuiRenderer::GuiRenderer(RenderContext* rc, bool saveFillRate) : _rc(rc), _customAlpha(1.0f), _saveFillRate(saveFillRate)
 {
+	pushClipRect(recti(vec2i(0), rc->sizei()));
+
 	if (saveFillRate)
 	{
 		_guiProgram = rc->programFactory().genProgram(gui_savefillrate_vertex_src, std::string(), gui_savefillrate_frag_src,
@@ -40,6 +42,23 @@ GuiRenderer::GuiRenderer(RenderContext* rc, bool saveFillRate) : _customAlpha(1.
 		_guiProgram->setUniform("layer1_texture", 1);
 
 	setProjectionMatrices(rc->size());
+}
+
+void GuiRenderer::resetClipRect()
+{
+	while (_clip.size() > 1)
+		_clip.pop();
+}
+
+void GuiRenderer::pushClipRect(const recti& value)
+{
+	_clip.push(value);
+}
+
+void GuiRenderer::popClipRect()
+{
+	assert(_clip.size() > 1);
+	_clip.pop();
 }
 
 void GuiRenderer::setProjectionMatrices(const vec2& contextSize)
@@ -74,21 +93,20 @@ GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& text
 	if (!_renderingElement.valid()) return 0;
 
 	bool shouldAdd = _saveFillRate && (layer == GuiRenderLayer_Layer1);
-	if (shouldAdd)
-		layer = GuiRenderLayer_Layer0;
+	layer = shouldAdd ? GuiRenderLayer_Layer0 : layer;
 	
 	_renderingElement->_changed = true;
 	size_t i0 = _renderingElement->_vertexList.currentIndex();
 	if (_renderingElement->_chunks.size())
 	{
 		RenderChunk& lastChunk = _renderingElement->_chunks.back();
-		
+
 		if ((lastChunk.elementClass == cls) && (lastChunk.layers[layer] == texture))
 			lastChunk.count += count;
-		else
+		else 
 			shouldAdd = true;
 	}
-	else
+	else 
 	{
 		shouldAdd = true;
 	}
@@ -97,7 +115,7 @@ GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& text
 	{
 		_lastTextures[layer] = texture;
 		_renderingElement->_chunks.push_back(RenderChunk(i0, count, 
-			_lastTextures[GuiRenderLayer_Layer0], _lastTextures[GuiRenderLayer_Layer1], cls));
+			_lastTextures[GuiRenderLayer_Layer0], _lastTextures[GuiRenderLayer_Layer1], _clip.top(), cls));
 	}
 	alloc(count);
 	_renderingElement->_vertexList.offset(count);
@@ -125,7 +143,7 @@ size_t GuiRenderer::addVertices(const GuiVertexList& vertices, const Texture& te
 	return current;
 }
 
-void GuiRenderer::setRendernigElement(const RenderingElementRef& r)
+void GuiRenderer::setRendernigElement(const RenderingElement::Pointer& r)
 {
 	_renderingElement = r;
 	_lastTextures[GuiRenderLayer_Layer0] = Texture();
@@ -156,16 +174,18 @@ void GuiRenderer::render(RenderContext* rc)
 {
 	if (!_renderingElement.valid()) return;
 
-	RenderState& rs = rc->renderState();
 	Renderer* renderer = rc->renderer();
-
 	const VertexArrayObject& vao = _renderingElement->vertexArrayObject();
+
+	RenderState& rs = rc->renderState();
 
 	_guiProgram->setUniform(_guiCustomOffsetUniform, GL_FLOAT_VEC2, _customOffset);
 	_guiProgram->setUniform(_guiCustomAlphaUniform, GL_FLOAT, _customAlpha);
 	ElementClass elementClass = ElementClass_max;
+
 	for (RenderChunkList::const_iterator i = _renderingElement->_chunks.begin(), e = _renderingElement->_chunks.end(); i != e; ++i)
 	{
+		rs.setClip(true, i->clip);
 		rs.bindTexture(0, i->layers[GuiRenderLayer_Layer0]);
 		rs.bindTexture(1, i->layers[GuiRenderLayer_Layer1]);
 
