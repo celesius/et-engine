@@ -68,7 +68,7 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 
 	if (_background[_state].texture.valid())
 	{
-		gr.createImageVertices(_bgVertices, _background[_state].texture, _background[_state].descriptor, 
+		gr.createImageVertices(_bgVertices, _background[_state].texture, _background[_state].descriptor,
 			rect(vec2(0.0f), size()), color(), transform, GuiRenderLayer_Layer0);
 	}
 

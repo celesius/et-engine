@@ -33,6 +33,7 @@ namespace et
 			
 			const vec2& contentSize() const
 				{ return _contentSize; }
+			
 			const vec2& offset() const
 				{ return _offset; }
 			
@@ -43,7 +44,11 @@ namespace et
 			
 			void adjustContentSize();
 			
+			void setBackgroundColor(const vec4& color);
+			
 		private:
+			void buildVertices(GuiRenderer& r);
+			
 			void invalidateChildren();
 			void broadcastPressed(const PointerInputInfo&);
 			void broadcastMoved(const PointerInputInfo&);
@@ -58,9 +63,11 @@ namespace et
 			void internal_setOffset(const vec2& o);
 			
 		private:
+			GuiVertexList _vertices;
 			Vector2Animator _offsetAnimator;
 			PointerInputInfo _currentPointer;
 			PointerInputInfo _previousPointer;
+			vec4 _backgroundColor;
 			vec2 _contentSize;
 			vec2 _offset;
 			vec2 _velocity;
