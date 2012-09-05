@@ -110,14 +110,15 @@ bool Button::pointerPressed(const PointerInputInfo& p)
 
 	_pressed = true;
 	setCurrentState(_selected ? ElementState_SelectedPressed : ElementState_Pressed);
-
+	
+	pressed.invoke(this);
 	return true;
 }
 
 bool Button::pointerReleased(const PointerInputInfo& p)
 {
 	if ((p.type != PointerType_General) || !_pressed) return false;
-
+	
 	_pressed = false;
 	ElementState newState = _selected ? ElementState_Selected : ElementState_Default;
 
@@ -128,6 +129,7 @@ bool Button::pointerReleased(const PointerInputInfo& p)
 	}
 
 	setCurrentState(newState);
+	released.invoke(this);
 	return true;
 }
 
@@ -142,6 +144,7 @@ bool Button::pointerCancelled(const PointerInputInfo& p)
 		newState = adjustElementState(_selected ? ElementState_SelectedHovered : ElementState_Hovered);
 	
 	setCurrentState(newState);
+	released.invoke(this);
 	return true;
 }
 
