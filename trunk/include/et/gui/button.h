@@ -45,6 +45,8 @@ namespace et
 			vec2 sizeForText(const std::string&);
 
 			ET_DECLARE_EVENT1(clicked, Button*)
+			ET_DECLARE_EVENT1(pressed, Button*)
+			ET_DECLARE_EVENT1(released, Button*)
 			
 			const Image& backgroundForState(ElementState state) const
 				{ return _background[state]; }
