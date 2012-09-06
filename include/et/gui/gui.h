@@ -59,7 +59,8 @@ namespace et
 			bool pointerCancelled(const et::PointerInputInfo&);
 			bool pointerScrolled(const et::PointerInputInfo&);
 			
-			void showMessageView(MessageView::Pointer mv, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
+			void showMessageView(MessageView::Pointer mv);
+			void showMessageView(MessageView::Pointer mv, size_t animationFlags, float duration = 0.3f);
 			
 			ET_DECLARE_EVENT1(layoutDidAppear, Layout::Pointer)
 			ET_DECLARE_EVENT1(layoutDidDisappear, Layout::Pointer)

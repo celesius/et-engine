@@ -63,6 +63,23 @@ void GuiRenderer::popClipRect()
 
 void GuiRenderer::setProjectionMatrices(const vec2& contextSize)
 {
+	std::stack<recti> tempClipStack;
+	
+	while (_clip.size() > 1)
+	{
+		tempClipStack.push(_clip.top());
+		_clip.pop();
+	}
+	
+	_clip.pop();
+	_clip.push(recti(vec2i(0), vec2i(static_cast<int>(contextSize.x), static_cast<int>(contextSize.y))));
+	
+	while (tempClipStack.size())
+	{
+		_clip.push(tempClipStack.top());
+		tempClipStack.pop();
+	}
+	
 	_defaultTransform = IDENTITY_MATRIX;
 	_defaultTransform[0][0] = 2.0f / contextSize.x;
 	_defaultTransform[1][1] = -2.0f / contextSize.y;

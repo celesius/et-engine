@@ -459,6 +459,11 @@ void Gui::LayoutEntryObject::animatorFinished(BaseAnimator* a)
 	owner->layoutEntryTransitionFinished(this);
 }
 
+void Gui::showMessageView(MessageView::Pointer mv)
+{
+	showMessageView(mv, 0, 0.0f);
+}
+
 void Gui::showMessageView(MessageView::Pointer mv, size_t animationFlags, float duration)
 {
 	if (hasLayout(mv))
