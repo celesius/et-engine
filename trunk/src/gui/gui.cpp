@@ -290,7 +290,10 @@ void Gui::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor d
 
 void Gui::internal_pushLayout(Layout::Pointer newLayout, AnimationDescriptor desc)
 {
-	if (!newLayout.valid()) return;
+	if (newLayout.invalid()) return;
+
+	if (hasLayout(newLayout))
+		internal_removeLayout(newLayout, AnimationDescriptor());
 
 	_layouts.push_back(LayoutEntry(new LayoutEntryObject(this, _rc, newLayout)));
 	animateLayoutAppearing(newLayout, _layouts.back().ptr(), desc.flags, desc.duration);
@@ -459,23 +462,10 @@ void Gui::LayoutEntryObject::animatorFinished(BaseAnimator* a)
 	owner->layoutEntryTransitionFinished(this);
 }
 
-void Gui::showMessageView(MessageView::Pointer mv)
-{
-	showMessageView(mv, 0, 0.0f);
-}
-
 void Gui::showMessageView(MessageView::Pointer mv, size_t animationFlags, float duration)
 {
-	if (hasLayout(mv))
-	{
-		internal_removeLayout(mv, AnimationDescriptor());
-		internal_pushLayout(mv, AnimationDescriptor());
-	}
-	else
-	{
-		mv->messageViewButtonSelected.connect(this, &Gui::onMessageViewButtonClicked);
-		pushLayout(mv, animationFlags, duration);
-	}
+	mv->messageViewButtonSelected.connect(this, &Gui::onMessageViewButtonClicked);
+	pushLayout(mv, animationFlags, duration);
 }
 
 void Gui::onMessageViewButtonClicked(MessageView* view, MessageViewButton button)
