@@ -143,6 +143,16 @@ namespace et
 		stream << value.x << ET_CSV_DELIMITER << value.y << ET_CSV_DELIMITER << value.z << ET_CSV_DELIMITER << value.w;
 		return stream;
 	}
+
+
+	template <typename T>
+	inline std::ostream& operator << (std::ostream& stream, const matrix4<T>& value) 
+	{ 
+		stream << "{" << std::endl << "\t" << value[0] << std::endl << 
+			"\t" << value[1] << std::endl << "\t" << value[2] << std::endl << 
+			"\t" << value[3] << std::endl << "}" << std::endl;
+		return stream;
+	}
 		
 	std::ostream& operator << (std::ostream& stream, const StringList& list);
 		
