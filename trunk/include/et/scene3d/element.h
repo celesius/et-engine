@@ -66,8 +66,8 @@ namespace et
 
 			bool isKindOf(ElementType t) const;
 
-			void invalidateTransform();
 			virtual mat4 finalTransform();
+			void invalidateTransform();
 
 			void setParent(Element* p);
 

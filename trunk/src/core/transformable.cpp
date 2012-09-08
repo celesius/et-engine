@@ -12,13 +12,13 @@
 using namespace et;
 
 ComponentTransformable::ComponentTransformable() : _cachedTransform(IDENTITY_MATRIX), 
-	_translation(0.0f), _scale(1.0f), _orientation(), _transformValid(false)
+	_translation(0.0f), _scale(1.0f), _orientation(), _flags(0)
 {
 }
 
 mat4 ComponentTransformable::transform()
 {
-	if (!_transformValid)
+	if (!transformValid())
 		buildTransform();
 
 	return _cachedTransform;
@@ -26,50 +26,78 @@ mat4 ComponentTransformable::transform()
 
 void ComponentTransformable::buildTransform()
 {
-	_cachedTransform = scaleMatrix(_scale) * _orientation.toMatrix();
-	_cachedTransform[3] = vec4(_translation, 1.0f);
-	_transformValid = true;
+	if (!shouldDecompose())
+	{
+		_cachedTransform = scaleMatrix(_scale) * _orientation.toMatrix();
+		_cachedTransform[3] = vec4(_translation, 1.0f);
+	}
+
+	_flags |= Flag_Valid;
 }
 
 void ComponentTransformable::invalidateTransform()
 {
-	_transformValid = false;
+	_flags &= ~Flag_Valid;
 }
 
 void ComponentTransformable::setTranslation(const vec3& t)
 {
+	if (shouldDecompose())
+		setTransform(_cachedTransform);
+
 	_translation = t;
 	invalidateTransform();
 }
 
 void ComponentTransformable::applyTranslation(const vec3& t)
 {
+	if (shouldDecompose())
+		setTransform(_cachedTransform);
+
 	_translation += t;
 	invalidateTransform();
 }
 
 void ComponentTransformable::setScale(const vec3& s)
 {
+	if (shouldDecompose())
+		setTransform(_cachedTransform);
+
 	_scale = s;
 	invalidateTransform();
 }
 
 void ComponentTransformable::applyScale(const vec3& s)
 {
+	if (shouldDecompose())
+		setTransform(_cachedTransform);
+
 	_scale *= s;
 	invalidateTransform();
 }
 
 void ComponentTransformable::setOrientation(const quaternion& q)
 {
+	if (shouldDecompose())
+		setTransform(_cachedTransform);
+
 	_orientation = q;
 	invalidateTransform();
 }
 
 void ComponentTransformable::applyOrientation(const quaternion& q)
 {
+	if (shouldDecompose())
+		setTransform(_cachedTransform);
+
 	_orientation *= q;
 	invalidateTransform();
+}
+
+const mat4& ComponentTransformable::cachedTransform() const
+{
+	assert(transformValid());
+	return _cachedTransform; 
 }
 
 #if (ET_DEBUG)
@@ -81,6 +109,7 @@ void ComponentTransformable::setTransform(mat4 originalMatrix)
 	_scale = removeMatrixScaleRowMajor(rotationMatrix);
 	_orientation = matrixToQuaternion(rotationMatrix);
 	_translation = m[3].xyz();
+	_flags &= ~Flag_ShouldDecompose;
 	buildTransform();
 	float deviation = 0.0f;
 	for (size_t v = 0; v < 4; ++v)
@@ -100,7 +129,15 @@ void ComponentTransformable::setTransform(mat4 m)
 	_scale = removeMatrixScaleRowMajor(rotationMatrix);
 	_orientation = matrixToQuaternion(rotationMatrix);
 	_translation = m[3].xyz();
+	_flags &= ~Flag_ShouldDecompose;
 	invalidateTransform();
 }
 
 #endif
+
+void ComponentTransformable::setTransformDirectly(const mat4& m)
+{
+	_cachedTransform = m;
+	_flags |= Flag_ShouldDecompose;
+	_flags &= ~Flag_Valid;
+}

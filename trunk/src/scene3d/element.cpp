@@ -35,6 +35,7 @@ mat4 Element::finalTransform()
 {
 	if (!transformValid())
 		_cachedFinalTransform = parent() ?  transform() * parent()->finalTransform() : transform();
+
 	return _cachedFinalTransform;
 }
 

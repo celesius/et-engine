@@ -22,16 +22,16 @@ namespace et
 
 		virtual ~MatrixTransformable() { }
 
-		virtual mat4 transform() 
+		mat4 transform() 
 			{ return _transform; }
 
-		virtual const mat4& transform() const
+		const mat4& transform() const
 			{ return _transform; }
 
-		virtual void setTransform(const mat4& transform)
+		void setTransform(const mat4& transform)
 			{ _transform = transform; }
 
-		virtual void applyTransform(const mat4& transform)
+		void applyTransform(const mat4& transform)
 			{ _transform *= transform; }
 
 	private:
@@ -45,7 +45,10 @@ namespace et
 		virtual ~ComponentTransformable() { }
 
 		mat4 transform();
+		const mat4& cachedTransform() const;
+
 		void setTransform(mat4 m);
+		void setTransformDirectly(const mat4& m);
 
 		void setTranslation(const vec3& t);
 		void applyTranslation(const vec3& t);
@@ -59,7 +62,7 @@ namespace et
 		virtual void invalidateTransform();
 		
 		bool transformValid() const
-			{ return _transformValid; }
+			{ return (_flags & Flag_Valid) == Flag_Valid; }
 		
 		const vec3& translation() const
 			{ return _translation; }
@@ -71,6 +74,15 @@ namespace et
 			{ return _orientation; }
 
 	private:
+		enum Flags
+		{
+			Flag_Valid = 0x01,
+			Flag_ShouldDecompose = 0x02,
+		};
+
+		bool shouldDecompose() const
+			{ return (_flags & Flag_ShouldDecompose) == Flag_ShouldDecompose; }
+
 		void buildTransform();
 
 	private:
@@ -78,6 +90,6 @@ namespace et
 		vec3 _translation;
 		vec3 _scale;
 		quaternion _orientation;
-		bool _transformValid;
+		size_t _flags;
 	};
 }
