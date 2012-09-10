@@ -5,10 +5,15 @@
  *
  */
 
+#include <Foundation/Foundation.h>
 #include <sys/time.h>
 #include <et/platform/platform.h>
 #include <et/core/tools.h>
 #include <et/core/containers.h>
+
+#if (ET_PLATFORM_MAC)
+#	include <AppKit/AppKit.h>
+#endif
 
 using namespace std;
 
