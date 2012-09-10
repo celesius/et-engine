@@ -183,7 +183,9 @@ void et::findSubfolders(const std::string& folder, bool recursive, std::vector<s
 
 void et::openUrl(const std::string& url)
 {
-	NSURL* aUrl = [NSURL URLWithString:[NSString stringWithCString:url.c_str() encoding:NSASCIIStringEncoding]];
+	if (url.size() == 0) return;
+	
+	NSURL* aUrl = [NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]];
 	
 #if (ET_PLATFORM_IOS)
 	[[UIApplication sharedApplication] openURL:aUrl];
