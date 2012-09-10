@@ -164,9 +164,18 @@ void Application::setActive(bool active)
 	_active = active;
 	
 	if (_active)
+	{
+		_lastQueuedTime = queryTime();
+		_runLoop->update(_lastQueuedTime);
+		_runLoop->resume();
+		
 		_delegate->applicationWillActivate();
+	}
 	else
+	{
+		_runLoop->pause();
 		_delegate->applicationWillDeactivate();
+	}
 }
 
 void Application::contextResized(const vec2i& size)
