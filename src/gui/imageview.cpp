@@ -65,9 +65,30 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 			float imageAspect = _descriptor.size.aspect();
 			float frameAspect = frameSize.aspect();
 			if (frameAspect > 1.0f)
-				frameSize.x = frameSize.x * imageAspect / frameAspect;
+			{
+				if (imageAspect > 1.0f)
+				{
+					float resultHeight = frameSize.x / imageAspect;
+					if (resultHeight > frameSize.y)
+					{
+						float scale = frameSize.y / resultHeight;
+						frameSize.x *= scale;
+						frameSize.y = resultHeight * scale;
+					}
+					else
+					{
+						frameSize.y = resultHeight;
+					}
+				}
+				else
+				{
+					frameSize.x = frameSize.x * imageAspect / frameAspect;
+				}
+			}
 			else
+			{
 				frameSize.y = frameSize.y / imageAspect * frameAspect;
+			}
 		}
 		else
 		{
