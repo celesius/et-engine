@@ -54,25 +54,29 @@ namespace et
 		void validate() const;
 
 		int modelViewMatrixUniformLocation() const 
-			{ return _mvm_loc; }
+			{ return _mModelViewLocation; }
 
 		int mvpMatrixUniformLocation() const
-			{ return _mvp_loc; }
+			{ return _mModelViewProjectionLocation; }
 
 		int cameraUniformLocation() const
-			{ return _cam_loc; }
+			{ return _vCameraLocation; }
 
 		int primaryLightUniformLocation() const
-			{ return _l0_loc; }
+			{ return _vPrimaryLightLocation; }
 
 		int lightProjectionMatrixLocation() const
-			{ return _lp_loc; }
+			{ return _mLightProjectionMatrixLocation; }
+
+		int transformMatrixLocation() const
+			{ return _mTransformLocation; }
 
 		void setModelViewMatrix(const mat4 &m);
 		void setMVPMatrix(const mat4 &m);
 		void setCameraPosition(const vec3& p);
 		void setPrimaryLightPosition(const vec3& p);
 		void setLightProjectionMatrix(const mat4 &m);
+		void setTransformMatrix(const mat4 &m);
 
 		void setCameraProperties(const Camera& cam);
 
@@ -98,11 +102,12 @@ namespace et
 		UniformMap _uniforms;
 		AttribVector _attributes;
 
-		int _mvm_loc;
-		int _mvp_loc;
-		int _cam_loc;
-		int _l0_loc;
-		int _lp_loc;
+		int _mModelViewLocation;
+		int _mModelViewProjectionLocation;
+		int _vCameraLocation;
+		int _vPrimaryLightLocation;
+		int _mLightProjectionMatrixLocation;
+		int _mTransformLocation;
 		bool _loaded;
 	};
 
