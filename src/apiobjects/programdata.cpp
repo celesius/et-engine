@@ -18,7 +18,8 @@ const std::string ProgramData::emptyShaderSource("none");
 
 ProgramData::ProgramData(RenderState& rs, std::string vertexShader, std::string geometryShader,
 	std::string fragmentShader, const std::string& id) : APIObjectData(id), _glID(0), _rs(rs), 
-	_mvm_loc(-1), _mvp_loc(-1), _cam_loc(-1), _l0_loc(-1), _lp_loc(-1), _loaded(false)
+	_mModelViewLocation(-1), _mModelViewProjectionLocation(-1), _vCameraLocation(-1), _vPrimaryLightLocation(-1), 
+	_mLightProjectionMatrixLocation(-1), _loaded(false)
 {
 	buildProgram(vertexShader, geometryShader, fragmentShader);
 }
@@ -41,33 +42,33 @@ UniformIterator ProgramData::findUniform(const std::string& name)
 
 void ProgramData::setModelViewMatrix(const mat4& m)
 {
-	if (_mvm_loc < 0) return;
+	if (_mModelViewLocation < 0) return;
 
-	glUniformMatrix4fv(_mvm_loc, 1, false, m.data());
+	glUniformMatrix4fv(_mModelViewLocation, 1, false, m.data());
 	checkOpenGLError("glUniformMatrix4fv");
 }
 
 void ProgramData::setMVPMatrix(const mat4& m)
 {
-	if (_mvp_loc < 0) return;
+	if (_mModelViewProjectionLocation < 0) return;
 
-	glUniformMatrix4fv(_mvp_loc, 1, false, m.data());
+	glUniformMatrix4fv(_mModelViewProjectionLocation, 1, false, m.data());
 	checkOpenGLError("glUniformMatrix4fv");
 }
 
 void ProgramData::setCameraPosition(const vec3& p)
 {                 
-	if (_cam_loc < 0) return;
+	if (_vCameraLocation < 0) return;
 
-	glUniform3fv(_cam_loc, 1, p.data());
+	glUniform3fv(_vCameraLocation, 1, p.data());
 	checkOpenGLError("SetCameraPosition");
 }
 
 void ProgramData::setPrimaryLightPosition(const vec3 &p)
 {
-	if (_l0_loc < 0) return;
+	if (_vPrimaryLightLocation < 0) return;
 
-	glUniform3fv(_l0_loc, 1, p.data());
+	glUniform3fv(_vPrimaryLightLocation, 1, p.data());
 	checkOpenGLError("SetPrimaryLightPosition");
 }
 
@@ -97,9 +98,17 @@ ProgramUniform ProgramData::getUniform(const std::string& uniform)
 
 void ProgramData::setLightProjectionMatrix(const mat4& m)
 {
-	if (_lp_loc < 0) return;
+	if (_mLightProjectionMatrixLocation < 0) return;
 
-	glUniformMatrix4fv(_lp_loc, 1, false, (GLfloat*)&m);
+	glUniformMatrix4fv(_mLightProjectionMatrixLocation, 1, false, m.data());
+	checkOpenGLError("glUniformMatrix4fv");
+}
+
+void ProgramData::setTransformMatrix(const mat4 &m)
+{
+	if (_mTransformLocation < 0) return;
+
+	glUniformMatrix4fv(_mTransformLocation, 1, false, m.data());
 	checkOpenGLError("glUniformMatrix4fv");
 }
 
@@ -284,19 +293,22 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 				_uniforms[name.binary()] = P;
 
 				if (strcmp(name.binary(), "mModelView") == 0)
-					_mvm_loc = P.location;
+					_mModelViewLocation = P.location;
 
 				if (strcmp(name.binary(), "mModelViewProjection") == 0) 
-					_mvp_loc = P.location;
+					_mModelViewProjectionLocation = P.location;
 
 				if (strcmp(name.binary(), "vCamera") == 0) 
-					_cam_loc = P.location;
+					_vCameraLocation = P.location;
 
 				if (strcmp(name.binary(), "vPrimaryLight") == 0) 
-					_l0_loc = P.location;
+					_vPrimaryLightLocation = P.location;
 
 				if (strcmp(name.binary(), "mLightProjectionMatrix") == 0) 
-					_lp_loc = P.location;
+					_mLightProjectionMatrixLocation = P.location;
+
+				if (strcmp(name.binary(), "mTransform") == 0)
+					_mTransformLocation = P.location;
 			}
 		}
 	}

@@ -17,10 +17,13 @@ namespace et
 	{
 	private:
 		friend class ProgramFactory;
-		Program(ProgramData* data) : IntrusivePtr<ProgramData>(data) { }
+
+		Program(ProgramData* data) : 
+			IntrusivePtr<ProgramData>(data) { }
 
 	public:
-		Program() : IntrusivePtr<ProgramData>(0) { }
+		Program() : 
+			IntrusivePtr<ProgramData>(0) { }
 
 	};
 
