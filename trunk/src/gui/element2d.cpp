@@ -10,6 +10,8 @@
 using namespace et;
 using namespace et::gui;
 
+const float minimalVisibleAlpha = 1.0f / 1000.0f;
+
 Element2d::Element2d(Element* parent) : Element(parent),
 	_frame(0.0f, 0.0f, 0.0f, 0.0f), _scale(1.0f), _color(1.0f), _angle(0.0f), _pivotPoint(0.0f)
 {
@@ -188,7 +190,16 @@ BaseAnimator* Element2d::setSize(float w, float h, float duration)
 BaseAnimator* Element2d::setVisible(bool vis, float duration)
 {
 	if (visible() == vis) return 0;
-	return setAlpha( (vis ? 1.0f : 0.0f) , duration);
+	
+	if (vis)
+	{
+		setAlpha(etMax(alpha(), minimalVisibleAlpha));
+		return setAlpha(1.0f, duration);
+	}
+	else
+	{
+		return setAlpha(0.0f, duration);
+	}
 }
 
 mat4 Element2d::finalTransform() 

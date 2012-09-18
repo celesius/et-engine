@@ -45,6 +45,7 @@ namespace et
 			void adjustContentSize();
 			
 			void setBackgroundColor(const vec4& color);
+			void setScrollbarsColor(const vec4&);
 			
 		private:
 			void buildVertices(RenderContext* rc, GuiRenderer& r);
@@ -68,10 +69,13 @@ namespace et
 			PointerInputInfo _currentPointer;
 			PointerInputInfo _previousPointer;
 			vec4 _backgroundColor;
+			vec4 _scrollbarsColor;
 			vec2 _contentSize;
 			vec2 _offset;
 			vec2 _velocity;
 			float _updateTime;
+			float _scrollbarsAlpha;
+			float _scrollbarsAlphaTarget;
 			bool _pointerCaptured;
 			bool _manualScrolling;
 		};
