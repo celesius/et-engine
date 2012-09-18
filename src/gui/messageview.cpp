@@ -117,7 +117,7 @@ void MessageView::layout(const vec2& sz)
 		{
 			_button1->setPivotPoint(vec2(0.5f, 1.0f));
 			button1Pos.x = 0.5f * contentSize.x;
-			buttonsSize.x = contentSize.x - 2.0f * edgeOffset.x;
+			buttonsSize.x = etMax(_button1->sizeForText(_button1->title()).x, 0.5f * (contentSize.x - 2.0f * edgeOffset.x));
 		}
 	}
 	else if (hasSecondButton())

@@ -15,9 +15,13 @@ using namespace et::gui;
 float deccelerationRate = 10.0f;
 float accelerationRate = 0.5f;
 float scrollbarSize = 5.0f;
+float maxScrollbarsVisibilityVelocity = 50.0f;
+float minAlpha = 1.0f / 255.0f;
+float alphaAnimationScale = 5.0f;
 
 Scroll::Scroll(Element2d* parent) : Element2d(parent), _offsetAnimator(0, 0, mainTimerPool()),
-	_updateTime(0.0f), _pointerCaptured(false), _manualScrolling(false)
+	_updateTime(0.0f), _scrollbarsAlpha(0.0f), _scrollbarsAlphaTarget(0.0f),
+	_pointerCaptured(false), _manualScrolling(false)
 {
 	_offsetAnimator.setDelegate(this);
 	setFlag(ElementFlag_HandlesChildEvents);
@@ -38,18 +42,26 @@ void Scroll::addToRenderQueue(RenderContext* rc, GuiRenderer& r)
 void Scroll::buildVertices(RenderContext* rc, GuiRenderer& r)
 {
 	_vertices.setOffset(0);
-/*
-	r.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor,
-		Element2d::finalTransform(), GuiRenderLayer_Layer0);
-*/
-	float scaledScollbarSize = scrollbarSize * static_cast<float>(rc->screenScaleFactor());
-	float barHeight = size().y * (size().y / _contentSize.y);
-	float barOffset = size().y * (_offset.y / _contentSize.y);
 
-	vec2 origin(size().x - 2.0f * scaledScollbarSize, -barOffset);
-
-	r.createColorVertices(_vertices, rect(origin, vec2(scaledScollbarSize, barHeight)), vec4(0.0f, 0.0f, 0.0f, 0.5f),
-		Element2d::finalTransform(), GuiRenderLayer_Layer0);
+	if (_backgroundColor.w > 0.0f)
+	{
+		r.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor,
+			Element2d::finalTransform(), GuiRenderLayer_Layer0);
+	}
+	
+	if (_scrollbarsColor.w > 0.0f)
+	{
+		float scaledScollbarSize = scrollbarSize * static_cast<float>(rc->screenScaleFactor());
+		float barHeight = size().y * (size().y / _contentSize.y);
+		float barOffset = size().y * (_offset.y / _contentSize.y);
+		vec2 origin(size().x - 2.0f * scaledScollbarSize, -barOffset);
+		
+		vec4 adjutsedColor = _scrollbarsColor;
+		adjutsedColor.w *= _scrollbarsAlpha;
+		
+		r.createColorVertices(_vertices, rect(origin, vec2(scaledScollbarSize, barHeight)), adjutsedColor,
+		  Element2d::finalTransform(), GuiRenderLayer_Layer0);
+	}
 	
 	setContentValid();
 }
@@ -93,6 +105,7 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 		{
 			_manualScrolling = true;
 			_pointerCaptured = true;
+			_scrollbarsAlphaTarget = 1.0f;
 			broadcastCancelled(p);
 		}
 		_previousPointer = _currentPointer;
@@ -180,31 +193,45 @@ void Scroll::update(float t)
 {
 	if (_updateTime == 0.0f)
 		_updateTime = t;
-
 	float deltaTime = t - _updateTime;
-
 	_updateTime = t;
+	
+	_scrollbarsAlpha = mix(_scrollbarsAlpha, _scrollbarsAlphaTarget, etMin(1.0f, alphaAnimationScale * deltaTime));
+	if (_scrollbarsAlpha < minAlpha)
+	{
+		_scrollbarsAlpha = 0.0f;
+	}
 
 	if (_manualScrolling)
 	{
+		_scrollbarsAlphaTarget = 1.0f;
 		float dt = _currentPointer.timestamp - _previousPointer.timestamp;
 		if (dt > 1.0e-2)
 		{
 			vec2 dp = _currentPointer.pos - _previousPointer.pos;
 			_velocity = mix(_velocity, dp * (accelerationRate / dt), 0.5f);
 		}
+		invalidateContent();
 		return;
 	}
 
 	float dt = etMin(1.0f, deltaTime * deccelerationRate);
 	_velocity -= _velocity * dt;
+	
+	_scrollbarsAlphaTarget = etMin(1.0f, _velocity.dotSelf() / maxScrollbarsVisibilityVelocity);
 
 	if (_velocity.dotSelf() < 1.0f)
 		_velocity = vec2(0.0f);
 
 	vec2 dp = _velocity * deltaTime;
 	if (dp.dotSelf() > 1.0e-6)
+	{
 		applyOffset(dp);
+	}
+	else if (fabsf(_scrollbarsAlpha - _scrollbarsAlphaTarget) > minAlpha)
+	{
+		invalidateContent();
+	}
 }
 
 void Scroll::setContentSize(const vec2& cs)
@@ -283,5 +310,11 @@ void Scroll::animatorFinished(BaseAnimator* a)
 void Scroll::setBackgroundColor(const vec4& color)
 {
 	_backgroundColor = color;
+	invalidateContent();
+}
+
+void Scroll::setScrollbarsColor(const vec4& c)
+{
+	_scrollbarsColor = c;
 	invalidateContent();
 }
