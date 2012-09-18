@@ -37,14 +37,19 @@ void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, GuiRen
 			vec2i(static_cast<int>(eSize.x), static_cast<int>(eSize.y))));
 	}
 	
-	element->addToRenderQueue(rc, gr);
+	bool overChildren = element->hasFlag(ElementFlag_RenderOverChildren);
+
+	if (!overChildren)
+		element->addToRenderQueue(rc, gr);
+
 	for (Element::List::iterator i = element->children().begin(), e = element->children().end(); i != e; ++i)
 		addElementToRenderQueue(i->ptr(), rc, gr);
 
+	if (overChildren)
+		element->addToRenderQueue(rc, gr);
+
 	if (element->hasFlag(ElementFlag_ClipToBounds))
-	{
 		gr.popClipRect();
-	}
 }
 
 void Layout::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)

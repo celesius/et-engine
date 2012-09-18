@@ -39,7 +39,8 @@ namespace et
 			ElementFlag_TransparentForPointer = 0x0004,
 			ElementFlag_RenderTopmost = 0x0008,
 			ElementFlag_HandlesChildEvents = 0x0010,
-			ElementFlag_ClipToBounds = 0x0020
+			ElementFlag_ClipToBounds = 0x0020,
+			ElementFlag_RenderOverChildren = 0x0040
 		};
 		
 		enum GuiRenderLayer 

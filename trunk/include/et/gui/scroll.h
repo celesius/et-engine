@@ -47,7 +47,7 @@ namespace et
 			void setBackgroundColor(const vec4& color);
 			
 		private:
-			void buildVertices(GuiRenderer& r);
+			void buildVertices(RenderContext* rc, GuiRenderer& r);
 			
 			void invalidateChildren();
 			void broadcastPressed(const PointerInputInfo&);
