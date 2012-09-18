@@ -190,16 +190,7 @@ BaseAnimator* Element2d::setSize(float w, float h, float duration)
 BaseAnimator* Element2d::setVisible(bool vis, float duration)
 {
 	if (visible() == vis) return 0;
-	
-	if (vis)
-	{
-		setAlpha(etMax(alpha(), minimalVisibleAlpha));
-		return setAlpha(1.0f, duration);
-	}
-	else
-	{
-		return setAlpha(0.0f, duration);
-	}
+	return setAlpha(vis ? 1.0f : 0.0f, duration);
 }
 
 mat4 Element2d::finalTransform() 
