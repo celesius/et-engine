@@ -14,6 +14,7 @@ using namespace et::gui;
 
 float deccelerationRate = 10.0f;
 float accelerationRate = 0.5f;
+float scrollbarSize = 5.0f;
 
 Scroll::Scroll(Element2d* parent) : Element2d(parent), _offsetAnimator(0, 0, mainTimerPool()),
 	_updateTime(0.0f), _pointerCaptured(false), _manualScrolling(false)
@@ -21,22 +22,33 @@ Scroll::Scroll(Element2d* parent) : Element2d(parent), _offsetAnimator(0, 0, mai
 	_offsetAnimator.setDelegate(this);
 	setFlag(ElementFlag_HandlesChildEvents);
 	setFlag(ElementFlag_ClipToBounds);
+	setFlag(ElementFlag_RenderOverChildren);
 	startUpdates();
 }
 
 void Scroll::addToRenderQueue(RenderContext* rc, GuiRenderer& r)
 {
 	if (!contentValid())
-		buildVertices(r);
+		buildVertices(rc, r);
 	
-	if (_backgroundColor.w > 0.0f)
+	if (_vertices.currentIndex())
 		r.addVertices(_vertices, Texture(), ElementClass_2d, GuiRenderLayer_Layer0);
 }
 
-void Scroll::buildVertices(GuiRenderer& r)
+void Scroll::buildVertices(RenderContext* rc, GuiRenderer& r)
 {
 	_vertices.setOffset(0);
+/*
 	r.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor,
+		Element2d::finalTransform(), GuiRenderLayer_Layer0);
+*/
+	float scaledScollbarSize = scrollbarSize * static_cast<float>(rc->screenScaleFactor());
+	float barHeight = size().y * (size().y / _contentSize.y);
+	float barOffset = size().y * (_offset.y / _contentSize.y);
+
+	vec2 origin(size().x - 2.0f * scaledScollbarSize, -barOffset);
+
+	r.createColorVertices(_vertices, rect(origin, vec2(scaledScollbarSize, barHeight)), vec4(0.0f, 0.0f, 0.0f, 0.5f),
 		Element2d::finalTransform(), GuiRenderLayer_Layer0);
 	
 	setContentValid();
@@ -198,6 +210,7 @@ void Scroll::update(float t)
 void Scroll::setContentSize(const vec2& cs)
 {
 	_contentSize = cs;
+	invalidateContent();
 }
 
 void Scroll::adjustContentSize()
@@ -250,6 +263,7 @@ void Scroll::internal_setOffset(const vec2& o)
 		_velocity.y = 0.0f;
 	}
 	
+	invalidateContent();
 	invalidateChildren();
 }
 
