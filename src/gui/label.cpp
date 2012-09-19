@@ -226,10 +226,24 @@ void Label::fitToWidth(float w)
 				latestLine.append(nextCharStr);
 			}
 		}
+		else if (_font->measureStringSize(word).x > w)
+		{
+			std::string wBegin = word.substr(0, word.size() - 1);
+			appended = latestLine + wBegin;
+			while (_font->measureStringSize(appended).x > w)
+			{
+				wBegin.erase(wBegin.size() - 1);
+				appended = latestLine + wBegin;
+			}
+			newText.append(appended);
+			newText.append("\n");
+			newText.append(word.substr(wBegin.size()));
+		}
 		else
 		{
 			size_t lastCharPos = newText.size() - 1;
 			char lastChar = newText.at(lastCharPos);
+			
 			if (isWhitespaceChar(lastChar) && !isNewLineChar(lastChar))
 			{
 				newText[lastCharPos] = '\n';
