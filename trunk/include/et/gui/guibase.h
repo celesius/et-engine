@@ -48,6 +48,7 @@ namespace et
 				{ }
 
 			virtual void addToRenderQueue(RenderContext*, GuiRenderer&);
+			virtual void addToOverlayRenderQueue(RenderContext*, GuiRenderer&);
 
 			virtual bool pointerPressed(const PointerInputInfo&)
 				{ return !hasFlag(ElementFlag_TransparentForPointer); }

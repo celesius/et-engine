@@ -5,9 +5,9 @@
  *
  */
 
-#include <assert.h>
+#include <et/core/debug.h>
 #include <et/core/serialization.h>
-#include <et/vertexbuffer/IndexArray.h>
+#include <et/vertexbuffer/indexarray.h>
 #include <et/primitives/primitives.h>
 
 using namespace et;
@@ -100,6 +100,11 @@ size_t IndexArray::primitivesCount() const
 	}
 	
 	return 0;
+}
+
+void IndexArray::resize(size_t count)
+{
+	_data.resize(count * _format);
 }
 
 void IndexArray::resizeToFit(size_t count)

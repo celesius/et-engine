@@ -6,7 +6,7 @@
  */
 
 #include <math.h>
-#include <assert.h>
+#include <et/core/debug.h>
 #include <et/geometry/geometry.h>
 
 using namespace et;

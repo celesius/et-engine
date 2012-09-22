@@ -423,6 +423,10 @@ Gui::LayoutEntryObject::LayoutEntryObject(Gui::LayoutEntryObject& l) :
 	moveDelegate();
 }
 
+Gui::LayoutEntryObject::~LayoutEntryObject()
+{
+	std::cout << "Gui::LayoutEntryObject::~LayoutEntryObject()" << std::endl;
+}
 
 Gui::LayoutEntryObject& Gui::LayoutEntryObject::operator = (Gui::LayoutEntryObject& l)
 {

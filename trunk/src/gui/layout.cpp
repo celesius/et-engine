@@ -28,28 +28,29 @@ void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, GuiRen
 {
 	if (!element->visible()) return;
 
-	if (element->hasFlag(ElementFlag_ClipToBounds))
+	bool clipToBounds = element->hasFlag(ElementFlag_ClipToBounds);
+
+	if (clipToBounds)
 	{
 		mat4 parentTransform = element->parent()->finalTransform();
 		vec2 eSize = multiplyWithoutTranslation(element->size(), parentTransform);
 		vec2 eOrigin = parentTransform * element->origin();
+
 		gr.pushClipRect(recti(vec2i(static_cast<int>(eOrigin.x), static_cast<int>(rc->size().y - eOrigin.y - eSize.y)), 
 			vec2i(static_cast<int>(eSize.x), static_cast<int>(eSize.y))));
 	}
 	
-	bool overChildren = element->hasFlag(ElementFlag_RenderOverChildren);
-
-	if (!overChildren)
-		element->addToRenderQueue(rc, gr);
+	element->addToRenderQueue(rc, gr);
 
 	for (Element::List::iterator i = element->children().begin(), e = element->children().end(); i != e; ++i)
 		addElementToRenderQueue(i->ptr(), rc, gr);
 
-	if (overChildren)
-		element->addToRenderQueue(rc, gr);
+	element->addToOverlayRenderQueue(rc, gr);
 
-	if (element->hasFlag(ElementFlag_ClipToBounds))
+	if (clipToBounds)
+	{
 		gr.popClipRect();
+	}
 }
 
 void Layout::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)

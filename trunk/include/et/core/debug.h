@@ -8,6 +8,7 @@
 #pragma once
 
 #include <iostream>
+#include <assert.h>
 #include <et/platform/platform.h>
 
 namespace et
@@ -19,7 +20,9 @@ namespace et
 		variable = newValue;
 		std::cout << variableName << " = " << valueName << ", call from " << function << std::endl;
 	}
+
 }
+
 
 #if (ET_DEBUG)
 	#define setDebugVariable(var, val) et::setDebugVariable_template_base(var, val, #var, #val, __FUNCTION__);

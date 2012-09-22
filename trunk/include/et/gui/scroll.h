@@ -21,6 +21,7 @@ namespace et
 		public:
 			Scroll(Element2d* parent);
 			void addToRenderQueue(RenderContext*, GuiRenderer&);
+			void addToOverlayRenderQueue(RenderContext*, GuiRenderer&);
 			
 			mat4 finalTransform();
 			mat4 finalInverseTransform();
@@ -64,7 +65,9 @@ namespace et
 			void internal_setOffset(const vec2& o);
 			
 		private:
-			GuiVertexList _vertices;
+			GuiVertexList _backgroundVertices;
+			GuiVertexList _scrollbarsVertices;
+
 			Vector2Animator _offsetAnimator;
 			PointerInputInfo _currentPointer;
 			PointerInputInfo _previousPointer;

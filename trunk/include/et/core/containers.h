@@ -7,29 +7,20 @@
 
 #pragma once
 
-#include <assert.h>
-#include <et/platform/platform.h>
+#include <et/core/debug.h>
 
 namespace et
 {
 
-	class Container
+	template <typename T>
+	struct ContainerBase
 	{
-	public:
-		virtual ~Container() { }
-
-		virtual void fill(int) = 0;
-
-		virtual char* binary() = 0;
-		virtual const char* binary() const = 0;
-
-		virtual const size_t size() const = 0;
-		virtual const size_t dataSize() const = 0;
-		virtual const size_t typeSize() const = 0;
+		static const size_t typeSize()
+			{ return sizeof(T); }
 	};
 
 	template <typename T, size_t count>
-	struct StaticDataStorage : private Container
+	struct StaticDataStorage : public ContainerBase<T>
 	{
 		StaticDataStorage() 
 			{ }
@@ -59,19 +50,16 @@ namespace et
 		
 		const size_t dataSize() const 
 			{ return count * sizeof(T); }
-		
-		const size_t typeSize() const
-			{ return sizeof(T); }
 	};
 
 	template <typename T>
-	class DataStorage : private Container
+	class DataStorage : public ContainerBase<T>
 	{
 	public:
 		typedef T DataFormat;
 
-		DataStorage() : _data(0), _size(0), _dataSize(0), _index(0)
-		{ }
+		DataStorage() : 
+			_data(0), _size(0), _dataSize(0), _index(0) { }
 
 		explicit DataStorage(size_t size) : _data(0), _size(0), _dataSize(0), _index(0) 
 		{ 
@@ -87,13 +75,13 @@ namespace et
 		DataStorage(const DataStorage& copy) : _data(0), _size(0), _dataSize(0), _index(0) 
 		{
 			resize(copy.size());
-			memcpy(_data, copy.data(), copy.dataSize());
+
+			if (copy.size() > 0)
+				memcpy(_data, copy.data(), copy.dataSize());
 		}
 
 		~DataStorage()
-		{ 
-			resize(0); 
-		}
+			{ resize(0); }
 
 		void resize(size_t size)
 		{
@@ -127,10 +115,16 @@ namespace et
 			{ ++_index; }
 		
 		T& current()
-			{ return _data[_index]; }
+			{ return assert(_index < _size); _data[_index]; }
+
+		const T& current() const
+			{ return assert(_index < _size); _data[_index]; }
 		
 		T* current_ptr()
-			{ return &_data[_index]; }
+			{ assert(_index < _size); return &_data[_index]; }
+
+		const T* current_ptr() const
+			{ assert(_index < _size); return &_data[_index]; }
 		
 		const size_t currentIndex() const
 			{ return _index; }
@@ -141,9 +135,6 @@ namespace et
 		const size_t dataSize() const
 			{ return _dataSize; }
 		
-		const size_t typeSize() const
-			{ return sizeof(T); }
-
 		T* data()
 			{ return _data; }
 		
@@ -161,10 +152,10 @@ namespace et
 		}
 
 		T* element_ptr(size_t i)
-			{ return &_data[i]; }
+			{ assert(i < _size); return &_data[i]; }
 
 		const T* element_ptr(size_t i) const 
-			{ return &_data[i]; }
+			{ assert(i < _size); return &_data[i]; }
 
 		T& operator [](size_t i)
 			{ assert(i < _size); return _data[i]; }
@@ -188,6 +179,7 @@ namespace et
 		void push_back(const T& value)
 		{
 			fitToSize(1);
+			assert(_index < _size); 
 			_data[_index] = value;
 			++_index;
 		}
@@ -202,7 +194,10 @@ namespace et
 		{
 			_index = buf._index;
 			resize(buf.size());
-			memcpy(_data, buf.data(), buf.dataSize());
+
+			if (buf.size() > 0)
+				memcpy(_data, buf.data(), buf.dataSize());
+
 			return *this;
 		}
 
@@ -218,7 +213,7 @@ namespace et
 	typedef DataStorage<char> StringDataStorage;
 
 	template <typename T>
-	class RawDataAcessor : public Container
+	class RawDataAcessor : public ContainerBase<T>
 	{
 	public:
 		static const int TypeSize = sizeof(T);
@@ -248,7 +243,6 @@ namespace et
 
 		const size_t size() const { return _size; };
 		const size_t dataSize() const { return _dataSize; }
-		const size_t typeSize() const { return TypeSize; }
 
 		bool valid() const { return _data != 0; }
 
