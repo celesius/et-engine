@@ -251,8 +251,10 @@ CharDescriptorList FontData::parseString(const std::string& s)
 					{
 						if (nBoldTags)
 							--nBoldTags;
+/*
 						else
 							std::cout << "WARNING: closing <b> tag without opening in string: " << s << std::endl;
+*/
 					}
 					else if (tag.find_first_of(tagColor) == 0)
 					{
@@ -261,10 +263,12 @@ CharDescriptorList FontData::parseString(const std::string& s)
 							--nColorTags;
 							colors.pop_front();
 						}
+/*
 						else
 						{
 							std::cout << "WARNING: closing <color> tag without opening in string: " << s << std::endl;
 						}
+*/
 					}
 					else 
 					{

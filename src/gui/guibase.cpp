@@ -70,7 +70,10 @@ void Element::invalidateTransform()
 
 void Element::addToRenderQueue(RenderContext*, GuiRenderer&) 
 {
+}
 
+void Element::addToOverlayRenderQueue(RenderContext*, GuiRenderer&)
+{
 }
 
 void Element::startUpdates(TimerPoolObject* timerPool)

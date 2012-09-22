@@ -81,7 +81,7 @@ void GuiRenderer::setProjectionMatrices(const vec2& contextSize)
 	}
 	
 	_defaultTransform = IDENTITY_MATRIX;
-	_defaultTransform[0][0] = 2.0f / contextSize.x;
+	_defaultTransform[0][0] =  2.0f / contextSize.x;
 	_defaultTransform[1][1] = -2.0f / contextSize.y;
 	_defaultTransform[3][0] = -1.0f;
 	_defaultTransform[3][1] = 1.0f;
@@ -93,15 +93,17 @@ void GuiRenderer::setProjectionMatrices(const vec2& contextSize)
 
 void GuiRenderer::alloc(size_t count)
 {
-	if (_renderingElement.valid() && (_renderingElement->_vertexList.currentIndex() + count >= _renderingElement->_vertexList.size()))
-	{
-		size_t newSize = _renderingElement->_vertexList.size() + BlockSize * (1 + count / BlockSize);
-		_renderingElement->_vertexList.resize(newSize);
+	if (_renderingElement.invalid()) return;
 
-		size_t currentActualSize = _renderingElement->_indexArray->actualSize();
-		_renderingElement->_indexArray->resizeToFit(newSize);
+	size_t currentOffset = _renderingElement->_vertexList.currentIndex();
+	size_t currentSize = _renderingElement->_vertexList.size();
+
+	if (currentOffset + count >= currentSize)
+	{
+		size_t newSize = currentSize + BlockSize * (1 + count / BlockSize);
+		_renderingElement->_vertexList.resize(newSize);
+		_renderingElement->_indexArray->resize(newSize);
 		_renderingElement->_indexArray->linearize();
-		_renderingElement->_indexArray->setActualSize(currentActualSize);
 	}
 }
 
@@ -114,6 +116,7 @@ GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& text
 	
 	_renderingElement->_changed = true;
 	size_t i0 = _renderingElement->_vertexList.currentIndex();
+
 	if (_renderingElement->_chunks.size())
 	{
 		RenderChunk& lastChunk = _renderingElement->_chunks.back();
@@ -137,24 +140,22 @@ GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& text
 	alloc(count);
 	_renderingElement->_vertexList.offset(count);
 
+	assert(i0 < _renderingElement->_vertexList.size());
+	assert(i0 * _renderingElement->_vertexList.typeSize() < _renderingElement->_vertexList.dataSize());
+
 	return _renderingElement->_vertexList.element_ptr(i0);
 }
 
 size_t GuiRenderer::addVertices(const GuiVertexList& vertices, const Texture& texture, ElementClass cls, GuiRenderLayer layer)
 {
-	if (!_renderingElement.valid()) return 0;
-
-	size_t current = _renderingElement->_vertexList.currentIndex();
+	size_t current = 0;
 	size_t count = vertices.currentIndex();
 
-	if (count)
+	if (_renderingElement.valid() && (count > 0))
 	{
+		current = _renderingElement->_vertexList.currentIndex();
 		GuiVertex* v0 = allocateVertices(count, texture, cls, layer);
-		memcpy(v0, vertices.binary(), vertices.dataSize());
-	}
-	else 
-	{
-		std::cout << "Adding empty vertices!" << std::endl;
+		memcpy(v0, vertices.data(), count * vertices.typeSize());
 	}
 
 	return current;

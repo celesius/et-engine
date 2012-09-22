@@ -119,6 +119,7 @@ namespace et
 				LayoutEntryObject(LayoutEntryObject&& l);
 				LayoutEntryObject(LayoutEntryObject& l);
 				LayoutEntryObject& operator = (LayoutEntryObject& l);
+				~LayoutEntryObject();
 
 				void animateTo(const vec3& oa, float duration, State s);
 

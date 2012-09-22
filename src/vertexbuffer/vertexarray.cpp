@@ -57,21 +57,29 @@ VertexArray::Description VertexArray::getDesc() const
 	size_t entry_i = 0;
 	for (VertexDataChunkList::const_iterator i = _chunks.begin(), e = _chunks.end(); i != e; ++i, ++entry_i)
 	{
-		VertexDataChunk chunk = *i;
+		const VertexDataChunk& chunk = *i;
+		const char* chunkData = chunk->data();
+		size_t chunkDataSize = chunk->dataSize();
+
 		size_t chunkOffset = desc.declaration[entry_i].offset();
 		if (desc.declaration.interleaved())
 		{
 			for (size_t j = 0; j < numElements; ++j)
 			{
-				char* dstPtr = ptr0 + chunkOffset + j * offset;
-				const char* srcPtr = chunk->data() + j * chunk->typeSize();
+				size_t dstPtrOffset = chunkOffset + j * offset;
+				assert(dstPtrOffset < desc.data.dataSize());
+				char* dstPtr = ptr0 + dstPtrOffset;
+
+				size_t srcPtrOffset = j * chunk->typeSize();
+				assert(srcPtrOffset < chunkDataSize);
+				const char* srcPtr = chunkData + srcPtrOffset;
+
 				memcpy(dstPtr, srcPtr, chunk->typeSize());
 			}
 		}
 		else
 		{
-			size_t size = chunk->dataSize();
-			memcpy(ptr0 + chunkOffset, chunk->data(), size);
+			memcpy(ptr0 + chunkOffset, chunkData, chunkDataSize);
 		}
 	} 
 

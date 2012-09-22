@@ -24,17 +24,13 @@ void Button::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, gr);
 
-	bool hasBackground = _background[_state].texture.valid();
-	bool hasTitle = _title.length() > 0;
-	bool hasImage = _image.texture.valid();
-
-	if (hasBackground)
+	if (_bgVertices.currentIndex() > 0)
 		gr.addVertices(_bgVertices, _background[_state].texture, ElementClass_2d, GuiRenderLayer_Layer0);
 
-	if (hasTitle)
+	if (_textVertices.currentIndex() > 0)
 		gr.addVertices(_textVertices, _font->texture(), ElementClass_2d, GuiRenderLayer_Layer1);
 
-	if (hasImage)
+	if (_imageVertices.currentIndex() > 0)
 		gr.addVertices(_imageVertices, _image.texture, ElementClass_2d, GuiRenderLayer_Layer0);
 }
 
@@ -72,7 +68,7 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 			rect(vec2(0.0f), size()), color(), transform, GuiRenderLayer_Layer0);
 	}
 
-	if (_title.length())
+	if (_title.size() > 0)
 	{
 		vec4 aColor = _state == ElementState_Pressed ? _textPressedColor : _textColor;
 		if (aColor.w > 0.0f)

@@ -75,7 +75,10 @@ namespace et
 		IndexType getIndex(size_t pos) const;
 		void setIndex(IndexType value, size_t pos);
 		void push_back(IndexType value);
+
+		void resize(size_t count);
 		void resizeToFit(size_t count);
+
 		void compact();
 
 		void serialize(std::ostream& stream);

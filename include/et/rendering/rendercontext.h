@@ -7,7 +7,8 @@
 
 #pragma once
 
-#include <et/platform/platform.h>
+#include <et/core/debug.h>
+
 #include <et/timers/notifytimer.h>
 #include <et/app/events.h>
 

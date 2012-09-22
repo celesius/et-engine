@@ -12,6 +12,7 @@
 #include <fstream>
 #include <vector>
 #include <et/core/constants.h>
+#include <et/core/debug.h>
 #include <et/platform/compileoptions.h>
 #include <et/geometry/geometry.h>
 

@@ -26,7 +26,6 @@ Scroll::Scroll(Element2d* parent) : Element2d(parent), _offsetAnimator(0, 0, mai
 	_offsetAnimator.setDelegate(this);
 	setFlag(ElementFlag_HandlesChildEvents);
 	setFlag(ElementFlag_ClipToBounds);
-	setFlag(ElementFlag_RenderOverChildren);
 	startUpdates();
 }
 
@@ -35,17 +34,25 @@ void Scroll::addToRenderQueue(RenderContext* rc, GuiRenderer& r)
 	if (!contentValid())
 		buildVertices(rc, r);
 	
-	if (_vertices.currentIndex())
-		r.addVertices(_vertices, Texture(), ElementClass_2d, GuiRenderLayer_Layer0);
+	r.addVertices(_backgroundVertices, Texture(), ElementClass_2d, GuiRenderLayer_Layer0);
+}
+
+void Scroll::addToOverlayRenderQueue(RenderContext* rc, GuiRenderer& r)
+{
+	if (!contentValid())
+		buildVertices(rc, r);
+
+	r.addVertices(_scrollbarsVertices, Texture(), ElementClass_2d, GuiRenderLayer_Layer0);
 }
 
 void Scroll::buildVertices(RenderContext* rc, GuiRenderer& r)
 {
-	_vertices.setOffset(0);
+	_backgroundVertices.setOffset(0);
+	_scrollbarsVertices.setOffset(0);
 
 	if (_backgroundColor.w > 0.0f)
 	{
-		r.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor,
+		r.createColorVertices(_backgroundVertices, rect(vec2(0.0f), size()), _backgroundColor,
 			Element2d::finalTransform(), GuiRenderLayer_Layer0);
 	}
 	
@@ -59,7 +66,7 @@ void Scroll::buildVertices(RenderContext* rc, GuiRenderer& r)
 		vec4 adjutsedColor = _scrollbarsColor;
 		adjutsedColor.w *= _scrollbarsAlpha;
 		
-		r.createColorVertices(_vertices, rect(origin, vec2(scaledScollbarSize, barHeight)), adjutsedColor,
+		r.createColorVertices(_scrollbarsVertices, rect(origin, vec2(scaledScollbarSize, barHeight)), adjutsedColor,
 		  Element2d::finalTransform(), GuiRenderLayer_Layer0);
 	}
 	
