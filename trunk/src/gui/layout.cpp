@@ -10,8 +10,8 @@
 using namespace et;
 using namespace et::gui;
 
-Layout::Layout() : Element2d(0), _currentElement(0), _focusedElement(0), 
-	_capturedElement(0), _valid(false), _dragging(false)
+Layout::Layout() : Element2d(0),
+	_currentElement(0), _focusedElement(0), _capturedElement(0), _valid(false), _dragging(false)
 {
 }
 
@@ -348,6 +348,12 @@ void Layout::collectTopmostElements(Element* element)
 
 	for (Element::List::iterator i = element->children().begin(), e = element->children().end(); i != e; ++i)
 		collectTopmostElements(i->ptr());
+}
+
+void Layout::initRenderingElement(et::RenderContext* rc)
+{
+	if (_renderingElement.invalid())
+		_renderingElement = RenderingElement::Pointer(new RenderingElement(rc));
 }
 
 /*

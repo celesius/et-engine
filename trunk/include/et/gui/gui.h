@@ -78,7 +78,7 @@ namespace et
 					oldLayout(o), newLayout(n) { }
 			};
 
-			void buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer& element, Layout::Pointer layout);
+			void buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer element, Layout::Pointer layout);
 			void buildBackgroundVertices(RenderContext* rc);
 			void buildKeyboardVertices(RenderContext* rc);
 
@@ -116,13 +116,13 @@ namespace et
 
 			public:
 				LayoutEntryObject(Gui* own, RenderContext* rc, Layout::Pointer l);
+				void animateTo(const vec3& oa, float duration, State s);
+				
+			private:
 				LayoutEntryObject(LayoutEntryObject&& l);
 				LayoutEntryObject(LayoutEntryObject& l);
 				LayoutEntryObject& operator = (LayoutEntryObject& l);
-				~LayoutEntryObject();
-
-				void animateTo(const vec3& oa, float duration, State s);
-
+				
 			private:
 				void animatorUpdated(BaseAnimator*);
 				void animatorFinished(BaseAnimator*);
@@ -130,12 +130,12 @@ namespace et
 
 			public:
 				Gui* owner;
-				RenderingElement::Pointer renderingElement;
 				Layout::Pointer layout;
 				AutoPtr<Vector3Animator> animator;
 				vec3 offsetAlpha;
 				State state;
 			};
+			
 			typedef IntrusivePtr<LayoutEntryObject> LayoutEntry;
 			typedef std::deque<LayoutEntry> LayoutEntryStack;
 			friend class LayoutEntryObject;

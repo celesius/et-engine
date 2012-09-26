@@ -54,7 +54,12 @@ namespace et
 
 			Layout* owner()
 				{ return this; }
+			
+			RenderingElement::Pointer renderingElement()
+				{ return _renderingElement; }
 
+			void initRenderingElement(et::RenderContext* rc);
+			
 		private:
 			Element* activeElement(const PointerInputInfo& p);
 			Element* getActiveElement(const PointerInputInfo& p, Element* e);
@@ -62,6 +67,8 @@ namespace et
 			void addElementToRenderQueue(Element* element, RenderContext* rc, GuiRenderer& gr);
 
 		private:
+			RenderingElement::Pointer _renderingElement;
+			
 			Element* _currentElement;
 			Element* _focusedElement;
 			Element* _capturedElement;

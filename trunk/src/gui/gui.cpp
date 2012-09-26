@@ -109,7 +109,7 @@ bool Gui::pointerScrolled(const et::PointerInputInfo& p)
 	return processed;
 }
 
-void Gui::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer& element, Layout::Pointer layout)
+void Gui::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer element, Layout::Pointer layout)
 {
 	_renderer.setRendernigElement(element);
 
@@ -167,7 +167,7 @@ void Gui::render(RenderContext* rc)
 	for (LayoutEntryStack::iterator i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
 	{
 		LayoutEntry& obj = *i;
-		buildLayoutVertices(rc, obj->renderingElement, obj->layout);
+		buildLayoutVertices(rc, obj->layout->renderingElement(), obj->layout);
 		_renderer.setCustomAlpha(obj->offsetAlpha.z);
 		_renderer.setCustomOffset(obj->offsetAlpha.xy());
 		_renderer.render(rc);
@@ -404,34 +404,29 @@ bool Gui::animatingTransition()
  */
 
 Gui::LayoutEntryObject::LayoutEntryObject(Gui* own, RenderContext* rc, Layout::Pointer l) : 
-	owner(own),	renderingElement(new RenderingElement(rc)), layout(l), animator(0), 
+	owner(own),	layout(l), animator(0), 
 	offsetAlpha(0.0f, 0.0f, 1.0f), state(Gui::LayoutEntryObject::State_Still)
 {
+	l->initRenderingElement(rc);
 }
 
 Gui::LayoutEntryObject::LayoutEntryObject(Gui::LayoutEntryObject&& l) : 
-	owner(l.owner), renderingElement(l.renderingElement), layout(l.layout), animator(l.animator.extract()), 
+	owner(l.owner), layout(l.layout), animator(l.animator.extract()), 
 	offsetAlpha(l.offsetAlpha), state(Gui::LayoutEntryObject::State_Still)
 {
 	moveDelegate();
 }
 
 Gui::LayoutEntryObject::LayoutEntryObject(Gui::LayoutEntryObject& l) : 
-	owner(l.owner), renderingElement(l.renderingElement), layout(l.layout), animator(l.animator.extract()), 
+	owner(l.owner), layout(l.layout), animator(l.animator.extract()), 
 	offsetAlpha(l.offsetAlpha), state(Gui::LayoutEntryObject::State_Still)
 {
 	moveDelegate();
 }
 
-Gui::LayoutEntryObject::~LayoutEntryObject()
-{
-	std::cout << "Gui::LayoutEntryObject::~LayoutEntryObject()" << std::endl;
-}
-
 Gui::LayoutEntryObject& Gui::LayoutEntryObject::operator = (Gui::LayoutEntryObject& l)
 {
 	owner = l.owner;
-	renderingElement = l.renderingElement;
 	layout = l.layout;
 	animator = l.animator.extract();
 	offsetAlpha = l.offsetAlpha;
