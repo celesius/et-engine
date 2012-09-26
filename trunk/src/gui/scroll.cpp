@@ -21,7 +21,7 @@ float alphaAnimationScale = 5.0f;
 
 Scroll::Scroll(Element2d* parent) : Element2d(parent), _offsetAnimator(0, 0, mainTimerPool()),
 	_updateTime(0.0f), _scrollbarsAlpha(0.0f), _scrollbarsAlphaTarget(0.0f),
-	_pointerCaptured(false), _manualScrolling(false)
+	_pointerCaptured(false), _manualScrolling(false), _bouncing(BounceDirection_None)
 {
 	_offsetAnimator.setDelegate(this);
 	setFlag(ElementFlag_HandlesChildEvents);
@@ -106,13 +106,28 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 	{
 		if (_manualScrolling)
 		{
-			applyOffset(p.pos - _currentPointer.pos);
+			vec2 dOffset = p.pos - _currentPointer.pos;
+			float offsetScale = 1.0f;
+			
+			if (-_offset.y < scrollUpperDefaultValue())
+			{
+				float diff = fabsf(-_offset.y - scrollUpperDefaultValue());
+				offsetScale *= diff / fabsf(scrollUpperDefaultValue() - scrollUpperLimit());
+			}
+			else if (-_offset.y > scrollLowerDefaultValue())
+			{
+				float diff = fabsf(-_offset.y - scrollLowerDefaultValue());
+				offsetScale *= diff / fabsf(scrollLowerDefaultValue() - scrollLowerLimit());
+			}
+			
+			applyOffset(offsetScale * dOffset);
 		}
 		else if (!_pointerCaptured)
 		{
 			_manualScrolling = true;
 			_pointerCaptured = true;
 			_scrollbarsAlphaTarget = 1.0f;
+			_bouncing = BounceDirection_None;
 			broadcastCancelled(p);
 		}
 		_previousPointer = _currentPointer;
@@ -160,10 +175,17 @@ void Scroll::broadcastPressed(const PointerInputInfo& p)
 {
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
 	
-	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
+	for (Element::List::reverse_iterator i = children().rbegin(), e = children().rend(); i != e; ++i)
 	{
-		if ((*i)->containsPoint(globalPos.pos, globalPos.normalizedPos))
-			(*i)->pointerPressed(PointerInputInfo(p.type, (*i)->positionInElement(globalPos.pos), globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
+		Element* el = i->ptr();
+		if (el->enabled() && el->visible() && el->containsPoint(globalPos.pos, globalPos.normalizedPos))
+		{
+			vec2 posInElement = el->positionInElement(globalPos.pos);
+			if (el->pointerPressed(PointerInputInfo(p.type, posInElement, globalPos.normalizedPos, p.scroll, p.id, p.timestamp)))
+			{
+				break;
+			}
+		}
 	}
 }
 
@@ -171,24 +193,45 @@ void Scroll::broadcastMoved(const PointerInputInfo& p)
 {
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
 	
-	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
-		(*i)->pointerMoved(PointerInputInfo(p.type, (*i)->positionInElement(globalPos.pos), globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
+	for (Element::List::reverse_iterator i = children().rbegin(), e = children().rend(); i != e; ++i)
+	{
+		Element* el = i->ptr();
+		if (el-visible() && el->enabled())
+		{
+			el->pointerMoved(PointerInputInfo(p.type, el->positionInElement(globalPos.pos),
+				globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
+		}
+	}
 }
 
 void Scroll::broadcastReleased(const PointerInputInfo& p)
 {
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
 	
-	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
-		(*i)->pointerReleased(PointerInputInfo(p.type, (*i)->positionInElement(globalPos.pos), globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
+	for (Element::List::reverse_iterator i = children().rbegin(), e = children().rend(); i != e; ++i)
+	{
+		Element* el = i->ptr();
+		if (el-visible() && el->enabled())
+		{
+			el->pointerReleased(PointerInputInfo(p.type, el->positionInElement(globalPos.pos),
+				globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
+		}
+	}
 }
 
 void Scroll::broadcastCancelled(const PointerInputInfo& p)
 {
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
 	
-	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
-		(*i)->pointerCancelled(PointerInputInfo(p.type, (*i)->positionInElement(globalPos.pos), globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
+	for (Element::List::reverse_iterator i = children().rbegin(), e = children().rend(); i != e; ++i)
+	{
+		Element* el = i->ptr();
+		if (el-visible() && el->enabled())
+		{
+			el->pointerCancelled(PointerInputInfo(p.type, el->positionInElement(globalPos.pos),
+				globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
+		}
+	}
 }
 
 bool Scroll::containsPoint(const vec2& p, const vec2& np)
@@ -200,14 +243,14 @@ void Scroll::update(float t)
 {
 	if (_updateTime == 0.0f)
 		_updateTime = t;
+	
 	float deltaTime = t - _updateTime;
+	
 	_updateTime = t;
 	
 	_scrollbarsAlpha = mix(_scrollbarsAlpha, _scrollbarsAlphaTarget, etMin(1.0f, alphaAnimationScale * deltaTime));
 	if (_scrollbarsAlpha < minAlpha)
-	{
 		_scrollbarsAlpha = 0.0f;
-	}
 
 	if (_manualScrolling)
 	{
@@ -221,7 +264,40 @@ void Scroll::update(float t)
 		invalidateContent();
 		return;
 	}
+	
+	if (-_offset.y < scrollUpperDefaultValue())
+		_bouncing = BounceDirection_ToUpper;
 
+	if (-_offset.y > scrollLowerDefaultValue())
+		_bouncing = BounceDirection_ToLower;
+	
+	if (_bouncing == BounceDirection_ToUpper)
+	{
+		float k = 0.25f * size().y;
+		float diff = -_offset.y - scrollUpperDefaultValue();
+		_velocity.y += k * diff * deltaTime;
+		
+		if ((_velocity.y <= 1.0f) && (fabsf(diff) <= 1.0f))
+		{
+			_velocity.y = 0.0f;
+			_offset.y = -scrollUpperDefaultValue();
+			_bouncing = BounceDirection_None;
+		}
+	}
+	else if (_bouncing == BounceDirection_ToLower)
+	{
+		float k = 0.25f * size().y;
+		float diff = -_offset.y - scrollLowerDefaultValue();
+		_velocity.y += k * diff * deltaTime;
+		
+		if ((_velocity.y <= 1.0f) && (fabsf(diff) <= 1.0f))
+		{
+			_velocity.y = 0.0f;
+			_offset.y = -scrollLowerDefaultValue();
+			_bouncing = BounceDirection_None;
+		}
+	}
+	
 	float dt = etMin(1.0f, deltaTime * deccelerationRate);
 	_velocity -= _velocity * dt;
 	
@@ -231,6 +307,7 @@ void Scroll::update(float t)
 		_velocity = vec2(0.0f);
 
 	vec2 dp = _velocity * deltaTime;
+	
 	if (dp.dotSelf() > 1.0e-6)
 	{
 		applyOffset(dp);
@@ -272,6 +349,7 @@ void Scroll::setOffset(const vec2& aOffset, float duration)
 	
 	if (duration == 0.0f)
 	{
+		_offsetAnimator.cancelUpdates();
 		internal_setOffset(aOffset);
 	}
 	else
@@ -280,20 +358,43 @@ void Scroll::setOffset(const vec2& aOffset, float duration)
 	}
 }
 
+float Scroll::scrollUpperLimit() const
+{
+	return scrollUpperDefaultValue() - 0.5f * size().y;
+}
+
+float Scroll::scrollLowerLimit() const
+{
+	return scrollLowerDefaultValue() + 0.5f * size().y;
+}
+
+float Scroll::scrollUpperDefaultValue() const
+{
+	return 0.0f;
+}
+
+float Scroll::scrollLowerDefaultValue() const
+{
+	return _contentSize.y - size().y;
+}
+
 void Scroll::internal_setOffset(const vec2& o)
 {
 	_offset = o * vec2(0.0f, 1.0f);
 	vec2 actualOffset = -_offset;
 	
-	if (actualOffset.y < 0.0f)
+	float upperLimit = scrollUpperLimit();
+	float lowerLimit = scrollLowerLimit();
+	
+	if (actualOffset.y < upperLimit)
 	{
-		_offset.y = 0.0f;
+		_offset.y = -upperLimit;
 		_velocity.y = 0.0f;
 	}
 	
-	if (actualOffset.y + size().y > _contentSize.y)
+	if (actualOffset.y > lowerLimit)
 	{
-		_offset.y = -_contentSize.y + size().y;
+		_offset.y = -lowerLimit;
 		_velocity.y = 0.0f;
 	}
 	

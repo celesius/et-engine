@@ -64,6 +64,19 @@ namespace et
 			
 			void internal_setOffset(const vec2& o);
 			
+			float scrollUpperLimit() const;
+			float scrollUpperDefaultValue() const;
+			float scrollLowerLimit() const;
+			float scrollLowerDefaultValue() const;
+			
+		private:
+			enum BounceDirection
+			{
+				BounceDirection_None,
+				BounceDirection_ToUpper,
+				BounceDirection_ToLower
+			};
+			
 		private:
 			GuiVertexList _backgroundVertices;
 			GuiVertexList _scrollbarsVertices;
@@ -81,6 +94,7 @@ namespace et
 			float _scrollbarsAlphaTarget;
 			bool _pointerCaptured;
 			bool _manualScrolling;
+			BounceDirection _bouncing;
 		};
 
 	}
