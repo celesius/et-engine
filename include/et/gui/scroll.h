@@ -64,6 +64,7 @@ namespace et
 			
 			void internal_setOffset(const vec2& o);
 			
+			float scrollOutOfContentSize() const;
 			float scrollUpperLimit() const;
 			float scrollUpperDefaultValue() const;
 			float scrollLowerLimit() const;

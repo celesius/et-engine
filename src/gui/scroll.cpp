@@ -112,15 +112,15 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 			if (-_offset.y < scrollUpperDefaultValue())
 			{
 				float diff = fabsf(-_offset.y - scrollUpperDefaultValue());
-				offsetScale *= diff / fabsf(scrollUpperDefaultValue() - scrollUpperLimit());
+				offsetScale *= etMax(0.0f, 1.0f - diff / scrollOutOfContentSize());
 			}
 			else if (-_offset.y > scrollLowerDefaultValue())
 			{
 				float diff = fabsf(-_offset.y - scrollLowerDefaultValue());
-				offsetScale *= diff / fabsf(scrollLowerDefaultValue() - scrollLowerLimit());
+				offsetScale *= etMax(0.0f, 1.0f - diff / scrollOutOfContentSize());
 			}
 			
-			applyOffset(offsetScale * dOffset);
+			applyOffset(sqr(offsetScale) * dOffset);
 		}
 		else if (!_pointerCaptured)
 		{
@@ -358,14 +358,19 @@ void Scroll::setOffset(const vec2& aOffset, float duration)
 	}
 }
 
+float Scroll::scrollOutOfContentSize() const
+{
+	return 0.5f * size().y;
+}
+
 float Scroll::scrollUpperLimit() const
 {
-	return scrollUpperDefaultValue() - 0.5f * size().y;
+	return scrollUpperDefaultValue() - scrollOutOfContentSize();
 }
 
 float Scroll::scrollLowerLimit() const
 {
-	return scrollLowerDefaultValue() + 0.5f * size().y;
+	return scrollLowerDefaultValue() + scrollOutOfContentSize();
 }
 
 float Scroll::scrollUpperDefaultValue() const
