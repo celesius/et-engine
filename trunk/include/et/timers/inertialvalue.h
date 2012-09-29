@@ -18,10 +18,10 @@ namespace et
 	{
 	public:
 		InertialValue() : 
-			_velocity(0), _value(0), _epsilon(0), _deccelerationRate(1.0f), _time(0.0f) { }
+			_velocity(0), _value(0), _deccelerationRate(1.0f), _time(0.0f) { }
 
 		InertialValue(const T& val) :
-			_velocity(0), _value(val), _epsilon(0), _deccelerationRate(1.0f), _time(0.0f) { }
+			_velocity(0), _value(val), _deccelerationRate(1.0f), _time(0.0f) { }
 
 		const T& velocity() const
 			{ return _velocity; }
@@ -75,13 +75,16 @@ namespace et
 		ET_DECLARE_EVENT1(valueUpdated, const T&)
 
 	private:
+
 		void update(float t)
 		{
+			static const float epsilon = 0.001f;
+
 			float dt = _deccelerationRate * (t - _time);
 			_velocity *= etMax(0.0f, 1.0f - dt);
 			
 			T dValue = dt * _velocity;
-			if (length(dValue) > _epsilon)
+			if (length(dValue) > epsilon)
 			{
 				_value += dValue;
 				valueUpdated.invoke(_value);
@@ -94,7 +97,6 @@ namespace et
 	private:
 		T _velocity;
 		T _value;
-		float _epsilon;
 		float _deccelerationRate;
 		float _time;
 	};

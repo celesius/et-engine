@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <Windows.h>
+#include <Psapi.h>
 #include <et/app/application.h>
 #include <et/opengl/opengl.h>
 #include <et/core/tools.h>
@@ -178,4 +179,13 @@ void Application::contextResized(const vec2i& size)
 void Application::setTitle(const std::string& s)
 {
 	SendMessage(reinterpret_cast<HWND>(_renderingContextHandle), WM_SETTEXT, 0, reinterpret_cast<LPARAM>(s.c_str()));
+}
+
+size_t Application::memoryUsage() const
+{
+	PROCESS_MEMORY_COUNTERS pmc = { } ;
+	pmc.cb = sizeof(pmc);
+	GetProcessMemoryInfo(GetCurrentProcess(), &pmc, pmc.cb);
+
+	return pmc.WorkingSetSize;
 }

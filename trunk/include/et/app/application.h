@@ -54,12 +54,6 @@ namespace et
 		RunLoop& runLoop()
 			{ return _runLoop; }
 
-		void alert(const std::string& title, const std::string& message, AlertType type = AlertType_Information);
-
-		void setFPSLimit(size_t value);
-		void setCPULoadLimit(bool enable) 
-			{ _cpuLimit = enable; }
-
 		size_t renderingContextHandle() const
 			{ return _renderingContextHandle; }
 
@@ -72,9 +66,14 @@ namespace et
 		size_t launchParamtersCount() const
 			{ return _parameters.size(); }
 
-		void setTitle(const std::string& s);
+		size_t memoryUsage() const;
 
-	protected:
+		void setTitle(const std::string& s);
+		void setFPSLimit(size_t value);
+		void setCPULoadLimit(bool enable) 
+			{ _cpuLimit = enable; }
+
+	private:
 		friend class RenderContext;
 
 		RenderContext* renderContext() 
@@ -83,6 +82,7 @@ namespace et
 		void performRendering();
 		void setActive(bool active);
 		void contextResized(const vec2i& size);
+		void alert(const std::string& title, const std::string& message, AlertType type = AlertType_Information);
 
 	private:
 		friend class ApplicationNotifier;
