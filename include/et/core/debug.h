@@ -23,9 +23,8 @@ namespace et
 
 }
 
-
 #if (ET_DEBUG)
-	#define setDebugVariable(var, val) et::setDebugVariable_template_base(var, val, #var, #val, __FUNCTION__);
+	#define setDebugVariable(var, val) et::setDebugVariable_template_base(var, val, #var, #val, ET_CALL_FUNCTION);
 #else
 	#define setDebugVariable(var, val) var = val;
 #endif

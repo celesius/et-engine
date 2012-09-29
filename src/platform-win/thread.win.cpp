@@ -68,6 +68,11 @@ void Thread::run()
 	_private->thread = CreateThread(0, 0, ThreadPrivate::threadProc, this, 0, &_private->threadId);
 }
 
+void Thread::sleep(size_t msec)
+{
+	Sleep(msec);
+}
+
 ThreadResult Thread::main()
 {
 	return 0;
