@@ -18,6 +18,7 @@ float scrollbarSize = 5.0f;
 float maxScrollbarsVisibilityVelocity = 50.0f;
 float minAlpha = 1.0f / 255.0f;
 float alphaAnimationScale = 5.0f;
+float bounceStopTreshold = 0.5f;
 
 Scroll::Scroll(Element2d* parent) : Element2d(parent), _offsetAnimator(0, 0, mainTimerPool()),
 	_updateTime(0.0f), _scrollbarsAlpha(0.0f), _scrollbarsAlphaTarget(0.0f),
@@ -277,7 +278,7 @@ void Scroll::update(float t)
 		float diff = -_offset.y - scrollUpperDefaultValue();
 		_velocity.y += k * diff * deltaTime;
 		
-		if ((_velocity.y <= 1.0f) && (fabsf(diff) <= 1.0f))
+		if ((_velocity.y <= bounceStopTreshold) && (fabsf(diff) <= bounceStopTreshold))
 		{
 			_velocity.y = 0.0f;
 			_offset.y = -scrollUpperDefaultValue();
@@ -290,7 +291,7 @@ void Scroll::update(float t)
 		float diff = -_offset.y - scrollLowerDefaultValue();
 		_velocity.y += k * diff * deltaTime;
 		
-		if ((_velocity.y <= 1.0f) && (fabsf(diff) <= 1.0f))
+		if ((_velocity.y <= bounceStopTreshold) && (fabsf(diff) <= bounceStopTreshold))
 		{
 			_velocity.y = 0.0f;
 			_offset.y = -scrollLowerDefaultValue();
