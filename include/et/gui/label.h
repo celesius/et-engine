@@ -51,6 +51,10 @@ namespace et
 		private:
 			std::string _text;
 			std::string _nextText;
+			
+			CharDescriptorList _charListText;
+			CharDescriptorList _charListNextText;
+			
 			Font _font;
 			GuiVertexList _vertices;
 			vec4 _backgroundColor;
