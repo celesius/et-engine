@@ -83,6 +83,63 @@ void Primitives::createSphere(VertexArray::Pointer data, float radius, const vec
 	} 
 }
 
+void Primitives::createTorus(VertexArray::Pointer data, float centralRadius, float sizeRadius, const vec2i& density)
+{
+	size_t lastIndex = data->size();
+	data->increase(density.square());
+
+	VertexDataChunk pos_c = data->chunk(Usage_Position);
+	VertexDataChunk norm_c = data->chunk(Usage_Normal);
+	VertexDataChunk tex_c = data->chunk(Usage_TexCoord0);
+	RawDataAcessor<vec3> pos = pos_c.valid() ? pos_c.accessData<vec3>(lastIndex) : RawDataAcessor<vec3>();
+	RawDataAcessor<vec3> norm = norm_c.valid() ? norm_c.accessData<vec3>(lastIndex) : RawDataAcessor<vec3>();
+	RawDataAcessor<vec2> tex = tex_c.valid() ? tex_c.accessData<vec2>(lastIndex) : RawDataAcessor<vec2>();
+
+	bool hasPos = pos.valid();
+	bool hasNorm = norm.valid();
+	bool hasTex = tex.valid();
+
+	float dPhi = DOUBLE_PI / static_cast<float>(density.x - 1);
+	float dTheta = DOUBLE_PI / static_cast<float>(density.y - 1);
+
+	int counter = 0;
+	float theta = -HALF_PI;
+	for (int i = 0; i < density.y; ++i)
+	{
+		float phi = 0.0;
+		for (int j = 0; j < density.x; ++j)
+		{
+			if (hasPos)
+			{
+				vec3 angleScale(cos(phi), sin(theta), sin(phi));
+				vec3 offset(centralRadius, 0.0f, centralRadius);
+				pos[counter] = (sizeRadius * vec3(cos(theta), 1.0f, cos(theta)) + offset) * angleScale;
+			}
+
+			if (hasNorm)
+			{
+				vec3 n;
+				n.x = cos(phi) * cos(theta);
+				n.y = sin(theta);
+				n.z = sin(phi) * cos(theta);
+				norm[counter] = normalize( n );
+			}
+
+			if (hasTex)
+			{
+				float u = static_cast<float>(j) / (density.x - 1);
+				float v = static_cast<float>(i) / (density.y - 1);
+				tex[counter] = vec2(u, v);
+			}
+
+			phi += dPhi;
+			++counter;
+		}
+
+		theta += dTheta;
+	} 
+}
+
 void Primitives::createCylinder(VertexArray::Pointer data, float radius, float height, const vec2i& density, const vec3& center)
 {
 	size_t lastIndex = data->size();
