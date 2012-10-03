@@ -274,7 +274,9 @@ void et::parseDefinesString(std::string defines, ProgramDefinesList& storage, st
 		{
 			std::string define = defines.substr(0, separator_pos);
 			defines.erase(0, separator_pos + 1);
-			storage.push_back(define);
+
+			if (define.size() > 0)
+				storage.push_back(define);
 		}
 	}
 }
