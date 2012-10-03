@@ -51,15 +51,17 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 		{
 			vec2 shadowOffset = textOffset + _shadowOffset;
 
-			renderer.createStringVertices(_vertices, _font->buildString(_text, _allowFormatting), _horizontalAlignment, _verticalAlignment, 
+			renderer.createStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment,
 				shadowOffset, _shadowColor * vec4(1.0, 1.0, 1.0, color().w * fadeOut), transform, GuiRenderLayer_Layer1);
-			renderer.createStringVertices(_vertices, _font->buildString(_nextText, _allowFormatting), _horizontalAlignment, _verticalAlignment, 
+			
+			renderer.createStringVertices(_vertices, _charListNextText, _horizontalAlignment, _verticalAlignment,
 				shadowOffset, _shadowColor * vec4(1.0, 1.0, 1.0, color().w * fadeIn), transform, GuiRenderLayer_Layer1);
 		}
 
-		renderer.createStringVertices(_vertices, _font->buildString(_text, _allowFormatting), _horizontalAlignment, _verticalAlignment, textOffset, 
+		renderer.createStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment, textOffset, 
 			color() * vec4(1.0, 1.0, 1.0, fadeOut), transform, GuiRenderLayer_Layer1);
-		renderer.createStringVertices(_vertices, _font->buildString(_nextText, _allowFormatting), _horizontalAlignment, _verticalAlignment, textOffset, 
+		
+		renderer.createStringVertices(_vertices, _charListNextText, _horizontalAlignment, _verticalAlignment, textOffset,
 			color() * vec4(1.0, 1.0, 1.0, fadeIn), transform, GuiRenderLayer_Layer1);
 	}
 	else 
@@ -68,11 +70,11 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 
 		if (hasShadow)
 		{
-			renderer.createStringVertices(_vertices, _font->buildString(_text, _allowFormatting), _horizontalAlignment, _verticalAlignment, 
+			renderer.createStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment, 
 				textOffset + _shadowOffset, _shadowColor * vec4(1.0f, 1.0f, 1.0, color().w), transform, GuiRenderLayer_Layer1);
 		}
 
-		renderer.createStringVertices(_vertices, _font->buildString(_text, _allowFormatting), _horizontalAlignment, _verticalAlignment, 
+		renderer.createStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment, 
 			textOffset, color(), transform, GuiRenderLayer_Layer1);
 	}
 
@@ -86,6 +88,7 @@ void Label::setText(const std::string& text, float duration)
 	if (duration == 0.0f)
 	{
 		_text = text;
+		_charListText = _font->buildString(_text, _allowFormatting);
 		adjustSize();
 	}
 	else 
@@ -93,12 +96,10 @@ void Label::setText(const std::string& text, float duration)
 		startUpdates();
 
 		if (_animatingText)
-		{
-			_text = _nextText;
-			_textSize = _font->measureStringSize(_text, _allowFormatting);
-		}
+			setText(_nextText, 0.0f);
 		
 		_nextText = text;
+		_charListNextText = _font->buildString(_nextText, _allowFormatting);
 		_nextTextSize = _font->measureStringSize(_nextText, _allowFormatting);
 		
 		_textFade = 0.0f;
@@ -132,9 +133,11 @@ void Label::update(float t)
 		_animatingText = false;
 		
 		_text = _nextText;
+		_charListText = _font->buildString(_text);
 		_textSize = _font->measureStringSize(_text, _allowFormatting);
 		
 		_nextText = std::string();
+		_charListNextText.clear();
 		_nextTextSize = vec2(0.0f);
 		
 		adjustSize();
@@ -153,6 +156,8 @@ void Label::adjustSize()
 void Label::setAllowFormatting(bool f)
 {
 	_allowFormatting = f;
+	_charListNextText = _font->buildString(_nextText, _allowFormatting);
+	_charListText = _font->buildString(_text, _allowFormatting);
 	invalidateContent();
 }
 
