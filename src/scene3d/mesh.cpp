@@ -20,7 +20,7 @@ Mesh::Mesh(const std::string& name, Element* parent) : RenderableElement(name, p
 
 Mesh::Mesh(const std::string& name, const VertexArrayObject& vao, const Material& material,
 	size_t startIndex, size_t numIndexes, Element* parent) : RenderableElement(name, parent), _vao(vao), 
-	_startIndex(startIndex), _numIndexes(numIndexes)
+	_startIndex(startIndex), _numIndexes(numIndexes), _selectedLod(0)
 {
 	setMaterial(material);
 }
