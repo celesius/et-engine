@@ -9,8 +9,8 @@
 
 namespace et
 {
-	static const std::string keyBegin = "begin";
-	static const std::string keyEnd = "end";
+	static const char* keyBegin = "begin";
+	static const char* keyEnd = "end";
 
 	size_t OpenGLCounters::primitiveCounter = 0;
 	size_t OpenGLCounters::DIPCounter = 0;

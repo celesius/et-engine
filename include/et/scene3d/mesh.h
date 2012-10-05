@@ -32,12 +32,14 @@ namespace et
 
 			Mesh* duplicate();
 
-			VertexArrayObject vertexArrayObject();
-			VertexBuffer vertexBuffer();
-			IndexBuffer indexBuffer();
-			const VertexArrayObject vertexArrayObject() const;
-			const VertexBuffer vertexBuffer() const;
-			const IndexBuffer indexBuffer() const;
+			VertexArrayObject& vertexArrayObject();
+			const VertexArrayObject& vertexArrayObject() const;
+
+			VertexBuffer& vertexBuffer();
+			const VertexBuffer& vertexBuffer() const;
+
+			IndexBuffer& indexBuffer();
+			const IndexBuffer& indexBuffer() const;
 
 			size_t startIndex() const;
 			size_t numIndexes() const;

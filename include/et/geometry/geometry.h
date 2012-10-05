@@ -158,10 +158,10 @@ namespace et
 	template <typename T>
 	inline T length(const vector4<T>& v)
 		{ return v.length(); }
-	
+
 	inline float length(float v)
 		{ return fabsf(v); }
-	
+
 	template<typename T>
 	inline T clamp(T value, T min, T max)
 		{ return (value < min) ? min : (value > max) ? max : value; }

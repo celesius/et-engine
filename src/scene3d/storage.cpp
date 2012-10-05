@@ -91,7 +91,7 @@ void Scene3dStorage::flush()
 		}
 	}
 	
-	MaterialList::iterator mi = _materials.begin();
+	Material::List::iterator mi = _materials.begin();
 	while (mi != _materials.end())
 	{
 		MaterialData* ptr = mi->ptr();

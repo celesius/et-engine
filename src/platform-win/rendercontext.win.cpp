@@ -207,7 +207,7 @@ HWND RenderContextPrivate::createWindow(WindowStyle style, const vec2i& pos, con
 	wRect.left = pos.x;
 	wRect.top  = pos.y;
 
-	RECT wR;
+	RECT wR = { };
 	SystemParametersInfo(SPI_GETWORKAREA, 0, (PVOID)&wR, 0);
 
 	int nScreenH = wR.bottom - wR.top;

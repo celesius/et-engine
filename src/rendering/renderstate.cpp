@@ -15,11 +15,11 @@
 
 using namespace et;
 
-static const std::string keyCurrentStateBegin = "RenderState::currentState() - begin";
-static const std::string keyCurrentStateEnd = "RenderState::currentState() - end";
-static const std::string keyEnableVertexAttribArray = "glEnableVertexAttribArray(...)";
-static const std::string keyDisableVertexAttribArray = "glDisableVertexAttribArray(...)";
-static const std::string keyVertexAttribPointer = "glVertexAttribPointer(...)";
+static const char* keyCurrentStateBegin = "RenderState::currentState() - begin";
+static const char* keyCurrentStateEnd = "RenderState::currentState() - end";
+static const char* keyEnableVertexAttribArray = "glEnableVertexAttribArray(...)";
+static const char* keyDisableVertexAttribArray = "glDisableVertexAttribArray(...)";
+static const char* keyVertexAttribPointer = "glVertexAttribPointer(...)";
 
 RenderState::State::State() : 
 	activeTextureUnit(0), boundFramebuffer(0), boundArrayBuffer(0), boundElementArrayBuffer(0), boundVertexArrayObject(0), 
@@ -27,8 +27,8 @@ RenderState::State::State() :
 	depthMaskEnabled(true), polygonOffsetFillEnabled(false), wireframe(false), lastBlend(Blend_Disabled), 
 	lastCull(CullState_None), lastDepthFunc(DepthFunc_Less)
 {
-	boundTextures.fill(0);
-	enabledVertexAttributes.fill(0);
+	memset(boundTextures, 0, sizeof(boundTextures));
+	memset(enabledVertexAttributes, 0, sizeof(enabledVertexAttributes));
 }
 
 PreservedRenderStateScope::PreservedRenderStateScope(RenderState& rs, bool shouldApplyBefore) : 

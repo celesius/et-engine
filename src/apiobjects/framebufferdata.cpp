@@ -12,6 +12,8 @@
 
 using namespace et;
 
+static const char* tagCheck = "FramebufferData::check";
+
 inline std::string FramebufferStatusToString(GLenum status)
 {
 	switch (status)
@@ -185,9 +187,7 @@ FramebufferData::~FramebufferData()
 
 bool FramebufferData::checkStatus()
 {
-	static const std::string tag = "FramebufferData::check";
-	checkOpenGLError(tag);
-	(void)tag;
+	checkOpenGLError(tagCheck);
 
 	_rc->renderState().bindFramebuffer(_id);
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);

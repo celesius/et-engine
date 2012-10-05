@@ -55,8 +55,8 @@ namespace et
 	public:
 		struct State
 		{
-			StaticDataStorage<GLuint, MAX_TEXTURE_UNITS> boundTextures;
-			StaticDataStorage<bool, Usage_max> enabledVertexAttributes;
+			GLuint boundTextures[MAX_TEXTURE_UNITS]; // StaticDataStorage<GLuint, MAX_TEXTURE_UNITS> boundTextures;
+			bool enabledVertexAttributes[Usage_max]; // StaticDataStorage<bool, Usage_max> enabledVertexAttributes;
 			
 			GLenum activeTextureUnit;
 			GLenum boundFramebuffer; 
