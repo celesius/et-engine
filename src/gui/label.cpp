@@ -17,6 +17,8 @@ Label::Label(const std::string& text, Font font, Element2d* parent) :
 	_horizontalAlignment(ElementAlignment_Near), _verticalAlignment(ElementAlignment_Near),
 	_animatingText(false), _allowFormatting(false)
 {
+	_charListText = _font->buildString(_text);
+	_charListNextText = _font->buildString(_nextText);
 	adjustSize();
 }
 
