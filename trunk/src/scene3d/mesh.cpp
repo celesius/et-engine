@@ -13,6 +13,9 @@ using namespace et::s3d;
 
 const std::string Mesh::defaultMeshName = "mesh";
 
+static IndexBuffer _emptyIndexBuffer;
+static VertexBuffer _emptyVertexBuffer;
+
 Mesh::Mesh(const std::string& name, Element* parent) : RenderableElement(name, parent), 
 	_startIndex(0), _numIndexes(0), _selectedLod(0)
 {
@@ -120,38 +123,38 @@ void Mesh::cleanupLodChildren()
 	}
 }
 
-VertexArrayObject Mesh::vertexArrayObject()
+VertexArrayObject& Mesh::vertexArrayObject()
 {
 	return currentLod()->_vao; 
 }
 
-const VertexArrayObject Mesh::vertexArrayObject() const
+const VertexArrayObject& Mesh::vertexArrayObject() const
 {
 	return currentLod()->_vao; 
 }
 
-VertexBuffer Mesh::vertexBuffer() 
+VertexBuffer& Mesh::vertexBuffer() 
 {
-	VertexArrayObject vao = vertexArrayObject();
-	return vao.valid() ? vao->vertexBuffer() : VertexBuffer(); 
+	VertexArrayObject& vao = vertexArrayObject();
+	return vao.valid() ? vao->vertexBuffer() : _emptyVertexBuffer; 
 }
 
-const VertexBuffer Mesh::vertexBuffer() const
+const VertexBuffer& Mesh::vertexBuffer() const
 {
-	VertexArrayObject vao = vertexArrayObject();
-	return vao.valid() ? vao->vertexBuffer() : VertexBuffer(); 
+	const VertexArrayObject& vao = vertexArrayObject();
+	return vao.valid() ? vao->vertexBuffer() : _emptyVertexBuffer; 
 }
 
-IndexBuffer Mesh::indexBuffer() 
+IndexBuffer& Mesh::indexBuffer() 
 {
-	VertexArrayObject vao = vertexArrayObject();
-	return vao.valid() ? vao->indexBuffer() : IndexBuffer(); 
+	VertexArrayObject& vao = vertexArrayObject();
+	return vao.valid() ? vao->indexBuffer() : _emptyIndexBuffer; 
 }
 
-const IndexBuffer Mesh::indexBuffer() const
+const IndexBuffer& Mesh::indexBuffer() const
 {
 	VertexArrayObject vao = vertexArrayObject();
-	return vao.valid() ? vao->indexBuffer() : IndexBuffer(); 
+	return vao.valid() ? vao->indexBuffer() : _emptyIndexBuffer; 
 }
 
 size_t Mesh::startIndex() const 
@@ -184,6 +187,7 @@ const Mesh* Mesh::currentLod() const
 Mesh* Mesh::currentLod()
 {
 	if (_selectedLod == 0) return this;
+
 	LodMap::iterator i = _lods.find(_selectedLod);
 	return (i == _lods.end()) ? this : i->second.ptr();
 }

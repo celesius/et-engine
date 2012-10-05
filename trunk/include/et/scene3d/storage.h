@@ -36,7 +36,7 @@ namespace et
 			IndexArray::Pointer indexArray()
 				{ return _indexArray; }
 
-			MaterialList& materials()
+			Material::List& materials()
 				{ return _materials; }
 
 			TextureList& textures()
@@ -63,7 +63,7 @@ namespace et
 		private:
 			VertexArrayList _vertexArrays;
 			IndexArray::Pointer _indexArray;
-			MaterialList _materials;
+			Material::List _materials;
 			TextureList _textures;
 		};
 	}

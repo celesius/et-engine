@@ -36,7 +36,7 @@ void Scene3d::serialize(std::ostream& stream)
 
 		serializeChunk(stream, HeaderMaterials);
 		serializeInt(stream, s->materials().size());
-		for (MaterialList::const_iterator mi = s->materials().begin(), me = s->materials().end(); mi != me; ++mi)
+		for (Material::List::const_iterator mi = s->materials().begin(), me = s->materials().end(); mi != me; ++mi)
 		{
 			serializeInt(stream, reinterpret_cast<int>(mi->ptr()));
 			(*mi)->serialize(stream);
@@ -233,7 +233,7 @@ Material Scene3d::materialWithId(int id)
 	for (Element::List::iterator si = storages.begin(), se = storages.end(); si != se; ++si)
 	{
 		Scene3dStorage* storage = static_cast<Scene3dStorage*>(si->ptr());
-		for (MaterialList::const_iterator i = storage->materials().begin(), e = storage->materials().end(); i != e; ++i)
+		for (Material::List::const_iterator i = storage->materials().begin(), e = storage->materials().end(); i != e; ++i)
 		{
 			const Material& data = *i;
 			if (data->tag == id) return data;
