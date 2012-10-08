@@ -41,7 +41,7 @@ inline size_t keyToMaterialParameter(const std::string& k)
 	return MaterialParameter_Undefined;
 }
 
-MaterialData::MaterialData() : 
+MaterialData::MaterialData() :
 	APIObjectData("default"), _blend(Blend_Disabled), _depthMask(true)
 {
 	setVector(MaterialParameter_DiffuseColor, vec4(1.0f));
@@ -272,7 +272,7 @@ void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, Texture
 void MaterialData::deserialize3(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath)
 {
 	int numParameters = deserializeInt(stream);
-	for (size_t i = 0; i < MaterialParameter_max; ++i)
+	for (size_t i = 0; i < numParameters; ++i)
 	{
 		int has = deserializeInt(stream);
 		int ival = deserializeInt(stream);
