@@ -48,11 +48,14 @@ namespace et
 		void setDepthWriteEnabled(bool d) 
 			{ _depthMask = d; }
 
+		void setName(const std::string& name)
+			{ APIObjectData::setName(name); }
+		
 		void serialize(std::ostream& stream) const;
 		void deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath);
 
 		MaterialData* clone() const;
-
+		
 	private:
 		void deserialize1(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath);
 		void deserialize2(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath);
