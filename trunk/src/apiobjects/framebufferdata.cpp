@@ -78,6 +78,7 @@ FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const Fr
 	_colorRenderbuffer(0), _depthRenderbuffer(0),
 	_rc(rc), _textureFactory(tf)
 {
+	(void)tagCheck;
 	checkOpenGLError("Framebuffer::Framebuffer " + name());
 
 	glGenFramebuffers(1, &_id);

@@ -20,6 +20,7 @@
 #include <et/geometry/plane.h>
 #include <et/geometry/quaternion.h>
 #include <et/geometry/parallelepiped.h>
+#include <et/geometry/equations.h>
 
 namespace et
 {

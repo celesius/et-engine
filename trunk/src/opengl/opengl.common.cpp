@@ -22,6 +22,8 @@ namespace et
 
 	void OpenGLCounters::reset()
 	{
+		(void)keyBegin;
+		(void)keyEnd;
 		primitiveCounter = 0;
 		DIPCounter = 0;
 		bindTextureCounter = 0;

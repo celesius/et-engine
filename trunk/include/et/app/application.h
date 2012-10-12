@@ -66,13 +66,16 @@ namespace et
 		size_t launchParamtersCount() const
 			{ return _parameters.size(); }
 
+		void setCPULoadLimit(bool enable)
+			{ _cpuLimit = enable; }
+		
 		size_t memoryUsage() const;
 
 		void setTitle(const std::string& s);
 		void setFPSLimit(size_t value);
-		void setCPULoadLimit(bool enable) 
-			{ _cpuLimit = enable; }
 
+		void alert(const std::string& title, const std::string& message, AlertType type = AlertType_Information);
+		
 	private:
 		friend class RenderContext;
 
@@ -82,7 +85,6 @@ namespace et
 		void performRendering();
 		void setActive(bool active);
 		void contextResized(const vec2i& size);
-		void alert(const std::string& title, const std::string& message, AlertType type = AlertType_Information);
 
 	private:
 		friend class ApplicationNotifier;
