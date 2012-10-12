@@ -176,7 +176,7 @@ void Primitives::createCylinder(VertexArray::Pointer data, float radius, float h
 				norm[counter] = normalize(p * vec3(1.0f, 0.0f, 1.0f));
 
 			if (hasTex)
-				tex[counter] = vec2(phi / DOUBLE_PI, 1.0f - static_cast<float>(v) / (density.y - 1));
+				tex[counter] = vec2(phi / DOUBLE_PI, static_cast<float>(v) / (density.y - 1));
 
 			phi += dPhi;
 			++counter;

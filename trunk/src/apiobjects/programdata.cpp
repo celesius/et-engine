@@ -19,7 +19,7 @@ const std::string ProgramData::emptyShaderSource("none");
 ProgramData::ProgramData(RenderState& rs, std::string vertexShader, std::string geometryShader,
 	std::string fragmentShader, const std::string& id) : APIObjectData(id), _glID(0), _rs(rs), 
 	_mModelViewLocation(-1), _mModelViewProjectionLocation(-1), _vCameraLocation(-1), _vPrimaryLightLocation(-1), 
-	_mLightProjectionMatrixLocation(-1), _loaded(false)
+	_mLightProjectionMatrixLocation(-1), _mTransformLocation(-1), _loaded(false)
 {
 	buildProgram(vertexShader, geometryShader, fragmentShader);
 }
