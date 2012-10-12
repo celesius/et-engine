@@ -27,6 +27,12 @@ RenderState::State::State() :
 	depthMaskEnabled(true), polygonOffsetFillEnabled(false), wireframe(false), lastBlend(Blend_Disabled), 
 	lastCull(CullState_None), lastDepthFunc(DepthFunc_Less)
 {
+	(void)keyCurrentStateBegin;
+	(void)keyCurrentStateEnd;
+	(void)keyEnableVertexAttribArray;
+	(void)keyDisableVertexAttribArray;
+	(void)keyVertexAttribPointer;
+	
 	memset(boundTextures, 0, sizeof(boundTextures));
 	memset(enabledVertexAttributes, 0, sizeof(enabledVertexAttributes));
 }

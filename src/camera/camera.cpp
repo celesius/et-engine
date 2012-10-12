@@ -31,7 +31,7 @@ void Camera::lookAt(const vec3& pos, const vec3& point, const vec3& up)
 	modelViewUpdated();
 }
 
-void Camera::perspectiveProjection(float fov, float aspect, float zNear, float zFar)
+const mat4& Camera::perspectiveProjection(float fov, float aspect, float zNear, float zFar)
 {
 	_projectionMatrix = IDENTITY_MATRIX;
 
@@ -47,9 +47,10 @@ void Camera::perspectiveProjection(float fov, float aspect, float zNear, float z
 	_projectionMatrix[3][2] = -2.0f * zNear * zFar / dz;
 
 	projectionUpdated();
+	return _projectionMatrix;
 }
 
-void Camera::orthogonalProjection(float left, float right, float top, float bottom, float zNear, float zFar)
+const mat4& Camera::orthogonalProjection(float left, float right, float top, float bottom, float zNear, float zFar)
 {
 	_projectionMatrix = IDENTITY_MATRIX;
 
@@ -62,9 +63,10 @@ void Camera::orthogonalProjection(float left, float right, float top, float bott
 	_projectionMatrix[3][2] = -(zFar + zNear) / (zFar - zNear);
 
 	projectionUpdated();
+	return _projectionMatrix;
 }
 
-void Camera::windowProjection(const vec2& windowSize)
+const mat4& Camera::windowProjection(const vec2& windowSize)
 {
 	_projectionMatrix = IDENTITY_MATRIX;
 	
@@ -76,6 +78,7 @@ void Camera::windowProjection(const vec2& windowSize)
 	_projectionMatrix[3][2] = 0.0f;
 	
 	projectionUpdated();
+	return _projectionMatrix;
 }
 
 void Camera::setPosition(const vec3& p)
