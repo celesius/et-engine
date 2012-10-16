@@ -101,6 +101,7 @@ Manager::~Manager()
 
 bool Manager::checkErrors()
 {
+#if ET_DEBUG
 	ALenum error = alcGetError(_private->device);
 
 	if (error != ALC_NO_ERROR)
@@ -119,6 +120,7 @@ bool Manager::checkErrors()
 		assert(false);
 		return true;
 	}
+#endif
 
 	return false;
 }
@@ -126,6 +128,11 @@ bool Manager::checkErrors()
 Track::Pointer Manager::loadTrack(const std::string& fileName)
 {
 	return Track::Pointer(new Track(fileName));
+}
+
+Track::Pointer Manager::genTrack(Description::Pointer desc)
+{
+	return Track::Pointer(new Track(desc));
 }
 
 Player::Pointer Manager::genPlayer(Track::Pointer track)
@@ -145,21 +152,29 @@ Player::Pointer Manager::genPlayer()
 
 Track::Track(const std::string& fileName) : _private(new TrackPrivate)
 {
-	alGenBuffers(1, &_private->buffer);
-	manager().checkErrors();
+	init(loadFile(fileName));
+}
 
-	Description::Pointer desc = loadFile(fileName);
-	if (desc.valid())
-	{
-		alBufferData(_private->buffer, desc->format, desc->data.data(), desc->data.dataSize(), desc->sampleRate);
-		manager().checkErrors();
-	}
+Track::Track(Description::Pointer desc) : _private(new TrackPrivate)
+{
+	init(desc);
 }
 
 Track::~Track()
 {
 	alDeleteBuffers(1, &_private->buffer);
 	delete _private;
+}
+
+void Track::init(Description::Pointer data)
+{
+	alGenBuffers(1, &_private->buffer);
+	manager().checkErrors();
+
+	if (data.invalid()) return;
+
+	alBufferData(_private->buffer, data->format, data->data.data(), data->data.dataSize(), data->sampleRate);
+	manager().checkErrors();
 }
 
 /*
@@ -242,7 +257,12 @@ void Player::linkTrack(Track::Pointer track)
 
 	_currentTrack = track;
 
-//	alSourceQueueBuffers(_private->source, 1, &track->_private->buffer);
 	alSourcei(_private->source, AL_BUFFER, track->_private->buffer);
+	manager().checkErrors();
+}
+
+void Player::setVolume(float value)
+{
+	alSourcef(_private->source, AL_GAIN, value);
 	manager().checkErrors();
 }
