@@ -20,7 +20,7 @@ namespace et
 		TextureCache();
 		~TextureCache();
 
-		void manageTexture(const Texture& tex);
+		Texture manageTexture(const Texture& tex);
 		Texture findTexture(const std::string& key);
 		void discardTexture(const Texture& tex);
 

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <et/core/intrusiveptr.h>
 #include <et/core/tools.h>
 #include <et/core/containers.h>
 #include <et/geometry/geometry.h>
@@ -19,8 +20,12 @@ namespace et
 		TextureOrigin_BottomLeft
 	};
 
-	class TextureDescription
+	class TextureDescription : public Shared
 	{  
+	public:
+		typedef IntrusivePtr<TextureDescription> Pointer;
+		typedef std::vector<TextureDescription> List;
+
 	public:
 		TextureDescription() : size(0), target(0), internalformat(0), format(0), type(0), compressed(0),
 			bitsPerPixel(0), channels(0), mipMapCount(0), layersCount(0) { }
@@ -55,6 +60,13 @@ namespace et
 		bool valid() const
 			{ return internalformat && format && (size.square() > 0); }
 
+	private:
+		TextureDescription(const TextureDescription&)
+			{ }
+
+		TextureDescription& operator = (const TextureDescription&)
+			{ return *this; }
+
 	public:
 		std::string source;
 		
@@ -72,7 +84,5 @@ namespace et
 		size_t mipMapCount;
 		size_t layersCount;
 	};
-
-	typedef std::vector<TextureDescription> TextureDescriptionList;
 
 }

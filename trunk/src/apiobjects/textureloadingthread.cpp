@@ -28,8 +28,6 @@ TextureLoadingRequest::~TextureLoadingRequest()
 {
 	if (delegate)
 		delegate->removeTextureLoadingRequest(this);
-
-	delete textureDescription; 
 }
 
 void TextureLoadingRequest::discardDelegate()
@@ -74,7 +72,7 @@ ThreadResult TextureLoadingThread::main()
 
 		if (req)
 		{
-			*req->textureDescription = TextureLoader::load(req->fileName, req->screenScale);
+			req->textureDescription = TextureLoader::load(req->fileName, req->screenScale);
 
 			Invocation1 invocation;
 			invocation.setTarget(_delegate, &TextureLoadingThreadDelegate::textureLoadingThreadDidLoadTextureData, req);

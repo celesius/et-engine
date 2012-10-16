@@ -22,7 +22,7 @@ namespace et
 	private:
 		friend class TextureFactory;
 		
-		TextureData(RenderContext* rc, const TextureDescription& desc, const std::string& id, bool deferred);
+		TextureData(RenderContext* rc, TextureDescription::Pointer desc, const std::string& id, bool deferred);
 		TextureData(RenderContext* rc, GLuint texture, const vec2i& size, const std::string& name);
 		
 	public:
@@ -37,35 +37,35 @@ namespace et
 
 		vec2 getTexCoord(const vec2& ivec, TextureOrigin origin = TextureOrigin_TopLeft) const;
 
-		void updateData(RenderContext* rc, const TextureDescription& desc);
+		void updateData(RenderContext* rc, TextureDescription::Pointer desc);
 		void updateDataDirectly(RenderContext* rc, const vec2i& size, char* data, size_t dataSize);
 
 		int glID() const
 			{ return _glID; }
 
 		int internalFormat() const
-			{ return _desc.internalformat; }
+			{ return _desc->internalformat; }
 
 		int format() const
-			{ return _desc.format; }
+			{ return _desc->format; }
 
 		int dataType() const
-			{ return _desc.type; }
+			{ return _desc->type; }
 
 		int target() const
-			{ return _desc.target; }
+			{ return _desc->target; }
 
 		int width() const
-			{ return _desc.size.x; }
+			{ return _desc->size.x; }
 
 		GLsizei height() const
-			{ return _desc.size.y; }
+			{ return _desc->size.y; }
 
 		const vec2i& size() const 
-			{ return _desc.size; }
+			{ return _desc->size; }
 
 		vec2 sizeFloat() const 
-			{ return vec2(static_cast<float>(_desc.size.x), static_cast<float>(_desc.size.y)); }
+			{ return vec2(static_cast<float>(_desc->size.x), static_cast<float>(_desc->size.y)); }
 
 		const vec2& texel() const
 			{ return _texel; }
@@ -77,7 +77,7 @@ namespace et
 		
 	private:
 		GLuint _glID;
-		TextureDescription _desc;
+		TextureDescription::Pointer _desc;
 		vector3<TextureWrap> _wrap;
 		vector2<TextureFiltration> _filtration;
 		vec2 _texel;

@@ -32,9 +32,12 @@ namespace et
 	t& operator = (const t&) { return *this; }	\
 	friend class et::Singleton<t>;
 
-#define ET_SINGLETON_COPY_DENY(t) private:		\
+#define ET_DENY_COPY(t) private:				\
 	t(const t&) { }								\
-	t& operator = (const t&) { return *this; }	\
+	t& operator = (const t&) { return *this; }
+
+#define ET_SINGLETON_COPY_DENY(t) private:		\
+	ET_DENY_COPY(t)								\
 	friend class et::Singleton<t>;
 
 }

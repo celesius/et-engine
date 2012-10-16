@@ -18,12 +18,14 @@ TextureCache::~TextureCache()
 	clear();
 }
 
-void TextureCache::manageTexture(const Texture& tex)
+Texture TextureCache::manageTexture(const Texture& tex)
 {
 	CriticalSectionScope lock(_lock);
 
 	if (tex.valid())
 		_textures[tex->name()] = tex;
+
+	return tex;
 }
 
 Texture TextureCache::findTexture(const std::string& key)
