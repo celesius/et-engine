@@ -17,21 +17,25 @@ namespace et
 	public:
 		struct ImageItem
 		{
-			TextureDescription image;
+			TextureDescription::Pointer image;
 			gui::ImageDescriptor place;
 
-			ImageItem(const TextureDescription& t, const gui::ImageDescriptor& p) : image(t), place(p) { }
+			ImageItem(TextureDescription::Pointer t, const gui::ImageDescriptor& p) : 
+				image(t), place(p) { }
 		};
 
 		typedef std::vector<ImageItem> ImageItemList;
 
 		struct TextureAtlasItem
 		{
-			TextureDescription texture;
+			TextureDescription::Pointer texture;
 			ImageItemList images;
 			int maxWidth;
 			int maxHeight;
-			TextureAtlasItem() : maxWidth(0), maxHeight(0) { }
+
+		public:
+			TextureAtlasItem() : 
+				maxWidth(0), maxHeight(0) { }
 		};
 
 		typedef std::vector<TextureAtlasItem> TextureAtlasItemList;
@@ -39,7 +43,7 @@ namespace et
 	public:
 		TextureAtlasWriter(bool addSpace = true) : _addSpace(addSpace) { }
 		TextureAtlasItem& addItem(const vec2i& textureSize);
-		bool placeImage(const TextureDescription& image, TextureAtlasItem& item);
+		bool placeImage(TextureDescription::Pointer image, TextureAtlasItem& item);
 
 		const TextureAtlasItemList& items() const 
 			{ return _items; }

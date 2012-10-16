@@ -17,27 +17,27 @@ TextureAtlasWriter::TextureAtlasItem& TextureAtlasWriter::addItem(const vec2i& t
 {
 	_items.push_back(TextureAtlasItem());
 	TextureAtlasItem& item = _items.back();
-	item.texture.size = textureSize;
+	item.texture->size = textureSize;
 	return item;
 }
 
-bool TextureAtlasWriter::placeImage(const TextureDescription& image, TextureAtlasItem& item)
+bool TextureAtlasWriter::placeImage(TextureDescription::Pointer image, TextureAtlasItem& item)
 {
-	int w = image.size.x;
-	int h = image.size.y;
+	int w = image->size.x;
+	int h = image->size.y;
 
 	int xOffset = 0;
 	int yOffset = 0;
 
 	if (_addSpace)
 	{
-		if (w < item.texture.size.x - 1)
+		if (w < item.texture->size.x - 1)
 		{
 			w++;
 			xOffset = 1;
 		}
 
-		if (h < item.texture.size.y - 1)
+		if (h < item.texture->size.y - 1)
 		{
 			h++;
 			yOffset = 1;
@@ -64,7 +64,7 @@ bool TextureAtlasWriter::placeImage(const TextureDescription& image, TextureAtla
 	{
 		desc.origin = i->place.origin + vec2(i->place.size.x, 0.0f);
 
-		bool placed = (desc.origin.x + w <= item.texture.size.x) && (desc.origin.y + h <= item.texture.size.y);
+		bool placed = (desc.origin.x + w <= item.texture->size.x) && (desc.origin.y + h <= item.texture->size.y);
 		if (placed)
 		{
 			for (ImageItemList::iterator ii = item.images.begin(); ii != e; ++ii)
@@ -91,7 +91,7 @@ bool TextureAtlasWriter::placeImage(const TextureDescription& image, TextureAtla
 		}
 
 		desc.origin = i->place.origin + vec2(0.0f, i->place.size.y);
-		placed = (desc.origin.x + w <= item.texture.size.x) && (desc.origin.y + h <= item.texture.size.y);
+		placed = (desc.origin.x + w <= item.texture->size.x) && (desc.origin.y + h <= item.texture->size.y);
 		if (placed)
 		{
 			for (ImageItemList::iterator ii = item.images.begin(); ii != e; ++ii)
@@ -122,7 +122,7 @@ bool TextureAtlasWriter::placeImage(const TextureDescription& image, TextureAtla
 }
 
 inline bool textureNameSort(const TextureAtlasWriter::ImageItem& i1, const TextureAtlasWriter::ImageItem& i2)
-	{ return i1.image.source < i2.image.source; }
+	{ return i1.image->source < i2.image->source; }
 
 void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* textureNamePattern)
 {
@@ -132,10 +132,10 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 	int textureIndex = 0;
 	for (TextureAtlasItemList::iterator i = _items.begin(), e = _items.end(); i != e; ++i, ++textureIndex)
 	{
-		BinaryDataStorage data(i->texture.size.square() * 4);
+		BinaryDataStorage data(i->texture->size.square() * 4);
 		data.fill(0);
 
-		BinaryDataStorage layoutData(i->texture.size.square() * 4);
+		BinaryDataStorage layoutData(i->texture->size.square() * 4);
 		layoutData.fill(0);
 
 		char textureName[1024] = { };
@@ -147,20 +147,20 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 		for (ImageItemList::iterator ii = i->images.begin(), ie = i->images.end(); ii != ie; ++ii, ++index)
 		{
 			TextureDescription image;
-			PNGLoader::loadFromFile(ii->image.source, image);
+			PNGLoader::loadFromFile(ii->image->source, image);
 
 			vec2i iOrigin(static_cast<int>(ii->place.origin.x), static_cast<int>(ii->place.origin.y));
 
-			ii->place.size = vec2(static_cast<float>(i->texture.size.x), static_cast<float>(i->texture.size.y));
+			ii->place.size = vec2(static_cast<float>(i->texture->size.x), static_cast<float>(i->texture->size.y));
 
-			ImageOperations::fill(layoutData, i->texture.size, 4, recti(iOrigin, image.size),
+			ImageOperations::fill(layoutData, i->texture->size, 4, recti(iOrigin, image.size),
 				vec4ub(rand() % 256, rand() % 256, rand() % 256, 255));
 
 			std::string sIndex = intToStr(index);
 			if (sIndex.length() < 2)
 				sIndex = "0" + sIndex;
 			std::string newFile = replaceFileExt(texName, ".layout" + sIndex + ".png");
-			std::string name = removeFileExt(getFileName(ii->image.source));
+			std::string name = removeFileExt(getFileName(ii->image->source));
 
 			vec4 offset;
 			size_t delimPos = name.find_first_of("~");
@@ -214,11 +214,11 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 			};
 
 			if (components)
-				ImageOperations::transfer(image.data, image.size, components, data, i->texture.size, 4, iOrigin);
+				ImageOperations::transfer(image.data, image.size, components, data, i->texture->size, 4, iOrigin);
 		}
 
-		ImageWriter::writeImageToFile(replaceFileExt(texName, ".layout.png"), layoutData, i->texture.size, 4, 8, ImageFormat_PNG);
-		ImageWriter::writeImageToFile(texName, data, i->texture.size, 4, 8, ImageFormat_PNG);
+		ImageWriter::writeImageToFile(replaceFileExt(texName, ".layout.png"), layoutData, i->texture->size, 4, 8, ImageFormat_PNG);
+		ImageWriter::writeImageToFile(texName, data, i->texture->size, 4, 8, ImageFormat_PNG);
 	}
 }
 
