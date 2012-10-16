@@ -8,8 +8,8 @@
 #include <fstream>
 #include <et/core/containers.h>
 #include <et/core/tools.h>
-#include <et/loaders/3dsloader.h>
-#include <et/loaders/3dsloader.const.h>
+#include <et/models/3dsloader.h>
+#include <et/models/3dsloader.const.h>
 
 /*
 * Supporting methods

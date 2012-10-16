@@ -9,7 +9,7 @@
 #include <iostream>
 
 #include <et/core/tools.h>
-#include <et/loaders/objLoader.h>
+#include <et/models/objloader.h>
 #include <et/apiobjects/vertexbuffer.h>
 #include <et/primitives/primitives.h>
 #include <et/app/application.h>
@@ -348,25 +348,25 @@ void OBJLoader::loadMaterials(const std::string& fileName, bool async, TextureCa
 				{
 					vec4 value;
 					materialFile >> value;
-					lastMaterial->setVec4(MaterialParameter_AmbientColor, value);
+					lastMaterial->setVector(MaterialParameter_AmbientColor, value);
 				} 
 				else if (next == 'd')
 				{
 					vec4 value;
 					materialFile >> value;
-					lastMaterial->setVec4(MaterialParameter_DiffuseColor, value);
+					lastMaterial->setVector(MaterialParameter_DiffuseColor, value);
 				} 
 				else if (next == 's')
 				{
 					vec4 value;
 					materialFile >> value;
-					lastMaterial->setVec4(MaterialParameter_SpecularColor, value);
+					lastMaterial->setVector(MaterialParameter_SpecularColor, value);
 				} 
 				else if (next == 'e')
 				{
 					vec4 value;
 					materialFile >> value;
-					lastMaterial->setVec4(MaterialParameter_EmissiveColor, value);
+					lastMaterial->setVector(MaterialParameter_EmissiveColor, value);
 				} 
 				else
 				{
@@ -520,7 +520,7 @@ void OBJLoader::loadMaterials(const std::string& fileName, bool async, TextureCa
 				{              
 					int value;
 					materialFile >> value;
-					lastMaterial->setInt(MaterialParameter_IlluminationType, value);
+					lastMaterial->setInt(MaterialParameter_ShadingModel, value);
 				}
 				else
 				{
@@ -609,7 +609,7 @@ void OBJLoader::processLoadedData()
 	if (totalVertices > 65535)
 		fmt = IndexArrayFormat_32bit;
 		
-	_indices = IndexArrayRef(new IndexArray(fmt, totalVertices, IndexArrayContentType_Triangles));
+	_indices = IndexArray::Pointer(new IndexArray(fmt, totalVertices, IndexArrayContentType_Triangles));
 	_indices->linearize();
 
 	_vertexData.reset(new VertexArray(decl, totalVertices));
@@ -645,7 +645,7 @@ void OBJLoader::processLoadedData()
 		}
 			
 		Material m;
-		for (MaterialList::iterator mi = materials.begin(), me = materials.end(); mi != me; ++mi)
+		for (Material::List::iterator mi = materials.begin(), me = materials.end(); mi != me; ++mi)
 		{
 			if ((*mi)->name() == (*gi)->material)
 			{
