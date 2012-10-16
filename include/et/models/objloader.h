@@ -15,7 +15,7 @@
 #include <et/apiobjects/vertexbuffer.h>
 #include <et/scene3d/mesh.h>
 #include <et/scene3d/material.h>
-#include <et/device/rendercontext.h>
+#include <et/rendering/rendercontext.h>
 
 namespace et
 {
@@ -104,10 +104,10 @@ namespace et
 
 		OBJGroup* lastGroup;
 		Material lastMaterial;
-		MaterialList materials;
+        Material::List materials;
 		OBJMeshIndexBoundsList _meshes;
-		IndexArrayRef _indices;
-		VertexArrayRef _vertexData;
+        IndexArray::Pointer _indices;
+		VertexArray::Pointer _vertexData;
 
 		vec3List vertices;
 		vec3List normals;
