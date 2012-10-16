@@ -272,7 +272,7 @@ void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, Texture
 void MaterialData::deserialize3(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath)
 {
 	int numParameters = deserializeInt(stream);
-	for (size_t i = 0; i < numParameters; ++i)
+	for (int i = 0; i < numParameters; ++i)
 	{
 		int has = deserializeInt(stream);
 		int ival = deserializeInt(stream);
