@@ -30,7 +30,11 @@ namespace et
 
 		private:
             Track(const std::string& fileName);
+			Track(Description::Pointer data);
 			ET_SINGLETON_COPY_DENY(Track);
+
+		private:
+			void init(Description::Pointer data);
             
 		private:
 			friend class Player;
@@ -54,9 +58,10 @@ namespace et
 
 			void play(bool looped = false);
             void play(Track::Pointer, bool looped = false);
-
 			void pause();
 			void stop();
+
+			void setVolume(float);
 
         private:
 			Player();
@@ -86,6 +91,8 @@ namespace et
 			~Manager();
 
 			Track::Pointer loadTrack(const std::string& fileName);
+			Track::Pointer genTrack(Description::Pointer desc);
+
 			Player::Pointer genPlayer(Track::Pointer track);
 			Player::Pointer genPlayer();
 
