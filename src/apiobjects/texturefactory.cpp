@@ -34,18 +34,18 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
 		bool calledFromAnotherThread = Threading::currentThread() != threading().mainThread();
 		size_t screenScale = renderContext()->screenScaleFactor();
 		
-		TextureDescription desc = async ? 
+		TextureDescription::Pointer desc = async ? 
             TextureLoader::loadDescription(file, screenScale, false) :
 			TextureLoader::load(file, screenScale);
 
 		if (desc.valid())
 		{
-			texture = Texture(new TextureData(renderContext(), desc, desc.source, calledFromAnotherThread));
+			texture = Texture(new TextureData(renderContext(), desc, desc->source, calledFromAnotherThread));
 			cache.manageTexture(texture);
 			
 			if (async)
 			{
-				_loadingThread->addRequest(desc.source, renderContext()->screenScaleFactor(), texture, delegate);
+				_loadingThread->addRequest(desc->source, renderContext()->screenScaleFactor(), texture, delegate);
 
 				Invocation1 i;
 				i.setTarget(delegate, &TextureLoaderDelegate::textureDidStartLoading, texture);
@@ -75,37 +75,37 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
 Texture TextureFactory::genTexture(GLenum target, GLint internalformat, const vec2i& size, GLenum format, 
 	GLenum type, const BinaryDataStorage& data, const std::string& id)
 {
-	TextureDescription desc;
-	desc.target = target;
-	desc.data = data;
-	desc.format = format;
-	desc.internalformat = internalformat;
-	desc.type = type;
-	desc.size = size;
-	desc.mipMapCount = 1;
-	desc.layersCount = 1;
+	TextureDescription::Pointer desc(new TextureDescription);
+	desc->target = target;
+	desc->data = data;
+	desc->format = format;
+	desc->internalformat = internalformat;
+	desc->type = type;
+	desc->size = size;
+	desc->mipMapCount = 1;
+	desc->layersCount = 1;
     // TODO: fix to actual values
-    desc.bitsPerPixel = format == GL_RGBA ? 32 : 24;
+    desc->bitsPerPixel = format == GL_RGBA ? 32 : 24;
 	return Texture(new TextureData(renderContext(), desc, id, false));
 }
 
 Texture TextureFactory::genCubeTexture(GLint internalformat, GLsizei size, GLenum format, GLenum type, const std::string& id)
 {
-	TextureDescription desc;
-	desc.target = GL_TEXTURE_CUBE_MAP;
-	desc.format = format;
-	desc.internalformat = internalformat;
-	desc.type = type;
-	desc.size = vec2i(size);
-	desc.layersCount = 6;
-	desc.mipMapCount = 1;
+	TextureDescription::Pointer desc(new TextureDescription);
+	desc->target = GL_TEXTURE_CUBE_MAP;
+	desc->format = format;
+	desc->internalformat = internalformat;
+	desc->type = type;
+	desc->size = vec2i(size);
+	desc->layersCount = 6;
+	desc->mipMapCount = 1;
 
 	return Texture(new TextureData(renderContext(), desc, id, false));
 }
 
-Texture TextureFactory::genTexture(const TextureDescription& desc)
+Texture TextureFactory::genTexture(TextureDescription::Pointer desc)
 {
-	return Texture(new TextureData(renderContext(), desc, desc.source, false));
+	return Texture(new TextureData(renderContext(), desc, desc->source, false));
 }
 
 Texture TextureFactory::genNoiseTexture(const vec2i& size, bool norm, const std::string& id)
@@ -124,18 +124,18 @@ Texture TextureFactory::genNoiseTexture(const vec2i& size, bool norm, const std:
 		randata.push_back(vec4f_to_4ub(rand_f));
 	}
 
-	TextureDescription desc;
-	desc.data = BinaryDataStorage(size.square() * 4);
-	desc.target = GL_TEXTURE_2D;
-	desc.format = GL_RGBA;
-	desc.internalformat = GL_RGBA;
-	desc.type = GL_UNSIGNED_BYTE;
-	desc.size = size;
-	desc.mipMapCount = 1;
-	desc.layersCount = 1;
-    desc.bitsPerPixel = 32;
+	TextureDescription::Pointer desc(new TextureDescription);
+	desc->data = BinaryDataStorage(size.square() * 4);
+	desc->target = GL_TEXTURE_2D;
+	desc->format = GL_RGBA;
+	desc->internalformat = GL_RGBA;
+	desc->type = GL_UNSIGNED_BYTE;
+	desc->size = size;
+	desc->mipMapCount = 1;
+	desc->layersCount = 1;
+    desc->bitsPerPixel = 32;
     
-	memcpy(desc.data.data(), randata.data(), randata.dataSize());
+	memcpy(desc->data.data(), randata.data(), randata.dataSize());
 
 	return Texture(new TextureData(renderContext(), desc, id, false));
 }
@@ -144,7 +144,7 @@ void TextureFactory::textureLoadingThreadDidLoadTextureData(TextureLoadingReques
 {
 	CriticalSectionScope lock(_csTextureLoading);
 
-	request->texture->updateData(renderContext(), *request->textureDescription);
+	request->texture->updateData(renderContext(), request->textureDescription);
 	textureDidLoad.invoke(request->texture);
 
 	if (request->delegate)
@@ -157,7 +157,7 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 	const std::string& negy, const std::string& posz, const std::string& negz, TextureCache& cache)
 {
 	size_t screenScale = renderContext()->screenScaleFactor();
-	TextureDescription layers[6] = 
+	TextureDescription::Pointer layers[6] = 
 	{
 		TextureLoader::load(posx, screenScale), 
 		TextureLoader::load(negx, screenScale), 
@@ -167,46 +167,44 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 		TextureLoader::load(negz, screenScale) 
 	};
 
-	std::string texId = layers[0].source + ";";
+	std::string texId = layers[0]->source + ";";
 	for (size_t l = 1; l < 6; ++l)
 	{
-		texId += (l < 5) ? layers[l].source + ";" : layers[l].source;
-		if ((layers[l-1].size != layers[l].size) || 
-			(layers[l-1].format != layers[l].format) ||
-			(layers[l-1].internalformat != layers[l].internalformat) || 
-			(layers[l-1].type != layers[l].type) || 
-			(layers[l-1].mipMapCount != layers[l].mipMapCount) || 
-			(layers[l-1].compressed != layers[l].compressed) ||
-			(layers[l-1].data.size() != layers[l].data.size()))
+		texId += (l < 5) ? layers[l]->source + ";" : layers[l]->source;
+		if ((layers[l-1]->size != layers[l]->size) || 
+			(layers[l-1]->format != layers[l]->format) ||
+			(layers[l-1]->internalformat != layers[l]->internalformat) || 
+			(layers[l-1]->type != layers[l]->type) || 
+			(layers[l-1]->mipMapCount != layers[l]->mipMapCount) || 
+			(layers[l-1]->compressed != layers[l]->compressed) ||
+			(layers[l-1]->data.size() != layers[l]->data.size()))
 		{
 			std::cout << "Failed to load cubemap textures. Textures aren't identical:" << std::endl <<
-				"> " << layers[l-1].source << std::endl <<
-				"> " << layers[l].source << std::endl;
+				"> " << layers[l-1]->source << std::endl <<
+				"> " << layers[l]->source << std::endl;
 			return Texture();
 		}
 	}
 
-	size_t layerSize = layers[0].dataSizeForAllMipLevels();
-	TextureDescription desc;
-	desc.target = GL_TEXTURE_CUBE_MAP;
-	desc.layersCount = 6;
-	desc.data.resize(6 * layerSize);
+	size_t layerSize = layers[0]->dataSizeForAllMipLevels();
+	TextureDescription::Pointer desc(new TextureDescription);
+	desc->target = GL_TEXTURE_CUBE_MAP;
+	desc->layersCount = 6;
+	desc->data.resize(6 * layerSize);
 
 	for (size_t l = 0; l < 6; ++l)
-		memcpy(desc.data.element_ptr(l * layerSize), layers[l].data.element_ptr(0), layerSize);
+		memcpy(desc->data.element_ptr(l * layerSize), layers[l]->data.element_ptr(0), layerSize);
 
-	desc.bitsPerPixel = layers[0].bitsPerPixel;
-	desc.channels = layers[0].channels;
-	desc.compressed = layers[0].compressed;
-	desc.format = layers[0].format;
-	desc.internalformat = layers[0].internalformat;
-	desc.mipMapCount= layers[0].mipMapCount;
-	desc.size = layers[0].size;
-	desc.type = layers[0].type;
+	desc->bitsPerPixel = layers[0]->bitsPerPixel;
+	desc->channels = layers[0]->channels;
+	desc->compressed = layers[0]->compressed;
+	desc->format = layers[0]->format;
+	desc->internalformat = layers[0]->internalformat;
+	desc->mipMapCount= layers[0]->mipMapCount;
+	desc->size = layers[0]->size;
+	desc->type = layers[0]->type;
 
-	Texture t(new TextureData(renderContext(), desc, texId, false));
-	cache.manageTexture(t);
-	return t;
+	return cache.manageTexture(Texture(new TextureData(renderContext(), desc, texId, false)));
 }
 
 Texture TextureFactory::createTextureWrapper(GLuint texture, const vec2i& size, const std::string& name)

@@ -10,20 +10,31 @@
 #include <string>
 #include <et/core/singleton.h>
 #include <et/core/intrusiveptr.h>
+#include <et/sound/formats.h>
 
 namespace et
 {
     namespace audio
     {
+		class Player;
+		class Manager;
+
         class TrackPrivate;
         class Track : public Shared
         {
         public:
             typedef IntrusivePtr<Track> Pointer;
             
+		public:
+			~Track();
+
+		private:
             Track(const std::string& fileName);
+			ET_SINGLETON_COPY_DENY(Track);
             
-        public:
+		private:
+			friend class Player;
+			friend class Manager;
             friend class TrackPivate;
             TrackPrivate* _private;
         };
@@ -37,16 +48,31 @@ namespace et
         {
         public:
             typedef IntrusivePtr<Player> Pointer;
-            
-        public:
-            Player();
+
+		public:
+			~Player();
+
+			void play(bool looped = false);
+            void play(Track::Pointer, bool looped = false);
+
+			void pause();
+			void stop();
+
+        private:
+			Player();
             Player(Track::Pointer track);
-            
-            void play(Track::Pointer);
+			ET_SINGLETON_COPY_DENY(Player);
+
+			void init();
+			void linkTrack(Track::Pointer);
             
         private:
+			friend class Manager;
             friend class PlayerPrivate;
+
+		private:
             PlayerPrivate* _private;
+			Track::Pointer _currentTrack;
         };
         
         /*
@@ -57,10 +83,17 @@ namespace et
         class Manager : public Singleton<Manager>
         {
         public:
-            
+			~Manager();
+
+			Track::Pointer loadTrack(const std::string& fileName);
+			Player::Pointer genPlayer(Track::Pointer track);
+			Player::Pointer genPlayer();
+
+			bool checkErrors();
+
         private:
             Manager();
-            
+           
         private:
             ET_SINGLETON_COPY_DENY(Manager);
             
@@ -68,5 +101,8 @@ namespace et
             friend class ManagerPrivate;
             ManagerPrivate* _private;
         };
+
+		inline Manager& manager()
+			{ return Manager::instance(); }
     }
 }

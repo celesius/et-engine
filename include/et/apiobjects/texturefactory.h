@@ -26,7 +26,7 @@ namespace et
 
 		Texture genNoiseTexture(const vec2i& size, bool normalize, const std::string& id = "");
 		Texture genCubeTexture(GLint internalformat, GLsizei size, GLenum format, GLenum type, const std::string& id = "");
-		Texture genTexture(const TextureDescription& desc);
+		Texture genTexture(TextureDescription::Pointer desc);
 		Texture genTexture(GLenum target, GLint internalformat, const vec2i& size, GLenum format, GLenum type, 
 			const BinaryDataStorage& data, const std::string& id = "");
 		

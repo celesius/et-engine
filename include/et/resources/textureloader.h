@@ -15,8 +15,8 @@ namespace et
 	class TextureLoader
 	{
 	public:
-		static const TextureDescription loadDescription(const std::string& name, size_t scaleFactor, bool initWithZero);
-		static const TextureDescription load(const std::string& name, size_t scaleFactor);
+		static TextureDescription::Pointer loadDescription(const std::string& name, size_t scaleFactor, bool initWithZero);
+		static TextureDescription::Pointer load(const std::string& name, size_t scaleFactor);
 
 		static const StringList& preferredExtensions();
 

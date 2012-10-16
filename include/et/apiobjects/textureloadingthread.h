@@ -45,7 +45,7 @@ namespace et
 	{
 		std::string fileName;
 		size_t screenScale;
-		TextureDescription* textureDescription;
+		TextureDescription::Pointer textureDescription;
 		Texture texture;
 		TextureLoaderDelegate* delegate;
 
