@@ -22,7 +22,7 @@ struct AudioFileChunk
 
 const uint32_t AIFFCommonChunkID = 'MMOC';
 const uint32_t AIFFUncompressedDataChunkID = 'DNSS';
-const uint32_t AIFFÑompressedDataChunkID = 'DNSC';
+const uint32_t AIFFCompressedDataChunkID = 'DNSC';
 
 const uint32_t WAVFileChunkID = 'FFIR';
 const uint32_t WAVDataChunkID = 'atad';
@@ -277,7 +277,7 @@ Description::Pointer et::audio::loadAIFFile(const std::string& fileName)
 
 			swapEndiannes(result->data.data(), result->data.dataSize());
 		}
-		else if (chunk.id.nID == AIFFÑompressedDataChunkID)
+		else if (chunk.id.nID == AIFFCompressedDataChunkID)
 		{
 			assert(0 && "Compressed audio data is not supported");
 		}
