@@ -21,7 +21,7 @@ TextureData::TextureData(RenderContext* rc, TextureDescription::Pointer desc, co
 	if (!deferred)
 	{
 #if (ET_OPENGLES)
-		if (!isPowerOfTwo(desc.size.x) || !isPowerOfTwo(desc.size.y))
+		if (!isPowerOfTwo(desc->size.x) || !isPowerOfTwo(desc->size.y))
 		{
 			_wrap.x = TextureWrap_ClampToEdge;
 			_wrap.y = TextureWrap_ClampToEdge;

@@ -108,7 +108,6 @@ bool Manager::checkErrors()
 	{
 		const char* message = alcGetString(_private->device, error);
 		std::cout << "OpenAL ALC error: " << message << std::endl;
-		assert(false);
 		return true;
 	}
 
@@ -117,7 +116,6 @@ bool Manager::checkErrors()
 	{
 		const char* message = alGetString(error);
 		std::cout << "OpenAL error: " << message << std::endl;
-		assert(false);
 		return true;
 	}
 #endif
