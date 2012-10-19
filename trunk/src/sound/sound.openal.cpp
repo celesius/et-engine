@@ -43,10 +43,9 @@ namespace et
 		class ManagerPrivate
 		{
 		public:
-			ManagerPrivate() : device(0), context(0)
+			ManagerPrivate() : context(0)
 				{ }
 
-			ALCdevice* device;
 			ALCcontext* context;
 		};
     }
@@ -59,68 +58,73 @@ using namespace et::audio;
  * Manager implementation
  */
 
+static ALCdevice* sharedDevice = 0;
+
+void checkOpenALErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const char* tag)
+{
+	ALenum error = alcGetError(sharedDevice);
+	if (error != ALC_NO_ERROR)
+	{
+		const char* message = alcGetString(sharedDevice, error);
+        printf("OpenAL ALC error: %s\n%s[%s]: %s\n", message, sourceFile, lineNumber, tag);
+        fflush(stdout);
+	}
+    
+	error = alGetError();
+	if (error != AL_NO_ERROR)
+	{
+		const char* message = alGetString(error);
+        printf("OpenAL error: %s\n%s[%s]: %s\n", message, sourceFile, lineNumber, tag);
+        fflush(stdout);
+	}
+}
+
+#if (ET_DEBUG)
+#   define checkOpenALError(tag) checkOpenALErrorEx(ET_CALL_FUNCTION, __FILE__, ET_TOCONSTCHAR(__LINE__), tag)
+#else
+#   define checkOpenALError(tag)
+#endif
+
 Manager::Manager() : _private(new ManagerPrivate)
 {
 	const char* defaultDeviceSpecifier = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
 	std::cout << "OpenAL device: " << defaultDeviceSpecifier;
 
-	_private->device = alcOpenDevice(defaultDeviceSpecifier);
-	assert(_private->device);
-
+	sharedDevice = alcOpenDevice(defaultDeviceSpecifier);
+	assert(sharedDevice);
+    
 	vec2i version;
-	alcGetIntegerv(_private->device, ALC_MAJOR_VERSION, sizeof(int), &version.x);
-	alcGetIntegerv(_private->device, ALC_MINOR_VERSION, sizeof(int), &version.y);
-
+	alcGetIntegerv(sharedDevice, ALC_MAJOR_VERSION, sizeof(int), &version.x);
+	alcGetIntegerv(sharedDevice, ALC_MINOR_VERSION, sizeof(int), &version.y);
+    
 	std::cout << ", version: " << version << std::endl;
 
-	_private->context = alcCreateContext(_private->device, 0);
-	assert(_private->device);
-
+	_private->context = alcCreateContext(sharedDevice, 0);
+	assert(sharedDevice);
+    
 	ALboolean success = alcMakeContextCurrent(_private->context);
-	assert(success);
+	assert(success); (void)success;
 
 	vec3 nullVector;
 	alListenerfv(AL_POSITION, nullVector.data());
-	checkErrors();
+	checkOpenALError("alListenerfv(AL_POSITION, ...");
 
     alListenerfv(AL_VELOCITY, nullVector.data());
-	checkErrors();
+	checkOpenALError("alListenerfv(AL_VELOCITY, ...");
 
 	float orientation[] = { 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f };
 	alListenerfv(AL_ORIENTATION, orientation);
-	checkErrors();
+	checkOpenALError("alListenerfv(AL_ORIENTATION, ...");
 }
 
 Manager::~Manager()
 {
 	alcMakeContextCurrent(0);
 	alcDestroyContext(_private->context);
-	alcCloseDevice(_private->device);
+	alcCloseDevice(sharedDevice);
 	delete _private;
-}
-
-bool Manager::checkErrors()
-{
-#if ET_DEBUG
-	ALenum error = alcGetError(_private->device);
-
-	if (error != ALC_NO_ERROR)
-	{
-		const char* message = alcGetString(_private->device, error);
-		std::cout << "OpenAL ALC error: " << message << std::endl;
-		return true;
-	}
-
-	error = alGetError();
-	if (error != AL_NO_ERROR)
-	{
-		const char* message = alGetString(error);
-		std::cout << "OpenAL error: " << message << std::endl;
-		return true;
-	}
-#endif
-
-	return false;
+    
+    sharedDevice = 0;
 }
 
 Track::Pointer Manager::loadTrack(const std::string& fileName)
@@ -167,12 +171,12 @@ Track::~Track()
 void Track::init(Description::Pointer data)
 {
 	alGenBuffers(1, &_private->buffer);
-	manager().checkErrors();
+    checkOpenALError("alGenBuffers");
 
 	if (data.invalid()) return;
 
 	alBufferData(_private->buffer, data->format, data->data.data(), data->data.dataSize(), data->sampleRate);
-	manager().checkErrors();
+    checkOpenALError("alBufferData");
 }
 
 /*
@@ -197,7 +201,7 @@ Player::~Player()
 	stop();
 
 	alDeleteSources(1, &_private->source);
-	manager().checkErrors();
+    checkOpenALError("alDeleteSources");
 
 	delete _private;
 }
@@ -207,28 +211,28 @@ void Player::init()
 	vec3 nullVector;
 
 	alGenSources(1, &_private->source);
-	manager().checkErrors();
+    checkOpenALError("alGenSources");
 
 	alSourcef(_private->source, AL_PITCH, 1.0f);
-	manager().checkErrors();
+    checkOpenALError("alSourcef(..., AL_PITCH, ...)");
 
 	alSourcef(_private->source, AL_GAIN, 1.0f);
-	manager().checkErrors();
+    checkOpenALError("alSourcef(..., AL_GAIN, ...)");
 
 	alSourcefv(_private->source, AL_POSITION, nullVector.data());
-	manager().checkErrors();
+    checkOpenALError("alSourcefv(..., AL_POSITION, ...)");
 
 	alSourcefv(_private->source, AL_VELOCITY, nullVector.data());
-	manager().checkErrors();
+    checkOpenALError("alSourcefv(..., AL_VELOCITY, ...)");
 }
 
 void Player::play(bool looped)
 {
 	alSourcei(_private->source, AL_LOOPING, looped ? AL_TRUE : AL_FALSE);
-	manager().checkErrors();
+    checkOpenALError("alSourcei(..., AL_LOOPING, ...)");
 
 	alSourcePlay(_private->source);
-	manager().checkErrors();
+    checkOpenALError("alSourcePlay");
 }
 
 void Player::play(Track::Pointer track, bool looped)
@@ -240,27 +244,34 @@ void Player::play(Track::Pointer track, bool looped)
 void Player::pause()
 {
 	alSourcePause(_private->source);
-	manager().checkErrors();
+    checkOpenALError("alSourcePause");
 }
 
 void Player::stop()
 {
 	alSourceStop(_private->source);
-	manager().checkErrors();
+    checkOpenALError("alSourceStop");
+}
+
+void Player::rewind()
+{
+    alSourceRewind(_private->source);
+    checkOpenALError("alSourceRewind");
 }
 
 void Player::linkTrack(Track::Pointer track)
 {
 	if (_currentTrack == track) return;
 
+    stop();
+    
 	_currentTrack = track;
-
 	alSourcei(_private->source, AL_BUFFER, track->_private->buffer);
-	manager().checkErrors();
+    checkOpenALError("alSourcei(.., AL_BUFFER, ...)");
 }
 
 void Player::setVolume(float value)
 {
 	alSourcef(_private->source, AL_GAIN, value);
-	manager().checkErrors();
+    checkOpenALError("alSourcei(.., AL_GAIN, ...)");
 }

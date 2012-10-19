@@ -60,6 +60,8 @@ namespace et
             void play(Track::Pointer, bool looped = false);
 			void pause();
 			void stop();
+            
+			void rewind();
 
 			void setVolume(float);
 
@@ -95,8 +97,6 @@ namespace et
 
 			Player::Pointer genPlayer(Track::Pointer track);
 			Player::Pointer genPlayer();
-
-			bool checkErrors();
 
         private:
             Manager();
