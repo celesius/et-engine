@@ -34,7 +34,7 @@ TextureData::TextureData(RenderContext* rc, TextureDescription::Pointer desc, co
 }
 
 TextureData::TextureData(RenderContext*, GLuint texture, const vec2i& size, const std::string& name) : 
-	APIObjectData(name), _glID(texture), _own(false)
+	APIObjectData(name), _glID(texture), _own(false), _desc(new TextureDescription)
 {
 	if (!glIsTexture(texture))
 	{
