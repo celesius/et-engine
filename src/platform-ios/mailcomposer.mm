@@ -85,9 +85,10 @@ MailComposer::~MailComposer()
 
 void MailComposer::composeEmail(const std::string& recepient, const std::string& title, const std::string& text)
 {
-	UIViewController* mainViewController = reinterpret_cast<UIViewController*>(application().renderingContextHandle());
-	
 	MFMailComposeViewController* viewController = [[MFMailComposeViewController alloc] init];
+    if (viewController == nil) return;
+    
+	UIViewController* mainViewController = reinterpret_cast<UIViewController*>(application().renderingContextHandle());
 	[viewController setSubject:[NSString stringWithUTF8String:title.c_str()]];
 	[viewController setToRecipients:[NSArray arrayWithObject:[NSString stringWithUTF8String:recepient.c_str()]]];
 	[viewController setMessageBody:[NSString stringWithUTF8String:text.c_str()] isHTML:NO];
