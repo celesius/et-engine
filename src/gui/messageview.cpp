@@ -67,7 +67,7 @@ void MessageView::layout(const vec2& sz)
 	
 	bool hasTitle = _title->textSize().dotSelf() > 0.0f;
 	bool hasText = _text->textSize().dotSelf() > 0.0f;
-	bool hasImage = _imgImage->texture().valid();
+	bool hasImage = _imgImage->texture().valid() && (_imgImage->imageDescriptor().size.dotSelf() > 0.0f);
 	bool hasButtons = hasFirstButton() || hasSecondButton();
 	
 	assert(!(hasText && hasImage) && "Unsupported MessageView parameters specified");
