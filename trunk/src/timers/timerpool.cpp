@@ -11,27 +11,10 @@
 #include <et/timers/timerpool.h>
 #include <et/timers/timedobject.h>
 
-class et::TimerPoolObjectPrivate
-{
-public:
-	TimerPoolObjectPrivate() : owner(0) { }
-	RunLoopObject* owner;
-};
-
 using namespace et;
 
-TimerPoolObject::TimerPoolObject() : _private(new TimerPoolObjectPrivate)
+TimerPoolObject::TimerPoolObject(RunLoopObject* owner) : _owner(owner)
 {
-}
-
-TimerPoolObject::~TimerPoolObject()
-{
-	delete _private;
-}
-
-void TimerPoolObject::setOwner(RunLoopObject* rl)
-{
-	_private->owner = rl;
 }
 
 void TimerPoolObject::attachTimedObject(TimedObject* obj)
@@ -116,10 +99,8 @@ void TimerPoolObject::update(float t)
 		}
 		else
 		{
-			std::cout << "WARNING: unresolved state for TimerPool QueueEntry" << std::endl;
-			++i;
+			assert(0 && "Unresolved state for TimerPool QueueEntry");
 		}
-
 	} 
 
 	_updating = false;
@@ -127,15 +108,16 @@ void TimerPoolObject::update(float t)
 
 void TimerPoolObject::deleteTimedObjecct(TimedObject* obj)
 {
-	TimedObjectDeletionTask* task = new TimedObjectDeletionTask(obj);
-	if (_private->owner)
-		_private->owner->addTask(task);
-	else
-		application().runLoop()->addTask(task);
+	_owner->addTask(new TimedObjectDeletionTask(obj));
 }
 
 float TimerPoolObject::actualTime() const
 {
-	return _private->owner ? _private->owner->time() : 0.0f;
+	return _owner->time();
+}
+
+void TimerPoolObject::retain()
+{
+	Shared::retain();
 }
 

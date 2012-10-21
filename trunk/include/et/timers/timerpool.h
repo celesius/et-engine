@@ -18,18 +18,19 @@ namespace et
 	class TimerPoolObject : public Shared
 	{
 	public:
-		TimerPoolObject();
-		~TimerPoolObject();
+		TimerPoolObject(RunLoopObject* owner);
 
 		void update(float t);
+		float actualTime() const;
+
+		void retain();
 
 		void attachTimedObject(TimedObject* obj);
 		void detachTimedObject(TimedObject* obj);
 		void deleteTimedObjecct(TimedObject* obj);
 
-		void setOwner(RunLoopObject*);
-
-		float actualTime() const;
+		void setOwner(RunLoopObject* owner)
+			{ _owner = owner; }
 
 	private:
 		enum QueueAction
@@ -55,7 +56,7 @@ namespace et
 		TimerPoolQueue _timedObjects;
 		TimerPoolQueue _queue;
 		CriticalSection _lock;
-		TimerPoolObjectPrivate* _private;
+		RunLoopObject* _owner;
 
 		bool _initialized;
 		bool _updating;

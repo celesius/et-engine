@@ -12,14 +12,17 @@
 
 using namespace et;
 
-RunLoopObject::RunLoopObject() : _mainTimerPool(new TimerPoolObject),
+RunLoopObject::RunLoopObject() :
 	_actualTime(0.0f), _time(0.0f), _activityTime(0.0f), _started(false), _active(true)
 {
-	attachTimerPool(_mainTimerPool);
+	attachTimerPool(TimerPool(new TimerPoolObject(this)));
 }
 
 RunLoopObject::~RunLoopObject()
 {
+	TimerPoolObject* tp = mainTimerPool().ptr();
+	_timerPools.clear();
+	tp->referenceCount();
 }
 
 void RunLoopObject::update(float t)

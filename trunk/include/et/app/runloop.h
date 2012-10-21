@@ -23,7 +23,7 @@ namespace et
 		void resume();
 
 		TimerPool& mainTimerPool()
-			{ return _mainTimerPool; }
+			{ return _timerPools.front(); }
 
 		float time() const
 			{ return _time; }
@@ -39,7 +39,6 @@ namespace et
 
 	private:
 		TimerPoolList _timerPools;
-		TimerPool _mainTimerPool;
 		TaskPool _taskPool;
 		float _actualTime;
 		float _time;

@@ -470,17 +470,11 @@ void Keyboard::show(bool animated, Element* forElement)
 void Keyboard::hide(bool animated)
 {
 	_capturedElement = 0;
-	if (!_visible) return;
-
-	_hideAnimator = setPosition(0.5f * _screenSize.x, _screenSize.y * 1.5f + 1.0f, animated ? showHideDuration : 0.0f);
-}
-
-void Keyboard::animatorFinished(BaseAnimator* animator)
-{
-	if (animator == _hideAnimator)
+	if (_visible)
+	{
+		setPosition(0.5f * _screenSize.x, _screenSize.y * 1.5f + 1.0f, animated ? showHideDuration : 0.0f);
 		_visible = false;
-
-	Element2d::animatorFinished(animator);
+	}
 }
 
 void Keyboard::setDelegate(KeyboardDelegate* delegate)

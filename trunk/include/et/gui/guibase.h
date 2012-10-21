@@ -108,7 +108,7 @@ namespace et
 			virtual const vec2& position() const = 0;
 			virtual vec2 origin() const = 0;
 			virtual const vec2& size() const = 0;
-			virtual BaseAnimator* setPosition(const vec2& p, float duration = 0.0f) = 0;
+			virtual void setPosition(const vec2& p, float duration = 0.0f) = 0;
 			virtual bool containsPoint(const vec2&, const vec2&) = 0;
 
 			/*

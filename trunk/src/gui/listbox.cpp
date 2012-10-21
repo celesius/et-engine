@@ -240,11 +240,10 @@ bool Listbox::containsPoint(const vec2& p, const vec2& np)
 	return Element2d::containsPoint(p, np) || inPopup;
 }
 
-BaseAnimator* Listbox::setFrame(const rect& r, float duration)
+void Listbox::setFrame(const rect& r, float duration)
 {
-	BaseAnimator* value = Element2d::setFrame(r, duration);
+	Element2d::setFrame(r, duration);
 	configurePopup();
-	return value;
 }
 
 bool Listbox::pointerPressed(const PointerInputInfo& p)

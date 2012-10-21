@@ -13,7 +13,6 @@
 namespace et
 {
 	class TimerPoolObject;
-	class TimedObjectPrivate;
 	class TimedObject 
 	{
 	public:
@@ -39,7 +38,7 @@ namespace et
 		float actualTime();
 
 	private:
-		TimedObjectPrivate* _private;
+		TimerPoolObject* _owner;
 		bool _running;
 		bool _released;
 	};

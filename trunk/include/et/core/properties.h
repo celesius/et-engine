@@ -15,6 +15,14 @@
 	private: \
 		T _##name;
 
+#define ET_DECLARE_PROPERTY_SETTER_COPY(T, name, setter) public: \
+		T name() const \
+			{ return _##name; } \
+		void setter(T value) \
+			{ _##name = value; } \
+	private: \
+		T _##name;
+
 #define ET_DECLARE_PROPERTY_READONLY(T, name) public: \
 		T name() const \
 			{ return _##name; } \

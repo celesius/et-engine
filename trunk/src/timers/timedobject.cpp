@@ -12,38 +12,28 @@
 
 using namespace et;
 
-class et::TimedObjectPrivate
-{
-public:
-	TimerPool timerPool;
-};
-
-TimedObject::TimedObject() : _private(new TimedObjectPrivate), _running(false), _released(false)
+TimedObject::TimedObject() : 
+	_owner(0), _running(false), _released(false)
 {
 }
 
 TimedObject::~TimedObject()
 {
-	if (_private->timerPool.valid())
-	{
-		_private->timerPool->detachTimedObject(this);
-		_private->timerPool.reset(0);
-	}
-
-	delete _private;
+	if (_owner)
+		_owner->detachTimedObject(this);
 }
 
 void TimedObject::startUpdates(TimerPoolObject* timerPool)
 {
 	if (_released || _running) return;
 
-	if (_running && _private->timerPool.valid())
-		_private->timerPool->detachTimedObject(this);
+	if (_running && _owner)
+		_owner->detachTimedObject(this);
 
 	_running = true;
 
-	_private->timerPool = timerPool ? TimerPool(timerPool) : mainRunLoop()->mainTimerPool();
-	_private->timerPool->attachTimedObject(this); 
+	_owner = (timerPool == nullptr) ? mainRunLoop()->mainTimerPool().ptr() : timerPool;
+	_owner->attachTimedObject(this); 
 }
 
 void TimedObject::cancelUpdates()
@@ -57,22 +47,11 @@ void TimedObject::destroy()
 
 	_running = false;
 	_released = true;
-
-	if (_private->timerPool.valid())
-		_private->timerPool->deleteTimedObjecct(this);
-	else
-		mainRunLoop()->addTask(new TimedObjectDeletionTask(this));
+	(_owner ? _owner : mainTimerPool().ptr())->deleteTimedObjecct(this);
 }
 
 float TimedObject::actualTime()
 {
-	if (_private->timerPool.valid())
-	{
-		return _private->timerPool->actualTime();
-	}
-	else
-	{
-		assert("TimedObject isn't attached to timer pool" && 0);
-		return 0.0f;
-	}
+	assert((_owner != nullptr) && "TimedObject isn't attached to timer pool");
+	return _owner->actualTime();
 }

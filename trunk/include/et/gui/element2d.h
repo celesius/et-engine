@@ -42,6 +42,7 @@ namespace et
 			const vec2& position() const;
 			const vec2& scale() const;
 			const rect& frame() const;
+			const vec2& pivotPoint() const;
 
 			vec2 origin() const;
 			vec2 offset() const;
@@ -53,28 +54,24 @@ namespace et
 			/*
 			 * Setters
 			 */
-			virtual BaseAnimator* setAngle(float angle, float duration = 0.0f);
-			virtual BaseAnimator* setScale(const vec2& scale, float duration = 0.0f);
-			virtual BaseAnimator* setColor(const vec4& color, float duration = 0.0f);
-			virtual BaseAnimator* setFrame(const rect& r, float duration = 0.0f);
-			virtual BaseAnimator* setFrame(const vec2& origin, const vec2& size, float duration = 0.0f);
-
-			const vec2& pivotPoint() const 
-				{ return _pivotPoint; }
-
+			virtual void setAngle(float angle, float duration = 0.0f);
+			virtual void setScale(const vec2& scale, float duration = 0.0f);
+			virtual void setColor(const vec4& color, float duration = 0.0f);
+			virtual void setFrame(const rect& r, float duration = 0.0f);
+			virtual void setFrame(const vec2& origin, const vec2& size, float duration = 0.0f);
 			virtual void setPivotPoint(const vec2& p, bool preservePosition = true);
 
 			/*
 			 * Convenience
 			 */
-			BaseAnimator* setPosition(const vec2& p, float duration = 0.0f);
-			BaseAnimator* setAlpha(const float alpha, float duration = 0.0f);
-			BaseAnimator* setFrame(float x, float y, float width, float height, float duration = 0.0f);
-			BaseAnimator* setPosition(float x, float y, float duration = 0.0f);
-			BaseAnimator* setSize(const vec2& s, float duration = 0.0f);
-			BaseAnimator* setSize(float w, float h, float duration = 0.0f);
-			BaseAnimator* rotate(float angle, float duration = 0.0f);
-			BaseAnimator* setVisible(bool visible, float duration = 0.0f);
+			void setPosition(const vec2& p, float duration = 0.0f);
+			void setAlpha(const float alpha, float duration = 0.0f);
+			void setFrame(float x, float y, float width, float height, float duration = 0.0f);
+			void setPosition(float x, float y, float duration = 0.0f);
+			void setSize(const vec2& s, float duration = 0.0f);
+			void setSize(float w, float h, float duration = 0.0f);
+			void rotate(float angle, float duration = 0.0f);
+			void setVisible(bool visible, float duration = 0.0f);
 
 			virtual bool containsPoint(const vec2& p, const vec2&);
 			virtual bool containLocalPoint(const vec2& p);
@@ -95,7 +92,11 @@ namespace et
 			void animatorFinished(BaseAnimator*);
 
 		private:
-			AnimatorList _animations;
+			RectAnimator _frameAnimator;
+			Vector4Animator _colorAnimator;
+			Vector2Animator _scaleAnimator;
+			FloatAnimator _angleAnimator;
+
 			mat4 _finalTransform;
 			mat4 _finalInverseTransform;
 			rect _frame;
