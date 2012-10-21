@@ -115,15 +115,15 @@ void Converter::applicationWillTerminate()
 
 void Converter::renderMeshList(RenderContext* rc, const s3d::Element::List& meshes)
 {
-	for (s3d::Element::List::const_iterator i = meshes.begin(), e = meshes.end(); i != e; ++i)
+	for (auto i = meshes.begin(), e = meshes.end(); i != e; ++i)
 	{
 		s3d::Mesh::Pointer mesh = *i;
 		if (mesh->active())
 		{
 			Material& m = mesh->material();
-			_defaultProgram->setUniform("ambientColor", m->getVec4(MaterialParameter_AmbientColor));
-			_defaultProgram->setUniform("diffuseColor", m->getVec4(MaterialParameter_DiffuseColor));
-			_defaultProgram->setUniform("specularColor", m->getVec4(MaterialParameter_SpecularColor));
+			_defaultProgram->setUniform("ambientColor", m->getVector(MaterialParameter_AmbientColor));
+			_defaultProgram->setUniform("diffuseColor", m->getVector(MaterialParameter_DiffuseColor));
+			_defaultProgram->setUniform("specularColor", m->getVector(MaterialParameter_SpecularColor));
 			_defaultProgram->setUniform("roughness", m->getFloat(MaterialParameter_Roughness));
 			_defaultProgram->setUniform("mTransform", mesh->finalTransform());
 			rc->renderState().bindTexture(0, mesh->material()->getTexture(MaterialParameter_DiffuseMap));
@@ -180,7 +180,7 @@ void Converter::onZoom(float z)
 	_vDistance.addVelocity(0.1f * _vDistance.value() * (1.0f - z));
 }
 
-void Converter::onDrag(et::vec2 v)
+void Converter::onDrag(et::vec2 v, et::PointerType)
 {
 	_vAngle.addVelocity(vec2(-v.y, v.x));
 }
@@ -250,7 +250,7 @@ void Converter::performLoading(std::string path)
 			s3d::Element::List allObjects = loadedScene->childrenOfType(s3d::ElementType_Any);
 
 			std::cout << "Loaded elements:" << std::endl;
-			for (s3d::Element::List::const_iterator i = allObjects.begin(), e = allObjects.end(); i != e; ++i)
+			for (auto i = allObjects.begin(), e = allObjects.end(); i != e; ++i)
 				std::cout << (*i)->name() << " " << (*i)->properties() << std::endl;
 			std::cout << "End." << std::endl;
 

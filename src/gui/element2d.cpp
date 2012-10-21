@@ -12,20 +12,36 @@ using namespace et::gui;
 
 const float minimalVisibleAlpha = 1.0f / 1000.0f;
 
-Element2d::Element2d(Element* parent) : Element(parent),
+Element2d::Element2d(Element* parent) : Element(parent), _frameAnimator(timerPool()), 
+	_colorAnimator(timerPool()), _scaleAnimator(timerPool()), _angleAnimator(timerPool()),
 	_frame(0.0f, 0.0f, 0.0f, 0.0f), _scale(1.0f), _color(1.0f), _angle(0.0f), _pivotPoint(0.0f)
 {
+	_frameAnimator.setTag(ElementAnimatedProperty_Frame);
+	_frameAnimator.setDelegate(this);
+	_colorAnimator.setTag(ElementAnimatedProperty_Color);
+	_colorAnimator.setDelegate(this);
+	_scaleAnimator.setTag(ElementAnimatedProperty_Scale);
+	_scaleAnimator.setDelegate(this);
+	_angleAnimator.setTag(ElementAnimatedProperty_Angle);
+	_angleAnimator.setDelegate(this);
 }
 
-Element2d::Element2d(const rect& frame, Element* parent) : Element(parent),
+Element2d::Element2d(const rect& frame, Element* parent) : Element(parent), _frameAnimator(timerPool()), 
+	_colorAnimator(timerPool()), _scaleAnimator(timerPool()), _angleAnimator(timerPool()),
 	_frame(frame), _scale(1.0f), _color(1.0f), _angle(0.0f), _pivotPoint(0.0f)
 {
+	_frameAnimator.setTag(ElementAnimatedProperty_Frame);
+	_frameAnimator.setDelegate(this);
+	_colorAnimator.setTag(ElementAnimatedProperty_Color);
+	_colorAnimator.setDelegate(this);
+	_scaleAnimator.setTag(ElementAnimatedProperty_Scale);
+	_scaleAnimator.setDelegate(this);
+	_angleAnimator.setTag(ElementAnimatedProperty_Angle);
+	_angleAnimator.setDelegate(this);
 }
 
 Element2d::~Element2d()
 {
-	for (AnimatorList::iterator i = _animations.begin(), e = _animations.end(); i != e; ++i)
-		(*i)->destroy();
 }
 
 const vec2& Element2d::size() const
@@ -48,6 +64,11 @@ const rect& Element2d::frame() const
 	return _frame;
 }
 
+const vec2& Element2d::pivotPoint() const
+{
+	return _pivotPoint;
+}
+
 const vec2& Element2d::scale() const
 {
 	return _scale;
@@ -68,129 +89,114 @@ bool Element2d::visible() const
 	return _color.w > 0.0f;
 }
 
-BaseAnimator* Element2d::setAngle(float angle, float duration)
+void Element2d::setAngle(float angle, float duration)
 {
 	if (duration == 0.0f)
 	{
 		_angle = angle;
 		invalidateTransform();
-		return 0;
 	}
 	else 
 	{
-		BaseAnimator* a = new FloatAnimator(this, &_angle, _angle, angle, duration, ElementAnimatedProperty_Angle, timerPool());
-		_animations.push_back(a);
-		return a;
+		_angleAnimator.animate( &_angle, _angle, angle, duration);
 	}
 }
 
-BaseAnimator* Element2d::rotate(float angle, float duration)
+void Element2d::rotate(float angle, float duration)
 {
 	return setAngle(_angle + angle, duration);
 }
 
-BaseAnimator* Element2d::setScale(const vec2& scale, float duration)
+void Element2d::setScale(const vec2& scale, float duration)
 {
 	if (duration == 0.0f)
 	{
 		_scale = scale;
 		invalidateTransform();
-		return 0;
 	}
 	else 
 	{
-		BaseAnimator* a = new Vector2Animator(this, &_scale, _scale, scale, duration, ElementAnimatedProperty_Scale, timerPool());
-		_animations.push_back(a);
-		return a;
+		_scaleAnimator.animate( &_scale, _scale, scale, duration);
 	}
 }
 
 
-BaseAnimator* Element2d::setColor(const vec4& color, float duration) 
+void Element2d::setColor(const vec4& color, float duration) 
 { 
 	if (duration == 0.0f)
 	{
 		_color = color; 
 		invalidateContent(); 
-		return 0;
 	}
 	else 
 	{
-		BaseAnimator* a = new Vector4Animator(this, &_color, _color, color, duration, ElementAnimatedProperty_Color, timerPool());
-		_animations.push_back(a);
-		return a;
+		_colorAnimator.animate(&_color, _color, color, duration);
 	}
 }
 
-BaseAnimator* Element2d::setAlpha(const float alpha, float duration) 
+void Element2d::setAlpha(const float alpha, float duration) 
 { 
-	if (_color.w == alpha) return 0;
+	if (_color.w == alpha) return;
 
 	if (duration == 0.0f)
 	{
 		_color.w = alpha; 
 		invalidateContent(); 
-		return 0;
 	}
 	else 
 	{
-		BaseAnimator* a = new FloatAnimator(this, &_color.w, _color.w, alpha, duration, ElementAnimatedProperty_Color, timerPool());
-		_animations.push_back(a);
-		return a;
+		_colorAnimator.animate(&_color, _color, vec4(_color.xyz(), alpha), duration);
 	}
 }
 
-BaseAnimator* Element2d::setFrame(const rect& r, float duration)
+void Element2d::setFrame(const rect& r, float duration)
 {
 	if (duration == 0.0f)
 	{
 		_frame = r;
 		invalidateTransform();
 		invalidateContent(); 
-		return 0;
 	}
 	else 
 	{
-		BaseAnimator* a = new RectAnimator(this, &_frame, _frame, r, duration, ElementAnimatedProperty_Frame, timerPool());
-		_animations.push_back(a);
-		return a;
+		_frameAnimator.animate(&_frame, _frame, r, duration);
 	}
 }
 
-BaseAnimator* Element2d::setFrame(float x, float y, float width, float height, float duration)
+void Element2d::setFrame(float x, float y, float width, float height, float duration)
 {
 	return setFrame(rect(x, y, width, height), duration);
 }
 
-BaseAnimator* Element2d::setFrame(const vec2& origin, const vec2& size, float duration)
+void Element2d::setFrame(const vec2& origin, const vec2& size, float duration)
 {
 	return setFrame(rect(origin, size), duration);
 }
 
-BaseAnimator* Element2d::setPosition(const vec2& p, float duration) 
+void Element2d::setPosition(const vec2& p, float duration) 
 { 
 	return setFrame(p.x, p.y, _frame.width, _frame.height, duration);
 }
 
-BaseAnimator* Element2d::setSize(const vec2& s, float duration) 
+void Element2d::setSize(const vec2& s, float duration) 
 { 
 	return setFrame(_frame.left, _frame.top, s.x, s.y, duration);
 }
 
-BaseAnimator* Element2d::setPosition(float x, float y, float duration) 
+void Element2d::setPosition(float x, float y, float duration) 
 { 
 	return setPosition(vec2(x, y), duration); 
 }
 
-BaseAnimator* Element2d::setSize(float w, float h, float duration) 
+void Element2d::setSize(float w, float h, float duration) 
 { 
 	return setSize(vec2(w, h), duration); 
 }
 
-BaseAnimator* Element2d::setVisible(bool vis, float duration)
+void Element2d::setVisible(bool vis, float duration)
 {
-	if (visible() == vis) return 0;
-	return setAlpha(vis ? 1.0f : 0.0f, duration);
+	if (visible() != vis) 
+		setAlpha(vis ? 1.0f : 0.0f, duration);
 }
 
 mat4 Element2d::finalTransform() 
@@ -216,7 +222,7 @@ float Element2d::finalAlpha() const
 
 void Element2d::animatorUpdated(BaseAnimator* a)
 {
-	ElementAnimatedPropery prop = static_cast<ElementAnimatedPropery>(a->tag);
+	ElementAnimatedPropery prop = static_cast<ElementAnimatedPropery>(a->tag());
 
 	bool isFrame = prop == ElementAnimatedProperty_Frame;
 	
@@ -229,14 +235,7 @@ void Element2d::animatorUpdated(BaseAnimator* a)
 
 void Element2d::animatorFinished(BaseAnimator* a)
 {
-	elementAnimationFinished.invoke(this, ElementAnimatedPropery(a->tag));
-	
-	AnimatorList::iterator i = find(_animations.begin(), _animations.end(), a);
-	if (i != _animations.end())
-	{
-		_animations.erase(i);
-		a->destroy();
-	}
+	elementAnimationFinished.invoke(this, static_cast<ElementAnimatedPropery>(a->tag()));
 }
 
 bool Element2d::containsPoint(const vec2& p, const vec2&) 

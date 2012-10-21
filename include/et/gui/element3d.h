@@ -33,8 +33,8 @@ namespace et
 			const vec2& position() const 
 				{ return _center; }
 
-			BaseAnimator* setPosition(const vec2&, float) 
-				{ return 0; }
+			void setPosition(const vec2&, float)
+				{ }
 
 		protected:
 			mat4 finalTransform();
@@ -54,6 +54,5 @@ namespace et
 			bool _finalTransformValid;
 			bool _inverseFinalTransformValid;
 		};
-
 	}
 }

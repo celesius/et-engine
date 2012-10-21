@@ -11,7 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{6C7B614E-BA19-4EC2-8725-C459AAAE6931}</ProjectGuid>
+    <VCTargetsPath Condition="'$(VCTargetsPath11)' != '' and '$(VSVersion)' == '' and '$(VisualStudioVersion)' == ''">$(VCTargetsPath11)</VCTargetsPath>
+  </PropertyGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B4DCB303-8D7F-444B-AEB8-8ADF2E9A204D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>FBXConverter</RootNamespace>
   </PropertyGroup>
@@ -19,11 +22,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v100</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v100</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -39,45 +44,51 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\SDK\FBX\include;..\..\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\SDK\FBX\include;$(SolutionDir)\..\..\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\SDK\FBX\lib\vs2010\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\SDK\FBX\include;..\..\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\SDK\FBX\include;$(SolutionDir)\..\..\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\SDK\FBX\lib\vs2010\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>FBXSDK_NEW_API;WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;FBXSDK_NEW_API;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>/MP4 %(AdditionalOptions)</AdditionalOptions>
+      <MinimalRebuild>false</MinimalRebuild>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>FBXSDK_NEW_API;WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;FBXSDK_NEW_API;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/MP4 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <IgnoreSpecificDefaultLibraries>
-      </IgnoreSpecificDefaultLibraries>
+      <AdditionalDependencies>psapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -102,6 +113,7 @@
     <ClCompile Include="..\..\src\camera\frustum.cpp" />
     <ClCompile Include="..\..\src\collision\aabb.cpp" />
     <ClCompile Include="..\..\src\collision\collision.cpp" />
+    <ClCompile Include="..\..\src\core\debug.cpp" />
     <ClCompile Include="..\..\src\core\plist.cpp" />
     <ClCompile Include="..\..\src\core\tools.cpp" />
     <ClCompile Include="..\..\src\core\transformable.cpp" />
@@ -120,10 +132,12 @@
     <ClCompile Include="..\..\src\gui\label.cpp" />
     <ClCompile Include="..\..\src\gui\layout.cpp" />
     <ClCompile Include="..\..\src\gui\listbox.cpp" />
+    <ClCompile Include="..\..\src\gui\messageview.cpp" />
     <ClCompile Include="..\..\src\gui\renderingelement.cpp" />
     <ClCompile Include="..\..\src\gui\scroll.cpp" />
     <ClCompile Include="..\..\src\gui\textfield.cpp" />
     <ClCompile Include="..\..\src\gui\textureatlas.cpp" />
+    <ClCompile Include="..\..\src\gui\textureatlaswriter.cpp" />
     <ClCompile Include="..\..\src\imaging\ddsloader.cpp" />
     <ClCompile Include="..\..\src\imaging\imageoperations.cpp" />
     <ClCompile Include="..\..\src\imaging\imagewriter.cpp" />
@@ -207,7 +221,9 @@
     <ClCompile Include="..\..\src\libpng\pngwrite.c" />
     <ClCompile Include="..\..\src\libpng\pngwtran.c" />
     <ClCompile Include="..\..\src\libpng\pngwutil.c" />
+    <ClCompile Include="..\..\src\models\3dsloader.cpp" />
     <ClCompile Include="..\..\src\models\fbxloader.cpp" />
+    <ClCompile Include="..\..\src\models\objLoader.cpp" />
     <ClCompile Include="..\..\src\opengl\opengl.common.cpp" />
     <ClCompile Include="..\..\src\platform-win\application.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\charactergenerator.win.cpp" />
@@ -215,15 +231,13 @@
     <ClCompile Include="..\..\src\platform-win\fontgen.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\gl.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\input.win.cpp" />
-    <ClCompile Include="..\..\src\platform-win\location.win.cpp" />
+    <ClCompile Include="..\..\src\platform-win\locale.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\mutex.win.cpp" />
-    <ClCompile Include="..\..\src\platform-win\orientation.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\referencecounter.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\rendercontext.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\thread.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\threading.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\tools.win.cpp" />
-    <ClCompile Include="..\..\src\platform-win\videocapture.win.cpp" />
     <ClCompile Include="..\..\src\primitives\primitives.cpp" />
     <ClCompile Include="..\..\src\rendering\renderer.cpp" />
     <ClCompile Include="..\..\src\rendering\rendering.cpp" />
@@ -265,144 +279,6 @@
     <ClCompile Include="source\converter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\et\apiobjects\apiobject.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\apiobjectfactory.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\framebuffer.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\framebufferdata.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\framebufferfactory.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\indexbuffer.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\indexbufferdata.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\program.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\programdata.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\programfactory.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\texture.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\texturecache.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\texturedata.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\texturedescription.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\texturefactory.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\textureloadingthread.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\vertexarrayobject.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\vertexarrayobjectdata.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\vertexbuffer.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\vertexbufferdata.h" />
-    <ClInclude Include="..\..\include\et\apiobjects\vertexbufferfactory.h" />
-    <ClInclude Include="..\..\include\et\app\appevironment.h" />
-    <ClInclude Include="..\..\include\et\app\application.h" />
-    <ClInclude Include="..\..\include\et\app\applicationnotifier.h" />
-    <ClInclude Include="..\..\include\et\app\events.h" />
-    <ClInclude Include="..\..\include\et\app\events.inl.h" />
-    <ClInclude Include="..\..\include\et\app\invocation.h" />
-    <ClInclude Include="..\..\include\et\app\runloop.h" />
-    <ClInclude Include="..\..\include\et\camera\camera.h" />
-    <ClInclude Include="..\..\include\et\camera\frustum.h" />
-    <ClInclude Include="..\..\include\et\collision\aabb.h" />
-    <ClInclude Include="..\..\include\et\collision\collision.h" />
-    <ClInclude Include="..\..\include\et\collision\obb.h" />
-    <ClInclude Include="..\..\include\et\collision\sphere.h" />
-    <ClInclude Include="..\..\include\et\core\autoptr.h" />
-    <ClInclude Include="..\..\include\et\core\autovalue.h" />
-    <ClInclude Include="..\..\include\et\core\constants.h" />
-    <ClInclude Include="..\..\include\et\core\containers.h" />
-    <ClInclude Include="..\..\include\et\core\debug.h" />
-    <ClInclude Include="..\..\include\et\core\flags.h" />
-    <ClInclude Include="..\..\include\et\core\hierarchy.h" />
-    <ClInclude Include="..\..\include\et\core\intrusiveptr.h" />
-    <ClInclude Include="..\..\include\et\core\plist.h" />
-    <ClInclude Include="..\..\include\et\core\properties.h" />
-    <ClInclude Include="..\..\include\et\core\serialization.h" />
-    <ClInclude Include="..\..\include\et\core\sharedptr.h" />
-    <ClInclude Include="..\..\include\et\core\singleton.h" />
-    <ClInclude Include="..\..\include\et\core\tools.h" />
-    <ClInclude Include="..\..\include\et\core\transformable.h" />
-    <ClInclude Include="..\..\include\et\core\types.h" />
-    <ClInclude Include="..\..\include\et\geometry\geometry.h" />
-    <ClInclude Include="..\..\include\et\geometry\matrix3.h" />
-    <ClInclude Include="..\..\include\et\geometry\matrix4.h" />
-    <ClInclude Include="..\..\include\et\geometry\parallelepiped.h" />
-    <ClInclude Include="..\..\include\et\geometry\plane.h" />
-    <ClInclude Include="..\..\include\et\geometry\quaternion.h" />
-    <ClInclude Include="..\..\include\et\geometry\ray.h" />
-    <ClInclude Include="..\..\include\et\geometry\rect.h" />
-    <ClInclude Include="..\..\include\et\geometry\segment.h" />
-    <ClInclude Include="..\..\include\et\geometry\splines.h" />
-    <ClInclude Include="..\..\include\et\geometry\splines.inl.h" />
-    <ClInclude Include="..\..\include\et\geometry\triangle.h" />
-    <ClInclude Include="..\..\include\et\geometry\vector2.h" />
-    <ClInclude Include="..\..\include\et\geometry\vector3.h" />
-    <ClInclude Include="..\..\include\et\geometry\vector4.h" />
-    <ClInclude Include="..\..\include\et\gui\button.h" />
-    <ClInclude Include="..\..\include\et\gui\carousel.h" />
-    <ClInclude Include="..\..\include\et\gui\element2d.h" />
-    <ClInclude Include="..\..\include\et\gui\element3d.h" />
-    <ClInclude Include="..\..\include\et\gui\font.h" />
-    <ClInclude Include="..\..\include\et\gui\fontbase.h" />
-    <ClInclude Include="..\..\include\et\gui\fontgen.h" />
-    <ClInclude Include="..\..\include\et\gui\fullscreenelement.h" />
-    <ClInclude Include="..\..\include\et\gui\gui.h" />
-    <ClInclude Include="..\..\include\et\gui\guibase.h" />
-    <ClInclude Include="..\..\include\et\gui\guirenderer.h" />
-    <ClInclude Include="..\..\include\et\gui\imageview.h" />
-    <ClInclude Include="..\..\include\et\gui\keyboard.h" />
-    <ClInclude Include="..\..\include\et\gui\label.h" />
-    <ClInclude Include="..\..\include\et\gui\layout.h" />
-    <ClInclude Include="..\..\include\et\gui\listbox.h" />
-    <ClInclude Include="..\..\include\et\gui\renderingelement.h" />
-    <ClInclude Include="..\..\include\et\gui\scroll.h" />
-    <ClInclude Include="..\..\include\et\gui\skin.h" />
-    <ClInclude Include="..\..\include\et\gui\textfield.h" />
-    <ClInclude Include="..\..\include\et\gui\textureatlas.h" />
-    <ClInclude Include="..\..\include\et\imaging\ddsloader.const.h" />
-    <ClInclude Include="..\..\include\et\imaging\ddsloader.h" />
-    <ClInclude Include="..\..\include\et\imaging\imageoperations.h" />
-    <ClInclude Include="..\..\include\et\imaging\imagewriter.h" />
-    <ClInclude Include="..\..\include\et\imaging\pngloader.h" />
-    <ClInclude Include="..\..\include\et\imaging\pvrloader.h" />
-    <ClInclude Include="..\..\include\et\imaging\textureatlaswriter.h" />
-    <ClInclude Include="..\..\include\et\input\gestures.h" />
-    <ClInclude Include="..\..\include\et\input\input.h" />
-    <ClInclude Include="..\..\include\et\models\3dsloader.const.h" />
-    <ClInclude Include="..\..\include\et\models\3dsloader.h" />
-    <ClInclude Include="..\..\include\et\models\fbxloader.h" />
-    <ClInclude Include="..\..\include\et\models\objloader.h" />
-    <ClInclude Include="..\..\include\et\opengl\gl.win.h" />
-    <ClInclude Include="..\..\include\et\opengl\opengl.h" />
-    <ClInclude Include="..\..\include\et\opengl\openglcaps.h" />
-    <ClInclude Include="..\..\include\et\platform\compileoptions.h" />
-    <ClInclude Include="..\..\include\et\platform\platform.h" />
-    <ClInclude Include="..\..\include\et\primitives\primitives.h" />
-    <ClInclude Include="..\..\include\et\rendering\rendercontext.h" />
-    <ClInclude Include="..\..\include\et\rendering\rendercontextparams.h" />
-    <ClInclude Include="..\..\include\et\rendering\renderer.h" />
-    <ClInclude Include="..\..\include\et\rendering\rendering.h" />
-    <ClInclude Include="..\..\include\et\rendering\renderstate.h" />
-    <ClInclude Include="..\..\include\et\resources\resourcestorage.h" />
-    <ClInclude Include="..\..\include\et\resources\textureloader.h" />
-    <ClInclude Include="..\..\include\et\scene3d\cameraelement.h" />
-    <ClInclude Include="..\..\include\et\scene3d\collisionmesh.h" />
-    <ClInclude Include="..\..\include\et\scene3d\element.h" />
-    <ClInclude Include="..\..\include\et\scene3d\material.h" />
-    <ClInclude Include="..\..\include\et\scene3d\mesh.h" />
-    <ClInclude Include="..\..\include\et\scene3d\scene3d.h" />
-    <ClInclude Include="..\..\include\et\scene3d\serialization.h" />
-    <ClInclude Include="..\..\include\et\scene3d\storage.h" />
-    <ClInclude Include="..\..\include\et\tasks\taskpool.h" />
-    <ClInclude Include="..\..\include\et\tasks\tasks.h" />
-    <ClInclude Include="..\..\include\et\threading\criticalsection.h" />
-    <ClInclude Include="..\..\include\et\threading\mutex.h" />
-    <ClInclude Include="..\..\include\et\threading\referencecounter.h" />
-    <ClInclude Include="..\..\include\et\threading\thread.h" />
-    <ClInclude Include="..\..\include\et\threading\threading.h" />
-    <ClInclude Include="..\..\include\et\timers\animator.h" />
-    <ClInclude Include="..\..\include\et\timers\inertialvalue.h" />
-    <ClInclude Include="..\..\include\et\timers\intervaltimer.h" />
-    <ClInclude Include="..\..\include\et\timers\notifytimer.h" />
-    <ClInclude Include="..\..\include\et\timers\sequence.h" />
-    <ClInclude Include="..\..\include\et\timers\timedobject.h" />
-    <ClInclude Include="..\..\include\et\timers\timerpool.h" />
-    <ClInclude Include="..\..\include\et\vertexbuffer\indexarray.h" />
-    <ClInclude Include="..\..\include\et\vertexbuffer\vertexarray.h" />
-    <ClInclude Include="..\..\include\et\vertexbuffer\vertexdatachunk.h" />
-    <ClInclude Include="..\..\include\et\vertexbuffer\vertexdeclaration.h" />
     <ClInclude Include="source\converter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

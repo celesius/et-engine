@@ -92,7 +92,7 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateT
 	if (updateTexture)
 		_private->updateTexture(_rc, _texture);
 
-	CharDescriptor desc(value);
+	CharDescriptor desc(value, CharParameter_Bold);
 	desc.origin = textureRect.origin() + vec2(1.0f);
 	desc.size = textureRect.size() - vec2(2.0f);
 	desc.uvOrigin = _texture->getTexCoord(textureRect.origin());

@@ -68,8 +68,6 @@ namespace et
 			void onReturnPressed(Button* b);
 			void onSwitchKeyboardsPressed(Button* b);
 
-			void animatorFinished(BaseAnimator*);
-
 			void onKeyPressed(unsigned char c);
 			void onKeyReleased(unsigned char c);
 			void onCharEntered(unsigned char c);
@@ -86,7 +84,6 @@ namespace et
 			ButtonList _serviceButtons;
 			Button::Pointer _lastActiveButton;
 			Button::Pointer _pressedButton;
-			BaseAnimator* _hideAnimator;
 			Element* _capturedElement;
 			vec2 _screenSize;
 			bool _extraButtonsVisible;

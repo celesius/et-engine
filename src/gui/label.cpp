@@ -135,7 +135,7 @@ void Label::update(float t)
 		_animatingText = false;
 		
 		_text = _nextText;
-		_charListText = _font->buildString(_text);
+		_charListText = _font->buildString(_text, _allowFormatting);
 		_textSize = _font->measureStringSize(_text, _allowFormatting);
 		
 		_nextText = std::string();

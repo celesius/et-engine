@@ -82,7 +82,7 @@ namespace et
 
 			void addToRenderQueue(RenderContext*, GuiRenderer&);
 
-			BaseAnimator* setFrame(const rect& r, float duration = 0.0f);
+			void setFrame(const rect& r, float duration = 0.0f);
 			bool containsPoint(const vec2& p, const vec2&);
 
 			bool pointerPressed(const PointerInputInfo&);

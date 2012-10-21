@@ -25,9 +25,9 @@
 #pragma comment(lib, "wininet.lib")
 
 #if (ET_DEBUG)
-	#pragma comment(lib, "fbxsdk-2013.2-mtd.lib")
+	#pragma comment(lib, "fbxsdk-2013.3-mtd.lib")
 #else
-	#pragma comment(lib, "fbxsdk-2013.2-mt.lib")
+	#pragma comment(lib, "fbxsdk-2013.3-mt.lib")
 #endif
 
 using namespace FBXSDK_NAMESPACE;
@@ -63,7 +63,7 @@ namespace et
 		void loadNode(FbxNode* node, s3d::Element::Pointer parent);
 		void buildVertexBuffers(RenderContext* rc, s3d::Element::Pointer root);
 
-		s3d::Mesh::Pointer loadMesh(FbxMesh* mesh, s3d::Element::Pointer parent, const MaterialList& materials, const StringList& params);
+		s3d::Mesh::Pointer loadMesh(FbxMesh* mesh, s3d::Element::Pointer parent, const Material::List& materials, const StringList& params);
 		Material loadMaterial(FbxSurfaceMaterial* material);
 
 		void loadMaterialColorValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, const char* fbxprop);
@@ -194,7 +194,7 @@ void FBXLoaderPrivate::loadTextures()
 
 void FBXLoaderPrivate::loadNode(FbxNode* node, s3d::Element::Pointer parent)
 {
-	MaterialList materials;
+	Material::List materials;
 	StringList props = loadNodeProperties(node);
 
 	const int lMaterialCount = node->GetMaterialCount();
@@ -280,7 +280,7 @@ void FBXLoaderPrivate::loadMaterialColorValue(Material& m, size_t propName, FbxS
 	if (value.IsValid())
 	{
 		FbxDouble3 data = value.Get<FbxDouble3>();
-		m->setVec4(propName,  vec4(static_cast<float>(data[0]),static_cast<float>(data[1]),static_cast<float>(data[2]), 1.0f));
+		m->setVector(propName,  vec4(static_cast<float>(data[0]),static_cast<float>(data[1]),static_cast<float>(data[2]), 1.0f));
 	}
 }
 
@@ -342,7 +342,7 @@ inline bool isWhiteSpaceSymbol(char c)
 	{ return isWhitespaceChar(c); }
 
 s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Pointer parent, 
-	const MaterialList& materials, const StringList& params)
+	const Material::List& materials, const StringList& params)
 {
 	s3d::Element::Pointer element;
 
@@ -441,12 +441,12 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 	if (hasTangents)
 		decl.push_back(Usage_Tangent, Type_Vec3);
 
-	VertexArrayRef va = storage->vertexArrayWithDeclarationForAppendingSize(decl, lPolygonVertexCount);
+	VertexArray::Pointer va = storage->vertexArrayWithDeclarationForAppendingSize(decl, lPolygonVertexCount);
 	int vbIndex = storage->indexOfVertexArray(va);
 	size_t vertexBaseOffset = va->size();
 	va->increase(lPolygonVertexCount);
 
-	IndexArrayRef ib = storage->indexArray();
+	IndexArray::Pointer ib = storage->indexArray();
 	ib->resizeToFit(ib->actualSize() + lPolygonCount * 3);
 
 	RawDataAcessor<vec3> pos = va->chunk(Usage_Position).accessData<vec3>(vertexBaseOffset);
@@ -563,6 +563,11 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 			p->attachLod(lodIndex, element);
 		}
 	}
+
+#undef ET_FBX_LOADER_PUSH_VERTEX
+#undef ET_FBX_LOADER_PUSH_NORMAL
+#undef ET_FBX_LOADER_PUSH_UV
+#undef ET_FBX_LOADER_PUSH_TANGENT
 
 	return element;
 }

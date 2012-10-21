@@ -17,8 +17,12 @@ TaskPool::TaskPool()
 
 TaskPool::~TaskPool() 
 {
+	CriticalSectionScope lock(_csModifying);
 	for (TaskList::iterator i = _tasks.begin(), e = _tasks.end(); i != e; ++i)
-		delete *i;
+	{
+		Task* t = *i;
+		delete t;
+	}
 }
 
 void TaskPool::addTask(Task* t, float delay)

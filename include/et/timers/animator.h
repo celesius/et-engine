@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <et/core/properties.h>
 #include <et/app/events.h>
 #include <et/timers/timedobject.h>
 
@@ -25,24 +26,20 @@ namespace et
 	class BaseAnimator : public TimedObject
 	{
 	public:
-		int tag;
+		BaseAnimator(const TimerPool& tp) : 
+			_tag(0), _delegate(0), _timerPool(tp) { }
 
-	public:
-		BaseAnimator(const TimerPool& tp) : tag(0), _timerPool(tp)
-			{ }
-
-		void setDelegate(AnimatorDelegate* delegate)
-			{ _delegate = delegate; }
+		ET_DECLARE_PROPERTY_SETTER_COPY(AnimatorDelegate*, delegate, setDelegate);
+		ET_DECLARE_PROPERTY(int, tag, setTag);
 
 	protected:
-		BaseAnimator(AnimatorDelegate* delegate, int t, const TimerPool& tp) : 
-			 tag(t), _delegate(delegate), _timerPool(tp) { }
+		BaseAnimator(AnimatorDelegate* delegate, int tag, const TimerPool& tp) : 
+			 _tag(tag), _delegate(delegate), _timerPool(tp) { }
 
 		TimerPool& timerPool()
 			{ return _timerPool; }
 
 	protected:
-		AnimatorDelegate* _delegate;
 		TimerPool _timerPool;
 	};
 
@@ -52,6 +49,9 @@ namespace et
 	class Animator : public BaseAnimator
 	{
 	public:
+		Animator(const TimerPool& tp) :
+			BaseAnimator(0, 0, tp) { }
+
 		Animator(AnimatorDelegate* delegate, int tag, const TimerPool& tp) : 
 			BaseAnimator(delegate, tag, tp) { }
 
@@ -81,15 +81,15 @@ namespace et
 			if (dt >= 1.0f)
 			{
 				*_value = _to;
-				_delegate->animatorUpdated(this);
+				delegate()->animatorUpdated(this);
 
 				cancelUpdates();
-				_delegate->animatorFinished(this);
+				delegate()->animatorFinished(this);
 			}
 			else 
 			{
 				*_value = _from * (1.0f - dt) + _to * dt;
-				_delegate->animatorUpdated(this);
+				delegate()->animatorUpdated(this);
 			}
 		}
 
