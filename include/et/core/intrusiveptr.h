@@ -63,6 +63,12 @@ namespace et
 		const T* ptr() const 
 			{ return _data; }
 
+		T& reference()
+			{ return *_data; }
+
+		const T& reference() const
+			{ return *_data; }
+
 		bool invalid() const
 			{ return _data == 0; }
 

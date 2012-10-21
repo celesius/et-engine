@@ -18,13 +18,14 @@ namespace et
 	{
 	public:
 		InertialValue() : 
-			_velocity(0), _value(0), _deccelerationRate(1.0f), _time(0.0f) { }
+			_velocity(0), _value(0), _deccelerationRate(1.0f), _time(0.0f), _precision(0.00001f) { }
 
 		InertialValue(const T& val) :
-			_velocity(0), _value(val), _deccelerationRate(1.0f), _time(0.0f) { }
+			_velocity(0), _value(val), _deccelerationRate(1.0f), _time(0.0f), _precision(0.00001f) { }
 
 		const T& velocity() const
 			{ return _velocity; }
+		
 		const T& value() const
 			{ return _value; }
 		
@@ -42,6 +43,9 @@ namespace et
 
 		void addValue(const T& v)
 			{ _value += v;}
+
+		void setPrecision(float p)
+			{ _precision = p; }
 
 		void run()
 		{
@@ -78,13 +82,11 @@ namespace et
 
 		void update(float t)
 		{
-			static const float epsilon = 0.001f;
-
 			float dt = _deccelerationRate * (t - _time);
 			_velocity *= etMax(0.0f, 1.0f - dt);
 			
 			T dValue = dt * _velocity;
-			if (length(dValue) > epsilon)
+			if (length(dValue) > _precision)
 			{
 				_value += dValue;
 				valueUpdated.invoke(_value);
@@ -99,5 +101,6 @@ namespace et
 		T _value;
 		float _deccelerationRate;
 		float _time;
+		float _precision;
 	};
 }
