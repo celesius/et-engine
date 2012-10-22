@@ -19,22 +19,13 @@ bool RectPlacer::place(const vec2i& size, rect& placedPosition)
 	int w = size.x;
 	int h = size.y;
 
-	int xOffset = 0;
-	int yOffset = 0;
-
 	if (_addSpace)
 	{
 		if (w < _contextSize.x - 1)
-		{
 			w++;
-			xOffset = 1;
-		}
 
 		if (h < _contextSize.y - 1)
-		{
 			h++;
-			yOffset = 1;
-		}
 	}
 
 	placedPosition = rect(vec2(0.0f), vec2(static_cast<float>(w), static_cast<float>(h)));

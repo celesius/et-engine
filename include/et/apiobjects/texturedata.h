@@ -39,6 +39,8 @@ namespace et
 
 		void updateData(RenderContext* rc, TextureDescription::Pointer desc);
 		void updateDataDirectly(RenderContext* rc, const vec2i& size, char* data, size_t dataSize);
+		
+		void updatePartialDataDirectly(RenderContext* rc, const vec2i& offset, const vec2i& size, char* data, size_t dataSize);
 
 		int glID() const
 			{ return _glID; }

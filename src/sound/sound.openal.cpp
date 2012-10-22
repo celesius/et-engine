@@ -82,7 +82,7 @@ void checkOpenALErrorEx(const char* caller, const char* sourceFile, const char* 
 Manager::Manager() : _private(new ManagerPrivate)
 {
 	const char* defaultDeviceSpecifier = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
-	std::cout << "OpenAL device: " << defaultDeviceSpecifier;
+	std::cout << "OpenAL device: " << defaultDeviceSpecifier << std::endl;
 
 	sharedDevice = alcOpenDevice(defaultDeviceSpecifier);
 	assert(sharedDevice);
@@ -165,6 +165,8 @@ void Track::init(Description::Pointer data)
 
 	alBufferData(_private->buffer, data->format, data->data.data(), data->data.dataSize(), data->sampleRate);
     checkOpenALError("alBufferData");
+	
+	data->data.resize(0);
 }
 
 /*

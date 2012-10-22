@@ -22,6 +22,7 @@ namespace et
 			virtual void keyboardDidReturnInElement(Keyboard*, Element*) { /* virtual */ };
 		};
 
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
 		class Keyboard : public Element2d
 		{
 		public:
@@ -92,5 +93,7 @@ namespace et
 			bool _shift;
 			bool _shiftLocked;
 		};
+#endif
 	}
 }
+

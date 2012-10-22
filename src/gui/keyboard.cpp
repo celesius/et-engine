@@ -5,6 +5,8 @@
  *
  */
 
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
+
 #include <et/app/application.h>
 #include <et/input/input.h>
 #include <et/gui/guirenderer.h>
@@ -530,3 +532,5 @@ float Keyboard::topOrigin() const
 {
 	return (platformHasHardwareKeyboard() ? 1.0f : 0.5f) * _screenSize.y;
 }
+
+#endif
