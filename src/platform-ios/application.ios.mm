@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include <mach/mach.h>
 
 #include <et/core/tools.h>
 #include <et/app/application.h>
@@ -13,9 +14,9 @@
 #include <et/platform-ios/applicationdelegate.h>
 
 #if defined(ET_EMBEDDED_APPLICATION)
-#include <et/opengl/openglcaps.h>
+#	include <et/opengl/openglcaps.h>
 #else
-#include <et/platform-ios/openglviewcontroller.h>
+#	include <et/platform-ios/openglviewcontroller.h>
 #endif
 
 using namespace et;
@@ -185,4 +186,12 @@ void Application::contextResized(const vec2i& size)
 		_delegate->applicationWillResizeContext(size);
 		performRendering();
 	}
+}
+
+size_t Application::memoryUsage() const
+{
+	struct task_basic_info info = { };
+	mach_msg_type_number_t size = sizeof(info);
+	kern_return_t kerr = task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t)&info, &size);
+	return (kerr == KERN_SUCCESS) ? info.resident_size : 0;
 }

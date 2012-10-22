@@ -39,7 +39,6 @@ namespace et
 		private:
 			friend class Player;
 			friend class Manager;
-            friend class TrackPivate;
             TrackPrivate* _private;
         };
         
@@ -75,7 +74,6 @@ namespace et
             
         private:
 			friend class Manager;
-            friend class PlayerPrivate;
 
 		private:
             PlayerPrivate* _private;

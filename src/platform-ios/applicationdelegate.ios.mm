@@ -5,11 +5,11 @@
  *
  */
 
-#import <QuartzCore/QuartzCore.h>
-#import <et/app/application.h>
-#import <et/app/applicationnotifier.h>
-#import <et/platform-ios/applicationdelegate.h>
-#import <et/platform-ios/openglviewcontroller.h>
+#include <QuartzCore/QuartzCore.h>
+#include <et/app/application.h>
+#include <et/app/applicationnotifier.h>
+#include <et/platform-ios/applicationdelegate.h>
+#include <et/platform-ios/openglviewcontroller.h>
 
 using namespace et;
 
