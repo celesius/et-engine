@@ -1,6 +1,5 @@
-#include <Windows.h>
 #include <et/models/fbxloader.h>
-
+#include "OpenPanel.h"
 #include "converter.h"
 
 using namespace fbxc;
@@ -94,12 +93,14 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	_camera.perspectiveProjection(QUARTER_PI, rc->size().aspect(), 1.0f, 2000.0f);
 	_camera.lookAt(fromSpherical(_vAngle.value().x, _vAngle.value().y) * _vDistance.value());
 
-	_defaultProgram = rc->programFactory().loadProgram("default.program");
+	_defaultProgram = rc->programFactory().loadProgram("shaders/default.program");
 	_defaultProgram->setPrimaryLightPosition(500.0f * vec3(0.0f, 1.0f, 0.0f));
 	_defaultProgram->setUniform("diffuseMap", 0);
 	_defaultProgram->setUniform("specularMap", 1);
 	_defaultProgram->setUniform("normalMap", 2);
 
+	rc->renderState().setClearColor(vec4(0.25f));
+	
 	const std::string& lp = application().launchParameter(1);
 	if (fileExists(lp))
 	{
@@ -187,8 +188,11 @@ void Converter::onDrag(et::vec2 v, et::PointerType)
 
 void Converter::onBtnOpenClick(et::gui::Button*)
 {
-	char filename[MAX_PATH] = { };
-
+	char filename[1024] = { };
+	std::string fileName;
+	
+#if (ET_PLATFORM_WIN)
+	
 	OPENFILENAME of = { };
 	of.lStructSize = sizeof(of);
 	of.hwndOwner = reinterpret_cast<HWND>(application().renderingContextHandle());
@@ -197,21 +201,26 @@ void Converter::onBtnOpenClick(et::gui::Button*)
 	of.Flags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_NOCHANGEDIR | OFN_PATHMUSTEXIST;
 	of.lpstrFile = filename;
 	of.nMaxFile = MAX_PATH;
-
 	if (!GetOpenFileName(&of)) return;
-
+	
+#elif (ET_PLATFORM_MAC)
+	
+	fileName = fbxc::selectFile();
+	
+#endif
 	Invocation1 i;
-	i.setTarget(this, &Converter::performLoading, std::string(of.lpstrFile));
+	i.setTarget(this, &Converter::performLoading, fileName);
 	i.invokeInMainRunLoop();
-
-	_scene.clear();
+	
 	_labStatus->setText("Loading...");
+	_scene.clear();
 }
 
 void Converter::onBtnSaveClick(et::gui::Button*)
 {
-	char filename[MAX_PATH] = { };
-
+	char filename[1024] = { };
+	
+#if (ET_PLATFORM_WIN)
 	OPENFILENAME of = { };
 	of.lStructSize = sizeof(of);
 	of.hwndOwner = reinterpret_cast<HWND>(application().renderingContextHandle());
@@ -220,13 +229,14 @@ void Converter::onBtnSaveClick(et::gui::Button*)
 	of.Flags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_NOCHANGEDIR | OFN_PATHMUSTEXIST;
 	of.lpstrFile = filename;
 	of.nMaxFile = MAX_PATH;
-
 	if (!GetSaveFileName(&of)) return;
-
+#elif (ET_PLATFORM_MAC)
+	
+#endif
+	
 	Invocation1 i;
-	i.setTarget(this, &Converter::performSaving, std::string(of.lpstrFile));
+	i.setTarget(this, &Converter::performSaving, std::string(filename));
 	i.invokeInMainRunLoop();
-
 	_labStatus->setText("Saving...");
 }
 
@@ -273,3 +283,6 @@ void Converter::onCameraUpdated()
 {
 	_camera.lookAt(fromSpherical(_vAngle.value().x, _vAngle.value().y) * _vDistance.value());
 }
+
+et::IApplicationDelegate* et::Application::initApplicationDelegate()
+	{ return new fbxc::Converter(); }

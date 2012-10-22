@@ -7,8 +7,6 @@
 
 #include <et/platform/platform.h>
 
-#if defined(ET_PLATFORM_WIN)
-
 #include <iostream>
 #include <assert.h>
 #include <fbxsdk.h>
@@ -22,12 +20,13 @@
 #include <et/scene3d/supportmesh.h>
 #include <et/models/fbxloader.h>
 
-#pragma comment(lib, "wininet.lib")
-
-#if (ET_DEBUG)
-	#pragma comment(lib, "fbxsdk-2013.3-mtd.lib")
-#else
-	#pragma comment(lib, "fbxsdk-2013.3-mt.lib")
+#if (ET_PLATFORM_WIN)
+#	pragma comment(lib, "wininet.lib")
+#	if (ET_DEBUG)
+#		pragma comment(lib, "fbxsdk-2013.3-mtd.lib")
+#	else
+#		pragma comment(lib, "fbxsdk-2013.3-mt.lib")
+#	endif
 #endif
 
 using namespace FBXSDK_NAMESPACE;
@@ -245,7 +244,7 @@ void FBXLoaderPrivate::loadNode(FbxNode* node, s3d::Element::Pointer parent)
 				if (storedElement->type() == s3d::ElementType_Mesh)
 					 instance = storedElement->duplicate();
 				else if (storedElement->type() == s3d::ElementType_SupportMesh)
-					s3d::SupportMesh* instance = static_cast<s3d::SupportMesh*>(storedElement->duplicate());
+					instance = static_cast<s3d::SupportMesh*>(storedElement->duplicate());
 
 				createdElement.reset(instance);
 			}
@@ -366,8 +365,8 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 
 		if (p.find_first_of(s_lodMeshProperty) == 0)
 		{
-			std::string l = trim(p.substr(s_lodMeshProperty.size()));
-			lodIndex = strToInt(l);
+			std::string prop = p.substr(s_lodMeshProperty.size());
+			lodIndex = strToInt(trim(prop));
 		}
 	}
 
@@ -459,7 +458,6 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 	mesh->GetUVSetNames(lUVNames);
 	std::string uvSetName = (hasUV && lUVNames.GetCount()) ? lUVNames[0].Buffer() : std::string();
 
-	int lastMaterialIndex = -1;
 	int vertexCount = 0;
 	size_t indexOffset = vertexBaseOffset;
 
@@ -652,8 +650,8 @@ StringList FBXLoaderPrivate::loadNodeProperties(FbxNode* node)
 }
 
 /*
-* Base objects
-*/
+ * Base objects
+ */
 
 FBXLoader::FBXLoader(const std::string& filename) : _filename(filename)
 {
@@ -675,4 +673,4 @@ s3d::ElementContainer::Pointer FBXLoader::load(RenderContext* rc, TextureCache& 
 	return result;
 }
 
-#endif
+// #endif

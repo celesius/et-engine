@@ -5,6 +5,7 @@
  *
  */
 
+#include <AppKit/AppKit.h>
 #include <et/app/applicationnotifier.h>
 
 using namespace et;

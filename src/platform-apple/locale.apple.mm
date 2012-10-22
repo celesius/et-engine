@@ -6,6 +6,7 @@
 */
 
 #include <fstream>
+#include <Foundation/Foundation.h>
 #include <et/core/tools.h>
 #include <et/core/containers.h>
 #include <et/locale/locale.h>

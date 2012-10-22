@@ -5,6 +5,7 @@
  *
  */
 
+#include <AppKit/AppKit.h>
 #include <et/opengl/openglcaps.h>
 #include <et/input/input.h>
 #include <et/app/applicationnotifier.h>
