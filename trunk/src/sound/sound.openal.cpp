@@ -25,27 +25,21 @@ namespace et
         class TrackPrivate
         {
 		public:     
-			TrackPrivate() : buffer(0) 
-				{ }
-
+			TrackPrivate() : buffer(0) { }
 			ALuint buffer;
         };
         
         class PlayerPrivate
         {
 		public:     
-			PlayerPrivate() : source(0)
-				{ }
-
+			PlayerPrivate() : source(0) { }
 			ALuint source;
 		};
 
 		class ManagerPrivate
 		{
 		public:
-			ManagerPrivate() : context(0)
-				{ }
-
+			ManagerPrivate() : context(0) { }
 			ALCcontext* context;
 		};
     }
@@ -92,15 +86,9 @@ Manager::Manager() : _private(new ManagerPrivate)
 
 	sharedDevice = alcOpenDevice(defaultDeviceSpecifier);
 	assert(sharedDevice);
-    
-	vec2i version;
-	alcGetIntegerv(sharedDevice, ALC_MAJOR_VERSION, sizeof(int), &version.x);
-	alcGetIntegerv(sharedDevice, ALC_MINOR_VERSION, sizeof(int), &version.y);
-    
-	std::cout << ", version: " << version << std::endl;
 
 	_private->context = alcCreateContext(sharedDevice, 0);
-	assert(sharedDevice);
+	assert(_private->context);
     
 	ALboolean success = alcMakeContextCurrent(_private->context);
 	assert(success); (void)success;

@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <pthread.h>
+#include <unistd.h>
 #include <libkern/OSAtomic.h>
 #include <et/core/tools.h>
 #include <et/threading/thread.h>
@@ -125,4 +126,9 @@ bool Thread::suspended() const
 ThreadId Thread::id() const
 {
 	return _private->threadId;
+}
+
+void Thread::sleep(size_t msec)
+{
+    usleep(msec * 1000);
 }
