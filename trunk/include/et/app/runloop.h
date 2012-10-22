@@ -28,8 +28,8 @@ namespace et
 		float time() const
 			{ return _time; }
 
-		void attachTimerPool(TimerPool& pool);
-		void detachTimerPool(TimerPool& pool);
+		void attachTimerPool(TimerPool pool);
+		void detachTimerPool(TimerPool pool);
 		void detachAllTimerPools();
 
 		void addTask(Task* t, float delay = 0.0f);

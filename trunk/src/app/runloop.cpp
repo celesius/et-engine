@@ -46,7 +46,7 @@ void RunLoopObject::addTask(Task* t, float delay)
 	_taskPool.addTask(t, delay);
 }
 
-void RunLoopObject::attachTimerPool(TimerPool& pool)
+void RunLoopObject::attachTimerPool(TimerPool pool)
 {
 	if (std::find(_timerPools.begin(), _timerPools.end(), pool) == _timerPools.end())
 	{
@@ -55,7 +55,7 @@ void RunLoopObject::attachTimerPool(TimerPool& pool)
 	}
 }
 
-void RunLoopObject::detachTimerPool(TimerPool& pool)
+void RunLoopObject::detachTimerPool(TimerPool pool)
 {
 	TimerPoolList::iterator i = _timerPools.begin();
 
