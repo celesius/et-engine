@@ -148,9 +148,10 @@ namespace et
 			RenderingElement::Pointer _renderingElementBackground;
 			ImageView _background;
 
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
 			RenderingElement::Pointer _renderingElementKeyboard;
 			Keyboard _keyboard;
-
+#endif
 			LayoutEntryStack _layouts;
 			vec2 _screenSize;
 			bool _backgroundValid;

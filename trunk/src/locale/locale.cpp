@@ -168,14 +168,12 @@ size_t Locale::parseKey(const StringDataStorage& data, size_t index)
 		key[i] = data[index+i];
 	
 	index = 0;
-	bool gotSlash = false;
 	std::string value(valueLenght, 0);
 	for (size_t i = 0; i < valueLenght; ++i)
 	{
 		if ((data[valueStart+i] == '\\') && (i+1 < valueLenght))
 		{
 			++i;
-			gotSlash = true;
 			if (data[valueStart+i] == 'n')
 				value[index] = 0x0a;
 			else if (data[valueStart+i] == '\\')

@@ -141,6 +141,12 @@ bool internal_writePNGtoFile(const std::string& fileName, const BinaryDataStorag
 	png_byte colorType = 0;
 	switch (components)
 	{
+		case 1:
+		{
+			colorType = PNG_COLOR_TYPE_GRAY;
+			break;
+		}
+			
 		case 3: 
 		{
 			colorType = PNG_COLOR_TYPE_RGB;

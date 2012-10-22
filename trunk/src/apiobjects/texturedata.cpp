@@ -221,6 +221,18 @@ void TextureData::updateDataDirectly(RenderContext* rc, const vec2i& size, char*
 	buildData(data, dataSize);
 }
 
+void TextureData::updatePartialDataDirectly(RenderContext* rc, const vec2i& offset, const vec2i& size, char* data, size_t dataSize)
+{
+	assert(_desc->target == GL_TEXTURE_2D);
+	
+	if (_glID == 0)
+		generateTexture(rc);
+	
+    rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
+	glTexSubImage2D(_desc->target, 0, offset.x, offset.y, size.x, size.y, _desc->format, _desc->type, data);
+	checkOpenGLError("glTexSubImage2D");
+}
+
 void TextureData::generateMipMaps(RenderContext* rc)
 {
     rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);

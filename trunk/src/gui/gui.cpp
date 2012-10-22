@@ -13,8 +13,11 @@ using namespace et::gui;
 
 
 Gui::Gui(RenderContext* rc, TextureCache& texCache) : _rc(rc), _textureCache(texCache), _renderer(rc, true), 
-	_renderingElementBackground(new RenderingElement(rc)), _renderingElementKeyboard(new RenderingElement(rc)), 
+	_renderingElementBackground(new RenderingElement(rc)),
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
+	_renderingElementKeyboard(new RenderingElement(rc)),
 	_keyboard(rc, Font(CharacterGenerator::Pointer(new CharacterGenerator(rc, "System", "System", 14))), _textureCache),
+#endif
 	_background(Texture(), 0), _backgroundValid(true)
 {
 	_background.setPivotPoint(vec2(0.5f));
@@ -26,8 +29,12 @@ bool Gui::pointerPressed(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
 
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
 	bool processed = _keyboard.visible() && _keyboard.pointerPressed(p);
-
+#else
+	bool processed = false;
+#endif
+	
 	if (!processed)
 	{
 		for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
@@ -44,7 +51,11 @@ bool Gui::pointerMoved(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
 
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
 	bool processed = _keyboard.visible() && _keyboard.pointerMoved(p);
+#else
+	bool processed = false;
+#endif
 
 	if (!processed)
 	{
@@ -62,7 +73,12 @@ bool Gui::pointerReleased(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
 
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
 	bool processed = _keyboard.visible() && _keyboard.pointerReleased(p);
+#else
+	bool processed = false;
+#endif
+	
 	if (!processed)
 	{
 		for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
@@ -79,7 +95,12 @@ bool Gui::pointerCancelled(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
 	
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
 	bool processed = _keyboard.visible() && _keyboard.pointerCancelled(p);
+#else
+	bool processed = false;
+#endif
+	
 	if (!processed)
 	{
 		for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
@@ -96,7 +117,12 @@ bool Gui::pointerScrolled(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
 
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
 	bool processed = _keyboard.visible() && _keyboard.pointerScrolled(p);
+#else
+	bool processed = false;
+#endif
+	
 	if (!processed)
 	{
 		for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
@@ -122,11 +148,13 @@ void Gui::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer eleme
 
 void Gui::buildKeyboardVertices(RenderContext* rc)
 {
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
 	if (_keyboard.invalid())
 	{
 		_renderingElementKeyboard->clear();
 		_keyboard.addToRenderQueue(rc, _renderer);
 	}
+#endif
 }
 
 void Gui::buildBackgroundVertices(RenderContext* rc)
@@ -145,8 +173,11 @@ void Gui::layout(const vec2& size)
 	_renderer.setProjectionMatrices(size);
 	_background.setFrame(0.5f * size, size);
 	_backgroundValid = false;
+	
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
 	_keyboard.layout(size);
-
+#endif
+	
 	for (LayoutEntryStack::iterator i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
 		(*i)->layout->layout(size);
 }
@@ -173,6 +204,7 @@ void Gui::render(RenderContext* rc)
 		_renderer.render(rc);
 	}
 
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
 	if (_keyboard.visible())
 	{
 		_renderer.setRendernigElement(_renderingElementKeyboard);
@@ -181,7 +213,8 @@ void Gui::render(RenderContext* rc)
 		_renderer.setCustomOffset(vec2(0.0f));
 		_renderer.render(rc);
 	}
-
+#endif
+	
 	_renderer.endRender(rc);
 }
 
@@ -193,6 +226,7 @@ void Gui::setBackgroundImage(const Image& img)
 
 void Gui::onKeyboardNeeded(Layout* l, Element* element)
 {
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
 	if (!platformHasHardwareKeyboard())
 	{
 		vec2 size = element->size();
@@ -204,14 +238,16 @@ void Gui::onKeyboardNeeded(Layout* l, Element* element)
 
 	_keyboard.show(true, element);
 	_keyboard.setDelegate(l);
+#endif
 }
 
 void Gui::onKeyboardResigned(Layout* l)
 {
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
 	if (!platformHasHardwareKeyboard() && _keyboard.visible())
 		l->resetVerticalOffset();
-
 	_keyboard.hide(true);
+#endif
 }
 
 
