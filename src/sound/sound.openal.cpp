@@ -324,14 +324,6 @@ void Player::setPan(float pan)
 		return;
 	}
 
-	static float prevPan = -1000.0f;
-
-	if (fabsf(pan - prevPan) > 0.1f)
-	{
-		std::cout << "pan: " << pan << std::endl;
-		prevPan = pan;
-	}
-
 	alSource3f(_private->source, AL_POSITION, pan, 0.0f, 0.0f);
 	checkOpenALError("alSource3f(..., AL_POSITION, ");
 }
