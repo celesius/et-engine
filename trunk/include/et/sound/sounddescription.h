@@ -21,10 +21,11 @@ namespace et
 			
 		public:
 			Description() :	
-				format(0), channels(0), bitDepth(0), sampleRate(0) { }
+				duration(0.0f), format(0), channels(0), bitDepth(0), sampleRate(0) { }
 
 		public:
 			std::string source;
+			float duration;
 
 			size_t format;
 			size_t channels;

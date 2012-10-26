@@ -25,6 +25,7 @@ namespace et
         class TrackPrivate
         {
 		public:     
+			Description::Pointer desc;
 			TrackPrivate() : buffer(0) { }
 			ALuint buffer;
         };
@@ -156,8 +157,30 @@ Track::~Track()
 	delete _private;
 }
 
+float Track::duration() const
+{
+	return _private->desc->duration;
+}
+
+size_t Track::channels() const
+{
+	return _private->desc->channels;
+}
+
+size_t Track::sampleRate() const
+{
+	return _private->desc->sampleRate;
+}
+
+size_t Track::bitDepth() const
+{
+	return _private->desc->bitDepth;
+}
+
 void Track::init(Description::Pointer data)
 {
+	_private->desc = data;
+
 	alGenBuffers(1, &_private->buffer);
     checkOpenALError("alGenBuffers");
 
@@ -264,4 +287,15 @@ void Player::setVolume(float value)
 {
 	alSourcef(_private->source, AL_GAIN, value);
     checkOpenALError("alSourcei(.., AL_GAIN, ...)");
+}
+
+float Player::position() const
+{
+	if (_currentTrack.invalid()) return 0.0f;
+
+	float sampleOffset = 0.0f;
+	alGetSourcef(_private->source, AL_SAMPLE_OFFSET, &sampleOffset);
+	checkOpenALError("alGetSourcef(..., AL_SAMPLE_OFFSET, ");
+
+	return sampleOffset / static_cast<float>(_currentTrack->sampleRate());
 }
