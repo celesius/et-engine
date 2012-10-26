@@ -94,6 +94,9 @@ Manager::Manager() : _private(new ManagerPrivate)
 	ALboolean success = alcMakeContextCurrent(_private->context);
 	assert(success); (void)success;
 
+	alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
+	checkOpenALError("alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED)");
+
 	vec3 nullVector;
 	alListenerfv(AL_POSITION, nullVector.data());
 	checkOpenALError("alListenerfv(AL_POSITION, ...");
@@ -186,7 +189,19 @@ void Track::init(Description::Pointer data)
 
 	if (data.invalid()) return;
 
-	alBufferData(_private->buffer, data->format, data->data.data(), data->data.dataSize(), data->sampleRate);
+	size_t sampleSize = data->bitDepth * data->channels;
+	size_t numSamples = data->data.dataSize() / sampleSize;
+	size_t actualDataSize = numSamples * sampleSize;
+
+	if (actualDataSize != data->data.dataSize())
+	{
+		size_t remain = data->data.dataSize() % sampleSize;
+		std::cout << data->source << std::endl << 
+			"\tincorrect audio data size: " << data->data.dataSize() << ", should be: " << actualDataSize << 
+			" to fit " << numSamples << " samples (" << remain << " bytes remained)." <<  std::endl;
+	}
+
+	alBufferData(_private->buffer, data->format, data->data.data(), actualDataSize, data->sampleRate);
     checkOpenALError("alBufferData");
 	
 	data->data.resize(0);
@@ -307,6 +322,14 @@ void Player::setPan(float pan)
 	{
 		std::cout << "Unable to set pan for stereo sound: " << _currentTrack->_private->desc->source << std::endl;
 		return;
+	}
+
+	static float prevPan = -1000.0f;
+
+	if (fabsf(pan - prevPan) > 0.1f)
+	{
+		std::cout << "pan: " << pan << std::endl;
+		prevPan = pan;
 	}
 
 	alSource3f(_private->source, AL_POSITION, pan, 0.0f, 0.0f);
