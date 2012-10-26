@@ -108,6 +108,9 @@ namespace et
 
         private:
             Manager();
+			
+			void nativeInit();
+			void nativeRelease();
            
         private:
             ET_SINGLETON_COPY_DENY(Manager);

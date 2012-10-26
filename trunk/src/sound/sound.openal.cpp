@@ -40,8 +40,7 @@ namespace et
 		class ManagerPrivate
 		{
 		public:
-			ManagerPrivate() : context(0) { }
-			ALCcontext* context;
+			ManagerPrivate() { }
 		};
     }
 }
@@ -54,6 +53,13 @@ using namespace et::audio;
  */
 
 static ALCdevice* sharedDevice = 0;
+static ALCcontext* sharedContext = 0;
+
+ALCdevice* getSharedDevice()
+	{ return sharedDevice; }
+
+ALCcontext* getSharedContext()
+	{ return sharedContext; }
 
 void checkOpenALErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const char* tag)
 {
@@ -88,10 +94,12 @@ Manager::Manager() : _private(new ManagerPrivate)
 	sharedDevice = alcOpenDevice(defaultDeviceSpecifier);
 	assert(sharedDevice);
 
-	_private->context = alcCreateContext(sharedDevice, 0);
-	assert(_private->context);
+	sharedContext = alcCreateContext(sharedDevice, 0);
+	assert(sharedContext);
+
+	nativeInit();
     
-	ALboolean success = alcMakeContextCurrent(_private->context);
+	ALboolean success = alcMakeContextCurrent(sharedContext);
 	assert(success); (void)success;
 
 	alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
@@ -111,8 +119,10 @@ Manager::Manager() : _private(new ManagerPrivate)
 
 Manager::~Manager()
 {
+	nativeRelease();
+	
 	alcMakeContextCurrent(0);
-	alcDestroyContext(_private->context);
+	alcDestroyContext(sharedContext);
 	alcCloseDevice(sharedDevice);
 	delete _private;
     
