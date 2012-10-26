@@ -28,6 +28,12 @@ namespace et
 		public:
 			~Track();
 
+			float duration() const;
+
+			size_t channels() const;
+			size_t sampleRate() const;
+			size_t bitDepth() const;
+
 		private:
             Track(const std::string& fileName);
 			Track(Description::Pointer data);
@@ -59,10 +65,12 @@ namespace et
             void play(Track::Pointer, bool looped = false);
 			void pause();
 			void stop();
-            
 			void rewind();
-
 			void setVolume(float);
+
+			float position() const;
+			Track::Pointer currentTrack() const
+				{ return _currentTrack; }
 
         private:
 			Player();

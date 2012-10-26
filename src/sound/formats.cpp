@@ -214,6 +214,8 @@ Description::Pointer et::audio::loadWAVFile(const std::string& fileName)
 		else if ((chunk.id.nID == WAVDataChunkID) && (result != nullptr))
 		{
 			result->data.resize(chunk.size);
+			result->duration = static_cast<float>(result->data.dataSize()) / (
+				static_cast<float>(result->sampleRate * result->channels * result->bitDepth / 8));
 			file.read(result->data.binary(), chunk.size);
 		}
 		else if (chunk.size > 0)
@@ -273,6 +275,8 @@ Description::Pointer et::audio::loadAIFFile(const std::string& fileName)
 			file.seekg(ssnd.offset, std::ios::cur);
 
 			result->data.resize(chunk.size - sizeof(ssnd));
+			result->duration = static_cast<float>(result->data.dataSize()) / 
+				static_cast<float>((result->sampleRate * result->channels * result->bitDepth / 8));
 			file.read(result->data.binary(), result->data.dataSize());
 
 			swapEndiannes(result->data.data(), result->data.dataSize());
