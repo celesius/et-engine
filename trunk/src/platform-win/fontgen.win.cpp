@@ -80,12 +80,12 @@ FontGeneratorResult FontGenerator::generate(ImageFormat fmt)
 		x_pos += i->size.x + characterOffset;
 		if (index && (index % charsPerRow == 0))
 		{
-			textureWidth = max(x_pos, textureWidth);
+			textureWidth = etMax(x_pos, textureWidth);
 			x_pos = characterOffset;
 		}
 	}
 
-	textureWidth = min(1024, textureWidth);
+	textureWidth = etMin(1024.0f, textureWidth);
 
 	bool foundOptimal = false;
 	while (!foundOptimal)
@@ -106,7 +106,7 @@ FontGeneratorResult FontGenerator::generate(ImageFormat fmt)
 
 			i->origin = vec2(x_pos, y_pos);
 			x_pos += i->size.x + characterOffset;
-			lineHeight = max(i->size.y, lineHeight);
+			lineHeight = etMax(i->size.y, lineHeight);
 		}
 		textureSize.y = roundToHighestPowerOfTow( static_cast<size_t>(y_pos + lineHeight + characterOffset) );
 

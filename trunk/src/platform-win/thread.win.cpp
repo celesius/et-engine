@@ -36,11 +36,7 @@ DWORD WINAPI ThreadPrivate::threadProc(LPVOID lpParameter)
 {
 	Thread* thread = reinterpret_cast<Thread*>(lpParameter);
 	InterlockedIncrement(&thread->_private->running);
-
-	ThreadResult result = thread->main();
-
-	thread->terminate();
-	return static_cast<DWORD>(result);
+	return static_cast<DWORD>(thread->main());
 }
 
 /*

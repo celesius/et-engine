@@ -66,7 +66,9 @@ namespace et
 			void pause();
 			void stop();
 			void rewind();
+
 			void setVolume(float);
+			void setPan(float);
 
 			float position() const;
 			Track::Pointer currentTrack() const

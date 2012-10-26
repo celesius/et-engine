@@ -299,3 +299,16 @@ float Player::position() const
 
 	return sampleOffset / static_cast<float>(_currentTrack->sampleRate());
 }
+
+void Player::setPan(float pan)
+{
+	if (_currentTrack.invalid()) return;
+	if (_currentTrack->channels() > 1)
+	{
+		std::cout << "Unable to set pan for stereo sound: " << _currentTrack->_private->desc->source << std::endl;
+		return;
+	}
+
+	alSource3f(_private->source, AL_POSITION, pan, 0.0f, 0.0f);
+	checkOpenALError("alSource3f(..., AL_POSITION, ");
+}
