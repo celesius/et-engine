@@ -74,23 +74,28 @@ VideoCapturePrivate::VideoCapturePrivate(VideoCapture* owner) : _owner(owner)
 	_proxy = [[VideoCaptureProxy alloc] initWithVideoCapturePrivate:this];
 
 	AVCaptureSession* _session = [[AVCaptureSession alloc] init];
-	_session.sessionPreset = AVCaptureSessionPresetHigh;
+	_session.sessionPreset = AVCaptureSessionPresetMedium;
 
 	NSError* error = nil;
 	AVCaptureDeviceInput* _input = [AVCaptureDeviceInput deviceInputWithDevice:[devices objectAtIndex:0] error:&error];
-	if (_input)
+	if (_input && [_session canAddInput:_input])
 		[_session addInput:_input];
 	
 	AVCaptureVideoDataOutput* _output = [[AVCaptureVideoDataOutput alloc] init];
+	_output.alwaysDiscardsLateVideoFrames = YES;
 	_output.videoSettings = [NSDictionary dictionaryWithObjectsAndKeys:
-							 [NSNumber numberWithInt:kCVPixelFormatType_32BGRA], kCVPixelBufferPixelFormatTypeKey,
-							 [NSNumber numberWithBool:NO], kCVPixelBufferOpenGLCompatibilityKey, nil];
+							 [NSNumber numberWithInt:kCVPixelFormatType_32BGRA], kCVPixelBufferPixelFormatTypeKey, nil];
 	
-	dispatch_queue_t queue = dispatch_queue_create("dispatch-queue", nil);
-	[_output setSampleBufferDelegate:_proxy queue:queue];
-	dispatch_release(queue);
-	
+	[_output setSampleBufferDelegate:_proxy queue:dispatch_get_main_queue()];
 	[_session addOutput:_output];
+	
+	AVCaptureConnection *conn = [_output connectionWithMediaType:AVMediaTypeVideo];
+	if (conn.supportsVideoMinFrameDuration)
+		conn.videoMinFrameDuration = CMTimeMake(1, 60);
+	
+	if (conn.supportsVideoMaxFrameDuration)
+		conn.videoMaxFrameDuration = CMTimeMake(1, 1);
+	
 	[_session startRunning];
 }
 
@@ -107,24 +112,24 @@ void VideoCapturePrivate::handleSampleBuffer(CMSampleBufferRef sampleBuffer)
 	CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
 	assert(CVPixelBufferLockBaseAddress(imageBuffer, 0) == kCVReturnSuccess);
 	
-	void* ptr = CVPixelBufferGetBaseAddress(imageBuffer);
+	VideoFrameData data;
+	data.dimensions = vec2i(CVPixelBufferGetWidth(imageBuffer), CVPixelBufferGetHeight(imageBuffer));
+	data.data = static_cast<char*>(CVPixelBufferGetBaseAddress(imageBuffer));
+	data.dataSize = CVPixelBufferGetDataSize(imageBuffer);
+	data.rowSize = CVPixelBufferGetBytesPerRow(imageBuffer);
+	_owner->frameDataAvailable.invoke(data);
 	
-	VideoFrame f(new VideoFrameData);
-	f->size = vec2i(CVPixelBufferGetWidth(imageBuffer), CVPixelBufferGetHeight(imageBuffer));
-	f->data = BinaryDataStorage(CVPixelBufferGetDataSize(imageBuffer));
-	memcpy(f->data.data(), ptr, f->data.dataSize());
-	
-	_owner->frameCaptured.invokeInMainRunLoop(f);
-	
-	CVPixelBufferUnlockBaseAddress(imageBuffer, 0);	
+	CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
 }
 
 void VideoCapturePrivate::run()
 {
-	[_session startRunning];
+	if (!_session.running)
+		[_session startRunning];
 }
 
 void VideoCapturePrivate::stop()
 {
-	[_session stopRunning];
+	if (_session.running)
+		[_session stopRunning];
 }
