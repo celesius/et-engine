@@ -347,6 +347,7 @@ void Gui::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntryObject* n
 	if ((animationFlags == AnimationFlag_None) || (fabsf(duration) < 0.001f))
 	{
 		newLayout->didAppear();
+		layoutDidAppear.invoke(newLayout);
 	}
 	else 
 	{
