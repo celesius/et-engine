@@ -95,6 +95,16 @@ namespace et
 
 using namespace et;
 
+bool OrientationManager::accelerometerAvailable()
+{
+	return [[[CMMotionManager alloc] init] autorelease].accelerometerAvailable;
+}
+
+bool OrientationManager::gyroscopeAvailable()
+{
+	return [[[CMMotionManager alloc] init] autorelease].gyroAvailable;
+}
+
 OrientationManager::OrientationManager() : _private(new OrientationManagerPrivate)
     { _private->manager = this; }
 

@@ -13,12 +13,18 @@
 
 namespace et
 {
-	struct VideoFrameData : public Shared
+	struct VideoFrameData
 	{
-		vec2i size;
-		BinaryDataStorage data;
+		vec2i dimensions;
+		
+		char* data;
+		size_t dataSize;
+		size_t rowSize;
+		
+	public:
+		VideoFrameData() : data(0), dataSize(0)
+			{ }
 	};
-	typedef IntrusivePtr<VideoFrameData> VideoFrame;
 	
 	class VideoCapturePrivate;
 	class VideoCapture : public EventReceiver
@@ -33,7 +39,7 @@ namespace et
         void run();
         void stop();
 		
-		ET_DECLARE_EVENT1(frameCaptured, VideoFrame);
+		ET_DECLARE_EVENT1(frameDataAvailable, VideoFrameData);
 		
 	private:
 		friend class VideoCapturePrivate;
