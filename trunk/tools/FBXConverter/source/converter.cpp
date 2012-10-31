@@ -188,10 +188,10 @@ void Converter::onDrag(et::vec2 v, et::PointerType)
 
 void Converter::onBtnOpenClick(et::gui::Button*)
 {
-	char filename[1024] = { };
 	std::string fileName;
 	
 #if (ET_PLATFORM_WIN)
+	char filename[1024] = { };
 	
 	OPENFILENAME of = { };
 	of.lStructSize = sizeof(of);
@@ -205,9 +205,10 @@ void Converter::onBtnOpenClick(et::gui::Button*)
 	
 #elif (ET_PLATFORM_MAC)
 	
-	fileName = fbxc::selectFile();
+	fileName = fbxc::selectFileToOpen();
 	
 #endif
+	
 	Invocation1 i;
 	i.setTarget(this, &Converter::performLoading, fileName);
 	i.invokeInMainRunLoop();
@@ -218,9 +219,11 @@ void Converter::onBtnOpenClick(et::gui::Button*)
 
 void Converter::onBtnSaveClick(et::gui::Button*)
 {
-	char filename[1024] = { };
+	std::string fileName;
 	
 #if (ET_PLATFORM_WIN)
+	char filename[1024] = { };
+	
 	OPENFILENAME of = { };
 	of.lStructSize = sizeof(of);
 	of.hwndOwner = reinterpret_cast<HWND>(application().renderingContextHandle());
@@ -232,10 +235,12 @@ void Converter::onBtnSaveClick(et::gui::Button*)
 	if (!GetSaveFileName(&of)) return;
 #elif (ET_PLATFORM_MAC)
 	
+	fileName = fbxc::selectFileToSave();
+	
 #endif
 	
 	Invocation1 i;
-	i.setTarget(this, &Converter::performSaving, std::string(filename));
+	i.setTarget(this, &Converter::performSaving, fileName);
 	i.invokeInMainRunLoop();
 	_labStatus->setText("Saving...");
 }
