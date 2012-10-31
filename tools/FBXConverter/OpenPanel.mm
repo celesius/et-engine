@@ -9,7 +9,7 @@
 #include "OpenPanel.h"
 #import <AppKit/AppKit.h>
 
-std::string fbxc::selectFile()
+std::string fbxc::selectFileToOpen()
 {
 	NSOpenPanel* openDlg = [NSOpenPanel openPanel];
     [openDlg setCanChooseFiles:YES];
@@ -24,6 +24,18 @@ std::string fbxc::selectFile()
 		{
 			return std::string([[url path] UTF8String]);
 		}
+    }
+	
+	return std::string();
+}
+
+std::string fbxc::selectFileToSave()
+{
+	NSSavePanel* saveDlg = [NSSavePanel savePanel];
+	
+    if ([saveDlg runModal] == NSOKButton)
+    {
+		return std::string([[[saveDlg URL] path] UTF8String]);
     }
 	
 	return std::string();

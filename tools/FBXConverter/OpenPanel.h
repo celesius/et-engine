@@ -12,5 +12,6 @@
 
 namespace fbxc
 {
-	std::string selectFile();
+	std::string selectFileToOpen();
+	std::string selectFileToSave();
 }
