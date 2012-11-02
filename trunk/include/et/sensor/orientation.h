@@ -32,6 +32,7 @@ namespace et
 	{
 		vec3 rate;
         vec3 orientation;
+		quaternion orientationQuaternion;
         
 		float timestamp;
         float interval;

@@ -50,6 +50,26 @@ const mat4& Camera::perspectiveProjection(float fov, float aspect, float zNear, 
 	return _projectionMatrix;
 }
 
+const mat4& Camera::customPerspectiveProjection(const vec2& fullFov, float zNear, float zFar)
+{
+	_projectionMatrix = IDENTITY_MATRIX;
+	
+	vec2 fov = 0.5f * fullFov;
+	float cotanX = cos(fov.x) / sin(fov.x);
+	float cotanY = cos(fov.y) / sin(fov.y);
+	float dz = zFar - zNear;
+	
+	_projectionMatrix[0][0] = cotanX;
+	_projectionMatrix[1][1] = cotanY;
+	_projectionMatrix[2][2] = -(zFar + zNear) / dz;
+	_projectionMatrix[3][3] =  0.0f;
+	_projectionMatrix[2][3] = -1.0f;
+	_projectionMatrix[3][2] = -2.0f * zNear * zFar / dz;
+	
+	projectionUpdated();
+	return _projectionMatrix;
+}
+
 const mat4& Camera::orthogonalProjection(float left, float right, float top, float bottom, float zNear, float zFar)
 {
 	_projectionMatrix = IDENTITY_MATRIX;
