@@ -42,6 +42,10 @@ namespace et
                          d.orientation.x = motion.attitude.pitch;
                          d.orientation.y = motion.attitude.yaw;
                          d.orientation.z = motion.attitude.roll;
+						 d.orientationQuaternion.vector.x = motion.attitude.quaternion.x;
+						 d.orientationQuaternion.vector.y = motion.attitude.quaternion.y;
+						 d.orientationQuaternion.vector.z = motion.attitude.quaternion.z;
+						 d.orientationQuaternion.scalar = motion.attitude.quaternion.w;
                          d.timestamp = motion.timestamp;
                          d.interval = dt;
                          manager->gyroscopeDataUpdated.invokeInMainRunLoop(d);
