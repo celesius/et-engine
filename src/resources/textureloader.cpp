@@ -16,8 +16,6 @@
 #include <et/imaging/pvrloader.h>
 #include <et/imaging/jpgloader.h>
 
-#define ET_TEXTURE_DEBUG_LOAD	0
-
 using namespace et;
 
 static StringList extensions;
@@ -48,15 +46,12 @@ const StringList& TextureLoader::preferredExtensions()
 
 std::string TextureLoader::resolveScalableFileName(const std::string& fileName, size_t screenScale, std::string* extPtr, bool silent)
 {
-	if (extPtr)
-		*extPtr = std::string();
-
 	std::string result = fileName;
 	size_t lastDotPos = fileName.find_last_of('.');
 
 	bool found = false;
 
-	if ((lastDotPos == std::string::npos) || (lastDotPos < fileName.length() - 4))
+	if ((lastDotPos == std::string::npos) || (lastDotPos < fileName.size() - 4))
 	{
 		const StringList& ext = TextureLoader::preferredExtensions();
 		for (StringList::const_iterator i = ext.begin(), e = ext.end(); i != e; ++i)
@@ -98,6 +93,7 @@ std::string TextureLoader::resolveScalableFileName(const std::string& fileName, 
             name = application().environment().resolveScalableFileName(getFileName(fileName), screenScale);
             found = fileExists(name);
         }
+		
         if (!found)
         {
             name = resolveScalableFileName(removeFileExt(fileName), screenScale, extPtr, silent);
@@ -129,30 +125,36 @@ std::string TextureLoader::resolveFileName(const std::string& name, std::string*
 
 TextureDescription::Pointer TextureLoader::loadDescription(const std::string& name, size_t scaleFactor, bool initWithZero)
 {
-	TextureDescription* desc = new TextureDescription;
-	desc->target = GL_TEXTURE_2D;
 	std::string ext;
-	
-#if (ET_TEXTURE_DEBUG_LOAD)
-	std::string fileName = resolveFileName("debug/debug", &ext);
-#else
 	std::string fileName = resolveScalableFileName(name, scaleFactor, &ext);
-#endif
 	
+	TextureDescription* desc = nullptr;
 	if (ext == ".png")
 	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
+		desc->source = fileName;
 		PNGLoader::loadInfoFromFile(fileName, *desc);
 	}
 	else if (ext == ".dds")
 	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
+		desc->source = fileName;
 		DDSLoader::loadInfoFromFile(fileName, *desc);
 	}
 	else if (ext == ".pvr")
 	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
+		desc->source = fileName;
 		PVRLoader::loadInfoFromFile(fileName, *desc);
 	}
 	else if ((ext == ".jpg") || (ext == ".jpeg"))
 	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
+		desc->source = fileName;
 		JPGLoader::loadInfoFromFile(fileName, *desc);
 	}
 	else
@@ -160,9 +162,7 @@ TextureDescription::Pointer TextureLoader::loadDescription(const std::string& na
 		std::cout << "Unable to load texture description from file: " << name << std::endl;
 	}
 	
-	desc->source = fileName;
-
-	if (initWithZero)
+	if ((desc != nullptr) && initWithZero)
 	{
 		desc->data = BinaryDataStorage(desc->dataSizeForAllMipLevels());
 		desc->data.fill(0);
@@ -173,8 +173,6 @@ TextureDescription::Pointer TextureLoader::loadDescription(const std::string& na
 
 TextureDescription::Pointer TextureLoader::load(const std::string& name, size_t scaleFactor)
 {
-	TextureDescription* desc = new TextureDescription;
-	desc->target = GL_TEXTURE_2D;
 	std::string ext;
 	
 #if (ET_TEXTURE_DEBUG_LOAD)
@@ -183,20 +181,31 @@ TextureDescription::Pointer TextureLoader::load(const std::string& name, size_t 
 	std::string fileName = resolveScalableFileName(name, scaleFactor, &ext, true);
 #endif
 	
+	TextureDescription* desc = nullptr;
+	
 	if (ext == ".png")
 	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
+		desc->source = fileName;
 		PNGLoader::loadFromFile(fileName, *desc);
 	}
 	else if (ext == ".dds")
 	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
 		DDSLoader::loadFromFile(fileName, *desc);
 	}
 	else if (ext == ".pvr")
 	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
 		PVRLoader::loadFromFile(fileName, *desc);
 	}
 	else if ((ext == ".jpg") || (ext == ".jpeg"))
 	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
 		JPGLoader::loadFromFile(fileName, *desc);
 	}
 	else
@@ -204,6 +213,5 @@ TextureDescription::Pointer TextureLoader::load(const std::string& name, size_t 
 //		std::cout << "Unable to load texture from file: " << name << std::endl;
 	}
 
-	desc->source = fileName;
 	return TextureDescription::Pointer(desc);
 }
