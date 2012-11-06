@@ -3,126 +3,134 @@
 
 namespace et
 {
-	class OrientationManagerPrivate : public EventReceiver 
+	class OrientationManagerPrivate : public EventReceiver
 	{
-	public:
-		OrientationManagerPrivate() : manager(0), accelEnabled(false), gyroEnabled(false), updating(false)
+	private:
+		static mat4 transformFromCMRotationMatrix(const CMRotationMatrix& m)
 		{
-            _oq = [[NSOperationQueue alloc] init];
-            _motionManager = [[CMMotionManager alloc] init];
-            _motionManager.deviceMotionUpdateInterval = 1.0f / 100.0f;
+			mat4 mout = IDENTITY_MATRIX;
+			mout[0][0] = static_cast<float>(m.m11);
+			mout[0][1] = static_cast<float>(m.m21);
+			mout[0][2] = static_cast<float>(m.m31);
+			mout[1][0] = static_cast<float>(m.m12);
+			mout[1][1] = static_cast<float>(m.m22);
+			mout[1][2] = static_cast<float>(m.m32);
+			mout[2][0] = static_cast<float>(m.m13);
+			mout[2][1] = static_cast<float>(m.m23);
+			mout[2][2] = static_cast<float>(m.m33);
+			return mout;
 		}
-        
-        ~OrientationManagerPrivate()
-        {
-            [_motionManager release];
-            [_oq release];
-        }
-        
-        void update()
-        {
-            bool shouldSwitch = updating != (gyroEnabled || accelEnabled);
-            if (!shouldSwitch) return;
-            
-            updating = gyroEnabled || accelEnabled;
-            if (updating)
-            {
-                __block float t = 0.0f;
-                
-                [_motionManager startDeviceMotionUpdatesToQueue:_oq withHandler:^(CMDeviceMotion *motion, NSError *error)
-                 {
-                     float dt = (t == 0.0f) ? 0.0f : (motion.timestamp - t);
-                     
-                     if (gyroEnabled)
-                     {
-                         et::GyroscopeData d;
-                         d.rate.x = motion.rotationRate.x;
-                         d.rate.y = motion.rotationRate.y;
-                         d.rate.z = motion.rotationRate.z;
-                         d.orientation.x = motion.attitude.pitch;
-                         d.orientation.y = motion.attitude.yaw;
-                         d.orientation.z = motion.attitude.roll;
-						 d.orientationQuaternion.vector.x = motion.attitude.quaternion.x;
-						 d.orientationQuaternion.vector.y = motion.attitude.quaternion.y;
-						 d.orientationQuaternion.vector.z = motion.attitude.quaternion.z;
-						 d.orientationQuaternion.scalar = motion.attitude.quaternion.w;
-                         d.timestamp = motion.timestamp;
-                         d.interval = dt;
-                         manager->gyroscopeDataUpdated.invokeInMainRunLoop(d);
-                     }
-                     
-                     if (accelEnabled)
-                     {
-                         et::AccelerometerData d;
-                         d.value.x = motion.gravity.x;
-                         d.value.y = motion.gravity.y;
-                         d.value.z = motion.gravity.z;
-                         d.timestamp = motion.timestamp;
-                         d.interval = dt;
-                         manager->accelerometerDataUpdated.invokeInMainRunLoop(d);
-                     }
-                     
-                     t = motion.timestamp;
-                 }];
-            }
-            else 
-            {
-                [_motionManager stopDeviceMotionUpdates];
-            }
-        }
-        
+		
+	public:
+		OrientationManagerPrivate() :
+			manager(0), accelEnabled(false), gyroEnabled(false), updating(false)
+		{
+			_oq = [[NSOperationQueue alloc] init];
+			_motionManager = [[CMMotionManager alloc] init];
+			_motionManager.deviceMotionUpdateInterval = 1.0f / 100.0f;
+		}
+		
+		~OrientationManagerPrivate()
+		{
+			[_motionManager release];
+			[_oq release];
+		}
+		
+		void update()
+		{
+			bool shouldSwitch = updating != (gyroEnabled || accelEnabled);
+			if (!shouldSwitch) return;
+			
+			updating = gyroEnabled || accelEnabled;
+			if (updating)
+			{
+				__block float t = 0.0f;
+				
+				[_motionManager startDeviceMotionUpdatesToQueue:_oq withHandler:^(CMDeviceMotion *motion, NSError *error)
+				{
+					float dt = (t == 0.0f) ? 0.0f : (motion.timestamp - t);
+
+					if (gyroEnabled)
+					{
+						et::GyroscopeData d;
+
+						d.interval = dt;
+						d.timestamp = motion.timestamp;
+						d.rate = vec3(motion.rotationRate.x, motion.rotationRate.y, motion.rotationRate.z);
+						d.orientation = vec3(motion.attitude.pitch, motion.attitude.yaw, motion.attitude.roll);
+						d.orientationMatrix = transformFromCMRotationMatrix(motion.attitude.rotationMatrix);
+						d.orientationQuaternion = quaternion(motion.attitude.quaternion.w, motion.attitude.quaternion.x,
+							motion.attitude.quaternion.y, motion.attitude.quaternion.z);
+						manager->gyroscopeDataUpdated.invokeInMainRunLoop(d);
+					}
+
+					if (accelEnabled)
+					{
+						et::AccelerometerData d;
+						d.value.x = motion.gravity.x;
+						d.value.y = motion.gravity.y;
+						d.value.z = motion.gravity.z;
+						d.timestamp = motion.timestamp;
+						d.interval = dt;
+						manager->accelerometerDataUpdated.invokeInMainRunLoop(d);
+					}
+
+					t = motion.timestamp;
+				}];
+			}
+			else
+			{
+				[_motionManager stopDeviceMotionUpdates];
+			}
+		}
+		
 		void setGyroEnabled(bool e)
 		{
-			if (gyroEnabled == e) return;	
+			if (gyroEnabled == e) return;
 			gyroEnabled = e;
-            update();
+			update();
 		}
-        
+		
 		void setAccelEnabled(bool e)
 		{
-			if (accelEnabled == e) return;	
+			if (accelEnabled == e) return;
 			accelEnabled = e;
-            update();
+			update();
 		}
-        
+		
 	public:
-        NSOperationQueue* _oq;
-        CMMotionManager* _motionManager;
+		NSOperationQueue* _oq;
+		CMMotionManager* _motionManager;
 		OrientationManager* manager;
 		
 		bool accelEnabled;
 		bool gyroEnabled;
-        bool updating;
-                
+		bool updating;
 	};
 }
 
 using namespace et;
 
 bool OrientationManager::accelerometerAvailable()
-{
-	return [[[CMMotionManager alloc] init] autorelease].accelerometerAvailable;
-}
+	{ return [[[CMMotionManager alloc] init] autorelease].accelerometerAvailable; }
 
 bool OrientationManager::gyroscopeAvailable()
-{
-	return [[[CMMotionManager alloc] init] autorelease].gyroAvailable;
-}
+	{ return [[[CMMotionManager alloc] init] autorelease].gyroAvailable; }
 
 OrientationManager::OrientationManager() : _private(new OrientationManagerPrivate)
-    { _private->manager = this; }
+	{ _private->manager = this; }
 
 OrientationManager::~OrientationManager()
-    { delete _private; }
+	{ delete _private; }
 
 void OrientationManager::setAccelerometerEnabled(bool e)
-    { _private->setAccelEnabled(e); }
+	{ _private->setAccelEnabled(e); }
 
 bool OrientationManager::accelerometerEnabled() const
-    { return _private->accelEnabled; }
+	{ return _private->accelEnabled; }
 
 void OrientationManager::setGyroscopeEnabled(bool e)
-    { _private->setGyroEnabled(e); }
+	{ _private->setGyroEnabled(e); }
 
 bool OrientationManager::gyroscopeEnabled() const
-    { return _private->gyroEnabled; }
+	{ return _private->gyroEnabled; }

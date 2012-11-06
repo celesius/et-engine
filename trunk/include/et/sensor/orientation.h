@@ -33,6 +33,7 @@ namespace et
 		vec3 rate;
         vec3 orientation;
 		quaternion orientationQuaternion;
+		mat4 orientationMatrix;
         
 		float timestamp;
         float interval;
