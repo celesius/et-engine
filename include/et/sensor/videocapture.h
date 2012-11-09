@@ -39,6 +39,11 @@ namespace et
         void run();
         void stop();
 		
+		void setFocusLocked(bool isLocked);
+		void setWhitebalancedLocked(bool isLocked);
+		void setExposureLocked(bool isLocked);
+		void setAllParametersLocked(bool isLocked);
+		
 		ET_DECLARE_EVENT1(frameDataAvailable, VideoFrameData);
 		
 	private:

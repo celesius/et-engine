@@ -23,6 +23,11 @@ namespace et
 		void handleSampleBuffer(CMSampleBufferRef);
         void run();
         void stop();
+
+		void setFocusLocked(bool isLocked);
+		void setWhitebalancedLocked(bool isLocked);
+		void setExposureLocked(bool isLocked);
+		void setAllParametersLocked(bool isLocked);
 		
 	private:
 		VideoCapture* _owner;
@@ -61,6 +66,26 @@ void VideoCapture::run()
 void VideoCapture::stop()
     { _private->stop(); }
 
+void VideoCapture::setFocusLocked(bool isLocked)
+{
+	_private->setFocusLocked(isLocked);
+}
+
+void VideoCapture::setWhitebalancedLocked(bool isLocked)
+{
+	_private->setWhitebalancedLocked(isLocked);
+}
+
+void VideoCapture::setExposureLocked(bool isLocked)
+{
+	_private->setExposureLocked(isLocked);
+}
+
+void VideoCapture::setAllParametersLocked(bool isLocked)
+{
+	_private->setAllParametersLocked(isLocked);
+}
+
 bool VideoCapture::available()
 {
     return [[AVCaptureDevice devices] count] > 0;
@@ -73,7 +98,7 @@ VideoCapturePrivate::VideoCapturePrivate(VideoCapture* owner) : _owner(owner)
     
 	_proxy = [[VideoCaptureProxy alloc] initWithVideoCapturePrivate:this];
 
-	AVCaptureSession* _session = [[AVCaptureSession alloc] init];
+	_session = [[AVCaptureSession alloc] init];
 	_session.sessionPreset = AVCaptureSessionPresetMedium;
 
 	NSError* error = nil;
@@ -132,4 +157,136 @@ void VideoCapturePrivate::stop()
 {
 	if (_session.running)
 		[_session stopRunning];
+}
+
+void VideoCapturePrivate::setFocusLocked(bool isLocked)
+{
+	if (_session == nullptr) return;
+	
+	[_session beginConfiguration];
+	
+	NSArray* devices = [AVCaptureDevice devices];
+	NSError* error = nil;
+	
+	for (AVCaptureDevice* device in devices)
+	{
+		if (([device hasMediaType:AVMediaTypeVideo]) && ([device position] == AVCaptureDevicePositionBack))
+		{
+			[device lockForConfiguration:&error];
+			if (isLocked)
+			{
+				if ([device isFocusModeSupported:AVCaptureFocusModeLocked])
+					device.focusMode = AVCaptureFocusModeLocked;
+			}
+			else
+			{
+				if ([device isFocusModeSupported:AVCaptureFocusModeContinuousAutoFocus])
+					device.focusMode = AVCaptureFocusModeContinuousAutoFocus;
+			}
+			[device unlockForConfiguration];
+		}
+	}
+	
+	[_session commitConfiguration];
+}
+
+void VideoCapturePrivate::setWhitebalancedLocked(bool isLocked)
+{
+	if (_session == nullptr) return;
+	
+	[_session beginConfiguration];
+	
+	NSArray* devices = [AVCaptureDevice devices];
+	NSError* error = nil;
+	
+	for (AVCaptureDevice* device in devices)
+	{
+		if (([device hasMediaType:AVMediaTypeVideo]) && ([device position] == AVCaptureDevicePositionBack))
+		{
+			[device lockForConfiguration:&error];
+			if (isLocked)
+			{
+				if ([device isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeLocked])
+					device.whiteBalanceMode = AVCaptureWhiteBalanceModeLocked;
+			}
+			else
+			{
+				if ([device isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance])
+					device.whiteBalanceMode = AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance;
+			}
+			[device unlockForConfiguration];
+		}
+	}
+	
+	[_session commitConfiguration];
+}
+
+void VideoCapturePrivate::setExposureLocked(bool isLocked)
+{
+	if (_session == nullptr) return;
+	
+	[_session beginConfiguration];
+	
+	NSArray* devices = [AVCaptureDevice devices];
+	NSError* error = nil;
+	
+	for (AVCaptureDevice* device in devices)
+	{
+		if (([device hasMediaType:AVMediaTypeVideo]) && ([device position] == AVCaptureDevicePositionBack))
+		{
+			[device lockForConfiguration:&error];
+			if (isLocked)
+			{
+				if ([device isExposureModeSupported:AVCaptureExposureModeLocked])
+					device.exposureMode = AVCaptureExposureModeLocked;
+			}
+			else
+			{
+				if ([device isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure])
+					device.exposureMode = AVCaptureExposureModeContinuousAutoExposure;
+			}
+			[device unlockForConfiguration];
+		}
+	}
+	
+	[_session commitConfiguration];
+}
+
+void VideoCapturePrivate::setAllParametersLocked(bool isLocked)
+{
+	if (_session == nullptr) return;
+	
+	[_session beginConfiguration];
+	
+	NSArray* devices = [AVCaptureDevice devices];
+	NSError* error = nil;
+	
+	for (AVCaptureDevice* device in devices)
+	{
+		if (([device hasMediaType:AVMediaTypeVideo]) && ([device position] == AVCaptureDevicePositionBack))
+		{
+			[device lockForConfiguration:&error];
+			if (isLocked)
+			{
+				if ([device isFocusModeSupported:AVCaptureFocusModeLocked])
+					device.focusMode = AVCaptureFocusModeLocked;
+				if ([device isExposureModeSupported:AVCaptureExposureModeLocked])
+					device.exposureMode = AVCaptureExposureModeLocked;
+				if ([device isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeLocked])
+					device.whiteBalanceMode = AVCaptureWhiteBalanceModeLocked;
+			}
+			else
+			{
+				if ([device isFocusModeSupported:AVCaptureFocusModeContinuousAutoFocus])
+					device.focusMode = AVCaptureFocusModeContinuousAutoFocus;
+				if ([device isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure])
+					device.exposureMode = AVCaptureExposureModeContinuousAutoExposure;
+				if ([device isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance])
+					device.whiteBalanceMode = AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance;
+			}
+			[device unlockForConfiguration];
+		}
+	}
+	
+	[_session commitConfiguration];
 }
