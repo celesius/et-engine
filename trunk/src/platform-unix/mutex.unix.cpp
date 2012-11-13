@@ -5,6 +5,7 @@
  *
  */
 
+#include <iostream>
 #include <et/threading/mutex.h>
 #include <errno.h>
 #include <pthread.h>

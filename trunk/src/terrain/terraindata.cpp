@@ -7,7 +7,7 @@
 
 #include <utility>
 #include <et/collision/collision.h>
-#include <et/utils/terrain/terrain.h>
+#include <et/terrain/terrain.h>
 #include <et/timers/intervaltimer.h>
 
 using namespace et;
@@ -111,7 +111,7 @@ void TerrainData::generateVertexData(const FloatDataStorage& hm)
 	_bounds = AABB(0.5f * (_minVertex + _maxVertex), _maxVertex - _minVertex);
 
 	size_t numTriangles = Primitives::indexCountForRegularMesh(_dimension, GL_TRIANGLES);
-	IndexArrayRef tempIB(new IndexArray(IndexArrayFormat_32bit, numTriangles, IndexArrayContentType_Triangles));
+	IndexArray::Pointer tempIB(new IndexArray(IndexArrayFormat_32bit, numTriangles, IndexArrayContentType_Triangles));
 	Primitives::buildTrianglesIndexes(tempIB, _dimension, 0, 0);
 
 	std::cout << "Computing normals..." << std::endl;
@@ -222,9 +222,9 @@ vec2 TerrainData::normalizePoint(const vec3& pt) const
 
 triangle TerrainData::triangleForXZ(const vec2i& pt0, int side) const
 {
-	triangle t;
-
-	t.v1 = positionAtXZ(pt0);
+	vec3 v1 = positionAtXZ(pt0);
+	vec3 v2;
+	vec3 v3;
 
 	vec2i pt1;
 	vec2i pt2 = pt0 + vec2i(1);
@@ -238,19 +238,19 @@ triangle TerrainData::triangleForXZ(const vec2i& pt0, int side) const
 		pt1 = vec2i(pt0.x, pt0.y + 1);
 		if (pt1.y >= _dimension.y) 
 			pt1.y = _dimension.y - 1;
-		t.v2 = positionAtXZ(pt1);
-		t.v3 = positionAtXZ(pt2);
+		v2 = positionAtXZ(pt1);
+		v3 = positionAtXZ(pt2);
 	}
 	else 
 	{
 		pt1 = vec2i(pt0.x + 1, pt0.y);
 		if (pt1.x >= _dimension.x) 
 			pt1.x = _dimension.x - 1;
-		t.v2 = positionAtXZ(pt2);
-		t.v3 = positionAtXZ(pt1);
+		v2 = positionAtXZ(pt2);
+		v3 = positionAtXZ(pt1);
 	}
 
-	return t;
+	return triangle(v1, v2, v3);
 }
 
 TerrainContact TerrainData::contactForSphere(const Sphere& s) const
@@ -281,14 +281,14 @@ TerrainContact TerrainData::contactForSphere(const Sphere& s) const
 			if ((d1 <= squareRadius) && (pointInsideTriangle(projCtoP1, t1)))
 			{
 				++numPoints;
-				t.normal += t1.normal();
+				t.normal += t1.normalizedNormal();
 				t.point += projCtoP1;
 			}
 
 			if ((d2 <= squareRadius) && (pointInsideTriangle(projCtoP2, t2)))
 			{
 				++numPoints;
-				t.normal += t2.normal();
+				t.normal += t2.normalizedNormal();
 				t.point += projCtoP2;
 			}
 
@@ -323,13 +323,13 @@ void TerrainData::gatherContactsForSphere(const Sphere& s, TerrainDataDelegate* 
 			vec3 projCtoP1 = plane(t1).projectionOfPoint(s.center());
 			float d1 = (projCtoP1 - s.center()).dotSelf();
 			if ((d1 <= squareRadius) && (pointInsideTriangle(projCtoP1, t1)))
-				contactDelegate->terrainDataDidFindContact(TerrainContact(projCtoP1, normalize(t1.normal()), true));
+				contactDelegate->terrainDataDidFindContact(TerrainContact(projCtoP1, normalize(t1.normalizedNormal()), true));
 
 			triangle t2 = triangleForXZ(vec2i(x, y), 1);
 			vec3 projCtoP2 = plane(t2).projectionOfPoint(s.center());
 			float d2 = (projCtoP1 - s.center()).dotSelf();
 			if ((d2 <= squareRadius) && (pointInsideTriangle(projCtoP2, t2)))
-				contactDelegate->terrainDataDidFindContact(TerrainContact(projCtoP2, normalize(t2.normal()), true));
+				contactDelegate->terrainDataDidFindContact(TerrainContact(projCtoP2, normalize(t2.normalizedNormal()), true));
 		}
 	}
 }
