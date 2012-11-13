@@ -7,9 +7,8 @@
 
 #pragma once
 
-#include <et/opengl/opengl.h>
-#include <et/rendering/rendering.h>
 #include <et/core/containers.h>
+#include <et/rendering/rendering.h>
 #include <et/apiobjects/framebuffer.h>
 
 namespace et

@@ -9,7 +9,7 @@
 #include <et/core/tools.h>
 #include <et/app/application.h>
 #include <et/primitives/primitives.h>
-#include <et/utils/terrain/terrain.h>
+#include <et/terrain/terrain.h>
 #include <et/timers/intervaltimer.h>
 
 using namespace et;
@@ -353,7 +353,7 @@ public:
 		lods[level].size[variation] = _buf->actualSize() - lods[level].first[variation];
 	}
 
-	TerrainLODLevels(IndexArrayRef buf, Terrain* t) : _buf(buf), _t(t), _x0(0), _z0(0)
+	TerrainLODLevels(IndexArray::Pointer buf, Terrain* t) : _buf(buf), _t(t), _x0(0), _z0(0)
 	{
 		int maxLodIndices = ET_TERRAIN_CHUNK_SIZE * ET_TERRAIN_CHUNK_SIZE * 6;
 		int approxIndices = maxLodIndices;
@@ -383,7 +383,7 @@ private:
 		{ return *this; }
 
 private:
-	IndexArrayRef _buf;
+	IndexArray::Pointer _buf;
 	Terrain* _t;
 
 	TerrainIndexType _x0;
@@ -495,7 +495,7 @@ void Terrain::generateBuffer()
 {
 	releaseData();
 	
-	IndexArrayRef indices(new IndexArray(IndexArrayFormat_16bit, 0, IndexArrayContentType_Triangles));
+	IndexArray::Pointer indices(new IndexArray(IndexArrayFormat_16bit, 0, IndexArrayContentType_Triangles));
 	_lods = new TerrainLODLevels(indices, this);
 	generateChunks();
 	indices->compact();

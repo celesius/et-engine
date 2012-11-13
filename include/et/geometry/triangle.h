@@ -54,13 +54,7 @@ namespace et
 		}
 
 	private:
-/*
-		const vector3<T>& operator[](int i) const
-			{ return (i == 2) ? v3 : ( (i == 1) ? v2 : v1 ); }
-
-		vector3<T>& operator[](int i)
-			{ return (i == 2) ? v3 : ( (i == 1) ? v2 : v1 ); }
-*/
+		
 		void fillSupportData()
 		{
 			_edge2to1 = _v2 - _v1;

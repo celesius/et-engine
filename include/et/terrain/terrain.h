@@ -10,8 +10,8 @@
 #include <et/core/containers.h>
 #include <et/collision/collision.h>
 #include <et/primitives/primitives.h>
-#include <et/device/rendercontext.h>
-#include <et/utils/terrain/terraindata.h>
+#include <et/rendering/rendercontext.h>
+#include <et/terrain/terraindata.h>
 
 namespace et
 {

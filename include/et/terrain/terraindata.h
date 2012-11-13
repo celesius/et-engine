@@ -59,10 +59,10 @@ namespace et
 		const AABB& bounds() const
 			{ return _bounds; }
 
-		const VertexArrayRef& vertexData() const 
+		const VertexArray::Pointer& vertexData() const
 			{ return _vertexData; }
 
-		VertexArrayRef& vertexData()
+		VertexArray::Pointer& vertexData()
 			{ return _vertexData; }
 
 		vec3 normalAtPoint(const vec3& pt) const;
@@ -102,7 +102,7 @@ namespace et
 		DataStorage<vec3> _positions;
 		DataStorage<vec3> _normals;
 
-		VertexArrayRef _vertexData;
+		VertexArray::Pointer _vertexData;
 	};
 
 	typedef IntrusivePtr<TerrainData> TerrainDataRef;
