@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <string>
 
 #include <et/opengl/opengl.h>
 #include <et/imaging/ddsloader.h>

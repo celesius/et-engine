@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <iostream>
 #include <assert.h>
 #include <et/platform/platform.h>
 

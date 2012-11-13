@@ -5,7 +5,6 @@
  *
  */
 
-#include <string>
 #include <iostream>
 #include <et/core/debug.h>
 #include <et/scene3d/element.h>

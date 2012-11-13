@@ -7,8 +7,6 @@
 
 #include <et/opengl/gl.win.h>
 
-#include <string>
-#include <string.h>
 #include <sstream>
 
 namespace et

@@ -6,7 +6,6 @@
  */
 
 #include <iostream>
-#include <vector>
 #include <algorithm>
 
 #include <et/imaging/imageoperations.h>

@@ -1,5 +1,5 @@
+#include <et/platform/platformtools.h>
 #include <et/models/fbxloader.h>
-#include "OpenPanel.h"
 #include "converter.h"
 
 using namespace fbxc;
@@ -188,26 +188,10 @@ void Converter::onDrag(et::vec2 v, et::PointerType)
 
 void Converter::onBtnOpenClick(et::gui::Button*)
 {
-	std::string fileName;
-	
-#if (ET_PLATFORM_WIN)
-	char filename[1024] = { };
-	
-	OPENFILENAME of = { };
-	of.lStructSize = sizeof(of);
-	of.hwndOwner = reinterpret_cast<HWND>(application().renderingContextHandle());
-	of.hInstance = GetModuleHandle(0);
-	of.lpstrFilter = "All supported files\0*.fbx;*.etm\0FBX files\0*.fbx\0ET models\0*.etm\0\0";
-	of.Flags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_NOCHANGEDIR | OFN_PATHMUSTEXIST;
-	of.lpstrFile = filename;
-	of.nMaxFile = MAX_PATH;
-	if (!GetOpenFileName(&of)) return;
-	
-#elif (ET_PLATFORM_MAC)
-	
-	fileName = fbxc::selectFileToOpen();
-	
-#endif
+	StringList types;
+	types.push_back("fbx");
+	types.push_back("etm");
+	std::string fileName = selectFile(types, SelectFileMode_Open);
 	
 	Invocation1 i;
 	i.setTarget(this, &Converter::performLoading, fileName);
@@ -219,25 +203,10 @@ void Converter::onBtnOpenClick(et::gui::Button*)
 
 void Converter::onBtnSaveClick(et::gui::Button*)
 {
-	std::string fileName;
-	
-#if (ET_PLATFORM_WIN)
-	char filename[1024] = { };
-	
-	OPENFILENAME of = { };
-	of.lStructSize = sizeof(of);
-	of.hwndOwner = reinterpret_cast<HWND>(application().renderingContextHandle());
-	of.hInstance = GetModuleHandle(0);
-	of.lpstrFilter = "ET models\0*.etm\0\0";
-	of.Flags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_NOCHANGEDIR | OFN_PATHMUSTEXIST;
-	of.lpstrFile = filename;
-	of.nMaxFile = MAX_PATH;
-	if (!GetSaveFileName(&of)) return;
-#elif (ET_PLATFORM_MAC)
-	
-	fileName = fbxc::selectFileToSave();
-	
-#endif
+	StringList types;
+	types.push_back("fbx");
+	types.push_back("etm");
+	std::string fileName = selectFile(types, SelectFileMode_Save);
 	
 	Invocation1 i;
 	i.setTarget(this, &Converter::performSaving, fileName);
