@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <string>
 #include <et/core/hierarchy.h>
 #include <et/core/flags.h>
 #include <et/core/transformable.h>

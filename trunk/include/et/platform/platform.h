@@ -9,6 +9,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
 #if defined(__MACH__)
 	#include <TargetConditionals.h>

@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <string>
 #include <et/apiobjects/texturedescription.h>
 
 namespace et

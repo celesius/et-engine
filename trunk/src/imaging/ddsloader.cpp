@@ -5,7 +5,6 @@
  *
  */
 
-#include <iostream>
 #include <fstream>
 
 #include <et/opengl/opengl.h>

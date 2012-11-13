@@ -5,9 +5,8 @@
  *
  */
 
-#include <iostream>
 #include <fstream>
-#include <cassert>
+#include <assert.h>
 #include <et/core/tools.h>
 #include <et/core/plist.h>
 #include <et/app/application.h>

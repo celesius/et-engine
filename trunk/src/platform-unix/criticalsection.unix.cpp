@@ -5,7 +5,6 @@
  *
  */
 
-#include <iostream>
 #include <et/threading/criticalsection.h>
 #include <errno.h>
 #include <pthread.h>

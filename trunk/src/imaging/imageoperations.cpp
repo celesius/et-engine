@@ -5,7 +5,6 @@
  *
  */
 
-#include <iostream>
 #include <algorithm>
 
 #include <et/imaging/imageoperations.h>

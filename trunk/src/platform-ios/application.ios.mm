@@ -5,7 +5,6 @@
  *
  */
 
-#include <iostream>
 #include <mach/mach.h>
 
 #include <et/core/tools.h>

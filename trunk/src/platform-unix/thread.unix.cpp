@@ -5,7 +5,6 @@
  *
  */
 
-#include <iostream>
 #include <pthread.h>
 #include <unistd.h>
 #include <libkern/OSAtomic.h>

@@ -5,7 +5,6 @@
  *
  */
 
-#include <iostream>
 #include <algorithm>
 #include <et/tasks/taskpool.h>
 

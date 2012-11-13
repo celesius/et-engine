@@ -5,7 +5,6 @@
  *
  */
 
-#include <iostream>
 #include <algorithm>
 #include <et/app/runloop.h>
 #include <et/tasks/tasks.h>

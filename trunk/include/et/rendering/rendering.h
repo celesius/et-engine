@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <string>
 #include <et/opengl/opengl.h>
 
 namespace et

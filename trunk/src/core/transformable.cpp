@@ -6,7 +6,6 @@
  */
 
 #include <assert.h>
-#include <iostream>
 #include <et/core/transformable.h>
 
 using namespace et;

@@ -5,7 +5,6 @@
  *
  */
 
-#include <iostream>
 #include <et/camera/camera.h>
 
 using namespace et;
