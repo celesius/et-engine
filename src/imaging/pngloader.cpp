@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <string>
 #include <libpng/png.h>
 
 #include <et/opengl/opengl.h>

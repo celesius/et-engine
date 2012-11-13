@@ -7,6 +7,9 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+
 #if defined(__MACH__)
 	#include <TargetConditionals.h>
 #endif
@@ -60,14 +63,13 @@
 
 namespace et
 {
+	typedef std::vector<std::string> StringList;
+
 	enum Platform
 	{
 		Platform_Windows,
 		Platform_iOS,
 		Platform_Mac
 	};
-
-inline bool platformHasHardwareKeyboard()
-	{ return CurrentPlatform == Platform_Windows; }
 
 }

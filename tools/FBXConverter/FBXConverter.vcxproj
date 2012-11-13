@@ -112,7 +112,6 @@
     <ClCompile Include="..\..\src\camera\camera.cpp" />
     <ClCompile Include="..\..\src\camera\frustum.cpp" />
     <ClCompile Include="..\..\src\collision\aabb.cpp" />
-    <ClCompile Include="..\..\src\collision\collision.cpp" />
     <ClCompile Include="..\..\src\core\debug.cpp" />
     <ClCompile Include="..\..\src\core\plist.cpp" />
     <ClCompile Include="..\..\src\core\tools.cpp" />
@@ -120,7 +119,6 @@
     <ClCompile Include="..\..\src\geometry\geometry.cpp" />
     <ClCompile Include="..\..\src\geometry\rectplacer.cpp" />
     <ClCompile Include="..\..\src\gui\button.cpp" />
-    <ClCompile Include="..\..\src\gui\carousel.cpp" />
     <ClCompile Include="..\..\src\gui\element2d.cpp" />
     <ClCompile Include="..\..\src\gui\element3d.cpp" />
     <ClCompile Include="..\..\src\gui\font.cpp" />
@@ -221,6 +219,7 @@
     <ClCompile Include="..\..\src\libpng\pngwrite.c" />
     <ClCompile Include="..\..\src\libpng\pngwtran.c" />
     <ClCompile Include="..\..\src\libpng\pngwutil.c" />
+    <ClCompile Include="..\..\src\locale\locale.cpp" />
     <ClCompile Include="..\..\src\models\3dsloader.cpp" />
     <ClCompile Include="..\..\src\models\fbxloader.cpp" />
     <ClCompile Include="..\..\src\models\objLoader.cpp" />
@@ -232,12 +231,17 @@
     <ClCompile Include="..\..\src\platform-win\gl.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\input.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\locale.win.cpp" />
+    <ClCompile Include="..\..\src\platform-win\location.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\mutex.win.cpp" />
+    <ClCompile Include="..\..\src\platform-win\orientation.win.cpp" />
+    <ClCompile Include="..\..\src\platform-win\platformtools.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\referencecounter.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\rendercontext.win.cpp" />
+    <ClCompile Include="..\..\src\platform-win\sound.openal.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\thread.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\threading.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\tools.win.cpp" />
+    <ClCompile Include="..\..\src\platform-win\videocapture.win.cpp" />
     <ClCompile Include="..\..\src\primitives\primitives.cpp" />
     <ClCompile Include="..\..\src\rendering\renderer.cpp" />
     <ClCompile Include="..\..\src\rendering\rendering.cpp" />
@@ -279,6 +283,36 @@
     <ClCompile Include="source\converter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\libjpeg\cderror.h" />
+    <ClInclude Include="..\..\include\libjpeg\cdjpeg.h" />
+    <ClInclude Include="..\..\include\libjpeg\jconfig.h" />
+    <ClInclude Include="..\..\include\libjpeg\jdct.h" />
+    <ClInclude Include="..\..\include\libjpeg\jerror.h" />
+    <ClInclude Include="..\..\include\libjpeg\jinclude.h" />
+    <ClInclude Include="..\..\include\libjpeg\jmemsys.h" />
+    <ClInclude Include="..\..\include\libjpeg\jmorecfg.h" />
+    <ClInclude Include="..\..\include\libjpeg\jpegint.h" />
+    <ClInclude Include="..\..\include\libjpeg\jpeglib.h" />
+    <ClInclude Include="..\..\include\libjpeg\jversion.h" />
+    <ClInclude Include="..\..\include\libjpeg\transupp.h" />
+    <ClInclude Include="..\..\include\libpng\png.h" />
+    <ClInclude Include="..\..\include\libpng\pngconf.h" />
+    <ClInclude Include="..\..\include\libpng\pngdebug.h" />
+    <ClInclude Include="..\..\include\libpng\pnginfo.h" />
+    <ClInclude Include="..\..\include\libpng\pnglibconf.h" />
+    <ClInclude Include="..\..\include\libpng\pngpriv.h" />
+    <ClInclude Include="..\..\include\libpng\pngstruct.h" />
+    <ClInclude Include="..\..\include\zlib\crc32.h" />
+    <ClInclude Include="..\..\include\zlib\deflate.h" />
+    <ClInclude Include="..\..\include\zlib\gzguts.h" />
+    <ClInclude Include="..\..\include\zlib\inffast.h" />
+    <ClInclude Include="..\..\include\zlib\inffixed.h" />
+    <ClInclude Include="..\..\include\zlib\inflate.h" />
+    <ClInclude Include="..\..\include\zlib\inftrees.h" />
+    <ClInclude Include="..\..\include\zlib\trees.h" />
+    <ClInclude Include="..\..\include\zlib\zconf.h" />
+    <ClInclude Include="..\..\include\zlib\zlib.h" />
+    <ClInclude Include="..\..\include\zlib\zutil.h" />
     <ClInclude Include="source\converter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

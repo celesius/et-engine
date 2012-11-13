@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <string>
 #include <libjpeg/jpeglib.h>
 
 #include <et/core/tools.h>

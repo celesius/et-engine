@@ -5,7 +5,6 @@
  *
  */
 
-#include <string>
 #include <et/input/input.h>
 
 using namespace et;

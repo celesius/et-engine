@@ -6,8 +6,6 @@
  */
 
 #include <fstream>
-#include <string>
-
 #include <et/app/application.h>
 #include <et/core/containers.h>
 #include <et/resources/textureloader.h>
