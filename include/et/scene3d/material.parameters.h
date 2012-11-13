@@ -50,6 +50,14 @@ namespace et
 		T value;
 		size_t set;
 		
+	public:
+		DefaultMaterialEntryBase& operator = (const DefaultMaterialEntryBase& r)
+		{
+			this->value = r.value;
+			this->set = r.set;
+			return *this;
+		}
+		
 	protected:
 		DefaultMaterialEntryBase() : value(0), set(0) { }
 		DefaultMaterialEntryBase(const T& v) : value(v), set(1) { }
