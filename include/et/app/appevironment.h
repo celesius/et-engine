@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <string>
 #include <et/core/tools.h>
 
 namespace et

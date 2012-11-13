@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <vector>
-
 #define ET_IN_TYPE const T&
 
 namespace et

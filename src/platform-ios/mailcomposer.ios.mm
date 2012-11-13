@@ -5,7 +5,6 @@
  *
  */
 
-#include <string>
 #include <MessageUI/MessageUI.h>
 #include <et/app/application.h>
 #include <et/platform-ios/mailcomposer.h>

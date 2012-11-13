@@ -7,10 +7,7 @@
 
 #pragma once
 
-#include <string>
-#include <iostream>
 #include <fstream>
-#include <vector>
 #include <et/core/constants.h>
 #include <et/core/debug.h>
 #include <et/geometry/geometry.h>

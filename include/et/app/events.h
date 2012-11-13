@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <vector>
 #include <algorithm>
 #include <et/app/invocation.h>
 

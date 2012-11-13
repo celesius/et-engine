@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <iostream>
 #include <map>
 
 #include <et/rendering/renderstate.h>

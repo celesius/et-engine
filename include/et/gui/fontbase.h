@@ -8,7 +8,6 @@
 #pragma once
 
 #include <map>
-#include <vector>
 #include <et/core/containers.h>
 #include <et/geometry/geometry.h>
 

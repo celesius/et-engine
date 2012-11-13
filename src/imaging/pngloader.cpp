@@ -5,7 +5,6 @@
  *
  */
 
-#include <iostream>
 #include <fstream>
 #include <libpng/png.h>
 

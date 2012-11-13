@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <vector>
 #include <map>
 #include <et/core/intrusiveptr.h>
 #include <et/core/containers.h>

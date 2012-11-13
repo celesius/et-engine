@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <string>
 #include <map>
 #include <et/threading/criticalsection.h>
 #include <et/apiobjects/texture.h>

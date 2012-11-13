@@ -5,7 +5,6 @@
  *
  */
 
-#include <iostream>
 #include <et/camera/frustum.h>
 
 using namespace et;

@@ -7,9 +7,7 @@
 
 #pragma once
 
-#include <string>
 #include <ostream>
-#include <iostream>
 
 #include <et/core/containers.h>
 #include <et/geometry/geometry.h>

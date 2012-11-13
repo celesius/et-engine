@@ -8,7 +8,6 @@
 #pragma once
 
 #include <list>
-#include <string>
 #include <queue>
 #include <et/threading/thread.h>
 #include <et/threading/criticalsection.h>
