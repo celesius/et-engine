@@ -43,9 +43,11 @@ namespace et
 
 			void invalidateTransform();
 			void invalidateContent();
+			
+			virtual bool enabled() const;
+			virtual void setEnabled(bool enabled);
 
-			virtual void processMessage(const GuiMessage&) 
-				{ }
+			virtual void processMessage(const GuiMessage&) { }
 
 			virtual void addToRenderQueue(RenderContext*, GuiRenderer&);
 			virtual void addToOverlayRenderQueue(RenderContext*, GuiRenderer&);
@@ -68,12 +70,14 @@ namespace et
 			virtual void pointerEntered(const PointerInputInfo&) { }
 			virtual void pointerLeaved(const PointerInputInfo&) { }
 
-			virtual bool capturesPointer() const { return true; }
-			virtual bool containLocalPoint(const vec2&) { return false; }
-			virtual vec2 positionInElement(const vec2& p) { return p; }
-
-			virtual bool enabled() const;
-			virtual void setEnabled(bool enabled);
+			virtual bool capturesPointer() const
+				{ return false; }
+			
+			virtual bool containLocalPoint(const vec2&)
+				{ return false; }
+			
+			virtual vec2 positionInElement(const vec2& p)
+				{ return p; }
 
 			virtual bool visible() const
 				{ return true; }
@@ -89,7 +93,10 @@ namespace et
 
 			virtual void layout(const vec2&) 
 				{ layoutChildren(); }
-
+			
+			virtual bool focused() const
+				{ return false; }
+			
 			virtual void setFocus() { };
 			virtual void resignFocus(Element*) { };
 

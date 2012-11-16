@@ -123,6 +123,10 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 			
 			applyOffset(sqr(offsetScale) * dOffset);
 		}
+		else if (_selectedElement.valid() && _selectedElement->capturesPointer())
+		{
+			broadcastMoved(p);
+		}
 		else if (!_pointerCaptured)
 		{
 			_manualScrolling = true;
@@ -184,6 +188,7 @@ void Scroll::broadcastPressed(const PointerInputInfo& p)
 			vec2 posInElement = el->positionInElement(globalPos.pos);
 			if (el->pointerPressed(PointerInputInfo(p.type, posInElement, globalPos.normalizedPos, p.scroll, p.id, p.timestamp)))
 			{
+				_selectedElement = Element::Pointer(el);
 				break;
 			}
 		}
@@ -218,6 +223,8 @@ void Scroll::broadcastReleased(const PointerInputInfo& p)
 				globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
 		}
 	}
+	
+	_selectedElement.reset(0);
 }
 
 void Scroll::broadcastCancelled(const PointerInputInfo& p)
@@ -233,6 +240,8 @@ void Scroll::broadcastCancelled(const PointerInputInfo& p)
 				globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
 		}
 	}
+	
+	_selectedElement.reset(0);
 }
 
 bool Scroll::containsPoint(const vec2& p, const vec2& np)
@@ -300,7 +309,7 @@ void Scroll::update(float t)
 	}
 	
 	float dt = etMin(1.0f, deltaTime * deccelerationRate);
-	_velocity -= _velocity * dt;
+	_velocity *= 1.0 - dt;
 	
 	_scrollbarsAlphaTarget = etMin(1.0f, _velocity.dotSelf() / maxScrollbarsVisibilityVelocity);
 

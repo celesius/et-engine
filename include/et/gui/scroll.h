@@ -79,6 +79,8 @@ namespace et
 			};
 			
 		private:
+			Element::Pointer _selectedElement;
+			
 			GuiVertexList _backgroundVertices;
 			GuiVertexList _scrollbarsVertices;
 
