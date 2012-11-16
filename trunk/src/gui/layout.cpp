@@ -123,7 +123,7 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 				}
 			}
 
-			if ((active->capturesPointer() && processed) || _dragging)
+			if (processed || _dragging)
 				_capturedElement = active;
 		}
 
