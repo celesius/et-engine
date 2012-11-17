@@ -309,7 +309,7 @@ void Scroll::update(float t)
 	}
 	
 	float dt = etMin(1.0f, deltaTime * deccelerationRate);
-	_velocity *= 1.0 - dt;
+	_velocity *= 1.0f - dt;
 	
 	_scrollbarsAlphaTarget = etMin(1.0f, _velocity.dotSelf() / maxScrollbarsVisibilityVelocity);
 
