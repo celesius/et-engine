@@ -64,6 +64,8 @@ namespace et
 			const char* ptr = glslv;
 			do
 			{
+				if (_glslVersion.size() && (*ptr == ET_SPACE)) break;
+
 				if ((*ptr >= '0') && (*ptr <= '9'))
 					_glslVersion.push_back(*ptr);
 			}

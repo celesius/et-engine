@@ -62,22 +62,30 @@ void Scene3d::serialize(std::ostream& stream)
 	ElementContainer::serialize(stream, SceneVersionLatest);
 }
 
-void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory, const std::string& basePath)
+bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory, const std::string& basePath)
 {
 	if (stream.fail()) 
     {
         std::cout << "Unable to deserialize scene from stream." << std::endl;
-        return;
+        return false;
     }
     
 	ChunkId readChunk = { };
 	deserializeChunk(stream, readChunk);
-	if (!chunkEqualTo(readChunk, HeaderScene)) return;
+	if (!chunkEqualTo(readChunk, HeaderScene)) 
+	{
+		std::cout << "Data not looks like proper ETM file." << std::endl;
+		return false;
+	}
 
 	_externalFactory = factory;
 
 	size_t version = deserializeInt(stream);
-	if (version > static_cast<size_t>(SceneVersionLatest)) return;
+	if (version > static_cast<size_t>(SceneVersionLatest))
+	{
+		std::cout << "Unsupported version of the ETM file." << std::endl;
+		return false;
+	}
 
 	volatile bool readCompleted = false;
 	while (!readCompleted)
@@ -86,7 +94,11 @@ void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 		if (chunkEqualTo(readChunk, HeaderData))
 		{
 			size_t storageVersion = deserializeInt(stream);
-			if (storageVersion != StorageVersion_1_0_0) return;
+			if (storageVersion != StorageVersion_1_0_0) 
+			{
+				std::cout << "Unsupported version of binary storage the ETM file." << std::endl;
+				return false;
+			}
 
 			size_t numStorages = deserializeInt(stream);
 			for (size_t i = 0; i < numStorages; ++i)
@@ -103,6 +115,7 @@ void Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 	}
 
 	_externalFactory = 0;
+	return true;
 }
 
 
@@ -192,10 +205,15 @@ void Scene3d::serialize(const std::string& filename)
 	serialize(file);
 }
 
-void Scene3d::deserialize(const std::string& filename, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory)
+bool Scene3d::deserialize(const std::string& filename, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory)
 {
 	std::ifstream file(filename.c_str(), std::ios::binary | std::ios::in);
-	deserialize(file, rc, tc, factory, getFilePath(filename));
+	bool result = deserialize(file, rc, tc, factory, getFilePath(filename));
+	if (!result)
+	{
+		std::cout << "Unable to load scene from file: " << filename << std::endl;
+	}
+	return result;
 }
 
 Element::Pointer Scene3d::createElementOfType(size_t type, Element* parent)
