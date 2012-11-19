@@ -25,8 +25,8 @@ namespace et
 			void serialize(std::ostream& stream);
 			void serialize(const std::string& filename);
 
-			void deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory, const std::string& basePath);
-			void deserialize(const std::string& filename, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory);
+			bool deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory, const std::string& basePath);
+			bool deserialize(const std::string& filename, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory);
 
 		private:
 			Scene3dStorage::Pointer deserializeStorage(std::istream& stream, RenderContext* rc, TextureCache& tc, const std::string& basePath);
