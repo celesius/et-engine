@@ -5,7 +5,7 @@
  *
  */
 
-#include <et/gui/Element2d.h>
+#include <et/gui/element2d.h>
 
 using namespace et;
 using namespace et::gui;

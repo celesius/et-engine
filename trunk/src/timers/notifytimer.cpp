@@ -5,7 +5,7 @@
  *
  */
 
-#include <et/timers/NotifyTimer.h>
+#include <et/timers/notifytimer.h>
 
 using namespace et;
 

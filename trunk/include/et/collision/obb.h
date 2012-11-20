@@ -5,7 +5,7 @@
  *
  */
 
-#pragma once 
+#pragma once
 
 #include <et/geometry/geometry.h>
 

@@ -71,8 +71,8 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTextu
 	CharDescriptor desc(value);
 	desc.origin = textureRect.origin() + vec2(1.0f);
 	desc.size = textureRect.size() - vec2(2.0f);
-	desc.uvOrigin = _texture->getTexCoord(textureRect.origin());
-	desc.uvSize = textureRect.size() / _texture->sizeFloat();
+	desc.uvOrigin = _texture->getTexCoord(desc.origin);
+	desc.uvSize = desc.size / _texture->sizeFloat();
 	_chars[value] = desc;
 	return desc;
 }
@@ -95,8 +95,8 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateT
 	CharDescriptor desc(value, CharParameter_Bold);
 	desc.origin = textureRect.origin() + vec2(1.0f);
 	desc.size = textureRect.size() - vec2(2.0f);
-	desc.uvOrigin = _texture->getTexCoord(textureRect.origin());
-	desc.uvSize = textureRect.size() / _texture->sizeFloat();
+	desc.uvOrigin = _texture->getTexCoord(desc.origin);
+	desc.uvSize = desc.size / _texture->sizeFloat();
 	_boldChars[value] = desc;
 	return desc;
 }

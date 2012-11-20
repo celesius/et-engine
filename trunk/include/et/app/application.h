@@ -11,28 +11,11 @@
 #include <et/app/appevironment.h>
 #include <et/app/events.h>
 #include <et/app/runloop.h>
+#include <et/app/applicationdelegate.h>
 #include <et/rendering/rendercontext.h>
 
 namespace et
 {
-	class IApplicationDelegate : virtual public EventReceiver
-	{
-	public:
-		virtual ~IApplicationDelegate() { }
-
-		virtual void setRenderContextParameters(et::RenderContextParameters&) { }
-		virtual void applicationDidLoad(et::RenderContext*) { }
-		virtual void applicationWillTerminate() { }
-
-		virtual void applicationWillResizeContext(const et::vec2i&) { }
-
-		virtual void applicationWillActivate() { }
-		virtual void applicationWillDeactivate() { }
-
-		virtual void render(et::RenderContext*) { }
-		virtual void idle(float) { }
-	};
-
 	class ApplicationNotifier;
 	class Application : public Singleton<Application>,  public EventReceiver
 	{
@@ -102,6 +85,7 @@ namespace et
 
 	private:
 		static IApplicationDelegate* _delegate;
+		ApplicationIdentifier _identifier;
 		RenderContext* _renderContext;
 		AppEnvironment _env;
 		RunLoop _runLoop;
