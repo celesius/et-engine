@@ -98,7 +98,7 @@ void Element2d::setAngle(float angle, float duration)
 	}
 	else 
 	{
-		_angleAnimator.animate( &_angle, _angle, angle, duration);
+		_angleAnimator.animate(&_angle, _angle, angle, duration);
 	}
 }
 

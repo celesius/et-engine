@@ -55,19 +55,6 @@ void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, GuiRen
 
 void Layout::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 {
-	PointerInputInfo p = input().currentPointer();
-	Element* e = activeElement(p);
-
-	if (_capturedElement)
-	{
-		if (e == _capturedElement)
-			setCurrentElement(p, e);
-	}
-	else 
-	{
-		setCurrentElement(p, e);
-	}
-
 	gr.resetClipRect();
 
 	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
