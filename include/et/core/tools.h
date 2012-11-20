@@ -32,6 +32,8 @@ namespace et
 	
 	std::string unicodeToUtf8(const std::wstring& w);
 	std::wstring utf8ToUnicode(const std::string& mbcs);
+	
+	std::string applicationIdentifierForCurrentProject();
 
 	/*
 	 * Common code

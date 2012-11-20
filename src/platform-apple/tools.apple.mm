@@ -5,7 +5,9 @@
  *
  */
 
+#include <CoreFoundation/CoreFoundation.h>
 #include <Foundation/Foundation.h>
+
 #include <sys/time.h>
 #include <et/platform/platform.h>
 #include <et/core/tools.h>
@@ -255,4 +257,10 @@ std::wstring et::utf8ToUnicode(const std::string& mbcs)
 	   encoding:NSUTF32LittleEndianStringEncoding options:0 range:NSMakeRange(0, [s length]) remainingRange:0];
 	
 	return std::wstring(reinterpret_cast<const wchar_t*>(result.data()));
+}
+
+std::string et::applicationIdentifierForCurrentProject()
+{
+	CFBundleRef mainBundle = CFBundleGetMainBundle();
+	return std::string(CFStringGetCStringPtr(CFBundleGetIdentifier(mainBundle), kCFStringEncodingMacRoman));
 }

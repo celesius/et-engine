@@ -67,10 +67,10 @@ namespace et
 			{ return _data; }
 
 		bool invalid() const
-			{ return _data == 0; }
+			{ return _data == nullptr; }
 
 		bool valid() const 
-			{ return _data != 0; }
+			{ return _data != nullptr; }
 
 	private:
 		AutoPtr(const AutoPtr<T>& r) : _data(0)

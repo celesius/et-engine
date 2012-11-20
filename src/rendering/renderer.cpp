@@ -8,7 +8,7 @@
 #include <et/opengl/openglcaps.h>
 #include <et/rendering/rendercontext.h>
 #include <et/rendering/renderer.h>
-#include <et/vertexbuffer/IndexArray.h>
+#include <et/vertexbuffer/indexarray.h>
 
 using namespace et;
 

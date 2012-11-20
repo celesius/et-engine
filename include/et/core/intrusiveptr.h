@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et/threading/ReferenceCounter.h>
+#include <et/threading/referencecounter.h>
 
 namespace et
 {
@@ -70,10 +70,10 @@ namespace et
 			{ return *_data; }
 
 		bool invalid() const
-			{ return _data == 0; }
+			{ return _data == nullptr; }
 
 		bool valid() const 
-			{ return _data != 0; }
+			{ return _data != nullptr; }
 
 		bool operator == (const IntrusivePtr& r) const
 			{ return _data == r._data; }

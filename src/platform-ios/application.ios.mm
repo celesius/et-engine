@@ -35,8 +35,13 @@ Application::~Application()
 
 IApplicationDelegate* Application::delegate()
 {
-	if (_delegate == 0)
+	if (_delegate == nullptr)
+	{
 		_delegate = initApplicationDelegate();
+		assert(_delegate);
+		
+		_identifier = _delegate->applicationIdentifier();
+	}
     
 	return _delegate;
 }

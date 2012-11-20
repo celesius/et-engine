@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et/gui/Element2d.h>
+#include <et/gui/element2d.h>
 
 namespace et
 {

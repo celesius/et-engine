@@ -1,0 +1,48 @@
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2012 by Sergey Reznik
+ * Please, do not modify contents without approval.
+ *
+ */
+
+#pragma once
+
+namespace et
+{
+	class RenderContext;
+	class RenderContextParameters;
+	
+	struct ApplicationIdentifier
+	{
+		std::string identifier;
+		std::string companyName;
+		std::string applicationName;
+		
+		ApplicationIdentifier() { }
+		
+		ApplicationIdentifier(const std::string& aIdentifier, const std::string& aCompanyName,
+			const std::string& aApplicationName) : identifier(aIdentifier), companyName(aCompanyName),
+			applicationName(aApplicationName) { }
+	};
+	
+	class IApplicationDelegate : virtual public EventReceiver
+	{
+	public:
+		virtual ~IApplicationDelegate() { }
+
+		virtual ApplicationIdentifier applicationIdentifier() const = 0;
+		
+		virtual void setRenderContextParameters(et::RenderContextParameters&) { }
+		virtual void applicationDidLoad(et::RenderContext*) { }
+		virtual void applicationWillTerminate() { }
+
+		virtual void applicationWillResizeContext(const et::vec2i&) { }
+
+		virtual void applicationWillActivate() { }
+		virtual void applicationWillDeactivate() { }
+
+		virtual void render(et::RenderContext*) { }
+		virtual void idle(float) { }
+	};
+
+}
