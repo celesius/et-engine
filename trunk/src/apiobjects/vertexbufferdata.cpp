@@ -27,7 +27,7 @@ VertexBufferData::VertexBufferData(RenderState& rs, const VertexDeclaration& dec
 
 VertexBufferData::~VertexBufferData()
 {
-	if (_vertexBuffer && glIsBuffer(_vertexBuffer))
+	if (_vertexBuffer)
 		glDeleteBuffers(1, &_vertexBuffer);
 
 	_rs.vertexBufferDeleted(_vertexBuffer);

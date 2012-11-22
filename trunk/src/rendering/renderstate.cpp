@@ -173,15 +173,7 @@ void RenderState::bindVertexArray(GLuint buffer)
 
 void RenderState::bindVertexArray(const VertexArrayObject& vao)
 {
-	if (vao.valid())
-	{
-		bindVertexArray(vao->glID());
-		bindBuffers(vao->vertexBuffer(), vao->indexBuffer());
-	}
-	else
-	{
-		bindVertexArray(0);
-	}
+	bindVertexArray(vao.valid() ? vao->glID() : 0);
 }
 
 void RenderState::resetBufferBindings()
