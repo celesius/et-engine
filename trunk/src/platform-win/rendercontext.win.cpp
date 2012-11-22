@@ -243,7 +243,7 @@ HWND RenderContextPrivate::createWindow(WindowStyle style, const vec2i& pos, con
 	if (windowSize.square() == 0)
 		windowSize = winSize;
 
-	return CreateWindowExA(WS_EX_APPWINDOW, wndClass.lpszClassName, "et2::e2w", wStyle, vPos.x, vPos.y, 
+	return CreateWindowExA(WS_EX_APPWINDOW, wndClass.lpszClassName, application().identifier().applicationName.c_str(), wStyle, vPos.x, vPos.y, 
 		winSize.x, winSize.y, 0, 0, hInstance, 0);
 }
 

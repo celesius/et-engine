@@ -36,16 +36,16 @@ bool RectPlacer::place(const vec2i& size, rect& placedPosition)
 		return true;
 	}
 	
-	for (RectList::iterator i = _placedItems.begin(), e = _placedItems.end(); i != e; ++i)
+	for (const rect& i : _placedItems)
 	{
-		placedPosition.setOrigin(i->origin() + vec2(i->size().x, 0.0f));
+		placedPosition.setOrigin(i.origin() + vec2(i.size().x, 0.0f));
 
 		bool placed = (placedPosition.origin().x + w <= _contextSize.x) && (placedPosition.origin().y + h <= _contextSize.y);
 		if (placed)
 		{
-			for (RectList::iterator ii = _placedItems.begin(); ii != e; ++ii)
+			for (const rect& ii : _placedItems)
 			{
-				if (ii->intersects(placedPosition) && (ii != i))
+				if (ii.intersects(placedPosition) && (ii != i))
 				{
 					placed = false;
 					break;
@@ -59,13 +59,13 @@ bool RectPlacer::place(const vec2i& size, rect& placedPosition)
 			return true;
 		}
 
-		placedPosition.setOrigin(i->origin() + vec2(0.0f, i->size().y));
+		placedPosition.setOrigin(i.origin() + vec2(0.0f, i.size().y));
 		placed = (placedPosition.origin().x + w <= _contextSize.x) && (placedPosition.origin().y + h <= _contextSize.y);
 		if (placed)
 		{
-			for (RectList::iterator ii = _placedItems.begin(); ii != e; ++ii)
+			for (const rect& ii : _placedItems)
 			{
-				if (ii->intersects(placedPosition) && (ii != i))
+				if (ii.intersects(placedPosition) && (ii != i))
 				{
 					placed = false;
 					break;
