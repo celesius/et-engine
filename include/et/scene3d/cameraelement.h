@@ -29,6 +29,7 @@ namespace et
 
 			Camera& camera()
 				{ return *this; }
+
 			const Camera& camera() const
 				{ return *this; }
 

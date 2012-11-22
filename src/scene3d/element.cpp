@@ -25,8 +25,8 @@ void Element::setParent(Element* p)
 void Element::invalidateTransform()
 {
 	ComponentTransformable::invalidateTransform();
-	for (List::iterator i = children().begin(), e = children().end(); i != e; ++i)
-		(*i)->invalidateTransform();
+	for (Element::Pointer& i : children())
+		i->invalidateTransform();
 }
 
 mat4 Element::finalTransform()
@@ -44,9 +44,9 @@ bool Element::isKindOf(ElementType t) const
 
 Element::Pointer Element::childWithName(const std::string& name, ElementType ofType, bool assertFail)
 {
-	for (List::const_iterator i = children().begin(), e = children().end(); i != e; ++i)
+	for (const Element::Pointer i : children())
 	{
-		Element::Pointer element = childWithNameCallback(name, *i, ofType);
+		Element::Pointer element = childWithNameCallback(name, i, ofType);
 		if (element.valid())
 			return element;
 	}
@@ -64,8 +64,8 @@ Element::List Element::childrenOfType(ElementType ofType) const
 {
 	Element::List list;
 
-	for (List::const_iterator i = children().begin(), e = children().end(); i != e; ++i)
-		childrenOfTypeCallback(ofType, list, *i);
+	for (const Element::Pointer i : children())
+		childrenOfTypeCallback(ofType, list, i);
 
 	return list;
 }
@@ -74,8 +74,8 @@ Element::List Element::childrenHavingFlag(size_t flag)
 {
 	Element::List list;
 
-	for (List::const_iterator i = children().begin(), e = children().end(); i != e; ++i)
-		childrenHavingFlagCallback(flag, list, *i);
+	for (const Element::Pointer i : children())
+		childrenHavingFlagCallback(flag, list, i);
 
 	return list;
 }
@@ -85,9 +85,9 @@ Element::Pointer Element::childWithNameCallback(const std::string& name, Element
 	if (root->isKindOf(ofType) && (root->name() == name))
 		return root;
 
-	for (List::const_iterator i = root->children().begin(), e = root->children().end(); i != e; ++i)
+	for (const Element::Pointer i : root->children())
 	{
-		Element::Pointer element = childWithNameCallback(name, *i, ofType);
+		Element::Pointer element = childWithNameCallback(name, i, ofType);
 		if (element.valid() && element->isKindOf(ofType))
 			return element;
 	}
@@ -100,8 +100,8 @@ void Element::childrenOfTypeCallback(ElementType t, Element::List& list, Element
 	if (root->isKindOf(t))
 		list.push_back(root);
 
-	for (List::const_iterator i = root->children().begin(), e = root->children().end(); i != e; ++i)
-		childrenOfTypeCallback(t, list, *i);
+	for (const Element::Pointer i : root->children())
+		childrenOfTypeCallback(t, list, i);
 }
 
 void Element::childrenHavingFlagCallback(size_t flag, Element::List& list, Element::Pointer root)
@@ -109,8 +109,8 @@ void Element::childrenHavingFlagCallback(size_t flag, Element::List& list, Eleme
 	if (root->hasFlag(flag))
 		list.push_back(root);
 
-	for (List::const_iterator i = root->children().begin(), e = root->children().end(); i != e; ++i)
-		childrenHavingFlagCallback(flag, list, *i);
+	for (const Element::Pointer i : root->children())
+		childrenHavingFlagCallback(flag, list, i);
 }
 
 void Element::clear()
@@ -130,8 +130,8 @@ void Element::serializeGeneralParameters(std::ostream& stream, SceneVersion vers
 	if (version >= SceneVersion_1_0_1)
 	{
 		serializeInt(stream, _properites.size());
-		for (StringList::iterator i = _properites.begin(), e = _properites.end(); i != e; ++i)
-			serializeString(stream, *i);
+		for (const std::string& i : _properites)
+			serializeString(stream, i);
 	}
 }
 
@@ -155,10 +155,10 @@ void Element::deserializeGeneralParameters(std::istream& stream, SceneVersion ve
 void Element::serializeChildren(std::ostream& stream, SceneVersion version)
 {
 	serializeInt(stream, children().size());
-	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
+	for (Element::Pointer& i : children())
 	{
-		serializeInt(stream, (*i)->type());
-		(*i)->serialize(stream, version);
+		serializeInt(stream, i->type());
+		i->serialize(stream, version);
 	}
 }
 

@@ -18,7 +18,7 @@ IndexBufferData::IndexBufferData(RenderState& rs, IndexArray::Pointer i, BufferD
 
 IndexBufferData::~IndexBufferData()
 {
-	if ((_indexBuffer != 0) && glIsBuffer(_indexBuffer))
+	if (_indexBuffer != 0)
 		glDeleteBuffers(1, &_indexBuffer);
 
 	_rs.indexBufferDeleted(_indexBuffer);
@@ -83,7 +83,7 @@ void IndexBufferData::build(const IndexArray::Pointer& i)
 	GLenum indexDraw = _drawType == BufferDrawType_Stream ? GL_STREAM_DRAW : GL_STATIC_DRAW;
 	size_t indexDataSize = i->format() * _size;
 
-	if (!_indexBuffer || !glIsBuffer(_indexBuffer))
+	if (_indexBuffer == 0)
 	{
 		glGenBuffers(1, &_indexBuffer);
 		checkOpenGLError("glGenBuffers(1, &_indexBuffer)");
