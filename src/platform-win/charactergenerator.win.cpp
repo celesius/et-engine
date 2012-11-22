@@ -26,6 +26,7 @@ class et::gui::CharacterGeneratorPrivate
 		std::string _boldFace;
 
 		RectPlacer _placer;
+		BinaryDataStorage _textureData;
 
 		HDC _dc;
 		HFONT _font;
@@ -106,7 +107,7 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateT
  */
 
 CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size) : 
-	_size(size), _face(face), _boldFace(boldFace), _placer(vec2i(defaultTextureSize), true)
+	_size(size), _face(face), _boldFace(boldFace), _placer(vec2i(defaultTextureSize), true), _textureData(sqr(defaultTextureSize) * 4)
 {
 	_dc = CreateCompatibleDC(0);
 	_bitmap = CreateBitmap(defaultTextureSize, defaultTextureSize, 1, 32, 0);
@@ -134,24 +135,17 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, Texture texture
 {
 	BITMAPINFO bm = { sizeof(bm.bmiHeader), defaultTextureSize, defaultTextureSize, 1, 32, 0, sqr(defaultTextureSize) * 4 };
 
-	BinaryDataStorage data(bm.bmiHeader.biSizeImage);
-	GetDIBits(_dc, _bitmap, 0, defaultTextureSize, data.data(), &bm, DIB_RGB_COLORS);
+	GetDIBits(_dc, _bitmap, 0, defaultTextureSize, _textureData.data(), &bm, DIB_RGB_COLORS);
 
-	unsigned int* ptr = reinterpret_cast<unsigned int*>(data.data());
-	unsigned int* ptrEnd = reinterpret_cast<unsigned int*>(data.data() + data.dataSize());
+	unsigned int* ptr = reinterpret_cast<unsigned int*>(_textureData.data());
+	unsigned int* ptrEnd = reinterpret_cast<unsigned int*>(_textureData.data() + _textureData.dataSize());
 	while (ptr != ptrEnd)
 	{
 		unsigned int& value = *ptr++;
 		value |= 0x00ffffff | ((((value & 0x000000ff) + ((value & 0x0000ff00) >> 8) + ((value & 0x00ff0000) >> 16) ) / 3) << 24);
 	}
 
-	texture->updateDataDirectly(rc, vec2i(defaultTextureSize), data.binary(), data.size());
-/*  *
-	static int stage = 1;
-	char path[256] = { };
-	sprintf(path, "d:\\fonts\\%s (%s) - %u - stage %02d.png", _face.c_str(), _boldFace.c_str(), _size, stage++);
-	ImageWriter::writeImageToFile(path, data, vec2i(defaultTextureSize), 4, 8, ImageFormat_PNG);
-// */
+	texture->updateDataDirectly(rc, vec2i(defaultTextureSize), _textureData.binary(), _textureData.size());
 }
 
 void CharacterGeneratorPrivate::renderCharacter(int value, const vec2i& position)

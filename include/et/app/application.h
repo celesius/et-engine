@@ -52,6 +52,9 @@ namespace et
 		void setCPULoadLimit(bool enable)
 			{ _cpuLimit = enable; }
 		
+		const ApplicationIdentifier& identifier() const 
+			{ return _identifier; }
+
 		size_t memoryUsage() const;
 
 		void setTitle(const std::string& s);

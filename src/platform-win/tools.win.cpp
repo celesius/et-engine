@@ -41,12 +41,11 @@ std::string et::applicationPath()
 
 std::string et::normalizeFilePath(std::string s)
 {
-	for (std::string::iterator i = s.begin(), e = s.end(); i != e; ++i)
+	for (char& i : s)
 	{
-		if ((*i) == '/')
-			(*i) = pathDelimiter;
+		if (i == '/')
+			i = pathDelimiter;
 	}
-
 	return s;
 }
 
@@ -106,8 +105,8 @@ void et::findFiles(const std::string& folder, const std::string& mask, bool recu
 
 	if (recursive)
 	{
-		for (StringList::iterator i = folderList.begin(), e = folderList.end(); i != e; ++i)
-			findFiles(*i, mask, recursive, list);
+		for (const std::string& i : folderList)
+			findFiles(i, mask, recursive, list);
 	}
 }
 
@@ -161,8 +160,8 @@ void et::findSubfolders(const std::string& folder, bool recursive, StringList& l
 
 	if (recursive)
 	{
-		for (StringList::iterator i = folderList.begin(), e = folderList.end(); i != e; ++i)
-			findSubfolders(*i, true, list);
+		for (const std::string& i : folderList)
+			findSubfolders(i, true, list);
 	}
 
 	list.insert(list.end(), folderList.begin(), folderList.end());
@@ -171,18 +170,18 @@ void et::findSubfolders(const std::string& folder, bool recursive, StringList& l
 std::string et::selectFile(const StringList& mask)
 {
 	size_t maskLen = 1;
-	for (StringList::const_iterator i = mask.begin(), e = mask.end(); i != e; ++i)
-		maskLen += i->size() + 1;
+	for (const std::string& i : mask)
+		maskLen += i.size() + 1;
 
 	char result[MAX_PATH] = { };
 	char* filter = new char[maskLen];
 	memset(filter, 0, maskLen);
 
 	size_t offset = 0;
-	for (StringList::const_iterator i = mask.begin(), e = mask.end(); i != e; ++i)
+	for (const std::string i : mask)
 	{
-		memcpy(filter + offset, i->data(), i->size());
-		offset += i->size() + 1;
+		memcpy(filter + offset, i.data(), i.size());
+		offset += i.size() + 1;
 	}
 
 	OPENFILENAME ofn = { };

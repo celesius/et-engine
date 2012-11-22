@@ -10,7 +10,7 @@
 namespace et
 {
 	class RenderContext;
-	class RenderContextParameters;
+	struct RenderContextParameters;
 	
 	struct ApplicationIdentifier
 	{
