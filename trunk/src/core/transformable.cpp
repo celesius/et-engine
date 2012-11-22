@@ -1,9 +1,9 @@
 /*
- * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
- *
- */
+* This file is part of `et engine`
+* Copyright 2009-2012 by Sergey Reznik
+* Please, do not modify contents without approval.
+*
+*/
 
 #include <assert.h>
 #include <et/core/transformable.h>
@@ -139,4 +139,25 @@ void ComponentTransformable::setTransformDirectly(const mat4& m)
 	_cachedTransform = m;
 	_flags |= Flag_ShouldDecompose;
 	_flags &= ~Flag_Valid;
+}
+
+const vec3& ComponentTransformable::translation() const
+{ 
+	return shouldDecompose() ? _cachedTransform[3].xyz() : _translation;
+}
+
+const vec3& ComponentTransformable::scale()
+{ 
+	if (shouldDecompose())
+		setTransform(_cachedTransform);
+
+	return _scale; 
+}
+
+const quaternion& ComponentTransformable::orientation()
+{
+	if (shouldDecompose())
+		setTransform(_cachedTransform);
+
+	return _orientation; 
 }

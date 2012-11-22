@@ -64,14 +64,9 @@ namespace et
 		bool transformValid() const
 			{ return (_flags & Flag_Valid) == Flag_Valid; }
 		
-		const vec3& translation() const
-			{ return _translation; }
-		
-		const vec3& scale() const
-			{ return _scale; }
-		
-		const quaternion& orientation() const
-			{ return _orientation; }
+		const vec3& translation() const;
+		const vec3& scale();
+		const quaternion& orientation();
 
 	private:
 		enum Flags

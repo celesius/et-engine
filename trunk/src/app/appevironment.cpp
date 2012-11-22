@@ -19,51 +19,33 @@ AppEnvironment::AppEnvironment() : _appPath(et::applicationPath()), _dataFolder(
     addSearchPath(_appPath + "../");
 	addSearchPath(_dataFolder + "../");
 
-	addSearchPath(_appPath + "shaders/" );
-	addSearchPath(_appPath + "models/" );
-	addSearchPath(_appPath + "textures/" );
-	addSearchPath(_appPath + "models/" );
-	addSearchPath(_appPath + "ui/" );
-
 	addSearchPath(_appPath + "data/");
-	addSearchPath(_appPath + "data/shaders/" );
-	addSearchPath(_appPath + "data/textures/" );
-	addSearchPath(_appPath + "data/models/" );
-	addSearchPath(_appPath + "data/ui/" );
-	
 	addSearchPath(_appPath + "../data/");
-	addSearchPath(_appPath + "../data/shaders/" );
-	addSearchPath(_appPath + "../data/textures/" );
-	addSearchPath(_appPath + "../data/models/" );
-	addSearchPath(_appPath + "../data/ui/" );
-
 	addSearchPath(_appPath + "../../data/");
-	addSearchPath(_appPath + "../../data/shaders/" );
-	addSearchPath(_appPath + "../../data/textures/" );
-	addSearchPath(_appPath + "../../data/models/" );
-	addSearchPath(_appPath + "../../data/ui/" );
 
-#if (ET_DEBUG)
-	addSearchPath(_appPath + "../engine/data/" );
-	addSearchPath(_appPath + "../engine/data/shaders/" );
-	addSearchPath(_appPath + "../engine/data/textures/" );
-	addSearchPath(_appPath + "../engine/data/models/" );
-	addSearchPath(_appPath + "../engine/data/ui/" );
-	addSearchPath(_appPath + "../../engine/data/" );
-	addSearchPath(_appPath + "../../engine/data/shaders/" );
-	addSearchPath(_appPath + "../../engine/data/textures/" );
-	addSearchPath(_appPath + "../../engine/data/models/" );
-	addSearchPath(_appPath + "../../engine/data/ui/" );
-#endif
+	addSearchPath(_appPath + "textures/" );
+	addSearchPath(_appPath + "data/textures/" );
+	addSearchPath(_appPath + "../data/textures/" );
+	addSearchPath(_appPath + "../../data/textures/" );
+
+	addSearchPath(_appPath + "shaders/" );
+	addSearchPath(_appPath + "data/shaders/" );
+	addSearchPath(_appPath + "../data/shaders/" );
+	addSearchPath(_appPath + "../../data/shaders/" );
+
+	addSearchPath(_appPath + "ui/" );
+	addSearchPath(_appPath + "data/ui/" );
+	addSearchPath(_appPath + "../data/ui/" );
+	addSearchPath(_appPath + "../../data/ui/" );
 }
 
 std::string AppEnvironment::findFile(const std::string& name) const
 { 
 	if (fileExists(name)) return name;
 
-	for (StringList::const_iterator i = _searchPath.begin(), e = _searchPath.end(); i != e; ++i)
+	for (const std::string& i : _searchPath)
 	{
-		std::string currentName = normalizeFilePath((*i) + name);
+		std::string currentName = normalizeFilePath(i + name);
 		if (fileExists(currentName))
 			return currentName;
 	}
@@ -75,9 +57,9 @@ std::string AppEnvironment::findFolder(const std::string& name) const
 {
 	if (folderExists(name)) return name;
 	
-	for (StringList::const_iterator i = _searchPath.begin(), e = _searchPath.end(); i != e; ++i)
+	for (const std::string& i : _searchPath)
 	{
-		std::string currentName = normalizeFilePath((*i) + name);
+		std::string currentName = normalizeFilePath(i + name);
 		if (folderExists(currentName))
 			return currentName;
 	}
@@ -87,9 +69,9 @@ std::string AppEnvironment::findFolder(const std::string& name) const
 
 bool AppEnvironment::expandFileName(std::string& name) const
 {
-	for (StringList::const_iterator i = _searchPath.begin(), e = _searchPath.end(); i != e; ++i)
+	for (const std::string& i : _searchPath)
 	{
-		const std::string currentName = (*i) + name;
+		const std::string currentName = i + name;
 		if (fileExists(currentName))
 		{
 			name = currentName;
