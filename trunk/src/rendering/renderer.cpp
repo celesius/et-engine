@@ -23,7 +23,7 @@ Renderer::Renderer(RenderContext* rc) : _rc(rc)
 {
 	checkOpenGLError("Renderer::Renderer");
 
-	IndexArray::Pointer ib(new IndexArray(IndexArrayFormat_16bit, 4, IndexArrayContentType_TriangleStrips));
+	IndexArray::Pointer ib(new IndexArray(IndexArrayFormat_8bit, 4, IndexArrayContentType_TriangleStrips));
 	ib->linearize();
 	
 	VertexArray::Pointer vb(new VertexArray(VertexDeclaration(false, Usage_Position, Type_Vec2), 4));
@@ -33,22 +33,20 @@ Renderer::Renderer(RenderContext* rc) : _rc(rc)
 	pos[2] = vec2(-1.0,  1.0);
 	pos[3] = vec2( 1.0,  1.0);
 
-	_fullscreenQuadVao = rc->vertexBufferFactory().createVertexArrayObject("fsquad-vao");
-	_fullscreenQuadVao->setBuffers(
-		rc->vertexBufferFactory().createVertexBuffer("fsquad-vert", vb, BufferDrawType_Static),
-		rc->vertexBufferFactory().createIndexBuffer("fsquad-ind", ib, BufferDrawType_Static));
+	_fullscreenQuadVao = rc->vertexBufferFactory().createVertexArrayObject("__internal_fullscreen_vao", 
+		vb, BufferDrawType_Static, ib, BufferDrawType_Static);
 
-	_fullscreenProgram = rc->programFactory().genProgram(fullscreen_vertex_shader, std::string(), copy_fragment_shader,
-		ProgramDefinesList(), ".", "__fullscreeen__program__");
+	_fullscreenProgram = rc->programFactory().genProgram(fullscreen_vertex_shader, std::string(), 
+		copy_fragment_shader, ProgramDefinesList(), ".", "__fullscreeen__program__");
 	_fullscreenProgram->setUniform("color_texture", defaultTextureUnit);
 
-	_fullscreenScaledProgram = rc->programFactory().genProgram(fullscreen_scaled_vertex_shader, std::string(), copy_fragment_shader,
-		ProgramDefinesList(), ".", "__fullscreeen_scaled_program__");
+	_fullscreenScaledProgram = rc->programFactory().genProgram(fullscreen_scaled_vertex_shader, std::string(),
+		copy_fragment_shader, ProgramDefinesList(), ".", "__fullscreeen_scaled_program__");
 	_fullscreenScaledProgram->setUniform("color_texture", defaultTextureUnit);
 	_fullScreenScaledProgram_PSUniform = _fullscreenScaledProgram->getUniformLocation("vScale");
 
-	_scaledProgram = rc->programFactory().genProgram(scaled_copy_vertex_shader, std::string(), copy_fragment_shader,
-		ProgramDefinesList(), ".", "__scaled_program__");
+	_scaledProgram = rc->programFactory().genProgram(scaled_copy_vertex_shader, std::string(), 
+		copy_fragment_shader, ProgramDefinesList(), ".", "__scaled_program__");
 	_scaledProgram->setUniform("color_texture", defaultTextureUnit);
 	_scaledProgram_PSUniform = _scaledProgram->getUniformLocation("PositionScale");
 }

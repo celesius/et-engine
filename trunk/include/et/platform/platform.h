@@ -10,6 +10,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <assert.h>
+#include <string.h>
+#include <stddef.h>
 
 #if defined(__MACH__)
 	#include <TargetConditionals.h>
