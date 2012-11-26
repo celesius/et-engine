@@ -11,7 +11,7 @@ using namespace et;
 
 Input::Input()
 {
-	std::memset(_keys, 0, sizeof(_keys));
+	_keys.fill(0);
 }
 
 void Input::pushKeyboardInputAction(unsigned char key, InputAction action)

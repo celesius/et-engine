@@ -46,7 +46,7 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 
 	if (_animatingText)
 	{
-		float fadeIn = sqrt(_textFade);
+		float fadeIn = sqrtf(_textFade);
 		float fadeOut = 1.0f - sqr(_textFade);
 
 		if (hasShadow)

@@ -16,7 +16,7 @@ namespace et
 #elif (ET_PLATFORM_WIN)
 	typedef long ReferenceCounterType;
 #else
-	#error ReferenceCounterType isn't defined
+	#error ReferenceCounterType is not defined
 #endif
 	
 	class ReferenceCounter

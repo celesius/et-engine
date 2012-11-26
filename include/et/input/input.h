@@ -9,12 +9,11 @@
 
 #include <et/core/tools.h>
 #include <et/core/singleton.h>
+#include <et/core/containers.h>
 #include <et/app/events.h>
 
 namespace et
 {
-
-#define MAX_KEYS    256
 
 	enum InputAction
 	{
@@ -28,16 +27,15 @@ namespace et
 		InputAction_PointerScrolled
 	};
 
-	enum PointerType
+	enum PointerTypeMask
 	{
-		PointerType_None,
-
-		PointerType_General,
-		PointerType_RightButton,
-		PointerType_MiddleButton,
-
-		PointerType_max
+		PointerType_None = 0x00,
+		PointerType_General = 0x01,
+		PointerType_RightButton = 0x02,
+		PointerType_MiddleButton = 0x04,
 	};
+
+	typedef size_t PointerType;
 
 	struct PointerInputInfo
 	{
@@ -118,7 +116,7 @@ namespace et
 	private:
 		typedef std::vector<PointerInputInfo> PointerInputInfoList;
 
-		bool _keys[MAX_KEYS];
+		StaticDataStorage<bool, 256> _keys;
 		PointerInputInfoList _pointers;
 	};
 

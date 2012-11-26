@@ -31,9 +31,8 @@ namespace et
 		ET_DECLARE_EVENT2(drag, vec2, PointerType)
 		ET_DECLARE_EVENT2(moved, vec2, PointerType)
 		ET_DECLARE_EVENT2(released, vec2, PointerType)
-
-		ET_DECLARE_EVENT1(click, vec2)
-		ET_DECLARE_EVENT1(doubleClick, vec2)
+		ET_DECLARE_EVENT2(click, vec2, PointerType)
+		ET_DECLARE_EVENT2(doubleClick, vec2, PointerType)
 
 		ET_DECLARE_EVENT0(hold)
 		ET_DECLARE_EVENT0(cancelled)
@@ -78,6 +77,7 @@ namespace et
         typedef std::map<size_t, PointersInputDelta> PointersInputDeltaMap;
 
 		PointersInputDeltaMap _pointers;
+		PointerType _singlePointerType;
 		vec2 _singlePointerPosition;
 		float _actualTime;
 		float _clickStartTime;

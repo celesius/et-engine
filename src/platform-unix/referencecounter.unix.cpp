@@ -6,7 +6,7 @@
  */
 
 #include <libkern/OSAtomic.h>
-#include <et/threading/Referencecounter.h>
+#include <et/threading/referencecounter.h>
 
 using namespace et;
 

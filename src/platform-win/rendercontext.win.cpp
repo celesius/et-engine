@@ -51,6 +51,8 @@ public:
 	void setActive(bool active);
 	void resized(const vec2i& sz);
 
+	bool shouldPostMovementMessage(int x, int y);
+
 private:
 	HWND createWindow(WindowStyle, const vec2i&, const vec2i&);
 	RenderContextData createDummyContext(HWND hWnd);
@@ -64,6 +66,8 @@ private:
 
 private:
 	RenderContext* _renderContext;
+	int _mouseX;
+	int _mouseY;
 };
 
 RenderContext::RenderContext(const RenderContextParameters& params, Application* app) : _params(params), _app(app),
@@ -179,7 +183,7 @@ void RenderContext::updateScreenScale(const vec2i& screenSize)
  */
 
 RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params) : failed(false),
-	hInstance(0), _renderContext(rc)
+	hInstance(0), _renderContext(rc), _mouseX(-1), _mouseY(-1)
 {
 	failed = !initWindow(params);
 
@@ -543,6 +547,15 @@ void RenderContextPrivate::resized(const vec2i& size)
 	_renderContext->resized(size);
 }
 
+bool RenderContextPrivate::shouldPostMovementMessage(int x, int y)
+{
+	if ((x == _mouseX) && (y == _mouseY)) return false;
+
+	_mouseX = x;
+	_mouseY = y;
+	return true;
+}
+
 /*
 * Render Context Data
 */ 
@@ -739,20 +752,19 @@ LRESULT CALLBACK mainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		{
 			internal_PointerInputInfo p(lParam);
+			if (handler->shouldPostMovementMessage(p.x, p.y))
+			{
+				float t = mainRunLoop()->time();
+				vec2 pt(static_cast<float>(p.x), static_cast<float>(p.y));
+				vec2 normPt(2.0f * pt.x / viewportSize.x - 1.0f, 1.0f - 2.0f * pt.y / viewportSize.y);
 
-			float t = mainRunLoop()->time();
-			vec2 pt(static_cast<float>(p.x), static_cast<float>(p.y));
-			vec2 normPt(2.0f * pt.x / viewportSize.x - 1.0f, 1.0f - 2.0f * pt.y / viewportSize.y);
+				PointerType pointer = PointerType_None;
+				pointer += (wParam & MK_LBUTTON) == MK_LBUTTON ? PointerType_General : 0;
+				pointer += (wParam & MK_RBUTTON) == MK_RBUTTON ? PointerType_RightButton : 0;
+				pointer += (wParam & MK_MBUTTON) == MK_MBUTTON ? PointerType_MiddleButton : 0;
 
-			if (wParam & MK_LBUTTON)
-				handler->pointerMoved(PointerInputInfo(PointerType_General, pt, normPt, 0, PointerType_General, t));
-			else if (wParam & MK_RBUTTON)
-				handler->pointerMoved(PointerInputInfo(PointerType_RightButton, pt, normPt, 0, PointerType_RightButton, t));
-			else if (wParam & MK_MBUTTON)
-				handler->pointerMoved(PointerInputInfo(PointerType_MiddleButton, pt, normPt, 0, PointerType_MiddleButton, t));
-			else
-				handler->pointerMoved(PointerInputInfo(PointerType_None, pt, normPt, 0, PointerType_None, t));
-
+				handler->pointerMoved(PointerInputInfo(pointer, pt, normPt, 0, pointer, t));
+			}
 			return 0;
 		}
 

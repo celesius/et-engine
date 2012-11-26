@@ -28,7 +28,15 @@ VertexArrayObject VertexBufferFactory::createVertexArrayObject(const std::string
 	return VertexArrayObject(new VertexArrayObjectData(_rs, name));
 }
 
-VertexArrayObject VertexBufferFactory::createVertexArrayObject(const std::string& name, VertexBuffer vb, IndexBuffer ib)
+VertexArrayObject VertexBufferFactory::createVertexArrayObject(const std::string& name, 
+	VertexArray::Pointer vertexData, BufferDrawType vertexDrawType, IndexArray::Pointer indexData, BufferDrawType indexDrawType)
 {
-	return VertexArrayObject(new VertexArrayObjectData(_rs, vb, ib, name));
+	VertexArrayObject vao(new VertexArrayObjectData(_rs, name));
+
+	VertexBuffer vb = createVertexBuffer(name + "-vb", vertexData, vertexDrawType);
+	IndexBuffer ib = createIndexBuffer(name + "-ib", indexData, indexDrawType);
+
+	vao->setBuffers(vb, ib);
+
+	return vao;
 }
