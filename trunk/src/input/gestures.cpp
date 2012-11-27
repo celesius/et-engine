@@ -67,14 +67,12 @@ void GesturesRecognizer::onPointerPressed(et::PointerInputInfo pi)
 	{
 		cancelWaitingForClicks();
 	}
-
-	std::cout << _pointers.size() << " pointers" << std::endl;
 }
 
 void GesturesRecognizer::onPointerMoved(et::PointerInputInfo pi)
 {
 	pointerMoved.invoke(pi);
-	if (_pointers.count(pi.type) == 0) return;
+	if (_pointers.count(pi.id) == 0) return;
 
 	_pointers[pi.id].previous = _pointers[pi.id].current;
 	_pointers[pi.id].current = pi;
@@ -102,8 +100,6 @@ void GesturesRecognizer::onPointerReleased(et::PointerInputInfo pi)
 	_pointers.erase(pi.id);
 	released.invoke(pi.normalizedPos, pi.type);
 	stopWaitingForClicks();
-
-	std::cout << _pointers.size() << " pointers" << std::endl;
 }
 
 void GesturesRecognizer::onPointerCancelled(et::PointerInputInfo pi)
