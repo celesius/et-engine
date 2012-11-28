@@ -38,10 +38,8 @@ Application::Application() : _renderContext(0), _exitCode(0), _renderingContextH
 
 Application::~Application()
 {
-/*
 	delete _delegate;
 	delete _renderContext;
-*/ 
 }
 
 IApplicationDelegate* Application::delegate()
@@ -127,7 +125,9 @@ void Application::setFPSLimit(size_t)
 
 void Application::setActive(bool active)
 {
+	if (active == _active) return;
 	
+	_active = active;
 }
 
 void Application::contextResized(const vec2i& size)
@@ -136,7 +136,7 @@ void Application::contextResized(const vec2i& size)
 }
 
 /*
- * etApplicationDelegate Implementation
+ * etApplicationDelegate implementation
  */
 
 @implementation etApplicationDelegate
@@ -152,9 +152,37 @@ void Application::contextResized(const vec2i& size)
 												  userInfo:nil repeats:YES];
 }
 
+- (void)stop
+{
+	[_updateTimer invalidate], _updateTimer = nil;
+}
+
 - (void)onTick:(id)sender
 {
 	_notifier.notifyIdle();
+}
+
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
+{
+	return YES;
+}
+
+- (void)applicationDidHide:(NSNotification *)notification
+{
+	[self stop];
+	_notifier.notifyDeactivated();
+}
+
+- (void)applicationDidUnhide:(NSNotification *)notification
+{
+	[self run];
+	_notifier.notifyActivated();
+}
+
+- (void)applicationWillTerminate:(NSNotification *)notification
+{
+	[self stop];
+	_notifier.notifyDeactivated();
 }
 
 @end
