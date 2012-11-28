@@ -49,16 +49,19 @@ namespace et
 		size_t launchParamtersCount() const
 			{ return _parameters.size(); }
 
-		void setCPULoadLimit(bool enable)
-			{ _cpuLimit = enable; }
-		
 		const ApplicationIdentifier& identifier() const 
 			{ return _identifier; }
+
+		bool running() const 
+			{ return _running; }
+
+		bool active() const 
+			{ return _active; }
 
 		size_t memoryUsage() const;
 
 		void setTitle(const std::string& s);
-		void setFPSLimit(size_t value);
+		void setFrameRateLimit(size_t value);
 
 		void alert(const std::string& title, const std::string& message, AlertType type = AlertType_Information);
 		
@@ -71,6 +74,9 @@ namespace et
 		void performRendering();
 		void setActive(bool active);
 		void contextResized(const vec2i& size);
+		
+		void platform_init();
+		int platform_run();
 
 	private:
 		friend class ApplicationNotifier;
@@ -99,13 +105,10 @@ namespace et
 		int _exitCode;
 		size_t _renderingContextHandle;
 		float _lastQueuedTime;
-		float _fpsLimit;
+		size_t _fpsLimit;
 
 		volatile bool _running;
 		volatile bool _active;
-
-		bool _fpsLimitEnabled;
-		bool _cpuLimit;
 	};
 
 	inline Application& application()

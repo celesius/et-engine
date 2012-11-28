@@ -43,6 +43,7 @@ namespace et
 		~RenderContext();
 
 		void init();
+		bool valid();
 
 		const vec2& size() const
 			{ return _renderState.mainViewportSizeFloat(); }

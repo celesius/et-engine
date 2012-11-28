@@ -16,11 +16,13 @@ namespace et
 	class Thread
 	{
 	public:
+		static void sleep(size_t msec);
+
+	public:
 		Thread(bool start = true);
 		virtual ~Thread();
 
 		void run();
-		void sleep(size_t msec);
 		void terminate(int result = 0);
 
 		bool running() const;
