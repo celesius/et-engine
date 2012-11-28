@@ -79,18 +79,17 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 	{
 		delete _private;
 		_private = 0;
-		application().quit(1);
-		return;
 	}
-
-	ogl_caps().checkCaps();
-
-	_screenScaleFactor = (_private->windowSize.x - 1) / (3 * _params.baseContextSize.x / 2) + 1;
-	_renderState.setRenderContext(this);
-	_programFactory = new ProgramFactory(this);
-	_textureFactory = new TextureFactory(this);
-	_framebufferFactory = new FramebufferFactory(this, _textureFactory);
-	_vertexBufferFactory = new VertexBufferFactory(_renderState);
+	else 
+	{
+		ogl_caps().checkCaps();
+		_screenScaleFactor = (_private->windowSize.x - 1) / (3 * _params.baseContextSize.x / 2) + 1;
+		_renderState.setRenderContext(this);
+		_programFactory = new ProgramFactory(this);
+		_textureFactory = new TextureFactory(this);
+		_framebufferFactory = new FramebufferFactory(this, _textureFactory);
+		_vertexBufferFactory = new VertexBufferFactory(_renderState);
+	}
 }
 
 RenderContext::~RenderContext()
@@ -113,6 +112,11 @@ void RenderContext::init()
 
 	_fpsTimer.expired.connect(this, &RenderContext::onFPSTimerExpired);
 	_fpsTimer.start(mainTimerPool(), 1.0f, -1);
+}
+
+bool RenderContext::valid()
+{
+	return _private != nullptr;
 }
 
 size_t RenderContext::renderingContextHandle()
@@ -144,11 +148,7 @@ void RenderContext::onFPSTimerExpired(NotifyTimer*)
 		_info.averageDIPPerSecond /= _info.averageFramePerSecond;
 		_info.averagePolygonsPerSecond /= _info.averageFramePerSecond;
 	}
-/*
-	std::cout << _info.averageFramePerSecond << " fps, " 
-				<< _info.averageDIPPerSecond << " dips, " 
-				<< _info.averagePolygonsPerSecond << " polys." << std::endl;
-*/
+
 	renderingInfoUpdated.invoke(_info);
 
 	_info.averageFramePerSecond = 0;
@@ -157,14 +157,17 @@ void RenderContext::onFPSTimerExpired(NotifyTimer*)
 
 void RenderContext::setActive(bool active)
 {
-	_app->setActive(active);
+	if (_app->running())
+		_app->setActive(active);
 }
 
 void RenderContext::resized(const vec2i& sz)
 {
 	updateScreenScale(sz);
 	_renderState.setMainViewportSize(sz);
-	_app->contextResized(sz);
+	
+	if (_app->running())
+		_app->contextResized(sz);
 }
 
 void RenderContext::updateScreenScale(const vec2i& screenSize)

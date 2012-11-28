@@ -11,7 +11,7 @@
 using namespace et;
 
 GesturesRecognizer::GesturesRecognizer(bool automaticMode) : InputHandler(automaticMode),
-	_scrollZoomScale(0.1f), _clickThreshold(0.25f), _doubleClickThreshold(0.25f), _holdThreshold(1.0f), _singlePointerType(0),
+	_scrollZoomScale(0.1f), _clickThreshold(0.2f), _doubleClickThreshold(0.25f), _holdThreshold(1.0f), _singlePointerType(0),
 	_actualTime(0.0f), _clickStartTime(0.0f), _expectClick(false), _expectDoubleClick(false), _clickTimeoutActive(false)
 {
 }

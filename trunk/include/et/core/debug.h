@@ -33,6 +33,8 @@ namespace et
 #if (ET_PLATFORM_WIN)
 
 	#define ET_CALL_FUNCTION	__FUNCTION__
+	#define _CRTDBG_MAP_ALLOC
+	#include <crtdbg.h>
 
 #elif (ET_PLATFORM_APPLE || ET_PLATFORM_LINUX)
 
