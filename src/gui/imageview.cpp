@@ -59,10 +59,11 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 	else if (_contentMode == ContentMode_Fit)
 	{
 		vec2 frameSize = size();
+		vec2 descSize = absv(_descriptor.size);
 		
-		if ((_descriptor.size.x > frameSize.x) || (_descriptor.size.y > frameSize.y))
+		if ((descSize.x > frameSize.x) || (descSize.y > frameSize.y))
 		{
-			float imageAspect = _descriptor.size.aspect();
+			float imageAspect = descSize.aspect();
 			float frameAspect = frameSize.aspect();
 			if (frameAspect > 1.0f)
 			{
@@ -92,7 +93,7 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 		}
 		else
 		{
-			frameSize = _descriptor.size;
+			frameSize = descSize;
 		}
 		
 		vec2 origin = 0.5f * (size() - frameSize);

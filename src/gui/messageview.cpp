@@ -56,6 +56,8 @@ void MessageView::layout(const vec2& sz)
 	
 	float maxMessageViewSize = 0.9f * sz.x;
 	float maxTextWidth = 0.9f * maxMessageViewSize;
+
+	vec2 imageSize = absv(_imgImage->imageDescriptor().size);
 	
 	vec2 textSize = _text->textSize();
 	if (textSize.x > maxTextWidth)
@@ -67,7 +69,7 @@ void MessageView::layout(const vec2& sz)
 	
 	bool hasTitle = _title->textSize().dotSelf() > 0.0f;
 	bool hasText = _text->textSize().dotSelf() > 0.0f;
-	bool hasImage = _imgImage->texture().valid() && (_imgImage->imageDescriptor().size.dotSelf() > 0.0f);
+	bool hasImage = _imgImage->texture().valid() && (imageSize.dotSelf() > 0.0f);
 	bool hasButtons = hasFirstButton() || hasSecondButton();
 	
 	assert(!(hasText && hasImage) && "Unsupported MessageView parameters specified");
@@ -81,8 +83,8 @@ void MessageView::layout(const vec2& sz)
 	
 	vec2 contentSize(0.0f, _title->textSize().y + gapsOffset * edgeOffset.y);
 	
-	contentSize.x += etMax(_title->textSize().x, _imgImage->imageDescriptor().size.x + _text->textSize().x);
-	contentSize.y += etMax(_imgImage->imageDescriptor().size.y, _text->textSize().y);
+	contentSize.x += etMax(_title->textSize().x, imageSize.x + _text->textSize().x);
+	contentSize.y += etMax(imageSize.y, _text->textSize().y);
 	
 	if (hasFirstButton() || hasSecondButton())
 	{
