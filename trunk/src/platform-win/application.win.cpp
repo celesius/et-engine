@@ -18,6 +18,10 @@ void Application::platform_init()
 #endif
 }
 
+void Application::platform_finalize()
+{
+}
+
 int Application::platform_run()
 {
 	RenderContextParameters params;
