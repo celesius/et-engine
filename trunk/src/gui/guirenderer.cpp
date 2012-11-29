@@ -344,22 +344,25 @@ void GuiRenderer::createImageVertices(GuiVertexList& vertices, const Texture& te
 
 	vec2 mask(layer == GuiRenderLayer_Layer0 ? 0.0f : 1.0f, 0.0f);
 
+	float width = fabsf(p.width);
+	float height = fabsf(p.height);
+	
 	vec2 topLeft = (p.origin());
-	vec2 topRight = (topLeft + vec2(p.width, 0.0f));
-	vec2 bottomLeft = (topLeft + vec2(0.0f, p.height));
-	vec2 bottomRight = (bottomLeft + vec2(p.width, 0.0f));
+	vec2 topRight = (topLeft + vec2(width, 0.0f));
+	vec2 bottomLeft = (topLeft + vec2(0.0f, height));
+	vec2 bottomRight = (bottomLeft + vec2(width, 0.0f));
 	vec2 centerTopLeft = (p.origin() + desc.contentOffset.origin());
-	vec2 centerTopRight = (p.origin() + vec2(p.width - desc.contentOffset.right, desc.contentOffset.top));
-	vec2 centerBottomLeft = (p.origin() + vec2(desc.contentOffset.left, p.height - desc.contentOffset.bottom));
-	vec2 centerBottomRight = (p.origin() + vec2(p.width - desc.contentOffset.right, p.height - desc.contentOffset.bottom));
+	vec2 centerTopRight = (p.origin() + vec2(width - desc.contentOffset.right, desc.contentOffset.top));
+	vec2 centerBottomLeft = (p.origin() + vec2(desc.contentOffset.left, height - desc.contentOffset.bottom));
+	vec2 centerBottomRight = (p.origin() + vec2(width - desc.contentOffset.right, height - desc.contentOffset.bottom));
 	vec2 topCenterTopLeft = (topLeft + vec2(desc.contentOffset.left, 0.0f));
-	vec2 topCenterTopRight = (topLeft + vec2(p.width - desc.contentOffset.right, 0));
+	vec2 topCenterTopRight = (topLeft + vec2(width - desc.contentOffset.right, 0));
 	vec2 leftCenterTopLeft = (topLeft + vec2(0, desc.contentOffset.top));
-	vec2 rightCenterTopRight = (topLeft + vec2(p.width, desc.contentOffset.top));
-	vec2 leftCenterBottomLeft = (topLeft + vec2(0, p.height - desc.contentOffset.bottom));
-	vec2 bottomCenterBottomLeft = (topLeft + vec2(desc.contentOffset.left, p.height));
-	vec2 bottomCenterBottomRigth = (topLeft + vec2(p.width - desc.contentOffset.right, p.height));
-	vec2 rightCenterBottomRigth = (topLeft + vec2(p.width, p.height - desc.contentOffset.bottom));
+	vec2 rightCenterTopRight = (topLeft + vec2(width, desc.contentOffset.top));
+	vec2 leftCenterBottomLeft = (topLeft + vec2(0, height - desc.contentOffset.bottom));
+	vec2 bottomCenterBottomLeft = (topLeft + vec2(desc.contentOffset.left, height));
+	vec2 bottomCenterBottomRigth = (topLeft + vec2(width - desc.contentOffset.right, height));
+	vec2 rightCenterBottomRigth = (topLeft + vec2(width, height - desc.contentOffset.bottom));
 
 	vec2 topLeftUV = tex->getTexCoord( desc.origin );
 	vec2 topRightUV = tex->getTexCoord( desc.origin + vec2(desc.size.x, 0.0f) );
