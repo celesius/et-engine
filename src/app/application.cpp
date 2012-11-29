@@ -72,7 +72,7 @@ void Application::idle()
 
 void Application::setFrameRateLimit(size_t value)
 {
-	_fpsLimit = (value == 0) ? 0 : (1000 / value);
+	_fpsLimit = (value == 0) ? 0 : (500 / value);
 }
 
 void Application::setActive(bool active)
