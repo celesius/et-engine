@@ -79,7 +79,7 @@ namespace et
 		void platform_finalize();
 		
 		int platform_run();
-
+		
 	private:
 		friend class ApplicationNotifier;
 		
