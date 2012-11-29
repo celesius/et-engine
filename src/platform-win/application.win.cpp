@@ -11,8 +11,6 @@
 
 using namespace et;
 
-IApplicationDelegate* et::Application::_delegate = 0;
-
 void Application::platform_init()
 {
 #if (ET_DEBUG)

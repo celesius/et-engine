@@ -76,6 +76,8 @@ namespace et
 		void contextResized(const vec2i& size);
 		
 		void platform_init();
+		void platform_finalize();
+		
 		int platform_run();
 
 	private:
