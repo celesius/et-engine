@@ -38,7 +38,10 @@ int Application::platform_run()
 #else
     @autoreleasepool
 	{
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([etApplicationDelegate class]));
+		std::string appName = _parameters.front();
+		StringDataStorage appNameData(appName.size());
+		memcpy(appNameData.data(), appName.c_str(), appName.size());
+        return UIApplicationMain(1, (char*[]){ appNameData.data() }, nil, NSStringFromClass([etApplicationDelegate class]));
     }
 #endif	
 }
