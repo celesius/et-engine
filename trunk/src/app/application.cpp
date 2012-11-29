@@ -10,6 +10,8 @@
 
 using namespace et;
 
+IApplicationDelegate* et::Application::_delegate = 0;
+
 Application::Application() : _renderContext(0), _exitCode(0), _lastQueuedTime(queryTime()), 
 	_fpsLimit(0), _running(false), _active(false)
 {
@@ -19,13 +21,18 @@ Application::Application() : _renderContext(0), _exitCode(0), _lastQueuedTime(qu
 
 Application::~Application()
 {
+	platform_finalize();
 }
 
 IApplicationDelegate* Application::delegate()
 {
-	if (_delegate == 0)
+	if (_delegate == nullptr)
+	{
 		_delegate = initApplicationDelegate();
-
+		assert(_delegate);
+		_identifier = _delegate->applicationIdentifier();
+	}
+    
 	return _delegate;
 }
 
@@ -48,8 +55,12 @@ void Application::idle()
 { 
 	_lastQueuedTime = queryTime();
 	_runLoop->update(_lastQueuedTime);
-	_delegate->idle(_runLoop->mainTimerPool()->actualTime());
-	performRendering();
+	
+	if (_running && _active)
+	{
+		_delegate->idle(_runLoop->mainTimerPool()->actualTime());
+		performRendering();
+	}
 
 	if (_fpsLimit > 0)
 	{
@@ -86,5 +97,9 @@ void Application::setActive(bool active)
 
 void Application::contextResized(const vec2i& size)
 {
-	_delegate->applicationWillResizeContext(size);
+	if (_running && _active)
+	{
+		_delegate->applicationWillResizeContext(size);
+		performRendering();
+	}
 }

@@ -20,46 +20,26 @@
 
 using namespace et;
 
-IApplicationDelegate* et::Application::_delegate = 0;
-
-Application::Application() : 
-	_renderContext(0), _running(false), _exitCode(0), _lastQueuedTime(queryTime())
+void Application::platform_init()
 {
 }
 
-Application::~Application()
+void Application::platform_finalize()
 {
-	delete _delegate;
-	delete _renderContext;
+	delete _delegate, _delegate = nullptr;
+	delete _renderContext, _delegate = nullptr;
 }
 
-IApplicationDelegate* Application::delegate()
-{
-	if (_delegate == nullptr)
-	{
-		_delegate = initApplicationDelegate();
-		assert(_delegate);
-		
-		_identifier = _delegate->applicationIdentifier();
-	}
-    
-	return _delegate;
-}
-
-int Application::run(int argc, char* argv[])
+int Application::platform_run()
 {
 #if defined(ET_EMBEDDED_APPLICATION)
-    
 	loaded();
 	return 0;
-    
-#else	
-    
-    @autoreleasepool 
-    {
+#else
+    @autoreleasepool
+	{
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([etApplicationDelegate class]));
     }
-    
 #endif	
 }
 
@@ -130,66 +110,11 @@ void Application::quit(int exitCode)
 #endif
 }
 
-void Application::performRendering()
-{
-	_renderContext->beginRender();
-	_delegate->render(_renderContext);
-	_renderContext->endRender();
-}
-
-void Application::idle()
-{ 
-    _lastQueuedTime = queryTime();
-    _runLoop->update(_lastQueuedTime);
-    
-    if (_running && _active)
-    {
-        _delegate->idle(_lastQueuedTime);
-        performRendering();
-    }
-	
-	usleep(0);
-}
-
 void Application::alert(const std::string& title, const std::string& message, AlertType)
 {
 	NSString* nsTitle = [NSString stringWithCString:title.c_str() encoding:NSASCIIStringEncoding];
 	NSString* nsMessage = [NSString stringWithCString:message.c_str() encoding:NSASCIIStringEncoding];
 	[[[[UIAlertView alloc] initWithTitle:nsTitle message:nsMessage delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil] autorelease] show];
-}
-
-void Application::setFPSLimit(size_t)
-{
-}
-
-void Application::setActive(bool active)
-{
-	if (_active == active) return;
-	
-	_active = active;
-	
-	if (_active)
-	{
-		_lastQueuedTime = queryTime();
-		_runLoop->update(_lastQueuedTime);
-		_runLoop->resume();
-		
-		_delegate->applicationWillActivate();
-	}
-	else
-	{
-		_runLoop->pause();
-		_delegate->applicationWillDeactivate();
-	}
-}
-
-void Application::contextResized(const vec2i& size)
-{
-	if (_running)
-	{
-		_delegate->applicationWillResizeContext(size);
-		performRendering();
-	}
 }
 
 size_t Application::memoryUsage() const
