@@ -66,7 +66,7 @@ void Thread::run()
 
 void Thread::sleep(size_t msec)
 {
-	SleepEx(msec, true);
+	SleepEx(msec, 0);
 }
 
 ThreadResult Thread::main()
