@@ -47,6 +47,14 @@ namespace et
 	inline bool isNewLineChar(wchar_t c)
 		{ return (c == 13) || (c == 10); }
 
+	inline std::string lowercase(const std::string& s)
+	{
+		std::string str(s);
+		for (size_t i = 0; i < str.length(); i++)
+			str[i] = static_cast<char>(tolower(str[i]));
+		return str;
+	}
+
 	inline void lowercase(std::string& str)
 	{
 		for (size_t i = 0; i < str.length(); i++)
