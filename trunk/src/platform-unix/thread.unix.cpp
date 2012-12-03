@@ -127,7 +127,7 @@ ThreadId Thread::id() const
 	return _private->threadId;
 }
 
-void Thread::sleep(size_t msec)
+void Thread::sleep(float seconds)
 {
-    usleep(msec * 1000);
+    usleep(static_cast<useconds_t>(seconds * 1000000.0f));
 }
