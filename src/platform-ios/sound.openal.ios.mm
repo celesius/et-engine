@@ -16,7 +16,7 @@ using namespace audio;
 extern ALCdevice* getSharedDevice();
 extern ALCcontext* getSharedContext();
 
-void interruptListener(void *inClientData, UInt32 inInterruptionState)
+void etInterruptListener(void *inClientData, UInt32 inInterruptionState)
 {
 	if (inInterruptionState == kAudioSessionBeginInterruption)
 	{
@@ -44,7 +44,7 @@ void interruptListener(void *inClientData, UInt32 inInterruptionState)
 
 void Manager::nativeInit()
 {
-	AudioSessionInitialize(nil, nil, interruptListener, nil);
+	AudioSessionInitialize(nil, nil, etInterruptListener, nil);
 	AudioSessionSetActive(true);
 }
 
