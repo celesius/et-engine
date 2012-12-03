@@ -107,7 +107,7 @@ namespace et
 		int _exitCode;
 		size_t _renderingContextHandle;
 		float _lastQueuedTime;
-		size_t _fpsLimit;
+		float _fpsLimit;
 
 		volatile bool _running;
 		volatile bool _active;

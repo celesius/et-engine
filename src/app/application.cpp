@@ -62,9 +62,9 @@ void Application::idle()
 		performRendering();
 	}
 
-	if (_fpsLimit > 0)
+	if (_fpsLimit > 0.0f)
 	{
-		size_t msec = static_cast<size_t>(1000.0f * (queryTime() - _lastQueuedTime));
+		float msec = queryTime() - _lastQueuedTime;
 		if (_fpsLimit > msec)
 			Thread::sleep(_fpsLimit - msec);
 	}
@@ -72,7 +72,7 @@ void Application::idle()
 
 void Application::setFrameRateLimit(size_t value)
 {
-	_fpsLimit = (value == 0) ? 0 : (500 / value);
+	_fpsLimit = (value == 0) ? 0.0f : (1.0f / static_cast<float>(value));
 }
 
 void Application::setActive(bool active)

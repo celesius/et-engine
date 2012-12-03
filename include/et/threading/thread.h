@@ -16,7 +16,7 @@ namespace et
 	class Thread
 	{
 	public:
-		static void sleep(size_t msec);
+		static void sleep(float seconds);
 
 	public:
 		Thread(bool start = true);
