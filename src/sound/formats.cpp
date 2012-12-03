@@ -101,7 +101,7 @@ void swapEndiannes(unsigned char* data, size_t dataSize)
 
 #pragma pack()
 
-size_t parseOpenALFormat(size_t numChannels, size_t bitDepth)
+size_t et::audio::openALFormatFromChannelsAndBitDepth(size_t numChannels, size_t bitDepth)
 {
 	if (numChannels == 1)
 	{
@@ -209,7 +209,7 @@ Description::Pointer et::audio::loadWAVFile(const std::string& fileName)
 			result->sampleRate = fmt.sampleRate;
 			result->channels = fmt.numChannels;
 			result->bitDepth = fmt.bitsPerSample;
-			result->format = parseOpenALFormat(result->channels, result->bitDepth);
+			result->format = openALFormatFromChannelsAndBitDepth(result->channels, result->bitDepth);
 		}
 		else if ((chunk.id.nID == WAVDataChunkID) && (result != nullptr))
 		{
@@ -266,7 +266,7 @@ Description::Pointer et::audio::loadAIFFile(const std::string& fileName)
 			result->bitDepth = swapEndiannes(comm.sampleSize);
 			result->channels = swapEndiannes(comm.numChannels);
 			result->sampleRate = static_cast<size_t>(_af_convert_from_ieee_extended(comm.c_sampleRate));
-			result->format = parseOpenALFormat(result->channels, result->bitDepth);
+			result->format = openALFormatFromChannelsAndBitDepth(result->channels, result->bitDepth);
 		}
 		else if ((chunk.id.nID == AIFFUncompressedDataChunkID) && (result != nullptr))
 		{
