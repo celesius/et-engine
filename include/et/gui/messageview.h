@@ -47,6 +47,8 @@ namespace et
 			void setButtonsBackground(const Image& img, ElementState s);
 			void setButtonsTextColor(const vec4& color);
 			void setButtonsPressedTextColor(const vec4& color);
+			
+			void setButtonsEnabled(bool b1, bool b2, bool animated);
 
 			ET_DECLARE_EVENT2(messageViewButtonSelected, MessageView*, MessageViewButton)
 			
