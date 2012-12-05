@@ -195,12 +195,12 @@ void MessageView::setButtonsPressedTextColor(const vec4& color)
 
 bool MessageView::hasFirstButton() const
 {
-	return _button1->title().size() > 0;
+	return !_button1->title().empty();
 }
 
 bool MessageView::hasSecondButton() const
 {
-	return _button2->title().size() > 0;
+	return !_button2->title().empty();
 }
 
 void MessageView::buttonClicked(Button* btn)
@@ -227,4 +227,21 @@ void MessageView::setButton1Title(const std::string& t)
 void MessageView::setButton2Title(const std::string& t)
 {
 	_button2->setTitle(t);
+}
+
+void MessageView::setButtonsEnabled(bool b1, bool b2, bool animated)
+{
+	float duration = animated ? 0.25f : 0.0f;
+	
+	if (hasFirstButton())
+	{
+		_button1->setEnabled(b1);
+		_button1->setAlpha(b1 ? 1.0f : 0.5f, duration);
+	}
+	
+	if (hasSecondButton())
+	{
+		_button2->setEnabled(b2);
+		_button2->setAlpha(b2 ? 1.0f : 0.5f, duration);
+	}
 }

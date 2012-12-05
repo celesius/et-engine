@@ -39,7 +39,7 @@ float et::queryTime()
 
 double __queryTime()
 {
-	timeval tv;
+	timeval tv = { };
 	gettimeofday(&tv, 0);
 	return static_cast<double>(tv.tv_sec) + static_cast<double>(tv.tv_usec) / 1000000.0;
 }
