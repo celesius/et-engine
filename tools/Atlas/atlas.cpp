@@ -1,7 +1,7 @@
 #include <et/core/tools.h>
 #include <et/gui/guibase.h>
 #include <et/imaging/pngloader.h>
-#include <et/imaging/textureatlaswriter.h>
+#include <et/gui/textureatlaswriter.h>
 
 using namespace et;
 
@@ -13,8 +13,8 @@ void printHelp()
 		"\tOPTIONAL: -nospace, default off - don't add one pixel space between images in atlas." << std::endl;
 }
 
-inline bool sortFunc(const TextureDescription& d1, const TextureDescription& d2)
-	{ return d1.size.square() > d2.size.square(); }
+inline bool sortFunc(const TextureDescription::Pointer& d1, const TextureDescription::Pointer& d2)
+	{ return d1->size.square() > d2->size.square(); }
 
 int main(int argc, char* argv[])
 {
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 		if ((strcmp(argv[i], "-root") == 0) && (i + 1 < argc))
 		{
 			rootFolder = std::string(argv[i+1]);
-			if (fileExists(rootFolder))
+			if (folderExists(rootFolder))
 			{
 				hasRoot = true;
 				++i;
@@ -64,13 +64,13 @@ int main(int argc, char* argv[])
 	}
 
 	StringList fileList;
-	TextureDescriptionList textureDescriptors;
+	TextureDescription::List textureDescriptors;
 	findFiles(rootFolder, "*.png", true, fileList);	
 
-	for (StringList::iterator i = fileList.begin(), e = fileList.end(); i != e; ++i)
+	for (const std::string& i : fileList)
 	{
-		TextureDescription desc;
-		PNGLoader::loadInfoFromFile(*i, desc);
+		TextureDescription::Pointer desc(new TextureDescription);
+		PNGLoader::loadInfoFromFile(i, desc.reference());
 		textureDescriptors.push_back(desc);
 	}
 	std::sort(textureDescriptors.begin(), textureDescriptors.end(), sortFunc);
@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
 	while (textureDescriptors.size())
 	{
 		TextureAtlasWriter::TextureAtlasItem& texture = placer.addItem(vec2i(1024, 1024));
-		TextureDescriptionList::iterator i = textureDescriptors.begin();
+		TextureDescription::List::iterator i = textureDescriptors.begin();
 
 		int placedItems = 0;
 		while (i != textureDescriptors.end())
@@ -95,15 +95,15 @@ int main(int argc, char* argv[])
 			}
 		}
 
-		texture.texture.size.x = roundToHighestPowerOfTow(texture.maxWidth);
-		texture.texture.size.y = roundToHighestPowerOfTow(texture.maxHeight);
+		texture.texture->size.x = roundToHighestPowerOfTow(texture.maxWidth);
+		texture.texture->size.y = roundToHighestPowerOfTow(texture.maxHeight);
 	}
 
 	for (TextureAtlasWriter::TextureAtlasItemList::const_iterator i = placer.items().begin(), e = placer.items().end(); i != e; ++i)
 	{
-		std::cout << "Texture: " << i->texture.size.x << "x" << i->texture.size.y << ":" << std::endl;
+		std::cout << "Texture: " << i->texture->size.x << "x" << i->texture->size.y << ":" << std::endl;
 		for (TextureAtlasWriter::ImageItemList::const_iterator ii = i->images.begin(), ie = i->images.end(); ii != ie; ++ii)
-			std::cout << "\t" << ii->place.origin << "\t|\t" << ii->place.size << "\t|\t" << ii->image.source << std::endl;
+			std::cout << "\t" << ii->place.origin << "\t|\t" << ii->place.size << "\t|\t" << ii->image->source << std::endl;
 	}
 
 	placer.writeToFile(outFile, pattern.c_str());
