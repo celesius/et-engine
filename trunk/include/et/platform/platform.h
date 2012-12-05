@@ -48,7 +48,6 @@
 #endif
 
 #if (ET_PLATFORM_IOS || ET_PLATFORM_MAC)
-	#include <string.h>
 	#define ET_PLATFORM_APPLE	1
 #else
 	#define ET_PLATFORM_APPLE	0

@@ -8,9 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5C1538F51557B21800B02941 /* atlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1538F41557B21800B02941 /* atlas.cpp */; };
-		5C1538F81557B26500B02941 /* tools.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C1538F71557B26500B02941 /* tools.mac.mm */; };
 		5C1538FB1557B27B00B02941 /* pngloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1538F91557B27B00B02941 /* pngloader.cpp */; };
-		5C1538FC1557B27B00B02941 /* textureatlaswriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1538FA1557B27B00B02941 /* textureatlaswriter.cpp */; };
 		5C15390D1557B29700B02941 /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1538FE1557B29700B02941 /* png.c */; };
 		5C15390E1557B29700B02941 /* pngerror.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1538FF1557B29700B02941 /* pngerror.c */; };
 		5C15390F1557B29700B02941 /* pngget.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539001557B29700B02941 /* pngget.c */; };
@@ -45,6 +43,11 @@
 		5C15393E1557B2D500B02941 /* imageoperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C15393D1557B2D500B02941 /* imageoperations.cpp */; };
 		5C1539401557B2F800B02941 /* imagewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C15393F1557B2F800B02941 /* imagewriter.cpp */; };
 		5C1539421557B3FB00B02941 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C1539411557B3FB00B02941 /* Foundation.framework */; };
+		5C6DAE7A166F600E0000CE97 /* textureatlaswriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C6DAE79166F600E0000CE97 /* textureatlaswriter.cpp */; };
+		5C6DAE7C166F60150000CE97 /* tools.apple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C6DAE7B166F60150000CE97 /* tools.apple.mm */; };
+		5C6DAE7E166F606D0000CE97 /* referencecounter.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C6DAE7D166F606D0000CE97 /* referencecounter.unix.cpp */; };
+		5C6DAE80166F607A0000CE97 /* geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C6DAE7F166F607A0000CE97 /* geometry.cpp */; };
+		5C6DAE82166F60AA0000CE97 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6DAE81166F60AA0000CE97 /* AppKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -62,9 +65,7 @@
 /* Begin PBXFileReference section */
 		5C1538E21557B1EC00B02941 /* Atlas */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Atlas; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C1538F41557B21800B02941 /* atlas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = atlas.cpp; sourceTree = "<group>"; };
-		5C1538F71557B26500B02941 /* tools.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = tools.mac.mm; path = "../../src/platform-mac/tools.mac.mm"; sourceTree = "<group>"; };
 		5C1538F91557B27B00B02941 /* pngloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pngloader.cpp; path = ../../src/imaging/pngloader.cpp; sourceTree = "<group>"; };
-		5C1538FA1557B27B00B02941 /* textureatlaswriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = textureatlaswriter.cpp; path = ../../src/imaging/textureatlaswriter.cpp; sourceTree = "<group>"; };
 		5C1538FE1557B29700B02941 /* png.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = png.c; sourceTree = "<group>"; };
 		5C1538FF1557B29700B02941 /* pngerror.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngerror.c; sourceTree = "<group>"; };
 		5C1539001557B29700B02941 /* pngget.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngget.c; sourceTree = "<group>"; };
@@ -99,6 +100,11 @@
 		5C15393D1557B2D500B02941 /* imageoperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imageoperations.cpp; path = ../../src/imaging/imageoperations.cpp; sourceTree = "<group>"; };
 		5C15393F1557B2F800B02941 /* imagewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imagewriter.cpp; path = ../../src/imaging/imagewriter.cpp; sourceTree = "<group>"; };
 		5C1539411557B3FB00B02941 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		5C6DAE79166F600E0000CE97 /* textureatlaswriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = textureatlaswriter.cpp; path = ../../src/gui/textureatlaswriter.cpp; sourceTree = "<group>"; };
+		5C6DAE7B166F60150000CE97 /* tools.apple.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = tools.apple.mm; path = "../../src/platform-apple/tools.apple.mm"; sourceTree = "<group>"; };
+		5C6DAE7D166F606D0000CE97 /* referencecounter.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = referencecounter.unix.cpp; path = "../../src/platform-unix/referencecounter.unix.cpp"; sourceTree = "<group>"; };
+		5C6DAE7F166F607A0000CE97 /* geometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = geometry.cpp; path = ../../src/geometry/geometry.cpp; sourceTree = "<group>"; };
+		5C6DAE81166F60AA0000CE97 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +112,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C6DAE82166F60AA0000CE97 /* AppKit.framework in Frameworks */,
 				5C1539421557B3FB00B02941 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -116,12 +123,13 @@
 		5C1538D71557B1EB00B02941 = {
 			isa = PBXGroup;
 			children = (
-				5C1539411557B3FB00B02941 /* Foundation.framework */,
 				5C15391C1557B29F00B02941 /* zlib */,
 				5C1538FD1557B29700B02941 /* libpng */,
 				5C1538F61557B25600B02941 /* Engine */,
 				5C1538E31557B1EC00B02941 /* Products */,
 				5C1538F41557B21800B02941 /* atlas.cpp */,
+				5C6DAE81166F60AA0000CE97 /* AppKit.framework */,
+				5C1539411557B3FB00B02941 /* Foundation.framework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -136,12 +144,14 @@
 		5C1538F61557B25600B02941 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				5C6DAE7F166F607A0000CE97 /* geometry.cpp */,
 				5C15393F1557B2F800B02941 /* imagewriter.cpp */,
 				5C15393D1557B2D500B02941 /* imageoperations.cpp */,
 				5C15393B1557B2C500B02941 /* tools.cpp */,
 				5C1538F91557B27B00B02941 /* pngloader.cpp */,
-				5C1538FA1557B27B00B02941 /* textureatlaswriter.cpp */,
-				5C1538F71557B26500B02941 /* tools.mac.mm */,
+				5C6DAE79166F600E0000CE97 /* textureatlaswriter.cpp */,
+				5C6DAE7B166F60150000CE97 /* tools.apple.mm */,
+				5C6DAE7D166F606D0000CE97 /* referencecounter.unix.cpp */,
 			);
 			name = Engine;
 			sourceTree = "<group>";
@@ -243,9 +253,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5C1538F51557B21800B02941 /* atlas.cpp in Sources */,
-				5C1538F81557B26500B02941 /* tools.mac.mm in Sources */,
 				5C1538FB1557B27B00B02941 /* pngloader.cpp in Sources */,
-				5C1538FC1557B27B00B02941 /* textureatlaswriter.cpp in Sources */,
 				5C15390D1557B29700B02941 /* png.c in Sources */,
 				5C15390E1557B29700B02941 /* pngerror.c in Sources */,
 				5C15390F1557B29700B02941 /* pngget.c in Sources */,
@@ -279,6 +287,10 @@
 				5C15393C1557B2C500B02941 /* tools.cpp in Sources */,
 				5C15393E1557B2D500B02941 /* imageoperations.cpp in Sources */,
 				5C1539401557B2F800B02941 /* imagewriter.cpp in Sources */,
+				5C6DAE7A166F600E0000CE97 /* textureatlaswriter.cpp in Sources */,
+				5C6DAE7C166F60150000CE97 /* tools.apple.mm in Sources */,
+				5C6DAE7E166F606D0000CE97 /* referencecounter.unix.cpp in Sources */,
+				5C6DAE80166F607A0000CE97 /* geometry.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,7 +317,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -325,7 +337,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -334,6 +346,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_CXX0X_EXTENSIONS = NO;
 				HEADER_SEARCH_PATHS = $PROJECT_DIR/../../include/;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -344,6 +357,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_CXX0X_EXTENSIONS = NO;
 				HEADER_SEARCH_PATHS = $PROJECT_DIR/../../include/;
 				PRODUCT_NAME = "$(TARGET_NAME)";

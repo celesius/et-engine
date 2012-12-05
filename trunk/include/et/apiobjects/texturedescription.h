@@ -24,7 +24,7 @@ namespace et
 	{  
 	public:
 		typedef IntrusivePtr<TextureDescription> Pointer;
-		typedef std::vector<TextureDescription> List;
+		typedef std::vector<TextureDescription::Pointer> List;
 
 	public:
 		TextureDescription() : size(0), target(0), internalformat(0), format(0), type(0), compressed(0),
