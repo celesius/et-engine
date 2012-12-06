@@ -75,6 +75,27 @@ using namespace et;
 	[_context release];
 	_context = nil;	
 }
+
+- (BOOL)shouldAutorotate
+{
+	return (_params.supportedInterfaceOrientations > 0);
+}
+
+- (NSUInteger)supportedInterfaceOrientations
+{
+	NSUInteger result = 0;
+	
+	if (_params.supportedInterfaceOrientations & InterfaceOrientation_Portrait)
+		result += UIInterfaceOrientationMaskPortrait;
+	if (_params.supportedInterfaceOrientations & InterfaceOrientation_PortraitUpsideDown)
+		result += UIInterfaceOrientationMaskPortraitUpsideDown;
+	if (_params.supportedInterfaceOrientations & InterfaceOrientation_LandscapeLeft)
+		result += UIInterfaceOrientationMaskLandscapeLeft;
+	if (_params.supportedInterfaceOrientations & InterfaceOrientation_LandscapeRight)
+		result += UIInterfaceOrientationMaskLandscapeRight;
+	
+	return result;
+}
 				   
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
