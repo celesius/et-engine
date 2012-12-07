@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <list>
 #include <et/tasks/tasks.h>
 
 namespace et

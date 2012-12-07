@@ -268,7 +268,7 @@ void Player::play(bool looped)
 {
 	alSourcei(_private->source, AL_LOOPING, looped ? AL_TRUE : AL_FALSE);
     checkOpenALError("alSourcei(..., AL_LOOPING, ...)");
-
+	
 	alSourcePlay(_private->source);
     checkOpenALError("alSourcePlay");
 }
