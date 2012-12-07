@@ -25,6 +25,5 @@ namespace et
 
 	typedef std::vector<Texture> TextureList;
 	typedef std::map<std::string, Texture> TextureMap;
-
 }
 

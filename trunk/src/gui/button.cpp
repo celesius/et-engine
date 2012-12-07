@@ -61,6 +61,11 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 	_bgVertices.setOffset(0);
 	_textVertices.setOffset(0);
 	_imageVertices.setOffset(0);
+	
+	if (_backgroundColor.w > 0.0f)
+	{
+		gr.createColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor, transform, GuiRenderLayer_Layer0);
+	}
 
 	if (_background[_state].texture.valid())
 	{
@@ -274,4 +279,15 @@ void Button::setImageLayout(ImageLayout l)
 {
 	_imageLayout = l;
 	invalidateContent();
+}
+
+void Button::setBackgroundColor(const vec4& color)
+{
+	_backgroundColor = color;
+	invalidateContent();
+}
+
+const vec4& Button::backgroundColor() const
+{
+	return _backgroundColor;
 }
