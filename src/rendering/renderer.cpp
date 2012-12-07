@@ -110,7 +110,7 @@ void Renderer::renderTexture(const Texture& texture, const vec2i& position, cons
 	vec2i sz;
 	sz.x = (size.x == -1) ? texture->width() : size.x;
 	sz.y = (size.y == -1) ? texture->height() : size.y;
-	renderTexture(texture, windowCoordinatesToScene(position), windowSizeToScene(sz));
+	renderTexture(texture, windowCoordinatesToScene(position + vec2i(0, sz.y)), windowSizeToScene(sz));
 }
 
 void Renderer::drawElements(const IndexBuffer& ib, size_t first, size_t count)
