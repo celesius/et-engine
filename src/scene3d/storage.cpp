@@ -118,8 +118,4 @@ void Scene3dStorage::flush()
 			++ti;
 		}
 	}
-/*
-	if (_indexArray.valid() && (_indexArray->referenceCount() == 1))
-		_indexArray = IndexArray::Pointer();
-*/ 
 }

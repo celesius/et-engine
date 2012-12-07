@@ -185,7 +185,10 @@ Description::Pointer et::audio::loadWAVFile(const std::string& fileName)
 {
 	std::ifstream file(fileName.c_str(), std::ios::in | std::ios::binary);
 	if (file.fail())
+	{
+		std::cout << "Unable to load WAV from file " << fileName << std::endl;
 		return Description::Pointer();
+	}
 
 	WAVFileChunk fileChunk = { };
 	file.read(reinterpret_cast<char*>(&fileChunk), sizeof(fileChunk));

@@ -70,6 +70,9 @@ namespace et
 			
 			void setTextPressedColor(const vec4& color);
 			const vec4& textPressedColor() const;
+			
+			void setBackgroundColor(const vec4& color);
+			const vec4& backgroundColor() const;
 
 			bool pointerPressed(const PointerInputInfo&);
 			bool pointerReleased(const PointerInputInfo&);
@@ -103,10 +106,11 @@ namespace et
 			GuiVertexList _imageVertices;
 			StaticDataStorage<Image, ElementState_max> _background;
 			Image _image;
-			vec2 _textSize;
-			vec2 _imageSize;
 			vec4 _textColor;
 			vec4 _textPressedColor;
+			vec4 _backgroundColor;
+			vec2 _textSize;
+			vec2 _imageSize;
 			vec2 _contentOffset;
 
 			Type _type;
