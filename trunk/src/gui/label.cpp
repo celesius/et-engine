@@ -35,7 +35,10 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 {
 	mat4 transform = finalTransform();
 
-	vec2 textOffset = size() * vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment));
+	vec2 alignment = vec2(alignmentFactor(_horizontalAlignment),
+						  alignmentFactor(_verticalAlignment));
+	
+	vec2 textOffset = size() * alignment;
 	
 	_vertices.setOffset(0);
 
@@ -168,6 +171,14 @@ void Label::setHorizontalAlignment(ElementAlignment h)
 	if (_horizontalAlignment == h) return;
 	
 	_horizontalAlignment = h;
+	invalidateContent();
+}
+
+void Label::setVerticalAlignment(ElementAlignment v)
+{
+	if (_verticalAlignment == v) return;
+	
+	_verticalAlignment = v;
 	invalidateContent();
 }
 

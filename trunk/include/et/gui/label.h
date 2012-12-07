@@ -34,12 +34,15 @@ namespace et
 				{ return _backgroundColor; }
 			
 			void addToRenderQueue(RenderContext* rc, GuiRenderer& guiRenderer);
-			void fitToWidth(float w);
+			void fitToWidth(float);
 			void adjustSize();
 			
-			void setAllowFormatting(bool f);
-			void setBackgroundColor(const vec4& color);
-			void setHorizontalAlignment(ElementAlignment h);
+			void setAllowFormatting(bool);
+			void setBackgroundColor(const vec4&);
+			
+			void setHorizontalAlignment(ElementAlignment);
+			void setVerticalAlignment(ElementAlignment);
+			
 			void setShadowColor(const vec4& color);
 			void setShadowOffset(const vec2& offset);
 			void setText(const std::string& text, float duration = 0.0f);

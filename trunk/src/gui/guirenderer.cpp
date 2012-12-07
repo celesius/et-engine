@@ -192,32 +192,31 @@ void GuiRenderer::render(RenderContext* rc)
 {
 	if (!_renderingElement.valid()) return;
 
-	Renderer* renderer = rc->renderer();
-	const VertexArrayObject& vao = _renderingElement->vertexArrayObject();
-
 	RenderState& rs = rc->renderState();
+	Renderer* renderer = rc->renderer();
 
 	_guiProgram->setUniform(_guiCustomOffsetUniform, GL_FLOAT_VEC2, _customOffset);
 	_guiProgram->setUniform(_guiCustomAlphaUniform, GL_FLOAT, _customAlpha);
 	ElementClass elementClass = ElementClass_max;
 
-	for (RenderChunkList::const_iterator i = _renderingElement->_chunks.begin(), e = _renderingElement->_chunks.end(); i != e; ++i)
+	const VertexArrayObject& vao = _renderingElement->vertexArrayObject();
+	for (const RenderChunk& i : _renderingElement->_chunks)
 	{
-		rs.setClip(true, i->clip);
-		rs.bindTexture(0, i->layers[GuiRenderLayer_Layer0]);
-		rs.bindTexture(1, i->layers[GuiRenderLayer_Layer1]);
+		rs.setClip(true, i.clip);
+		rs.bindTexture(0, i.layers[GuiRenderLayer_Layer0]);
+		rs.bindTexture(1, i.layers[GuiRenderLayer_Layer1]);
 
-		if (i->elementClass != elementClass)
+		if (i.elementClass != elementClass)
 		{
-			elementClass = i->elementClass;
-			bool is3D = i->elementClass == ElementClass_3d;
+			elementClass = i.elementClass;
+			bool is3D = i.elementClass == ElementClass_3d;
 			rs.setDepthTest(is3D);
 			rs.setDepthMask(is3D);
 			_guiProgram->setUniform(_guiDefaultTransformUniform, GL_FLOAT_MAT4,
 					is3D ? _guiCamera.modelViewProjectionMatrix() : _defaultTransform);
 		}
 
-		renderer->drawElements(vao->indexBuffer(), i->first, i->count);
+		renderer->drawElements(vao->indexBuffer(), i.first, i.count);
 	}
 }
 
@@ -238,11 +237,9 @@ void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescri
 	vec4 line;
 	std::vector<vec4> lines;
 	
-	for (CharDescriptorList::const_iterator i = chars.begin(), e = chars.end(); i != e; ++i)
+	for (const CharDescriptor& desc : chars)
 	{
-		const CharDescriptor& desc = *i;
 		line.w = etMax(line.w, desc.size.y);
-		
 		if ((desc.value == ET_NEWLINE) || (desc.value == ET_RETURN))
 		{
 			lines.push_back(line);
@@ -254,20 +251,13 @@ void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescri
 		}
 	}
 	lines.push_back(line);
-	
-	if (hAlign == ElementAlignment_Center)
+
+	float hAlignFactor = alignmentFactor(hAlign);
+	float vAlignFactor = alignmentFactor(vAlign);
+	for (vec4& i : lines)
 	{
-		for (std::vector<vec4>::iterator i = lines.begin(), e = lines.end(); i != e; ++i)
-			i->x = -0.5f * i->z;
-	}
-	else if (hAlign == ElementAlignment_Far)
-	{
-		for (std::vector<vec4>::iterator i = lines.begin(), e = lines.end(); i != e; ++i)
-			i->x = -i->z;
-	}
-	
-	if (vAlign != ElementAlignment_Near)
-	{
+		i.x -= hAlignFactor * i.z;
+		i.y -= vAlignFactor * i.w;
 	}
 	
 	size_t lineIndex = 0;
@@ -275,9 +265,8 @@ void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescri
 	
 	vec2 mask(layer == GuiRenderLayer_Layer0 ? 0.0f : 1.0f, 0.0f);
 	vertices.fitToSize(6 * chars.size());
-	for (CharDescriptorList::const_iterator i = chars.begin(), e = chars.end(); i != e; ++i)
+	for (const CharDescriptor& desc : chars)
 	{
-		const CharDescriptor& desc = *i;
 		if ((desc.value == ET_NEWLINE) || (desc.value == ET_RETURN))
 		{
 			line = lines[++lineIndex];
