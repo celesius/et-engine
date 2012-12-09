@@ -64,9 +64,9 @@ void Thread::run()
 	_private->thread = CreateThread(0, 0, ThreadPrivate::threadProc, this, 0, &_private->threadId);
 }
 
-void Thread::sleep(size_t msec)
+void Thread::sleep(float sec)
 {
-	SleepEx(msec, 0);
+	SleepEx(static_cast<DWORD>(1000.0f * sec), 0);
 }
 
 ThreadResult Thread::main()

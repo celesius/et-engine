@@ -52,22 +52,20 @@ void Application::performRendering()
 }
 
 void Application::idle()
-{ 
-	_lastQueuedTime = queryTime();
-	_runLoop->update(_lastQueuedTime);
-	
-	if (_running && _active)
+{
+	assert(_running);
+
+	float _lastQueuedTime = queryTime();
+
+	if (_active)
 	{
+		_runLoop->update(_lastQueuedTime);
 		_delegate->idle(_runLoop->mainTimerPool()->actualTime());
 		performRendering();
 	}
 
-	if (_fpsLimit > 0.0f)
-	{
-		float msec = queryTime() - _lastQueuedTime;
-		if (_fpsLimit > msec)
-			Thread::sleep(_fpsLimit - msec);
-	}
+	float frameTime = queryTime() - _lastQueuedTime;
+	Thread::sleep(etMax(0.0f, _fpsLimit - frameTime));
 }
 
 void Application::setFrameRateLimit(size_t value)
