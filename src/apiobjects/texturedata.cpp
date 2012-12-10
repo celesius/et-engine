@@ -221,9 +221,9 @@ void TextureData::updateDataDirectly(RenderContext* rc, const vec2i& size, char*
 	buildData(data, dataSize);
 }
 
-void TextureData::updatePartialDataDirectly(RenderContext* rc, const vec2i& offset, const vec2i& size, char* data, size_t dataSize)
+void TextureData::updatePartialDataDirectly(RenderContext* rc, const vec2i& offset, const vec2i& size, char* data, size_t)
 {
-	assert(_desc->target == GL_TEXTURE_2D);
+	assert((_desc->target == GL_TEXTURE_2D) && !_desc->compressed);
 	
 	if (_glID == 0)
 		generateTexture(rc);
