@@ -31,18 +31,27 @@ namespace et
 #define ET_TOCONSTCHAR(a)		ET_TOCONSTCHAR_IMPL(a)
 
 #if (ET_PLATFORM_WIN)
+
 #	define ET_CALL_FUNCTION	__FUNCTION__
+
 #	define _CRTDBG_MAP_ALLOC
 #	include <crtdbg.h>
+
 #	if ((_MSC_VER >= 1700) && !defined(ET_MSC_USE_1600_TOOLSET))
 #		define ET_SUPPORT_RANGE_BASED_FOR	1
 #	else
 #		define ET_SUPPORT_RANGE_BASED_FOR	0
 #	endif
+
 #elif (ET_PLATFORM_APPLE)
-#	define ET_CALL_FUNCTION	__PRETTY_FUNCTION__
+
+#	define ET_CALL_FUNCTION				__PRETTY_FUNCTION__
+#	define ET_SUPPORT_RANGE_BASED_FOR	__has_feature(cxx_range_for)
+
 #else
+
 #	error ET_CALL_FUNCTION is undefined
+
 #endif
 
 #if !defined(ET_SUPPORT_RANGE_BASED_FOR)
