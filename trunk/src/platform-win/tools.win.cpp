@@ -248,3 +248,6 @@ std::wstring et::utf8ToUnicode(const std::string& mbcs)
 
 	return std::wstring(result.data());
 }
+
+std::string et::applicationIdentifierForCurrentProject()
+	{ return "com.et.app"; }
