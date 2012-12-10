@@ -31,11 +31,8 @@ Mesh::Mesh(const std::string& name, const VertexArrayObject& vao, const Material
 Mesh* Mesh::duplicate()
 {
 	Mesh* result = new Mesh(name(), _vao, material(), _startIndex, _numIndexes, parent());
+	duplicateChildrenToObject(result);
 	result->tag = tag;
-
-	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
-		(*i)->duplicate()->setParent(result);
-
 	return result;
 }
 

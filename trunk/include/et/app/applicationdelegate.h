@@ -30,7 +30,7 @@ namespace et
 	public:
 		virtual ~IApplicationDelegate() { }
 
-		virtual ApplicationIdentifier applicationIdentifier() const = 0;
+		virtual et::ApplicationIdentifier applicationIdentifier() const = 0;
 		
 		virtual void setRenderContextParameters(et::RenderContextParameters&) { }
 		virtual void applicationDidLoad(et::RenderContext*) { }

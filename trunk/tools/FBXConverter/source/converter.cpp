@@ -258,5 +258,8 @@ void Converter::onCameraUpdated()
 	_camera.lookAt(fromSpherical(_vAngle.value().x, _vAngle.value().y) * _vDistance.value());
 }
 
+et::ApplicationIdentifier Converter::applicationIdentifier() const
+	{ return ApplicationIdentifier("com.cheetek.fbxconverter", "Cheetek", "FBXConverter"); }
+
 et::IApplicationDelegate* et::Application::initApplicationDelegate()
 	{ return new fbxc::Converter(); }

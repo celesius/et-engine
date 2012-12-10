@@ -18,10 +18,13 @@ CameraElement::CameraElement(const std::string& name, Element* parent) : Element
 CameraElement* CameraElement::duplicate()
 {
 	CameraElement* result = new CameraElement(name(), parent());
+	duplicateChildrenToObject(result);
+
 	result->setModelViewMatrix(modelViewMatrix());
 	result->setProjectionMatrix(projectionMatrix());
 	if (upVectorLocked())
 		result->lockUpVector(lockedUpVector());
+
 	return result;
 }
 

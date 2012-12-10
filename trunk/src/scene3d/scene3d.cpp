@@ -263,11 +263,11 @@ Material Scene3d::materialWithId(int id)
 
 VertexArrayObject Scene3d::vaoWithIdentifiers(const std::string& vbid, const std::string& ibid)
 {
-	for (VertexArrayObjectList::iterator i = _vaos.begin(), e = _vaos.end(); i != e; ++i)
+	ET_ITERATE(_vaos, const VertexArrayObject&, i,
 	{
-		if (((*i)->vertexBuffer()->name() == vbid) && ((*i)->indexBuffer()->name() == ibid))
-			return *i;
-	}
+		if ((i->vertexBuffer()->name() == vbid) && (i->indexBuffer()->name() == ibid))
+			return i;
+	})
 	return VertexArrayObject();
 }
 

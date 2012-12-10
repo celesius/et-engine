@@ -11,6 +11,9 @@ namespace fbxc
 	public:
 		Converter();
 
+	private:
+		et::ApplicationIdentifier applicationIdentifier() const;
+
 		void setRenderContextParameters(et::RenderContextParameters&);
 		void applicationDidLoad(et::RenderContext*);
 		void applicationWillTerminate();

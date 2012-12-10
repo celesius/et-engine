@@ -58,7 +58,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;FBXSDK_NEW_API;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;FBXSDK_NEW_API;ET_MSC_USE_1600_TOOLSET;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/MP4 %(AdditionalOptions)</AdditionalOptions>
       <MinimalRebuild>false</MinimalRebuild>
@@ -78,7 +78,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;FBXSDK_NEW_API;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;FBXSDK_NEW_API;ET_MSC_USE_1600_TOOLSET;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/MP4 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
@@ -106,6 +106,7 @@
     <ClCompile Include="..\..\src\apiobjects\vertexbufferdata.cpp" />
     <ClCompile Include="..\..\src\apiobjects\vertexbufferfactory.cpp" />
     <ClCompile Include="..\..\src\app\appevironment.cpp" />
+    <ClCompile Include="..\..\src\app\application.cpp" />
     <ClCompile Include="..\..\src\app\events.cpp" />
     <ClCompile Include="..\..\src\app\invocation.cpp" />
     <ClCompile Include="..\..\src\app\runloop.cpp" />

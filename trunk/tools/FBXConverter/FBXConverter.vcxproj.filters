@@ -589,6 +589,9 @@
     <ClCompile Include="..\..\src\collision\aabb.cpp">
       <Filter>engine\engine</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\app\application.cpp">
+      <Filter>engine\engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\converter.h">
