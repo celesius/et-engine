@@ -96,6 +96,8 @@ namespace et
 			void deserializeGeneralParameters(std::istream& stream, SceneVersion version);
 			void deserializeChildren(std::istream& stream, ElementFactory* factory, SceneVersion version);
 
+			void duplicateChildrenToObject(Element* object);
+
 		private:
 			Pointer childWithNameCallback(const std::string& name, Pointer root, ElementType ofType);
 			void childrenOfTypeCallback(ElementType t, Element::List& list, Pointer root) const;
@@ -123,6 +125,7 @@ namespace et
 			ElementContainer* duplicate()
 			{
 				ElementContainer* result = new ElementContainer(name(), parent());
+				duplicateChildrenToObject(result);
 				result->tag = tag;
 				return result; 
 			}

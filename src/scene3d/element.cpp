@@ -25,8 +25,10 @@ void Element::setParent(Element* p)
 void Element::invalidateTransform()
 {
 	ComponentTransformable::invalidateTransform();
-	for (Element::Pointer& i : children())
+	ET_ITERATE(children(), Element::Pointer&, i,
+	{
 		i->invalidateTransform();
+	});
 }
 
 mat4 Element::finalTransform()
@@ -44,12 +46,12 @@ bool Element::isKindOf(ElementType t) const
 
 Element::Pointer Element::childWithName(const std::string& name, ElementType ofType, bool assertFail)
 {
-	for (const Element::Pointer i : children())
+	ET_ITERATE(children(), const Element::Pointer&, i, 
 	{
 		Element::Pointer element = childWithNameCallback(name, i, ofType);
 		if (element.valid())
 			return element;
-	}
+	})
 
 	if (assertFail)
 	{
@@ -63,34 +65,27 @@ Element::Pointer Element::childWithName(const std::string& name, ElementType ofT
 Element::List Element::childrenOfType(ElementType ofType) const
 {
 	Element::List list;
-
-	for (const Element::Pointer i : children())
-		childrenOfTypeCallback(ofType, list, i);
-
+	ET_ITERATE(children(), const Element::Pointer&, i, childrenOfTypeCallback(ofType, list, i))
 	return list;
 }
 
 Element::List Element::childrenHavingFlag(size_t flag)
 {
 	Element::List list;
-
-	for (const Element::Pointer i : children())
-		childrenHavingFlagCallback(flag, list, i);
-
+	ET_ITERATE(children(), const Element::Pointer&, i, childrenHavingFlagCallback(flag, list, i))
 	return list;
 }
 
 Element::Pointer Element::childWithNameCallback(const std::string& name, Element::Pointer root, ElementType ofType)
 {
-	if (root->isKindOf(ofType) && (root->name() == name))
-		return root;
+	if (root->isKindOf(ofType) && (root->name() == name)) return root;
 
-	for (const Element::Pointer i : root->children())
+	ET_ITERATE(root->children(), const Element::Pointer&, i,  
 	{
 		Element::Pointer element = childWithNameCallback(name, i, ofType);
 		if (element.valid() && element->isKindOf(ofType))
 			return element;
-	}
+	})
 
 	return Element::Pointer();
 }
@@ -100,8 +95,10 @@ void Element::childrenOfTypeCallback(ElementType t, Element::List& list, Element
 	if (root->isKindOf(t))
 		list.push_back(root);
 
-	for (const Element::Pointer i : root->children())
+	ET_ITERATE(root->children(), const Element::Pointer&, i,  
+	{
 		childrenOfTypeCallback(t, list, i);
+	})
 }
 
 void Element::childrenHavingFlagCallback(size_t flag, Element::List& list, Element::Pointer root)
@@ -109,8 +106,10 @@ void Element::childrenHavingFlagCallback(size_t flag, Element::List& list, Eleme
 	if (root->hasFlag(flag))
 		list.push_back(root);
 
-	for (const Element::Pointer i : root->children())
+	ET_ITERATE(root->children(), const Element::Pointer&, i,  
+	{
 		childrenHavingFlagCallback(flag, list, i);
+	})
 }
 
 void Element::clear()
@@ -130,8 +129,7 @@ void Element::serializeGeneralParameters(std::ostream& stream, SceneVersion vers
 	if (version >= SceneVersion_1_0_1)
 	{
 		serializeInt(stream, _properites.size());
-		for (const std::string& i : _properites)
-			serializeString(stream, i);
+		ET_ITERATE(_properites, const std::string&, i, serializeString(stream, i))
 	}
 }
 
@@ -155,11 +153,11 @@ void Element::deserializeGeneralParameters(std::istream& stream, SceneVersion ve
 void Element::serializeChildren(std::ostream& stream, SceneVersion version)
 {
 	serializeInt(stream, children().size());
-	for (Element::Pointer& i : children())
+	ET_ITERATE(children(), Element::Pointer&, i, 
 	{
 		serializeInt(stream, i->type());
 		i->serialize(stream, version);
-	}
+	})
 }
 
 void Element::deserializeChildren(std::istream& stream, ElementFactory* factory, SceneVersion version)
@@ -171,6 +169,11 @@ void Element::deserializeChildren(std::istream& stream, ElementFactory* factory,
 		Element::Pointer child = factory->createElementOfType(type, (type == ElementType_Storage) ? 0 : this);
 		child->deserialize(stream, factory, version);
 	}
+}
+
+void Element::duplicateChildrenToObject(Element* object)
+{
+	ET_ITERATE(children(), Element::Pointer, i, i->duplicate()->setParent(object))
 }
 
 void Element::serialize(std::ostream&, SceneVersion)

@@ -41,11 +41,7 @@ std::string et::applicationPath()
 
 std::string et::normalizeFilePath(std::string s)
 {
-	for (char& i : s)
-	{
-		if (i == '/')
-			i = pathDelimiter;
-	}
+	ET_ITERATE(s, char&, i, if (i == '/') i = pathDelimiter)
 	return s;
 }
 
@@ -105,8 +101,7 @@ void et::findFiles(const std::string& folder, const std::string& mask, bool recu
 
 	if (recursive)
 	{
-		for (const std::string& i : folderList)
-			findFiles(i, mask, recursive, list);
+		ET_ITERATE(folderList, const std::string&, i, findFiles(i, mask, recursive, list))
 	}
 }
 
@@ -160,8 +155,7 @@ void et::findSubfolders(const std::string& folder, bool recursive, StringList& l
 
 	if (recursive)
 	{
-		for (const std::string& i : folderList)
-			findSubfolders(i, true, list);
+		ET_ITERATE(folderList, const std::string&, i, findSubfolders(i, true, list))
 	}
 
 	list.insert(list.end(), folderList.begin(), folderList.end());
@@ -170,19 +164,18 @@ void et::findSubfolders(const std::string& folder, bool recursive, StringList& l
 std::string et::selectFile(const StringList& mask)
 {
 	size_t maskLen = 1;
-	for (const std::string& i : mask)
-		maskLen += i.size() + 1;
+	ET_ITERATE(mask, const std::string&, i, maskLen += i.size() + 1)
 
 	char result[MAX_PATH] = { };
 	char* filter = new char[maskLen];
 	memset(filter, 0, maskLen);
 
 	size_t offset = 0;
-	for (const std::string i : mask)
+	ET_ITERATE(mask, const std::string&, i,
 	{
 		memcpy(filter + offset, i.data(), i.size());
 		offset += i.size() + 1;
-	}
+	})
 
 	OPENFILENAME ofn = { };
 	ofn.lStructSize = sizeof(ofn);

@@ -43,12 +43,12 @@ std::string AppEnvironment::findFile(const std::string& name) const
 { 
 	if (fileExists(name)) return name;
 
-	for (const std::string& i : _searchPath)
+	ET_ITERATE(_searchPath, const std::string&, i,
 	{
 		std::string currentName = normalizeFilePath(i + name);
 		if (fileExists(currentName))
 			return currentName;
-	}
+	})
 
 	return name;
 }
@@ -57,19 +57,19 @@ std::string AppEnvironment::findFolder(const std::string& name) const
 {
 	if (folderExists(name)) return name;
 	
-	for (const std::string& i : _searchPath)
+	ET_ITERATE(_searchPath, const std::string&, i,
 	{
 		std::string currentName = normalizeFilePath(i + name);
 		if (folderExists(currentName))
 			return currentName;
-	}
+	})
 	
 	return name;	
 }
 
 bool AppEnvironment::expandFileName(std::string& name) const
 {
-	for (const std::string& i : _searchPath)
+	ET_ITERATE(_searchPath, const std::string&, i,
 	{
 		const std::string currentName = i + name;
 		if (fileExists(currentName))
@@ -77,7 +77,7 @@ bool AppEnvironment::expandFileName(std::string& name) const
 			name = currentName;
 			return true;
 		}
-	}
+	})
 
 	return false;
 }

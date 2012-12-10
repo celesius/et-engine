@@ -200,7 +200,7 @@ void GuiRenderer::render(RenderContext* rc)
 	ElementClass elementClass = ElementClass_max;
 
 	const VertexArrayObject& vao = _renderingElement->vertexArrayObject();
-	for (const RenderChunk& i : _renderingElement->_chunks)
+	ET_ITERATE(_renderingElement->_chunks, const RenderChunk&, i,
 	{
 		rs.setClip(true, i.clip);
 		rs.bindTexture(0, i.layers[GuiRenderLayer_Layer0]);
@@ -217,7 +217,7 @@ void GuiRenderer::render(RenderContext* rc)
 		}
 
 		renderer->drawElements(vao->indexBuffer(), i.first, i.count);
-	}
+	})
 }
 
 void GuiRenderer::buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, const GuiVertex& topRight, 
@@ -236,8 +236,8 @@ void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescri
 {
 	vec4 line;
 	std::vector<vec4> lines;
-	
-	for (const CharDescriptor& desc : chars)
+
+	ET_ITERATE(chars, const CharDescriptor&, desc,
 	{
 		line.w = etMax(line.w, desc.size.y);
 		if ((desc.value == ET_NEWLINE) || (desc.value == ET_RETURN))
@@ -249,23 +249,23 @@ void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescri
 		{
 			line.z += desc.size.x;
 		}
-	}
+	})
 	lines.push_back(line);
 
 	float hAlignFactor = alignmentFactor(hAlign);
 	float vAlignFactor = alignmentFactor(vAlign);
-	for (vec4& i : lines)
+	ET_ITERATE(lines, vec4&, i,
 	{
 		i.x -= hAlignFactor * i.z;
 		i.y -= vAlignFactor * i.w;
-	}
+	})
 	
 	size_t lineIndex = 0;
 	line = lines.front();
 	
 	vec2 mask(layer == GuiRenderLayer_Layer0 ? 0.0f : 1.0f, 0.0f);
 	vertices.fitToSize(6 * chars.size());
-	for (const CharDescriptor& desc : chars)
+	ET_ITERATE(chars, const CharDescriptor&, desc,
 	{
 		if ((desc.value == ET_NEWLINE) || (desc.value == ET_RETURN))
 		{
@@ -292,7 +292,7 @@ void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescri
 			
 			line.x += desc.size.x;
 		}
-	}
+	})
 }
 
 int GuiRenderer::measuseVerticesCountForImageDescriptor(const ImageDescriptor& desc)

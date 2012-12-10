@@ -343,11 +343,9 @@ inline bool isWhiteSpaceSymbol(char c)
 s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Pointer parent, 
 	const Material::List& materials, const StringList& params)
 {
-	s3d::Element::Pointer element;
-
-	const char* meshName = mesh->GetName();
-	if (strlen(meshName) == 0)
-		meshName = mesh->GetNode()->GetName();
+	const char* mName = mesh->GetName();
+	const char* nName = mesh->GetNode()->GetName();
+	std::string meshName(strlen(mName) == 0 ? nName : mName);
 
 	size_t lodIndex = 0;
 	bool support = false;
@@ -375,8 +373,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 
 	bool isContainer = false;
 	int numMaterials = 0;
-	s3d::Element* realParent = parent.ptr();
-	
+
 	FbxGeometryElementMaterial* material = mesh->GetElementMaterial();
 	FbxLayerElementArrayTemplate<int>* materialIndices = 0;
 	if (material)
@@ -395,18 +392,9 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 		}
 	}
 
-	if (isContainer)
-	{
-		element = s3d::ElementContainer::Pointer(new s3d::ElementContainer(mesh->GetNode()->GetName(), parent.ptr()));
-		realParent = element.ptr();
-	}
-	else
-	{
-		if (support)
-			element = s3d::SupportMesh::Pointer(new s3d::SupportMesh(meshName, realParent));
-		else
-			element = s3d::Mesh::Pointer(new s3d::Mesh(meshName, realParent));
-	}
+	s3d::Mesh::Pointer element = support ? 
+		s3d::SupportMesh::Pointer(new s3d::SupportMesh(meshName, parent.ptr())) : 
+		s3d::Mesh::Pointer(new s3d::Mesh(meshName, parent.ptr()));
 
 	bool hasNormal = mesh->GetElementNormalCount() > 0;
 	bool hasUV = mesh->GetElementUVCount() > 0;
@@ -483,12 +471,12 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 	{
 		for (int m = 0; m < numMaterials; ++m)
 		{
-			s3d::Mesh::Pointer meshElement;
+			s3d::Element* aParent = (m == 0) ? parent.ptr() : element.ptr();
+			std::string aName = (m == 0) ? meshName : (meshName + "~" + materials.at(m)->name());
 
-			if (support)
-				meshElement = s3d::SupportMesh::Pointer(new s3d::SupportMesh(meshName, realParent));
-			else
-				meshElement = s3d::Mesh::Pointer(new s3d::Mesh(meshName, realParent));
+			s3d::Mesh::Pointer meshElement = (m == 0) ? element : 
+				(support ? s3d::SupportMesh::Pointer(new s3d::SupportMesh(aName, aParent)) : 
+							s3d::Mesh::Pointer(new s3d::Mesh(aName, aParent)));
 
 			meshElement->tag = vbIndex;
 			meshElement->setStartIndex(indexOffset);
@@ -510,7 +498,6 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 					}
 				}
 			}
-
 			meshElement->setNumIndexes(indexOffset - meshElement->startIndex());
 			if ((lodIndex > 0) && (parent->type() == s3d::ElementType_Mesh))
 			{

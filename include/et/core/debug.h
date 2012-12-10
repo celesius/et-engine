@@ -31,17 +31,33 @@ namespace et
 #define ET_TOCONSTCHAR(a)		ET_TOCONSTCHAR_IMPL(a)
 
 #if (ET_PLATFORM_WIN)
-
-	#define ET_CALL_FUNCTION	__FUNCTION__
-	#define _CRTDBG_MAP_ALLOC
-	#include <crtdbg.h>
-
-#elif (ET_PLATFORM_APPLE || ET_PLATFORM_LINUX)
-
-	#define ET_CALL_FUNCTION	__PRETTY_FUNCTION__
-
+#	define ET_CALL_FUNCTION	__FUNCTION__
+#	define _CRTDBG_MAP_ALLOC
+#	include <crtdbg.h>
+#	if ((_MSC_VER >= 1700) && !defined(ET_MSC_USE_1600_TOOLSET))
+#		define ET_SUPPORT_RANGE_BASED_FOR	1
+#	else
+#		define ET_SUPPORT_RANGE_BASED_FOR	0
+#	endif
+#elif (ET_PLATFORM_APPLE)
+#	define ET_CALL_FUNCTION	__PRETTY_FUNCTION__
 #else
-
-	#error ET_CALL_FUNCTION is undefined
-
+#	error ET_CALL_FUNCTION is undefined
 #endif
+
+#if !defined(ET_SUPPORT_RANGE_BASED_FOR)
+#	error Please define if compiler supports range based for
+#endif
+
+#if (ET_SUPPORT_RANGE_BASED_FOR)
+#	define ET_START_ITERATION(container, type, variable)	for (type variable : container) {
+#else 
+#	define ET_START_ITERATION(container, type, variable)	for (auto variable##I = container.begin(), variable##E = container.end();\
+																variable##I != variable##E; ++variable##I) { type variable = *variable##I;
+#endif
+
+#define ET_END_ITERATION(container)							}
+
+#define ET_ITERATE(container, type, variable, expression)	ET_START_ITERATION(container, type, variable)\
+																expression;\
+															ET_END_ITERATION(container)
