@@ -44,7 +44,7 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 		return;
 	}
     
-    ogl_caps().checkCaps();
+    openGLCapabilites().checkCaps();
 
 	_renderState.setRenderContext(this);
 	_programFactory = new ProgramFactory(this);

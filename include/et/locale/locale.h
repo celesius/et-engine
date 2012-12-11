@@ -41,5 +41,5 @@ namespace et
 
 	std::string localized(const std::string& key);
 
-	#include <et/locale/locale.ext.h>
+#	include <et/locale/locale.ext.h>
 }

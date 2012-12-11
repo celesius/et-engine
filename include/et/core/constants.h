@@ -66,6 +66,7 @@
 #define ET_SPACE			' '
 
 #define ET_BACKSPACE		8
+#define ET_TAB				9
 #define ET_NEWLINE			10
 #define ET_RETURN			13
 #define ET_SHIFT			16

@@ -56,12 +56,15 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 		if (hasShadow)
 		{
 			vec2 shadowOffset = textOffset + _shadowOffset;
+			vec4 shadowColor = _shadowColor;
 
+			shadowColor.w *= color().w * fadeOut;
 			renderer.createStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment,
-				shadowOffset, _shadowColor * vec4(1.0, 1.0, 1.0, color().w * fadeOut), transform, GuiRenderLayer_Layer1);
+				shadowOffset, shadowColor, transform, GuiRenderLayer_Layer1);
 			
+			shadowColor.w = _shadowColor.w * color().w * fadeIn;
 			renderer.createStringVertices(_vertices, _charListNextText, _horizontalAlignment, _verticalAlignment,
-				shadowOffset, _shadowColor * vec4(1.0, 1.0, 1.0, color().w * fadeIn), transform, GuiRenderLayer_Layer1);
+				shadowOffset, shadowColor, transform, GuiRenderLayer_Layer1);
 		}
 
 		renderer.createStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment, textOffset, 

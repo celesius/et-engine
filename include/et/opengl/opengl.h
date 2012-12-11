@@ -8,80 +8,78 @@
 #pragma once
 
 #include <et/core/debug.h>
-#include <et/core/tools.h>
+
+#if ET_PLATFORM_WIN
+#
+#	include <et/opengl/gl.win.h>
+#
+#	define ET_OPENGLES								0
+#
+#	define GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG		0
+#	define GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG		0
+#	define GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG		0
+#	define GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG		0
+#
+#elif ET_PLATFORM_MAC
+#
+#	include <OpenGL/gl3.h>
+#	include <OpenGL/gl3ext.h>
+#
+#	define ET_OPENGLES								0
+#
+#	define GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG		0
+#	define GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG		0
+#	define GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG		0
+#	define GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG		0
+#
+#elif ET_PLATFORM_IOS
+#
+#	include <OpenGLES/ES2/gl.h>
+#	include <OpenGLES/ES2/glext.h>
+#
+#	define ET_OPENGLES								1
+#
+#	define GL_DEPTH_COMPONENT24						GL_DEPTH_COMPONENT24_OES
+#	define GL_HALF_FLOAT							GL_HALF_FLOAT_OES
+#	define GL_RGB8									GL_RGB
+#	define GL_RGBA8									GL_RGBA
+#	define GL_RGB16F								0
+#	define GL_RGBA16F								0
+#	define GL_RGB32F								0
+#	define GL_RGBA32F								0
+#	define GL_R										0
+#	define GL_RG									0
+#	define GL_R16									0
+#	define GL_RG16									0
+#	define GL_RGB16									0
+#	define GL_RGBA16								0
+#
+#	define glGenVertexArrays						glGenVertexArraysOES
+#	define glBindVertexArray						glBindVertexArrayOES
+#	define glIsVertexArray							glIsVertexArrayOES
+#
+#	if !defined(glDeleteVertexArrays)
+#		define glDeleteVertexArrays					glGenVertexArraysOES
+#	endif
+#
+#	if !defined(glFramebufferTexture)
+#		define glFramebufferTexture(target, attachment, texture, level) glFramebufferTexture2D(target, attachment, GL_TEXTURE_2D, texture, level)
+#	endif
+#
+#	define GL_TEXTURE_MAX_LEVEL						GL_TEXTURE_MAX_LEVEL_APPLE
+#	define GL_TEXTURE_1D							0
+#	define GL_VERTEX_ARRAY_BINDING					GL_VERTEX_ARRAY_BINDING_OES
+#
+#endif
+
+#if (ET_DEBUG)
+#	define checkOpenGLError(tag) checkOpenGLErrorEx(ET_CALL_FUNCTION, __FILE__, ET_TOCONSTCHAR(__LINE__), tag)
+#else
+#	define checkOpenGLError(tag)
+#endif
 
 namespace et
 {
-
-#if ET_PLATFORM_WIN
-
-	#include <et/opengl/gl.win.h> 
-	
-	#define ET_OPENGLES								0
-	#define GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG		0
-	#define GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG		0
-	#define GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG		0
-	#define GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG		0
-	#define MAX_TEXTURE_UNITS						8
-	
-#elif ET_PLATFORM_MAC
-	
-	#include <OpenGL/gl3.h>
-	#include <OpenGL/gl3ext.h>
-
-	#define ET_OPENGLES								0
-	#define GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG		0
-	#define GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG		0
-	#define GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG		0
-	#define GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG		0
-	#define MAX_TEXTURE_UNITS						8
-	
-#elif ET_PLATFORM_IOS
-
-	#include <OpenGLES/ES2/gl.h>
-	#include <OpenGLES/ES2/glext.h>
-
-	#define ET_OPENGLES								1
-
-	#define GL_DEPTH_COMPONENT24					GL_DEPTH_COMPONENT24_OES
-	#define GL_HALF_FLOAT							GL_HALF_FLOAT_OES
-	
-	#define GL_RGB8									GL_RGB
-	#define GL_RGBA8								GL_RGBA
-	
-	#define GL_RGB16F								0
-	#define GL_RGBA16F								0
-	#define GL_RGB32F								0
-	#define GL_RGBA32F								0
-	#define GL_R									0
-	#define GL_RG									0
-	#define GL_R16									0
-	#define GL_RG16									0
-	#define GL_RGB16								0
-	#define GL_RGBA16								0
-
-	#define MAX_TEXTURE_UNITS						8
-
-	#define glGenVertexArrays						glGenVertexArraysOES
-	#define	glBindVertexArray						glBindVertexArrayOES
-	#define	glIsVertexArray							glIsVertexArrayOES
-	
-	#if !defined(glDeleteVertexArrays)
-		#define glDeleteVertexArrays				glGenVertexArraysOES
-	#endif
-	
-	#if !defined(glFramebufferTexture)
-		#define glFramebufferTexture(target, attachment, texture, level) \
-			glFramebufferTexture2D(target, attachment, GL_TEXTURE_2D, texture, level)
-	#endif
-	
-	#define GL_TEXTURE_MAX_LEVEL					GL_TEXTURE_MAX_LEVEL_APPLE
-	#define GL_TEXTURE_1D							0
-	
-	#define GL_VERTEX_ARRAY_BINDING					GL_VERTEX_ARRAY_BINDING_OES
-
-#endif
-
 	enum BufferDrawType
 	{
 		BufferDrawType_Static,
@@ -106,6 +104,11 @@ namespace et
 		TextureFiltration_LinearMipMapLinear,
 		TextureFiltration_max
 	};
+	
+	enum
+	{
+		MaxTextureUnits	= 8
+	};
 
 	struct OpenGLCounters
 	{
@@ -118,12 +121,6 @@ namespace et
 		static size_t bindVertexArrayObjectCounter;
 		static void reset();
 	};
-
-#if (ET_DEBUG)
-	#define checkOpenGLError(tag) checkOpenGLErrorEx(ET_CALL_FUNCTION, __FILE__, ET_TOCONSTCHAR(__LINE__), tag)
-#else
-	#define checkOpenGLError(tag)
-#endif
 
 	void checkOpenGLErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const char* tag);
 	void checkOpenGLErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const std::string& tag);
@@ -161,5 +158,4 @@ namespace et
 
 	int textureWrapValue(TextureWrap w);
 	int textureFiltrationValue(TextureFiltration f);
-
 }

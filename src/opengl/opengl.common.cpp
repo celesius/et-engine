@@ -6,6 +6,7 @@
 */
 
 #include <et/opengl/opengl.h>
+#include <et/core/tools.h>
 
 namespace et
 {
@@ -546,15 +547,14 @@ namespace et
 #endif
 	}
 
+#if (ET_PLATFORM_WIN)
+#	define ET_VALIDATE_GLFUNC_EXT(F) if (!F) F = F##EXT;
+#else
+#	define ET_VALIDATE_GLFUNC_EXT(F)
+#endif
+	
 	void validateExtensions()
 	{
-
-#if (ET_PLATFORM_WIN)
-		#define ET_VALIDATE_GLFUNC_EXT(F) if (!F) F = F##EXT;
-#else
-		#define ET_VALIDATE_GLFUNC_EXT(F)
-#endif
-
 		ET_VALIDATE_GLFUNC_EXT(glIsRenderbuffer);
 		ET_VALIDATE_GLFUNC_EXT(glBindRenderbuffer);
 		ET_VALIDATE_GLFUNC_EXT(glDeleteRenderbuffers);
