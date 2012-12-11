@@ -125,7 +125,7 @@ FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const Fr
 		else 
 		{
 			Texture d;
-			if (_isCubemapBuffer && (ogl_caps().version() == OpenGLVersion_New))
+			if (_isCubemapBuffer && (openGLCapabilites().version() == OpenGLVersion_New))
 			{
 				d = tf->genCubeTexture(desc.depthInternalformat, desc.size.x, desc.depthFormat, 
 					desc.depthType, name() + "_depth");
@@ -205,7 +205,7 @@ bool FramebufferData::addRenderTarget(const Texture& rt)
 
 	_rc->renderState().bindFramebuffer(_id);
 
-	if (ogl_caps().version() == OpenGLVersion_New)
+	if (openGLCapabilites().version() == OpenGLVersion_New)
 	{
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _numTargets, rt->glID(), 0);
 		checkOpenGLError("Framebuffer::addRenderTarget -> glFramebufferTexture(..., GL_COLOR_ATTACHMENT0 " + name());
@@ -239,7 +239,7 @@ bool FramebufferData::setDepthTarget(const Texture& rt)
 
 	_rc->renderState().bindFramebuffer(_id);
 
-	if (ogl_caps().version() == OpenGLVersion_New)
+	if (openGLCapabilites().version() == OpenGLVersion_New)
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, rt->glID(), 0);
 	else
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, rt->glID(), 0);
@@ -299,7 +299,7 @@ bool FramebufferData::setCurrentRenderTarget(const Texture& texture, GLenum targ
 {
 	_rc->renderState().bindFramebuffer(_id);
 
-	if (ogl_caps().version() == OpenGLVersion_New)
+	if (openGLCapabilites().version() == OpenGLVersion_New)
 	{
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture->glID(), 0);
 	}

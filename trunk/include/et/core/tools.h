@@ -39,13 +39,13 @@ namespace et
 	 * Common code
 	 */
 	inline bool isNewLineChar(char c)
-		{ return (c == 13) || (c == 10); }
-	inline bool isWhitespaceChar(char c)
-		{ return (c == 32) || (c == 13) || (c == 10) || (c == 9); }
-	inline bool isWhitespaceChar(wchar_t c)
-		{ return (c == 32) || (c == 13) || (c == 10) || (c == 9); }
+		{ return (c == ET_RETURN) || (c == ET_NEWLINE); }
 	inline bool isNewLineChar(wchar_t c)
-		{ return (c == 13) || (c == 10); }
+		{ return (c == ET_RETURN) || (c == ET_NEWLINE); }
+	inline bool isWhitespaceChar(char c)
+		{ return (c == ET_SPACE) || (c == ET_RETURN) || (c == ET_NEWLINE) || (c == ET_TAB); }
+	inline bool isWhitespaceChar(wchar_t c)
+		{ return (c == ET_SPACE) || (c == ET_RETURN) || (c == ET_NEWLINE) || (c == ET_TAB); }
 
 	inline std::string lowercase(const std::string& s)
 	{
@@ -149,12 +149,11 @@ namespace et
 		return stream;
 	}
 
-
 	template <typename T>
 	inline std::ostream& operator << (std::ostream& stream, const matrix4<T>& value) 
 	{ 
 		stream << "{" << std::endl << "\t" << value[0] << std::endl << 
-			"\t" << value[1] << std::endl << "\t" << value[2] << std::endl << 
+			"\t" << value[1] << std::endl << "\t" << value[2] << std::endl <<
 			"\t" << value[3] << std::endl << "}" << std::endl;
 		return stream;
 	}

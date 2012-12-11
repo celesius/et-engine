@@ -366,7 +366,7 @@ void RenderState::textureDeleted(GLuint texture)
 	if (_currentState.boundTextures[_currentState.activeTextureUnit] == texture)
 		bindTexture(_currentState.activeTextureUnit, 0, GL_TEXTURE_2D);
 
-	for (GLuint i = 0; i < MAX_TEXTURE_UNITS; ++i) 
+	for (GLuint i = 0; i < MaxTextureUnits; ++i)
 	{
 		if (_currentState.boundTextures[i] == texture)
 			_currentState.boundTextures[i] = 0;
@@ -511,7 +511,7 @@ void RenderState::applyState(const RenderState::State& s)
 	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, s.boundElementArrayBuffer, true);
 	bindBuffer(GL_ARRAY_BUFFER, s.boundArrayBuffer, true);
 	
-	for (size_t i = 0; i < MAX_TEXTURE_UNITS; ++i)
+	for (size_t i = 0; i < MaxTextureUnits; ++i)
 		bindTexture(i, s.boundTextures[i], GL_TEXTURE_2D);
 	
 	for (size_t i = 0; i < Usage_max; ++i)
@@ -537,7 +537,7 @@ RenderState::State RenderState::currentState()
 	glGetIntegerv(GL_ACTIVE_TEXTURE, &value);
 	s.activeTextureUnit = value - GL_TEXTURE0;
 	
-	for (size_t i = 0; i < MAX_TEXTURE_UNITS; ++i)
+	for (size_t i = 0; i < MaxTextureUnits; ++i)
 	{
 		value = 0;
 		glActiveTexture(GL_TEXTURE0 + i);

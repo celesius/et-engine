@@ -21,13 +21,13 @@ ProgramFactory::ProgramFactory(RenderContext* rc) : APIObjectFactory(rc)
 		"#define etHighp	highp\n";
 #else
 	_commonHeader = 
-		"#version " + ogl_caps().glslVersion() + "\n"
+		"#version " + openGLCapabilites().glslVersion() + "\n"
 		"#define etLowp\n"
 		"#define etMediump\n"
 		"#define etHighp\n";
 #endif
 
-	if (ogl_caps().version() == OpenGLVersion_Old)
+	if (openGLCapabilites().version() == OpenGLVersion_Old)
 	{
 		_fragShaderHeader = 
 			"#define etTexture2D	texture2D\n"
@@ -115,7 +115,7 @@ Program ProgramFactory::loadProgram(const std::string& file, const ProgramDefine
 	if (!fileExists(fName)) 
 		fName = application().environment().findFile(vertex_source);
 
-	bool gl2 = ogl_caps().version() == OpenGLVersion_Old;
+	bool gl2 = openGLCapabilites().version() == OpenGLVersion_Old;
 	std::string gl2Name;
 
 	if (gl2)

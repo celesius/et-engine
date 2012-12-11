@@ -5,9 +5,8 @@
 *
 */
 
-#define ET_INTERNAL_WRAP_LOCALIZEDPRINTF(expression)	StringDataStorage buffer(1024 + key.size(), 0); \
-														expression; \
-														return std::string(buffer.data());
+#define ET_INTERNAL_WRAP_LOCALIZEDPRINTF(expression)	StringDataStorage buffer(1024 + key.size(), 0);\
+														expression; return std::string(buffer.data());
 
 template <typename A1>
 std::string localizedPrintf(const std::string& key, A1 a1)
