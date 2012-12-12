@@ -74,12 +74,12 @@ VertexArray::Description VertexArray::getDesc() const
 				assert(srcPtrOffset < chunkDataSize);
 				const char* srcPtr = chunkData + srcPtrOffset;
 
-				memcpy(dstPtr, srcPtr, chunk->typeSize());
+				etCopyMemory(dstPtr, srcPtr, chunk->typeSize());
 			}
 		}
 		else
 		{
-			memcpy(ptr0 + chunkOffset, chunkData, chunkDataSize);
+			etCopyMemory(ptr0 + chunkOffset, chunkData, chunkDataSize);
 		}
 	} 
 

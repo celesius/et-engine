@@ -74,7 +74,7 @@ namespace et
 			size_t outputLength = formatStrLength + strlen(sourceFile) + strlen(lineNumber) + strlen(caller) + strlen(tag);
 
 			char* buffer = new char[2 * outputLength];
-			memset(buffer, 0, outputLength);
+			etFillMemory(buffer, 0, outputLength);
 
 			sprintf(buffer, formatStr, sourceFile, lineNumber, caller, tag, errorStr.c_str());
 			puts(buffer);

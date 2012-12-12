@@ -33,8 +33,8 @@ RenderState::State::State() :
 	(void)keyDisableVertexAttribArray;
 	(void)keyVertexAttribPointer;
 	
-	memset(boundTextures, 0, sizeof(boundTextures));
-	memset(enabledVertexAttributes, 0, sizeof(enabledVertexAttributes));
+	boundTextures.fill(0);
+	enabledVertexAttributes.fill(0);
 }
 
 PreservedRenderStateScope::PreservedRenderStateScope(RenderState& rs, bool shouldApplyBefore) : 

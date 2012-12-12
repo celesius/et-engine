@@ -33,16 +33,20 @@ void Application::platform_finalize()
 int Application::platform_run()
 {
 #if defined(ET_EMBEDDED_APPLICATION)
+	
 	loaded();
 	return 0;
+	
 #else
+
     @autoreleasepool
 	{
 		std::string appName = _parameters.front();
 		StringDataStorage appNameData(appName.size());
-		memcpy(appNameData.data(), appName.c_str(), appName.size());
+		etCopyMemory(appNameData.data(), appName.c_str(), appName.size());
         return UIApplicationMain(1, (char*[]){ appNameData.data() }, nil, NSStringFromClass([etApplicationDelegate class]));
     }
+	
 #endif	
 }
 
