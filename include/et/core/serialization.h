@@ -44,9 +44,14 @@ namespace et
 		assert(stream.good());
 
 		int size = deserializeInt(stream);
-		DataStorage<char> value(size + 1, 0);
-		stream.read(value.binary(), size);
-		return std::string(value.binary());
+		if (size > 0)
+		{
+			StringDataStorage value(size + 1, 0);
+			stream.read(value.binary(), size);
+			return std::string(value.binary());
+		}
+
+		return std::string();
 	}
 
 	inline void serializeFloat(std::ostream& stream, float value)
