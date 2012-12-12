@@ -135,7 +135,7 @@ Texture TextureFactory::genNoiseTexture(const vec2i& size, bool norm, const std:
 	desc->layersCount = 1;
     desc->bitsPerPixel = 32;
     
-	memcpy(desc->data.data(), randata.data(), randata.dataSize());
+	etCopyMemory(desc->data.data(), randata.data(), randata.dataSize());
 
 	return Texture(new TextureData(renderContext(), desc, id, false));
 }
@@ -193,8 +193,10 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 	desc->data.resize(6 * layerSize);
 
 	for (size_t l = 0; l < 6; ++l)
-		memcpy(desc->data.element_ptr(l * layerSize), layers[l]->data.element_ptr(0), layerSize);
-
+	{
+		etCopyMemory(desc->data.element_ptr(l * layerSize), layers[l]->data.element_ptr(0), layerSize);
+	}
+	
 	desc->bitsPerPixel = layers[0]->bitsPerPixel;
 	desc->channels = layers[0]->channels;
 	desc->compressed = layers[0]->compressed;

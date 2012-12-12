@@ -70,4 +70,38 @@ namespace et
 		variable = newValue;
 		std::cout << variableName << " = " << valueName << ", call from " << function << std::endl;
 	}
+	
+	inline void etCopyMemory(void* dest, const void* source, size_t size)
+	{
+#if (ET_DEBUG)
+		static size_t totalMemoryCopied = 0;
+		if (totalMemoryCopied > 0xffffffff - size)
+			totalMemoryCopied = 0;
+		
+		totalMemoryCopied += size;
+		if (size > 16)
+		{
+			std::cout << "[etCopyMemory] copying " << size << " bytes (" << size / 1024 << "Kb, "
+				<< size / 1024 / 1024 << "Mb). Copied so far:" << totalMemoryCopied << " bytes, "
+				<< totalMemoryCopied / 1024 << "Kb, " << totalMemoryCopied / 1024 / 1024 << "Mb." << std::endl;
+		}
+#endif
+		memcpy(dest, source, size);
+	}
+	
+	inline void etFillMemory(void* dest, int value, size_t size)
+	{
+#if (ET_DEBUG)
+		static size_t totalMemoryFilled = 0;
+		if (totalMemoryFilled > 0xffffffff - size)
+			totalMemoryFilled = 0;
+		
+		totalMemoryFilled += size;
+		
+		std::cout << "[etFillMemory] filling " << size << " bytes (" << size / 1024 << "Kb, "
+			<< size / 1024 / 1024 << "Mb). Filled so far:" << totalMemoryFilled << " bytes, "
+			<< totalMemoryFilled / 1024 << "Kb, " << totalMemoryFilled / 1024 / 1024 << "Mb." << std::endl;
+#endif
+		memset(dest, value, size);
+	}
 }

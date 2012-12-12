@@ -26,12 +26,12 @@ namespace et
 			{ }
 		
 		StaticDataStorage(int initialize) 
-			{ memset(data, initialize, sizeof(data)); }
+			{ etFillMemory(data, initialize, sizeof(data)); }
 
 		T data[count];
 
 		void fill(int value)
-			{ memset(data, value, dataSize()); }
+			{ etFillMemory(data, value, dataSize()); }
 
 		T& operator [](int i)
 			{ return data[i]; }
@@ -77,7 +77,7 @@ namespace et
 			resize(copy.size());
 
 			if (copy.size() > 0)
-				memcpy(_data, copy.data(), copy.dataSize());
+				etCopyMemory(_data, copy.data(), copy.dataSize());
 		}
 
 		~DataStorage()
@@ -96,7 +96,7 @@ namespace et
 			{
 				new_data = new T[size];
 				if (min_size > 0)
-					memcpy(new_data, _data, min_size * sizeof(T));
+					etCopyMemory(new_data, _data, min_size * sizeof(T));
 			}
 			else
 			{
@@ -109,7 +109,7 @@ namespace et
 		}
 
 		void fill(int value) 
-			{ memset(_data, value, _dataSize); }
+			{ etFillMemory(_data, value, _dataSize); }
 
 		void operator ++()
 			{ ++_index; }
@@ -196,7 +196,7 @@ namespace et
 			resize(buf.size());
 
 			if (buf.size() > 0)
-				memcpy(_data, buf.data(), buf.dataSize());
+				etCopyMemory(_data, buf.data(), buf.dataSize());
 
 			return *this;
 		}
@@ -231,20 +231,25 @@ namespace et
 		}
 
 		T& operator[] (size_t i) 
-		{ 
-			return *(reinterpret_cast<T*>(_data + i * _stride + _offset));
-		}
+			{ return *(reinterpret_cast<T*>(_data + i * _stride + _offset)); }
 
 		void fill(int v)
-			{ memset(_data, v, _dataSize); }
+			{ etFillMemory(_data, v, _dataSize); }
 
-		char* binary() { return (char*)_data; };
-		const char* binary() const  { return (char*)_data; };
+		char* binary()
+			{ return (char*)_data; };
+		
+		const char* binary() const
+			{ return (char*)_data; };
 
-		const size_t size() const { return _size; };
-		const size_t dataSize() const { return _dataSize; }
+		const size_t size() const
+			{ return _size; };
+		
+		const size_t dataSize() const
+			{ return _dataSize; }
 
-		bool valid() const { return _data != 0; }
+		bool valid() const
+			{ return _data != nullptr; }
 
 		RawDataAcessor& operator = (const RawDataAcessor& r)
 		{
