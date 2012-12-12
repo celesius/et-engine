@@ -17,7 +17,7 @@
 
 #if (ET_PLATFORM_WIN)
 #
-#	define ET_CALL_FUNCTION	__FUNCTION__
+#	define ET_CALL_FUNCTION					__FUNCTION__
 #
 #	define _CRTDBG_MAP_ALLOC
 #	include <crtdbg.h>
@@ -30,8 +30,9 @@
 #
 #elif (ET_PLATFORM_APPLE)
 #
-#	define ET_CALL_FUNCTION				__PRETTY_FUNCTION__
-#	define ET_SUPPORT_RANGE_BASED_FOR	__has_feature(cxx_range_for)
+#	define ET_CALL_FUNCTION					__PRETTY_FUNCTION__
+#	define ET_SUPPORT_RANGE_BASED_FOR		__has_feature(cxx_range_for)
+#	define ET_FORCE_INLINE					__att
 #
 #else
 #
@@ -61,6 +62,8 @@
 																expression;\
 															ET_END_ITERATION(container)
 
+#define ET_LOG_MEMORY_OPERATIONS	0
+
 namespace et
 {
 	template <typename T>
@@ -73,31 +76,25 @@ namespace et
 	
 	inline void etCopyMemory(void* dest, const void* source, size_t size)
 	{
-#if (ET_DEBUG)
+#if (ET_DEBUG && ET_LOG_MEMORY_OPERATIONS)
 		static size_t totalMemoryCopied = 0;
 		if (totalMemoryCopied > 0xffffffff - size)
 			totalMemoryCopied = 0;
-		
 		totalMemoryCopied += size;
-		if (size > 16)
-		{
-			std::cout << "[etCopyMemory] copying " << size << " bytes (" << size / 1024 << "Kb, "
-				<< size / 1024 / 1024 << "Mb). Copied so far:" << totalMemoryCopied << " bytes, "
-				<< totalMemoryCopied / 1024 << "Kb, " << totalMemoryCopied / 1024 / 1024 << "Mb." << std::endl;
-		}
+		std::cout << "[etCopyMemory] copying " << size << " bytes (" << size / 1024 << "Kb, "
+			<< size / 1024 / 1024 << "Mb). Copied so far:" << totalMemoryCopied << " bytes, "
+			<< totalMemoryCopied / 1024 << "Kb, " << totalMemoryCopied / 1024 / 1024 << "Mb." << std::endl;
 #endif
 		memcpy(dest, source, size);
 	}
-	
+
 	inline void etFillMemory(void* dest, int value, size_t size)
 	{
-#if (ET_DEBUG)
+#if (ET_DEBUG && ET_LOG_MEMORY_OPERATIONS)
 		static size_t totalMemoryFilled = 0;
 		if (totalMemoryFilled > 0xffffffff - size)
 			totalMemoryFilled = 0;
-		
 		totalMemoryFilled += size;
-		
 		std::cout << "[etFillMemory] filling " << size << " bytes (" << size / 1024 << "Kb, "
 			<< size / 1024 / 1024 << "Mb). Filled so far:" << totalMemoryFilled << " bytes, "
 			<< totalMemoryFilled / 1024 << "Kb, " << totalMemoryFilled / 1024 / 1024 << "Mb." << std::endl;

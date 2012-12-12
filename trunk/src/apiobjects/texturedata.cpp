@@ -121,7 +121,7 @@ void TextureData::generateTexture(RenderContext*)
 	checkOpenGLError("TextureData::generateTexture " + name());
 }
 
-void TextureData::buildData(char* aDataPtr, size_t aDataSize)
+void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
 {
 	if (_desc->target == GL_TEXTURE_1D)
 	{
@@ -138,7 +138,7 @@ void TextureData::buildData(char* aDataPtr, size_t aDataSize)
 			size_t t_dataSize = _desc->dataSizeForMipLevel(level);
 			size_t t_offset = _desc->dataOffsetForMipLevel(level);
 			
-			char* ptr = (aDataPtr && (t_offset < aDataSize)) ? &aDataPtr[t_offset] : 0;
+			const char* ptr = (aDataPtr && (t_offset < aDataSize)) ? &aDataPtr[t_offset] : 0;
 			if (_desc->compressed && ptr)
 				etCompressedTexImage2D(_desc->target, level, _desc->internalformat, t_mipSize.x, t_mipSize.y, 0, t_dataSize, ptr); 
 			else
@@ -156,7 +156,7 @@ void TextureData::buildData(char* aDataPtr, size_t aDataSize)
 				size_t t_dataSize = _desc->dataSizeForMipLevel(level);
 				size_t t_offset = _desc->dataOffsetForMipLevel(level, layer);
 				
-				char* ptr = (aDataPtr && (t_offset < aDataSize)) ? &aDataPtr[t_offset] : 0;
+				const char* ptr = (aDataPtr && (t_offset < aDataSize)) ? &aDataPtr[t_offset] : 0;
 				if (_desc->compressed && ptr)
 					etCompressedTexImage2D(target, level, _desc->internalformat, t_mipSize.x, t_mipSize.y, 0, t_dataSize, ptr); 
 				else
@@ -191,7 +191,7 @@ void TextureData::build(RenderContext* rc)
 	if (_desc->mipMapCount > 1)
 		setMaxLod(rc, _desc->mipMapCount - 1);
 
-    buildData(_desc->data.binary(), _desc->data.dataSize());
+    buildData(_desc->data.constBinaryData(), _desc->data.dataSize());
 	_desc->data.resize(0);
 }
 

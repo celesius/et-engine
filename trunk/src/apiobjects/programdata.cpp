@@ -259,7 +259,7 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 			GLint nameLength = 0;
 			GLint attribSize = 0; 
 			GLenum attribType = 0;
-			DataStorage<char> name(maxNameLength, 0);
+			StringDataStorage name(maxNameLength, 0);
 			glGetActiveAttrib(_glID, i, maxNameLength, &nameLength, &attribSize, &attribType, name.binary()); 
 
 			VertexAttributeUsage v = stringToVertexAttribute(name.binary());
@@ -286,7 +286,7 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 			{
 				GLsizei uniformLenght = 0;
 				GLint uniformSize = 0;
-				DataStorage<char> name(maxNameLength, 0);
+				StringDataStorage name(maxNameLength, 0);
 				ProgramUniform P;
 				glGetActiveUniform(_glID, i, maxNameLength, &uniformLenght, &uniformSize, &P.type, name.binary());
 				P.location = glGetUniformLocation(_glID, name.binary());
@@ -341,7 +341,7 @@ int ProgramData::link()
 
 	if (!cStatus && (nLogLen > 1))
 	{
-		DataStorage<char> infoLog(nLogLen + 1, 0);
+		StringDataStorage infoLog(nLogLen + 1, 0);
 		glGetProgramInfoLog(_glID, nLogLen, &nLogLen, infoLog.data());
 		checkOpenGLError("glGetProgramInfoLog<LINK> " + name());
 		std::cout << "Program " << name() << " link log: " << std::endl << infoLog.data() << std::endl;

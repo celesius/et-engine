@@ -47,7 +47,7 @@ namespace et
 	private:
 		VertexAttributeUsage _usage;
 		VertexAttributeType _type;
-		DataStorage<char> _data;
+		BinaryDataStorage _data;
 	};
 
 	class VertexDataChunk : public IntrusivePtr<VertexDataChunkData>

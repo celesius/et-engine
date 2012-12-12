@@ -75,7 +75,7 @@ namespace et
 	private:
 		void generateTexture(RenderContext* rc);
 		void build(RenderContext* rc);
-        void buildData(char* ptr, size_t dataSize);
+        void buildData(const char* ptr, size_t dataSize);
 		
 	private:
 		GLuint _glID;
