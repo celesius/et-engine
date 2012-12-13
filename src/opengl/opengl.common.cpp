@@ -66,7 +66,7 @@ namespace et
 		GLenum error = glGetError();
 		if (error != GL_NO_ERROR)
 		{
-			static const char* formatStr = "[%s:%s] %s, %s\n%s\n";
+			static const char* formatStr = "[%s:%s] %s\n\{\n\ttag = %s\n\terr = %s\n}\n";
 			static const size_t formatStrLength = strlen(formatStr);
 
 			std::string errorStr = glErrorToString(error);

@@ -117,17 +117,17 @@ void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescriptio
 	desc.size = vec2i(header.width, header.height);
 	desc.mipMapCount = header.numMipmaps ? header.numMipmaps : 1;
 	desc.layersCount = 1;
-    
-	if (desc.mipMapCount > 1)
+/*
+	size_t actualMipMaps = 0;
+	vec2i latestMipMapSize(intPower(2, desc.mipMapCount - 1));
+	while ((desc.mipMapCount > 1) && (latestMipMapSize.x > 4) && (latestMipMapSize.y > 4))
 	{
-		int lastLevelScale = intPower(2, desc.mipMapCount);
-		while ((desc.size.x / lastLevelScale < 4) && (desc.size.y / lastLevelScale < 4))
-		{
-			desc.mipMapCount--;
-			lastLevelScale = intPower(2, desc.mipMapCount);
-		}
+		actualMipMaps++;
+		desc.mipMapCount--;
+		latestMipMapSize = vec2i(intPower(2, desc.mipMapCount));
 	}
-    
+	desc.mipMapCount = 1;//actualMipMaps;
+*/
     if ((header.channelType == PVRChannelType_UnsignedByte) || (header.channelType == PVRChannelType_UnsignedByteNorm))
         desc.type = GL_UNSIGNED_BYTE;
     else if ((header.channelType == PVRChannelType_UnsignedShort) || (header.channelType == PVRChannelType_UnsignedShortNorm))
