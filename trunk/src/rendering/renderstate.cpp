@@ -384,7 +384,7 @@ void RenderState::frameBufferDeleted(GLuint buffer)
 
 void RenderState::setVertexAttribEnabled(GLuint attrib, bool enabled, bool force)
 {
-	bool wasEnabled = _currentState.enabledVertexAttributes[attrib];
+	bool wasEnabled = _currentState.enabledVertexAttributes[attrib] > 0;
 
 	if (enabled && (!wasEnabled || force))
 	{
@@ -515,7 +515,10 @@ void RenderState::applyState(const RenderState::State& s)
 		bindTexture(i, s.boundTextures[i], GL_TEXTURE_2D);
 	
 	for (size_t i = 0; i < Usage_max; ++i)
-		setVertexAttribEnabled(i, s.enabledVertexAttributes[i], false);
+	{
+		bool enabled = s.enabledVertexAttributes[i] != 0;
+		setVertexAttribEnabled(i, enabled, false);
+	}
 	
 	setActiveTextureUnit(s.activeTextureUnit);
 }

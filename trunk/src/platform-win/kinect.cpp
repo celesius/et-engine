@@ -12,7 +12,7 @@
 #include <iostream>
 #include <Windows.h>
 #include <MSR_NuiApi.h>
-#include <et/kinect/kinect.h>
+#include <et/platform-win/kinect.h>
 
 #pragma comment(lib, "MSRKinectNUI.lib")
 

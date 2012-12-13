@@ -57,7 +57,7 @@ CharacterGenerator::~CharacterGenerator()
 CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTexture)
 {
 	SIZE characterSize = { };
-	wchar_t string[2] = { value, 0 };
+	wchar_t string[2] = { static_cast<wchar_t>(value), 0 };
 
 	SelectObject(_private->_dc, _private->_font);
 	GetTextExtentPointW(_private->_dc, string, 1, &characterSize);
@@ -81,7 +81,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTextu
 CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateTexture)
 {
 	SIZE characterSize = { };
-	wchar_t string[2] = { value, 0 };
+	wchar_t string[2] = { static_cast<wchar_t>(value), 0 };
 
 	SelectObject(_private->_dc, _private->_boldFont);
 	GetTextExtentPointW(_private->_dc, string, 1, &characterSize);
@@ -151,7 +151,7 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, Texture texture
 void CharacterGeneratorPrivate::renderCharacter(int value, const vec2i& position)
 {
 	RECT r = { position.x, position.y, defaultTextureSize, defaultTextureSize };
-	wchar_t string[2] = { value, 0 };
+	wchar_t string[2] = { static_cast<wchar_t>(value), 0 };
 
 	SelectObject(_dc, _font);
 	DrawTextW(_dc, string, -1, &r, 0);
@@ -160,7 +160,7 @@ void CharacterGeneratorPrivate::renderCharacter(int value, const vec2i& position
 void CharacterGeneratorPrivate::renderBoldCharacter(int value, const vec2i& position)
 {
 	RECT r = { position.x, position.y, defaultTextureSize, defaultTextureSize };
-	wchar_t string[2] = { value, 0 };
+	wchar_t string[2] = { static_cast<wchar_t>(value), 0 };
 
 	SelectObject(_dc, _boldFont);
 	DrawTextW(_dc, string, -1, &r, 0);

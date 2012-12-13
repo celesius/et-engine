@@ -146,16 +146,18 @@ void Gui::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer eleme
 	}
 }
 
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
 void Gui::buildKeyboardVertices(RenderContext* rc)
 {
-#if (ET_ENABLE_CUSTOM_KEYBOARD)
 	if (_keyboard.invalid())
 	{
 		_renderingElementKeyboard->clear();
 		_keyboard.addToRenderQueue(rc, _renderer);
 	}
-#endif
 }
+#else
+void Gui::buildKeyboardVertices(RenderContext*) { }
+#endif
 
 void Gui::buildBackgroundVertices(RenderContext* rc)
 {
@@ -224,9 +226,9 @@ void Gui::setBackgroundImage(const Image& img)
 	_backgroundValid = false;
 }
 
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
 void Gui::onKeyboardNeeded(Layout* l, Element* element)
 {
-#if (ET_ENABLE_CUSTOM_KEYBOARD)
 	if (!platformHasHardwareKeyboard())
 	{
 		vec2 size = element->size();
@@ -238,18 +240,21 @@ void Gui::onKeyboardNeeded(Layout* l, Element* element)
 
 	_keyboard.show(true, element);
 	_keyboard.setDelegate(l);
-#endif
 }
+#else
+void Gui::onKeyboardNeeded(Layout*, Element*) { }
+#endif
 
+#if (ET_ENABLE_CUSTOM_KEYBOARD)
 void Gui::onKeyboardResigned(Layout* l)
 {
-#if (ET_ENABLE_CUSTOM_KEYBOARD)
 	if (!platformHasHardwareKeyboard() && _keyboard.visible())
 		l->resetVerticalOffset();
 	_keyboard.hide(true);
-#endif
 }
-
+#else
+void Gui::onKeyboardResigned(Layout*) { }
+#endif
 
 void Gui::getAnimationParams(size_t flags, vec3* nextSrc, vec3* nextDst, vec3* currDst)
 {
@@ -492,7 +497,7 @@ void Gui::LayoutEntryObject::animatorUpdated(BaseAnimator*)
 {
 }
 
-void Gui::LayoutEntryObject::animatorFinished(BaseAnimator* a)
+void Gui::LayoutEntryObject::animatorFinished(BaseAnimator*)
 {
 	animator.extract()->destroy();
 	owner->layoutEntryTransitionFinished(this);
@@ -504,7 +509,7 @@ void Gui::showMessageView(MessageView::Pointer mv, size_t animationFlags, float 
 	pushLayout(mv, animationFlags, duration);
 }
 
-void Gui::onMessageViewButtonClicked(MessageView* view, MessageViewButton button)
+void Gui::onMessageViewButtonClicked(MessageView* view, MessageViewButton)
 {
 	removeLayout(Layout::Pointer(view));
 }
