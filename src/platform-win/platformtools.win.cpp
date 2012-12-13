@@ -12,7 +12,7 @@
 
 using namespace et;
 
-std::string et::selectFile(const StringList& ext, SelectFileMode mode)
+std::string et::selectFile(const StringList&, SelectFileMode mode)
 {
 	char filename[1024] = { };
 

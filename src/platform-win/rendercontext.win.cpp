@@ -82,7 +82,7 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 	}
 	else 
 	{
-		ogl_caps().checkCaps();
+		openGLCapabilites().checkCaps();
 		_screenScaleFactor = (_private->windowSize.x - 1) / (3 * _params.baseContextSize.x / 2) + 1;
 		_renderState.setRenderContext(this);
 		_programFactory = new ProgramFactory(this);

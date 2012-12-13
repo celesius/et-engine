@@ -49,18 +49,19 @@
 #if (ET_SUPPORT_RANGE_BASED_FOR)
 #
 #	define ET_START_ITERATION(container, type, variable)	for (type variable : container) {
+#	define ET_END_ITERATION									}
 #
 #else 
 #
 #	define ET_START_ITERATION(container, type, variable)	for (auto variable##I = container.begin(), variable##E = container.end();\
-#																variable##I != variable##E; ++variable##I) { type variable = *variable##I;
+																variable##I != variable##E; ++variable##I) { type variable = *variable##I;
+#define ET_END_ITERATION									}
 #endif
 
-#define ET_END_ITERATION(container)							}
 
 #define ET_ITERATE(container, type, variable, expression)	ET_START_ITERATION(container, type, variable)\
 																expression;\
-															ET_END_ITERATION(container)
+															ET_END_ITERATION
 
 #define ET_LOG_MEMORY_OPERATIONS	0
 
