@@ -44,6 +44,9 @@ namespace et
 
 		void init();
 		bool valid();
+		
+		const RenderContextParameters& parameters() const
+			{ return _params; }
 
 		const vec2& size() const
 			{ return _renderState.mainViewportSizeFloat(); }
