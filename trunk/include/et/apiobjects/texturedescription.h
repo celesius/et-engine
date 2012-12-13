@@ -34,7 +34,10 @@ namespace et
 			{ return size / intPower(2, level); }
 
 		size_t dataSizeForMipLevel(size_t level)
-			{ return sizeForMipLevel(level).square() * bitsPerPixel / 8; }
+		{
+			size_t actualSize = sizeForMipLevel(level).square() * bitsPerPixel / 8;
+			return compressed ? etMax(static_cast<size_t>(32), actualSize) : actualSize;
+		}
 
 		size_t dataSizeForAllMipLevels()
 		{
