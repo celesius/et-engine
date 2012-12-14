@@ -78,7 +78,8 @@ namespace et
 		bool remove(VertexAttributeUsage usage);
 		void clear();
 
-		const VertexElement& element(size_t i) const;
+		const VertexElement& element(size_t) const;
+		const VertexElement& elementForUsage(VertexAttributeUsage) const;
 
 		const VertexElementList& elements() const
 			{ return _list; }   

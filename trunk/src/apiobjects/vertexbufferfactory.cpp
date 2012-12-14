@@ -11,7 +11,7 @@ using namespace et;
 
 VertexBuffer VertexBufferFactory::createVertexBuffer(const std::string& name, VertexArray::Pointer data, BufferDrawType vertexDrawType)
 {
-	VertexBuffer vb(new VertexBufferData(_rs, data->getDesc(), vertexDrawType, name));
+	VertexBuffer vb(new VertexBufferData(_rs, data->generateDescription(), vertexDrawType, name));
 	vb->setSourceTag(reinterpret_cast<size_t>(data.ptr()));
 	return vb;
 }

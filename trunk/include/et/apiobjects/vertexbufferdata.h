@@ -51,7 +51,7 @@ namespace et
 		VertexDeclaration _decl;
 		size_t _dataSize;
 		size_t _sourceTag;
-		BufferDrawType _vertexDrawType;
+		BufferDrawType _drawType;
 	};
 
 }
