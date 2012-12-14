@@ -14,10 +14,6 @@
 #include <et/core/containers.h>
 #include <et/sound/sound.h>
 
-#if (ET_PLATFORM_WIN)
-#	pragma comment(lib, "OpenAL32")
-#endif
-
 namespace et
 {
     namespace audio
