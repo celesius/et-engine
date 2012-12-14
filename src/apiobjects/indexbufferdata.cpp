@@ -80,7 +80,7 @@ void IndexBufferData::build(const IndexArray::Pointer& i)
 {
 	setProperties(i);
 
-	GLenum indexDraw = _drawType == BufferDrawType_Stream ? GL_STREAM_DRAW : GL_STATIC_DRAW;
+	GLenum indexDraw = drawTypeValue(_drawType);
 	size_t indexDataSize = i->format() * _size;
 
 	if (_indexBuffer == 0)

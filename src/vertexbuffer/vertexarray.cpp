@@ -29,7 +29,7 @@ VertexArray::VertexArray(const VertexDeclaration& decl, size_t size) : tag(0), _
 	}
 }
 
-VertexArray::Description VertexArray::getDesc() const
+VertexArray::Description VertexArray::generateDescription() const
 {
 	size_t dataSize = 0;
 	size_t offset = 0;

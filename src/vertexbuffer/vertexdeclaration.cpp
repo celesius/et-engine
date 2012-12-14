@@ -74,10 +74,18 @@ void VertexDeclaration::clear()
 
 const VertexElement& VertexDeclaration::element(size_t i) const
 {
-	if (i > _list.size())
-		return _empty;
-	else
-		return _list[i];
+	return (i >= _list.size()) ? _empty : _list[i];
+}
+
+const VertexElement& VertexDeclaration::elementForUsage(VertexAttributeUsage u) const
+{
+	ET_ITERATE(_list, const VertexElement&, e, 
+	{
+		if (e.usage() == u)
+			return e;
+	});
+
+	return _empty;
 }
 
 bool VertexDeclaration::operator == (const VertexDeclaration& r) const

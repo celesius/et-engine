@@ -83,6 +83,7 @@ namespace et
 	enum BufferDrawType
 	{
 		BufferDrawType_Static,
+		BufferDrawType_Dynamic,
 		BufferDrawType_Stream,
 		BufferDrawType_max
 	};
@@ -156,6 +157,7 @@ namespace et
 	void etTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height,
 		GLint border, GLenum format, GLenum type, const GLvoid * pixels);
 
-	int textureWrapValue(TextureWrap w);
-	int textureFiltrationValue(TextureFiltration f);
+	int textureWrapValue(TextureWrap);
+	int textureFiltrationValue(TextureFiltration);
+	int drawTypeValue(BufferDrawType);
 }

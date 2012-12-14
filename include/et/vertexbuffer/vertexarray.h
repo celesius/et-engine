@@ -36,7 +36,7 @@ namespace et
 			{ return _smoothing; }
 
 		VertexDataChunk chunk(VertexAttributeUsage usage);
-		Description getDesc() const;
+		Description generateDescription() const;
 		
 		void increase(size_t size);
 		void fitToSize(size_t size);
