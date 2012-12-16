@@ -59,7 +59,7 @@
 #	define glIsVertexArray							glIsVertexArrayOES
 #
 #	if !defined(glDeleteVertexArrays)
-#		define glDeleteVertexArrays					glGenVertexArraysOES
+#		define glDeleteVertexArrays					glDeleteVertexArraysOES
 #	endif
 #
 #	if !defined(glFramebufferTexture)
