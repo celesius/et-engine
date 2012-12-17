@@ -480,6 +480,8 @@ namespace et
 	{
 		switch (f)
 		{
+		case TextureFiltration_Nearest:
+			return GL_NEAREST;
 		case TextureFiltration_Linear:
 			return GL_LINEAR;
 		case TextureFiltration_NearestMipMapNearest:
