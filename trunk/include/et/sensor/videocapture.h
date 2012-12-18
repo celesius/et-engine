@@ -26,6 +26,16 @@ namespace et
 			{ }
 	};
 	
+	enum VideoCaptureFlags
+	{
+		VideoCaptureFlag_LockFocus = 0x01,
+		VideoCaptureFlag_LockWhiteBalance = 0x02,
+		VideoCaptureFlag_LockExposure = 0x04,
+		
+		VideoCaptureFlag_LockAllParameters =
+			VideoCaptureFlag_LockFocus | VideoCaptureFlag_LockWhiteBalance | VideoCaptureFlag_LockExposure
+	};
+	
 	class VideoCapturePrivate;
 	class VideoCapture : public EventReceiver
 	{
@@ -39,10 +49,8 @@ namespace et
         void run();
         void stop();
 		
-		void setFocusLocked(bool isLocked);
-		void setWhitebalancedLocked(bool isLocked);
-		void setExposureLocked(bool isLocked);
-		void setAllParametersLocked(bool isLocked);
+		void setFlags(size_t flag);
+		void removeFlags(size_t flag);
 		
 		ET_DECLARE_EVENT1(frameDataAvailable, VideoFrameData);
 		

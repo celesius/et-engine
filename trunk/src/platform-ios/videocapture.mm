@@ -25,9 +25,8 @@ namespace et
         void stop();
 
 		void setFocusLocked(bool isLocked);
-		void setWhitebalancedLocked(bool isLocked);
+		void setWhiteBalanceLocked(bool isLocked);
 		void setExposureLocked(bool isLocked);
-		void setAllParametersLocked(bool isLocked);
 		
 	private:
 		VideoCapture* _owner;
@@ -39,19 +38,35 @@ namespace et
 using namespace et;
 
 @interface VideoCaptureProxy : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
-	{ VideoCapturePrivate* _p; }
+{
+	VideoCapturePrivate* _p;
+}
+
 - (id)initWithVideoCapturePrivate:(VideoCapturePrivate*)p;
-- (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection;
+
+- (void)captureOutput:(AVCaptureOutput *)captureOutput
+	didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection;
+
 @end
 
 @implementation VideoCaptureProxy
-- (id)initWithVideoCapturePrivate:(VideoCapturePrivate*)p {
+
+- (id)initWithVideoCapturePrivate:(VideoCapturePrivate*)p
+{
 	self = [super init];
-	if (self) { _p = p; }
+	if (self)
+	{
+		_p = p;
+	}
 	return self;
 }
-- (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
-	{ _p->handleSampleBuffer(sampleBuffer); }
+
+- (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
+	   fromConnection:(AVCaptureConnection *)connection
+{
+	_p->handleSampleBuffer(sampleBuffer);
+}
+
 @end
 
 VideoCapture::VideoCapture()
@@ -66,24 +81,24 @@ void VideoCapture::run()
 void VideoCapture::stop()
     { _private->stop(); }
 
-void VideoCapture::setFocusLocked(bool isLocked)
+void VideoCapture::setFlags(size_t flags)
 {
-	_private->setFocusLocked(isLocked);
+	if ((flags & VideoCaptureFlag_LockFocus) == VideoCaptureFlag_LockFocus)
+		_private->setFocusLocked(true);
+	if ((flags & VideoCaptureFlag_LockExposure) == VideoCaptureFlag_LockExposure)
+		_private->setExposureLocked(true);
+	if ((flags & VideoCaptureFlag_LockWhiteBalance) == VideoCaptureFlag_LockWhiteBalance)
+		_private->setWhiteBalanceLocked(true);
 }
 
-void VideoCapture::setWhitebalancedLocked(bool isLocked)
+void VideoCapture::removeFlags(size_t flags)
 {
-	_private->setWhitebalancedLocked(isLocked);
-}
-
-void VideoCapture::setExposureLocked(bool isLocked)
-{
-	_private->setExposureLocked(isLocked);
-}
-
-void VideoCapture::setAllParametersLocked(bool isLocked)
-{
-	_private->setAllParametersLocked(isLocked);
+	if ((flags & VideoCaptureFlag_LockFocus) == VideoCaptureFlag_LockFocus)
+		_private->setFocusLocked(false);
+	if ((flags & VideoCaptureFlag_LockExposure) == VideoCaptureFlag_LockExposure)
+		_private->setExposureLocked(false);
+	if ((flags & VideoCaptureFlag_LockWhiteBalance) == VideoCaptureFlag_LockWhiteBalance)
+		_private->setWhiteBalanceLocked(false);
 }
 
 bool VideoCapture::available()
@@ -116,10 +131,10 @@ VideoCapturePrivate::VideoCapturePrivate(VideoCapture* owner) : _owner(owner)
 	
 	AVCaptureConnection *conn = [_output connectionWithMediaType:AVMediaTypeVideo];
 	if (conn.supportsVideoMinFrameDuration)
-		conn.videoMinFrameDuration = CMTimeMake(1, 60);
+		conn.videoMinFrameDuration = CMTimeMake(1, 30);
 	
 	if (conn.supportsVideoMaxFrameDuration)
-		conn.videoMaxFrameDuration = CMTimeMake(1, 1);
+		conn.videoMaxFrameDuration = CMTimeMake(1, 15);
 	
 	[_session startRunning];
 }
@@ -190,7 +205,7 @@ void VideoCapturePrivate::setFocusLocked(bool isLocked)
 	[_session commitConfiguration];
 }
 
-void VideoCapturePrivate::setWhitebalancedLocked(bool isLocked)
+void VideoCapturePrivate::setWhiteBalanceLocked(bool isLocked)
 {
 	if (_session == nullptr) return;
 	
@@ -244,45 +259,6 @@ void VideoCapturePrivate::setExposureLocked(bool isLocked)
 			{
 				if ([device isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure])
 					device.exposureMode = AVCaptureExposureModeContinuousAutoExposure;
-			}
-			[device unlockForConfiguration];
-		}
-	}
-	
-	[_session commitConfiguration];
-}
-
-void VideoCapturePrivate::setAllParametersLocked(bool isLocked)
-{
-	if (_session == nullptr) return;
-	
-	[_session beginConfiguration];
-	
-	NSArray* devices = [AVCaptureDevice devices];
-	NSError* error = nil;
-	
-	for (AVCaptureDevice* device in devices)
-	{
-		if (([device hasMediaType:AVMediaTypeVideo]) && ([device position] == AVCaptureDevicePositionBack))
-		{
-			[device lockForConfiguration:&error];
-			if (isLocked)
-			{
-				if ([device isFocusModeSupported:AVCaptureFocusModeLocked])
-					device.focusMode = AVCaptureFocusModeLocked;
-				if ([device isExposureModeSupported:AVCaptureExposureModeLocked])
-					device.exposureMode = AVCaptureExposureModeLocked;
-				if ([device isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeLocked])
-					device.whiteBalanceMode = AVCaptureWhiteBalanceModeLocked;
-			}
-			else
-			{
-				if ([device isFocusModeSupported:AVCaptureFocusModeContinuousAutoFocus])
-					device.focusMode = AVCaptureFocusModeContinuousAutoFocus;
-				if ([device isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure])
-					device.exposureMode = AVCaptureExposureModeContinuousAutoExposure;
-				if ([device isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance])
-					device.whiteBalanceMode = AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance;
 			}
 			[device unlockForConfiguration];
 		}
