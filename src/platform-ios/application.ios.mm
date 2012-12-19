@@ -22,6 +22,7 @@ using namespace et;
 
 void Application::platform_init()
 {
+	_env.updateDocumentsFolder(_identifier.identifier);
 }
 
 void Application::platform_finalize()

@@ -25,6 +25,9 @@ namespace et
 			applicationName(aApplicationName) { }
 	};
 	
+	template <typename T> struct vector2;
+	typedef vector2<int> vec2i;
+	
 	class IApplicationDelegate : virtual public EventReceiver
 	{
 	public:

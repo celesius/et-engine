@@ -107,21 +107,22 @@ bool et::folderExists(const std::string& name)
 	return exists && isDir;
 }
 
-std::string et::applicationDocumentsFolder()
+std::string et::applicationDocumentsBaseFolder()
 {
     @autoreleasepool 
     {
-        NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSArray* paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
         NSString* folder = [[paths objectAtIndex:0] stringByAppendingString:@"/"];
-        return std::string([folder cStringUsingEncoding:NSASCIIStringEncoding]);
+        return std::string([folder cStringUsingEncoding:NSUTF8StringEncoding]);
     }
 }
 
 void et::createDirectory(const std::string& name)
 {
 	NSError* err = nil;
-	NSString* path = [NSString stringWithCString:name.c_str() encoding:NSASCIIStringEncoding];
-	[[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:NO attributes:nil error:&err];
+	NSString* path = [NSString stringWithCString:name.c_str() encoding:NSUTF8StringEncoding];
+	[[NSFileManager defaultManager]	createDirectoryAtPath:path withIntermediateDirectories:NO
+											   attributes:nil error:&err];
 	
 	if (err)
 		NSLog(@"Unable to create directory at %@, error: %@", path, err);

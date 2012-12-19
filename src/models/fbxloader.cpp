@@ -114,8 +114,8 @@ bool FBXLoaderPrivate::import(const std::string& filename)
 		printf("Call to FbxImporter::Initialize() failed.\n");
 		printf("Error returned: %s\n", importer->GetLastErrorString());
 
-		if (importer->GetLastErrorID() == FbxIO::eFileVersionNotSupportedYet ||
-			importer->GetLastErrorID() == FbxIO::eFileVersionNotSupportedAnymore)
+		if (importer->GetLastErrorID() == FbxIOBase::eFileVersionNotSupportedYet ||
+			importer->GetLastErrorID() == FbxIOBase::eFileVersionNotSupportedAnymore)
 		{
 			printf("FBX version number for this FBX SDK is %d.%d.%d\n", lSDKMajor, lSDKMinor, lSDKRevision);
 			printf("FBX version number for file %s is %d.%d.%d\n\n", filename.c_str(), lFileMajor, lFileMinor, lFileRevision);
@@ -392,9 +392,11 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 		}
 	}
 
-	s3d::Mesh::Pointer element = support ? 
-		s3d::SupportMesh::Pointer(new s3d::SupportMesh(meshName, parent.ptr())) : 
-		s3d::Mesh::Pointer(new s3d::Mesh(meshName, parent.ptr()));
+	s3d::Mesh::Pointer element;
+	if (support)
+		element = s3d::SupportMesh::Pointer(new s3d::SupportMesh(meshName, parent.ptr()));
+	else
+		element = s3d::Mesh::Pointer(new s3d::Mesh(meshName, parent.ptr()));
 
 	bool hasNormal = mesh->GetElementNormalCount() > 0;
 	bool hasUV = mesh->GetElementUVCount() > 0;
@@ -474,9 +476,18 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 			s3d::Element* aParent = (m == 0) ? parent.ptr() : element.ptr();
 			std::string aName = (m == 0) ? meshName : (meshName + "~" + materials.at(m)->name());
 
-			s3d::Mesh::Pointer meshElement = (m == 0) ? element : 
-				(support ? s3d::SupportMesh::Pointer(new s3d::SupportMesh(aName, aParent)) : 
-							s3d::Mesh::Pointer(new s3d::Mesh(aName, aParent)));
+			s3d::Mesh::Pointer meshElement;
+			if (m == 0)
+			{
+				meshElement = element;
+			}
+			else
+			{
+				if (support)
+					meshElement = s3d::SupportMesh::Pointer(new s3d::SupportMesh(aName, aParent));
+				else
+					meshElement = s3d::Mesh::Pointer(new s3d::Mesh(aName, aParent));
+			}
 
 			meshElement->tag = vbIndex;
 			meshElement->setStartIndex(indexOffset);

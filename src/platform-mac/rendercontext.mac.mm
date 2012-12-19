@@ -44,7 +44,7 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 	_private = new RenderContextPrivate(this, params);
 	_renderState.setMainViewportSize(params.contextSize);
 	
-	ogl_caps().checkCaps();
+	openGLCapabilites().checkCaps();
 	
 	_textureFactory = new TextureFactory(this);
 	_framebufferFactory = new FramebufferFactory(this, _textureFactory);
@@ -179,8 +179,8 @@ void RenderContextPrivate::run()
 		CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink);
 		CVDisplayLinkSetOutputCallback(_displayLink, cvDisplayLinkOutputCallback, this);
 		CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink,
-														  static_cast<CGLContextObj>([_openGlContext CGLContextObj]),
-														  static_cast<CGLPixelFormatObj>([_pixelFormat CGLPixelFormatObj]));
+			static_cast<CGLContextObj>([_openGlContext CGLContextObj]),
+			static_cast<CGLPixelFormatObj>([_pixelFormat CGLPixelFormatObj]));
 	}
 	
 	CVDisplayLinkStart(_displayLink);

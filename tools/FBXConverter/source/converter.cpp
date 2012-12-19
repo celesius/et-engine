@@ -11,7 +11,7 @@ Converter::Converter() : _rc(0)
 
 void Converter::setRenderContextParameters(RenderContextParameters& p)
 {
-	p.contextSize = vec2i(1024, 768);
+	p.contextSize = vec2i(1024, 640);
 }
 
 void Converter::applicationDidLoad(RenderContext* rc)
@@ -100,6 +100,9 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	_defaultProgram->setUniform("normalMap", 2);
 
 	rc->renderState().setClearColor(vec4(0.25f));
+	rc->renderState().setDepthTest(true);
+	rc->renderState().setDepthMask(true);
+	rc->renderState().setBlend(true, Blend_Default);
 	
 	const std::string& lp = application().launchParameter(1);
 	if (fileExists(lp))
@@ -183,7 +186,7 @@ void Converter::onZoom(float z)
 
 void Converter::onDrag(et::vec2 v, et::PointerType)
 {
-	_vAngle.addVelocity(vec2(-v.y, v.x));
+	_vAngle.addVelocity(0.25f * vec2(-v.y, v.x));
 }
 
 void Converter::onBtnOpenClick(et::gui::Button*)

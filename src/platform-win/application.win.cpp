@@ -16,6 +16,8 @@ void Application::platform_init()
 #if (ET_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
+	
+	_env.updateDocumentsFolder(_identifier.applicationName);
 }
 
 void Application::platform_finalize()

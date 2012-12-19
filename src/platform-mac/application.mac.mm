@@ -28,39 +28,6 @@ using namespace et;
 /*
  * Application implementation
  */
-IApplicationDelegate* et::Application::_delegate = 0;
-
-Application::Application() : _renderContext(0), _exitCode(0), _renderingContextHandle(0), _lastQueuedTime(0.0f),
-	_fpsLimit(0), _running(false), _active(false), _fpsLimitEnabled(false), _cpuLimit(false)
-{
-	
-}
-
-Application::~Application()
-{
-	delete _delegate;
-	delete _renderContext;
-}
-
-IApplicationDelegate* Application::delegate()
-{
-	if (_delegate == 0)
-		_delegate = initApplicationDelegate();
-    
-	return _delegate;
-}
-
-int Application::run(int argc, char* argv[])
-{
-	@autoreleasepool
-	{
-		[[NSApplication sharedApplication] setDelegate:[[[etApplicationDelegate alloc] init] autorelease]];
-		[[NSApplication sharedApplication] run];
-		
-		return 0;
-	}
-}
-
 void Application::loaded()
 {
 	_lastQueuedTime = queryTime();
@@ -91,48 +58,30 @@ void Application::quit(int exitCode)
 	[[NSApplication sharedApplication] terminate:nil];
 }
 
-void Application::performRendering()
-{
-	_renderContext->beginRender();
-	_delegate->render(_renderContext);
-	_renderContext->endRender();
-}
-
-void Application::idle()
-{
-	float t = queryTime();
-	if (_fpsLimitEnabled && (t - _lastQueuedTime < _fpsLimit)) return;
-	
-	_lastQueuedTime = t;
-	
-	_delegate->idle(t);
-	_runLoop->update(t);
-	performRendering();
-	
-	if (_cpuLimit)
-		usleep(0);
-}
-
 void Application::alert(const std::string&, const std::string&, AlertType)
 {
 	
 }
 
-void Application::setFPSLimit(size_t)
+void Application::platform_init()
 {
-	
+	_env.updateDocumentsFolder(_identifier);
 }
 
-void Application::setActive(bool active)
+int Application::platform_run()
 {
-	if (active == _active) return;
-	
-	_active = active;
+	@autoreleasepool
+	{
+		[[NSApplication sharedApplication] setDelegate:[[[etApplicationDelegate alloc] init] autorelease]];
+		[[NSApplication sharedApplication] run];
+		return 0;
+	}
 }
 
-void Application::contextResized(const vec2i& size)
+void Application::platform_finalize()
 {
-	
+	delete _delegate, _delegate = nullptr;
+	delete _renderContext, _renderContext = nullptr;
 }
 
 /*
@@ -155,6 +104,7 @@ void Application::contextResized(const vec2i& size)
 - (void)stop
 {
 	[_updateTimer invalidate], _updateTimer = nil;
+	_notifier.notifyDeactivated();
 }
 
 - (void)onTick:(id)sender
@@ -164,13 +114,13 @@ void Application::contextResized(const vec2i& size)
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
 {
+	[self stop];
 	return YES;
 }
 
 - (void)applicationDidHide:(NSNotification *)notification
 {
 	[self stop];
-	_notifier.notifyDeactivated();
 }
 
 - (void)applicationDidUnhide:(NSNotification *)notification
@@ -182,7 +132,6 @@ void Application::contextResized(const vec2i& size)
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
 	[self stop];
-	_notifier.notifyDeactivated();
 }
 
 @end
