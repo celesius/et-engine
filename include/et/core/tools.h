@@ -19,7 +19,10 @@ namespace et
 	float queryTime();
 	std::string applicationPath();
 	std::string applicationDataFolder();
+	
+	std::string applicationLibraryBaseFolder();
 	std::string applicationDocumentsBaseFolder();
+	
 	std::string normalizeFilePath(std::string s);
 	
 	bool fileExists(const std::string& name);

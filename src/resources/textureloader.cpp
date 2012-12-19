@@ -26,16 +26,21 @@ const StringList& TextureLoader::preferredExtensions()
 		extensions.push_back(".dds");
 		extensions.push_back(".png");
 		extensions.push_back(".jpg");
+		extensions.push_back(".jpeg");
 #elif ET_PLATFORM_IOS
 		extensions.push_back(".pvr");
 		extensions.push_back(".png");
 		extensions.push_back(".jpg");
+		extensions.push_back(".jpeg");
 #elif ET_PLATFORM_MAC
 		extensions.push_back(".dds");
 		extensions.push_back(".png");
 		extensions.push_back(".jpg");
+		extensions.push_back(".jpeg");
 #else
-	#error Please, define preferred extensions list for current platform.
+#
+#	error Please, define preferred extensions list for current platform.
+#
 #endif
 	}
 
@@ -49,7 +54,7 @@ std::string TextureLoader::resolveScalableFileName(const std::string& fileName, 
 
 	bool found = false;
 
-	if ((lastDotPos == std::string::npos) || (lastDotPos < fileName.size() - 4))
+	if ((lastDotPos == std::string::npos) || (lastDotPos < fileName.size() - 5))
 	{
 		const StringList& ext = TextureLoader::preferredExtensions();
 		for (StringList::const_iterator i = ext.begin(), e = ext.end(); i != e; ++i)
@@ -172,12 +177,7 @@ TextureDescription::Pointer TextureLoader::loadDescription(const std::string& na
 TextureDescription::Pointer TextureLoader::load(const std::string& name, size_t scaleFactor)
 {
 	std::string ext;
-	
-#if (ET_TEXTURE_DEBUG_LOAD)
-	std::string fileName = resolveFileName("debug/debug", &ext);
-#else
 	std::string fileName = resolveScalableFileName(name, scaleFactor, &ext, true);
-#endif
 	
 	TextureDescription* desc = nullptr;
 	

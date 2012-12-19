@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A53B4F2F16811F0E00C6B8EC /* libfbxsdk-2013.3-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A53B4F2E16811F0E00C6B8EC /* libfbxsdk-2013.3-static.a */; };
+		5C5128AC1681FA2500ED9B96 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C5128AA1681FA2500ED9B96 /* libjpeg.a */; };
+		5C5128AD1681FA2500ED9B96 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C5128AB1681FA2500ED9B96 /* libpng.a */; };
+		5C5128AF1681FA4700ED9B96 /* libfbxsdk-2013.3-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C5128AE1681FA4700ED9B96 /* libfbxsdk-2013.3-static.a */; };
 		A53B4F3116811FA900C6B8EC /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A53B4F3016811FA900C6B8EC /* libiconv.dylib */; };
 		A53B4F331681212F00C6B8EC /* platformtools.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A53B4F321681212F00C6B8EC /* platformtools.mac.mm */; };
 		A53B4F351681220500C6B8EC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53B4F341681220500C6B8EC /* main.cpp */; };
-		A53B4F3F1681246400C6B8EC /* libpng15.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A53B4F3E1681246400C6B8EC /* libpng15.a */; };
 		A53B4F421681247300C6B8EC /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A53B4F411681247300C6B8EC /* libz.dylib */; };
 		A53B4F441681256B00C6B8EC /* data in Resources */ = {isa = PBXBuildFile; fileRef = A53B4F431681256B00C6B8EC /* data */; };
 		A5A23E2F16811838001B3E98 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A23E2E16811838001B3E98 /* Cocoa.framework */; };
@@ -115,11 +116,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A53B4F2E16811F0E00C6B8EC /* libfbxsdk-2013.3-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfbxsdk-2013.3-static.a"; path = "../../../../../../Applications/Autodesk/FBX SDK/2013.3/lib/gcc4/ub/libfbxsdk-2013.3-static.a"; sourceTree = "<group>"; };
+		5C5128AA1681FA2500ED9B96 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../lib/osx/libjpeg.a; sourceTree = "<group>"; };
+		5C5128AB1681FA2500ED9B96 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = ../../lib/osx/libpng.a; sourceTree = "<group>"; };
+		5C5128AE1681FA4700ED9B96 /* libfbxsdk-2013.3-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfbxsdk-2013.3-static.a"; path = "../../../../../../../Applications/Autodesk/FBX SDK/2013.3/lib/gcc4/ub/libfbxsdk-2013.3-static.a"; sourceTree = "<group>"; };
 		A53B4F3016811FA900C6B8EC /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		A53B4F321681212F00C6B8EC /* platformtools.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = platformtools.mac.mm; sourceTree = "<group>"; };
 		A53B4F341681220500C6B8EC /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		A53B4F3E1681246400C6B8EC /* libpng15.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng15.a; path = ../../lib/osx/libpng15.a; sourceTree = "<group>"; };
 		A53B4F411681247300C6B8EC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		A53B4F431681256B00C6B8EC /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; path = data; sourceTree = "<group>"; };
 		A5A23E2A16811838001B3E98 /* FBXConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FBXConverter.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -239,8 +241,9 @@
 				A5A23F3616811EC3001B3E98 /* OpenGL.framework in Frameworks */,
 				A5A23F3416811EBF001B3E98 /* QuartzCore.framework in Frameworks */,
 				A5A23E2F16811838001B3E98 /* Cocoa.framework in Frameworks */,
-				A53B4F2F16811F0E00C6B8EC /* libfbxsdk-2013.3-static.a in Frameworks */,
-				A53B4F3F1681246400C6B8EC /* libpng15.a in Frameworks */,
+				5C5128AC1681FA2500ED9B96 /* libjpeg.a in Frameworks */,
+				5C5128AD1681FA2500ED9B96 /* libpng.a in Frameworks */,
+				5C5128AF1681FA4700ED9B96 /* libfbxsdk-2013.3-static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,8 +275,9 @@
 			children = (
 				A53B4F411681247300C6B8EC /* libz.dylib */,
 				A53B4F3016811FA900C6B8EC /* libiconv.dylib */,
-				A53B4F3E1681246400C6B8EC /* libpng15.a */,
-				A53B4F2E16811F0E00C6B8EC /* libfbxsdk-2013.3-static.a */,
+				5C5128AA1681FA2500ED9B96 /* libjpeg.a */,
+				5C5128AB1681FA2500ED9B96 /* libpng.a */,
+				5C5128AE1681FA4700ED9B96 /* libfbxsdk-2013.3-static.a */,
 				A5A23E3116811838001B3E98 /* AppKit.framework */,
 				A5A23E3216811838001B3E98 /* CoreData.framework */,
 				A5A23E3316811838001B3E98 /* Foundation.framework */,

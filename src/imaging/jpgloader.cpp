@@ -5,21 +5,14 @@
  *
  */
 
-#define ET_ENABLE_JPEG	0
-
 #include <fstream>
-
-#if (ET_ENABLE_JPEG)
-#	include <libjpeg/jpeglib.h>
-#endif
-
+#include <libjpeg/jpeglib.h>
 #include <et/core/tools.h>
 #include <et/opengl/opengl.h>
 #include <et/imaging/jpgloader.h>
 
 using namespace et;
 
-#if (ET_ENABLE_JPEG)
 void JPGLoader::loadInfoFromStream(std::istream& stream, TextureDescription& desc)
 {
 	if (stream.fail()) return;
@@ -53,15 +46,7 @@ void JPGLoader::loadInfoFromStream(std::istream& stream, TextureDescription& des
 	
 	jpeg_destroy_decompress(&cinfo);
 }
-#else
-void JPGLoader::loadInfoFromStream(std::istream&, TextureDescription&)
-{
-	assert(0 && "JPEG support is disabled.");
-}
-#endif
 
-
-#if (ET_ENABLE_JPEG)
 void JPGLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
 {
 	if (stream.fail()) return;
@@ -97,7 +82,7 @@ void JPGLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
 	desc.layersCount = 1;
 	desc.data = BinaryDataStorage(desc.size.square() * cinfo.output_components);
 	
-	size_t rowSize = cinfo.output_components * cinfo.output_height;
+	size_t rowSize = cinfo.output_components * cinfo.output_width;
 	unsigned char* p_line = desc.data.data();
 	
 	if (jpeg_start_decompress(&cinfo))
@@ -116,13 +101,6 @@ void JPGLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
 	jpeg_finish_decompress(&cinfo);
 	jpeg_destroy_decompress(&cinfo);
 }
-#else
-void JPGLoader::loadFromStream(std::istream&, TextureDescription&)
-{
-	assert(0 && "JPEG support is disabled.");
-}
-#endif
-
 
 void JPGLoader::loadInfoFromFile(const std::string& path, TextureDescription& desc)
 {
