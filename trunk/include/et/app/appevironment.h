@@ -7,10 +7,12 @@
 
 #pragma once
 
-#include <et/core/tools.h>
+#include <et/core/debug.h>
 
 namespace et
 {
+	class ApplicationIdentifier;
+	
 	class AppEnvironment
 	{
 	public: 
@@ -22,20 +24,17 @@ namespace et
 		const std::string& applicationInputDataFolder() const
 			{ return _dataFolder; }
 		
-		const std::string& applicationDocumentsFolder() const
-			{ return _documentsFolder; }
-
-		bool expandFileName(std::string& name) const;
-
+		void addSearchPath(const std::string& path);
+		void addRelativeSearchPath(const std::string& path);
+		
 		std::string findFile(const std::string& name) const;
 		std::string findFolder(const std::string& name) const;
 		std::string resolveScalableFileName(const std::string& name, size_t scale) const;
 
-		void addSearchPath(const std::string& path)
-			{ _searchPath.push_back(addTrailingSlash(path)); }
-
-		void addRelativeSearchPath(const std::string& path)
-			{ _searchPath.push_back(addTrailingSlash(_appPath + path)); }
+		bool expandFileName(std::string& name) const;
+		
+		const std::string& applicationDocumentsFolder() const;
+		void updateDocumentsFolder(const ApplicationIdentifier& i);
 
 	private:
 		std::string _appPath;

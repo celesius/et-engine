@@ -5,8 +5,6 @@
  *
  */
 
-#pragma once
-
 #include <Windows.h>
 #include <et/platform/platformtools.h>
 

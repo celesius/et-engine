@@ -5,38 +5,69 @@
  *
  */
 
+#include <et/app/application.h>
 #include <et/app/appevironment.h>
-#include <et/core/tools.h>
 
 using namespace et;
 
-AppEnvironment::AppEnvironment() : _appPath(et::applicationPath()), _dataFolder(et::applicationDataFolder()),
-	_documentsFolder(et::applicationDocumentsFolder())
+AppEnvironment::AppEnvironment() : _appPath(et::applicationPath()),
+	_dataFolder(et::applicationDataFolder())
 {
 	addSearchPath(_appPath);
 	addSearchPath(_dataFolder);
     
-    addSearchPath(_appPath + "../");
+    addSearchPath(_dataFolder + "../");
 	addSearchPath(_dataFolder + "../");
 
-	addSearchPath(_appPath + "data/");
-	addSearchPath(_appPath + "../data/");
-	addSearchPath(_appPath + "../../data/");
+	addSearchPath(_dataFolder + "data/");
+	addSearchPath(_dataFolder + "../data/");
+	addSearchPath(_dataFolder + "../../data/");
 
-	addSearchPath(_appPath + "textures/" );
-	addSearchPath(_appPath + "data/textures/" );
-	addSearchPath(_appPath + "../data/textures/" );
-	addSearchPath(_appPath + "../../data/textures/" );
+	addSearchPath(_dataFolder + "textures/" );
+	addSearchPath(_dataFolder + "data/textures/" );
+	addSearchPath(_dataFolder + "../data/textures/" );
+	addSearchPath(_dataFolder + "../../data/textures/" );
 
-	addSearchPath(_appPath + "shaders/" );
-	addSearchPath(_appPath + "data/shaders/" );
-	addSearchPath(_appPath + "../data/shaders/" );
-	addSearchPath(_appPath + "../../data/shaders/" );
+	addSearchPath(_dataFolder + "shaders/" );
+	addSearchPath(_dataFolder + "data/shaders/" );
+	addSearchPath(_dataFolder + "../data/shaders/" );
+	addSearchPath(_dataFolder + "../../data/shaders/" );
 
-	addSearchPath(_appPath + "ui/" );
-	addSearchPath(_appPath + "data/ui/" );
-	addSearchPath(_appPath + "../data/ui/" );
-	addSearchPath(_appPath + "../../data/ui/" );
+	addSearchPath(_dataFolder + "ui/" );
+	addSearchPath(_dataFolder + "data/ui/" );
+	addSearchPath(_dataFolder + "../data/ui/" );
+	addSearchPath(_dataFolder + "../../data/ui/" );
+}
+
+const std::string& AppEnvironment::applicationDocumentsFolder() const
+{
+	assert(!_documentsFolder.empty());
+	return _documentsFolder;
+}
+
+void AppEnvironment::updateDocumentsFolder(const ApplicationIdentifier& i)
+{
+	_documentsFolder = applicationDocumentsBaseFolder() + i.companyName;
+	
+	if (!folderExists(_documentsFolder))
+		createDirectory(_documentsFolder);
+	assert(folderExists(_documentsFolder));
+	
+	_documentsFolder += pathDelimiter + i.applicationName;
+	
+	if (!folderExists(_documentsFolder))
+		createDirectory(_documentsFolder);
+	assert(folderExists(_documentsFolder));
+}
+
+void AppEnvironment::addSearchPath(const std::string& path)
+{
+	_searchPath.push_back(addTrailingSlash(path));
+}
+
+void AppEnvironment::addRelativeSearchPath(const std::string& path)
+{
+	_searchPath.push_back(addTrailingSlash(_appPath + path));
 }
 
 std::string AppEnvironment::findFile(const std::string& name) const

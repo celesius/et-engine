@@ -16,6 +16,7 @@ Application::Application() : _renderContext(0), _exitCode(0), _lastQueuedTime(qu
 	_fpsLimit(0), _running(false), _active(false)
 {
 	threading();
+	delegate();
 	platform_init();
 }
 

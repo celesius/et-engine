@@ -19,15 +19,15 @@ namespace et
 	float queryTime();
 	std::string applicationPath();
 	std::string applicationDataFolder();
-	std::string applicationDocumentsFolder();
+	std::string applicationDocumentsBaseFolder();
 	std::string normalizeFilePath(std::string s);
+	
 	bool fileExists(const std::string& name);
 	bool folderExists(const std::string& name);
+	
 	void createDirectory(const std::string& name);
 	void findFiles(const std::string& folder, const std::string& mask, bool recursive, StringList& list);
 	void findSubfolders(const std::string& folder, bool recursive, StringList& list);
-	std::string selectFile(const StringList& mask);
-	std::string selectFile(const std::string& description, const std::string& ext);
 	void openUrl(const std::string& url);
 	
 	std::string unicodeToUtf8(const std::wstring& w);
