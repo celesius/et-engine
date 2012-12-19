@@ -10,8 +10,8 @@
 
 using namespace et;
 
-AppEnvironment::AppEnvironment() : _appPath(et::applicationPath()),
-	_dataFolder(et::applicationDataFolder())
+AppEnvironment::AppEnvironment() :
+	_appPath(et::applicationPath()), _dataFolder(et::applicationDataFolder())
 {
 	addSearchPath(_appPath);
 	addSearchPath(_dataFolder);
@@ -47,7 +47,7 @@ const std::string& AppEnvironment::applicationDocumentsFolder() const
 
 void AppEnvironment::updateDocumentsFolder(const ApplicationIdentifier& i)
 {
-	_documentsFolder = applicationDocumentsBaseFolder() + i.companyName;
+	_documentsFolder = applicationLibraryBaseFolder() + i.companyName;
 	
 	if (!folderExists(_documentsFolder))
 		createDirectory(_documentsFolder);

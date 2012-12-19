@@ -107,11 +107,21 @@ bool et::folderExists(const std::string& name)
 	return exists && isDir;
 }
 
+std::string et::applicationLibraryBaseFolder()
+{
+    @autoreleasepool
+    {
+        NSArray* paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+        NSString* folder = [[paths objectAtIndex:0] stringByAppendingString:@"/"];
+        return std::string([folder cStringUsingEncoding:NSUTF8StringEncoding]);
+    }
+}
+
 std::string et::applicationDocumentsBaseFolder()
 {
     @autoreleasepool 
     {
-        NSArray* paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+        NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString* folder = [[paths objectAtIndex:0] stringByAppendingString:@"/"];
         return std::string([folder cStringUsingEncoding:NSUTF8StringEncoding]);
     }
