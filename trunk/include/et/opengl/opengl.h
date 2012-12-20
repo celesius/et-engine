@@ -92,6 +92,7 @@ namespace et
 	{
 		TextureWrap_Repeat,
 		TextureWrap_ClampToEdge,
+		TextureWrap_MirrorRepeat,
 		TextureWrap_max
 	};
 

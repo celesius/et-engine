@@ -465,10 +465,12 @@ namespace et
 	{
 		switch (w)
 		{
-		case TextureWrap_ClampToEdge:
-			return GL_CLAMP_TO_EDGE;
 		case TextureWrap_Repeat:
 			return GL_REPEAT;
+		case TextureWrap_ClampToEdge:
+			return GL_CLAMP_TO_EDGE;
+		case TextureWrap_MirrorRepeat:
+			return GL_MIRRORED_REPEAT;
 		default:
 			assert(0 && "Unrecognized texture wrap.");
 		}
