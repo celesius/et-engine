@@ -18,6 +18,9 @@ enum PVRFormat
 	PVRVersion3Format_PVRTC_2bpp_RGBA = 1,
 	PVRVersion3Format_PVRTC_4bpp_RGB = 2,
 	PVRVersion3Format_PVRTC_4bpp_RGBA = 3,
+	PVRVersion3Format_RGBA = 'abgr',
+	
+	PVRVersion3Format_mask = 0xffffffff,
     
 	PVRVersion2Format_PVRTC2 = 0x18,
 	PVRVersion2Format_PVRTC4 = 0x19
@@ -117,17 +120,7 @@ void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescriptio
 	desc.size = vec2i(header.width, header.height);
 	desc.mipMapCount = header.numMipmaps ? header.numMipmaps : 1;
 	desc.layersCount = 1;
-/*
-	size_t actualMipMaps = 0;
-	vec2i latestMipMapSize(intPower(2, desc.mipMapCount - 1));
-	while ((desc.mipMapCount > 1) && (latestMipMapSize.x > 4) && (latestMipMapSize.y > 4))
-	{
-		actualMipMaps++;
-		desc.mipMapCount--;
-		latestMipMapSize = vec2i(intPower(2, desc.mipMapCount));
-	}
-	desc.mipMapCount = 1;//actualMipMaps;
-*/
+
     if ((header.channelType == PVRChannelType_UnsignedByte) || (header.channelType == PVRChannelType_UnsignedByteNorm))
         desc.type = GL_UNSIGNED_BYTE;
     else if ((header.channelType == PVRChannelType_UnsignedShort) || (header.channelType == PVRChannelType_UnsignedShortNorm))
@@ -137,7 +130,8 @@ void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescriptio
     else 
         std::cout << "Unsupported PVR channel type: " << header.channelType << std::endl;
     
-    if (header.pixelFormat == PVRVersion3Format_PVRTC_2bpp_RGB)
+	size_t pixelFormat = header.pixelFormat & PVRVersion3Format_mask;
+    if (pixelFormat == PVRVersion3Format_PVRTC_2bpp_RGB)
 	{
 		desc.compressed = true;
 		desc.channels = 3;
@@ -145,7 +139,7 @@ void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescriptio
         desc.format = GL_RGB;
 		desc.internalformat = GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
 	}
-    else if (header.pixelFormat == PVRVersion3Format_PVRTC_2bpp_RGBA)
+    else if (pixelFormat == PVRVersion3Format_PVRTC_2bpp_RGBA)
 	{
 		desc.compressed = true;
 		desc.channels = 4;
@@ -153,7 +147,7 @@ void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescriptio
         desc.format = GL_RGBA;
 		desc.internalformat = GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
 	}
-    else if (header.pixelFormat == PVRVersion3Format_PVRTC_4bpp_RGB)
+    else if (pixelFormat == PVRVersion3Format_PVRTC_4bpp_RGB)
 	{
 		desc.compressed = true;
 		desc.channels = 3;
@@ -161,13 +155,21 @@ void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescriptio
         desc.format = GL_RGB;
 		desc.internalformat = GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
 	}
-    else if (header.pixelFormat == PVRVersion3Format_PVRTC_4bpp_RGBA)
+    else if (pixelFormat == PVRVersion3Format_PVRTC_4bpp_RGBA)
 	{
 		desc.compressed = true;
         desc.bitsPerPixel = 4;
 		desc.channels = 4;
         desc.format = GL_RGBA;
 		desc.internalformat = GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
+	}
+	else if (pixelFormat == PVRVersion3Format_RGBA)
+	{
+		desc.compressed = false;
+        desc.bitsPerPixel = 32;
+		desc.channels = 4;
+        desc.format = GL_RGBA;
+		desc.internalformat = GL_RGBA;
 	}
 	else
 	{
