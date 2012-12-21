@@ -18,19 +18,15 @@ static const int defaultBindingUnit = 7;
 TextureData::TextureData(RenderContext* rc, TextureDescription::Pointer desc, const std::string& id, bool deferred) : 
 	APIObjectData(id), _glID(0), _desc(desc), _own(true)
 {
-	if (!deferred)
-	{
+	if (deferred) return;
+	
 #if (ET_OPENGLES)
-		if (!isPowerOfTwo(desc->size.x) || !isPowerOfTwo(desc->size.y))
-		{
-			_wrap.x = TextureWrap_ClampToEdge;
-			_wrap.y = TextureWrap_ClampToEdge;
-			_wrap.z = TextureWrap_ClampToEdge;
-		}
-#endif		
-		generateTexture(rc);
-		build(rc);
-	}
+	if (!(isPowerOfTwo(desc->size.x) && isPowerOfTwo(desc->size.y)))
+		_wrap = vector3<TextureWrap>(TextureWrap_ClampToEdge);
+#endif
+	
+	generateTexture(rc);
+	build(rc);
 }
 
 TextureData::TextureData(RenderContext*, GLuint texture, const vec2i& size, const std::string& name) : 
@@ -94,9 +90,8 @@ void TextureData::setFiltration(RenderContext* rc, TextureFiltration minFiltrati
 
 void TextureData::compareRefToTexture(RenderContext* rc, bool enable, GLenum compareFunc)
 {
-#if (!ET_OPENGLES)
+#if defined(GL_TEXTURE_COMPARE_MODE) && defined(GL_TEXTURE_COMPARE_FUNC)
 	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
-
 	if (enable)
 	{
 		glTexParameteri(_desc->target, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
@@ -111,7 +106,7 @@ void TextureData::compareRefToTexture(RenderContext* rc, bool enable, GLenum com
 		checkOpenGLError("glTexParameteri(_target, GL_TEXTURE_COMPARE_MODE, GL_NONE) " + name()); 
 	}
 #else
-	std::cout << "TextureData::compareRefToTexture" << rc << ", " << enable << ", " << compareFunc << ") call in OpenGL ES" << std::endl;
+	assert(0 && "WARNING: GL_TEXTURE_COMPARE_MODE and GL_TEXTURE_COMPARE_FUNC are not defined.");
 #endif	
 }
 

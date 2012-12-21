@@ -41,18 +41,13 @@ namespace et
 	class FramebufferData : public APIObjectData
 	{
 	public:
-		static const int MaxRenderTargets = 16;
-
+		enum
+		{
+			MaxRenderTargets = 8
+		};
+		
 	public:
 		~FramebufferData();
-
-		bool checkStatus();
-
-		Texture renderTarget(size_t index = 0) const
-			{ return (index < MaxRenderTargets) ? _renderTargets[index] : Texture(); }
-
-		Texture depthBuffer() const
-			{ return _depthBuffer; }
 
 		bool addRenderTarget(const Texture& texture);
 		void addSameRendertarget();
@@ -66,6 +61,8 @@ namespace et
 		
 		bool setCurrentCubemapFace(size_t faceIndex);
 
+		bool checkStatus();
+		
 		void setDrawBuffersCount(int c);
 
 		GLuint glID() const
@@ -80,6 +77,12 @@ namespace et
 		GLuint depthRenderbuffer() const
 			{ return _depthRenderbuffer; }
 
+		Texture renderTarget(size_t index = 0) const
+			{ assert(index < MaxRenderTargets); return _renderTargets[index]; }
+		
+		Texture depthBuffer() const
+			{ return _depthBuffer; }
+		
 		void setColorRenderbuffer(GLuint r)
 			{ _colorRenderbuffer = r; }
 		
