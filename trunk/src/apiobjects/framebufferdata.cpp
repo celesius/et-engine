@@ -12,73 +12,13 @@
 
 using namespace et;
 
-static const char* tagCheck = "FramebufferData::check";
+extern std::string FramebufferStatusToString(GLenum status);
+extern const GLenum renderbufferTargets[FramebufferData::MaxRenderTargets];
 
-inline std::string FramebufferStatusToString(GLenum status)
+FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const FramebufferDescription& desc, const std::string& aName) :
+	APIObjectData(aName), _isCubemapBuffer(desc.isCubemap != 0), _id(0), _size(desc.size), _numTargets(0),
+	_colorRenderbuffer(0), _depthRenderbuffer(0), _rc(rc), _textureFactory(tf)
 {
-	switch (status)
-	{
-	case GL_FRAMEBUFFER_COMPLETE:
-		return "GL_FRAMEBUFFER_COMPLETE"; 
-
-	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-		return "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
-			
-	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-		return "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
-			
-	case GL_FRAMEBUFFER_UNSUPPORTED:
-		return "GL_FRAMEBUFFER_UNSUPPORTED";
-
-#if defined(GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS)
-	case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
-		return "GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS";
-#endif
-
-#if defined(GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER)
-	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-		return "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER"; 
-#endif
-
-#if defined(GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER)
-	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-		return "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER"; 
-#endif
-
-#if defined(GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS)
-	case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
-		return "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS";
-#endif
-
-	default: 
-		return "Unknown FBO status " + intToStr(status);
-	}
-}
-
-static const GLenum RENDERBUFFERS_TARGETS[FramebufferData::MaxRenderTargets] = 
-{ 
-	GL_COLOR_ATTACHMENT0, 
-#if (ET_OPENGLES)
-	0, 0, 0, 
-	0, 0, 0, 
-	0, 0, 0, 
-	0, 0, 0,
-	0, 0, 0
-#else	
-	GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2,	GL_COLOR_ATTACHMENT3,
-	GL_COLOR_ATTACHMENT4, GL_COLOR_ATTACHMENT5, GL_COLOR_ATTACHMENT6,
-	GL_COLOR_ATTACHMENT7, GL_COLOR_ATTACHMENT8, GL_COLOR_ATTACHMENT9,
-	GL_COLOR_ATTACHMENT10, GL_COLOR_ATTACHMENT11, GL_COLOR_ATTACHMENT12,
-	GL_COLOR_ATTACHMENT13, GL_COLOR_ATTACHMENT14, GL_COLOR_ATTACHMENT15 
-#endif	
-};
-
-FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const FramebufferDescription& desc, const std::string& aName) : APIObjectData(aName), 
-	_isCubemapBuffer(desc.isCubemap != 0), _id(0), _size(desc.size), _numTargets(0), 
-	_colorRenderbuffer(0), _depthRenderbuffer(0),
-	_rc(rc), _textureFactory(tf)
-{
-	(void)tagCheck;
 	checkOpenGLError("Framebuffer::Framebuffer " + name());
 
 	glGenFramebuffers(1, &_id);
@@ -188,7 +128,7 @@ FramebufferData::~FramebufferData()
 
 bool FramebufferData::checkStatus()
 {
-	checkOpenGLError(tagCheck);
+	checkOpenGLError("FramebufferData::checkStatus");
 
 	_rc->renderState().bindFramebuffer(_id);
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -326,8 +266,8 @@ void FramebufferData::setDrawBuffersCount(int count)
 	checkOpenGLError("Framebuffer::setDrawBuffersCount -> glDrawBuffers " + name());
 	checkStatus();
 #else
-	std::cout << "FramebufferData::setDrawBuffersCount(" << count << ") call in OpenGL ES" << std::endl;
-#endif	
+	assert(0 && "glDrawBuffers is not supported in OpenGL ES");
+#endif
 }
 
 bool FramebufferData::setCurrentCubemapFace(size_t faceIndex)
@@ -387,3 +327,98 @@ void FramebufferData::forceSize(int w, int h)
 {
 	_size = vec2i(w, h);
 }
+
+/*
+ * Support
+ */
+std::string FramebufferStatusToString(GLenum status)
+{
+	switch (status)
+	{
+		case GL_FRAMEBUFFER_COMPLETE:
+			return "GL_FRAMEBUFFER_COMPLETE";
+			
+		case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+			return "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
+			
+		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+			return "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
+			
+		case GL_FRAMEBUFFER_UNSUPPORTED:
+			return "GL_FRAMEBUFFER_UNSUPPORTED";
+			
+#if defined(GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS)
+		case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+			return "GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS";
+#endif
+			
+#if defined(GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER)
+		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+			return "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
+#endif
+			
+#if defined(GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER)
+		case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+			return "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER";
+#endif
+			
+#if defined(GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS)
+		case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+			return "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS";
+#endif
+			
+		default:
+			return "Unknown FBO status " + intToStr(status);
+	}
+}
+
+const GLenum renderbufferTargets[FramebufferData::MaxRenderTargets]
+{
+#if defined(GL_COLOR_ATTACHMENT0)
+	GL_COLOR_ATTACHMENT0,
+#else
+	0,
+#endif
+	
+#if defined(GL_COLOR_ATTACHMENT1)
+	GL_COLOR_ATTACHMENT1,
+#else
+	0,
+#endif
+	
+#if defined(GL_COLOR_ATTACHMENT2)
+	GL_COLOR_ATTACHMENT2,
+#else
+	0,
+#endif
+	
+#if defined(GL_COLOR_ATTACHMENT3)
+	GL_COLOR_ATTACHMENT3,
+#else
+	0,
+#endif
+	
+#if defined(GL_COLOR_ATTACHMENT4)
+	GL_COLOR_ATTACHMENT4,
+#else
+	0,
+#endif
+	
+#if defined(GL_COLOR_ATTACHMENT5)
+	GL_COLOR_ATTACHMENT5,
+#else
+	0,
+#endif
+	
+#if defined(GL_COLOR_ATTACHMENT6)
+	GL_COLOR_ATTACHMENT6,
+#else
+	0,
+#endif
+	
+#if defined(GL_COLOR_ATTACHMENT7)
+	GL_COLOR_ATTACHMENT7,
+#else
+	0,
+#endif
+};
