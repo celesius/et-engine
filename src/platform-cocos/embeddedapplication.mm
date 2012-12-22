@@ -58,11 +58,14 @@ static etApplication* _sharedInstance = nil;
 	CCGLView* view = (CCGLView*)[[CCDirector sharedDirector] view];
 	NSAssert(view, @"Cocos OpenGL view should be initialized before running embedded application.");
 	
+	[view addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
+	
 	RenderState::State state = RenderState::currentState();
+	int defaultFramebuffer = [[view valueForKey:@"renderer_"] defaultFrameBuffer];
 	
 	application().run(0, 0);
 	_notifier->accessRenderContext()->renderState().setDefaultFramebuffer(
-		[self renderContext]->framebufferFactory().createFramebufferWrapper([[view valueForKey:@"renderer_"] defaultFrameBuffer]));
+		[self renderContext]->framebufferFactory().createFramebufferWrapper(defaultFramebuffer));
 	
 	_notifier->accessRenderContext()->renderState().applyState(state);
 	_loaded = YES;
@@ -81,6 +84,26 @@ static etApplication* _sharedInstance = nil;
 	delete _notifier;
 	[super dealloc];
 }
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object
+	change:(NSDictionary *)change context:(void *)context
+{
+	if ([keyPath isEqualToString:@"frame"])
+	{
+		CGRect frame = { };
+		NSValue* value = [change objectForKey:@"new"];
+		[value getValue:&frame];
+		
+		vec2i size = vec2i(static_cast<int>(frame.size.width), static_cast<int>(frame.size.height));
+		RenderContext* rc = _notifier->accessRenderContext();
+		if (rc->sizei() != size)
+		{
+			rc->renderState().defaultFramebuffer()->forceSize(size.x, size.y);
+			_notifier->notifyResize(size);
+		}
+	}
+}
+
 
 - (et::RenderContext*)renderContext
 {

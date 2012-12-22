@@ -112,6 +112,12 @@ namespace et
 		/*
 		 * Framebuffers
 		 */
+		Framebuffer defaultFramebuffer()
+			{ return _defaultFramebuffer; }
+		
+		const Framebuffer& defaultFramebuffer() const
+			{ return _defaultFramebuffer; }
+		
 		void setDefaultFramebuffer(const Framebuffer& framebuffer);
 		void bindDefaultFramebuffer(GLenum target = GL_FRAMEBUFFER);
 		void bindFramebuffer(GLuint framebuffer, GLenum target = GL_FRAMEBUFFER);
