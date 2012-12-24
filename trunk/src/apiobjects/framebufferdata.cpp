@@ -262,7 +262,7 @@ void FramebufferData::setDrawBuffersCount(int count)
 {
 #if (!ET_OPENGLES)
 	_rc->renderState().bindFramebuffer(_id);
-	glDrawBuffers(count, RENDERBUFFERS_TARGETS);
+	glDrawBuffers(count, renderbufferTargets);
 	checkOpenGLError("Framebuffer::setDrawBuffersCount -> glDrawBuffers " + name());
 	checkStatus();
 #else

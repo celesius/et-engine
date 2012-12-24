@@ -58,9 +58,12 @@ void Application::quit(int exitCode)
 	[[NSApplication sharedApplication] terminate:nil];
 }
 
-void Application::alert(const std::string&, const std::string&, AlertType)
+void Application::setTitle(const std::string &s)
 {
-	
+}
+
+void Application::alert(const std::string&, const std::string&, AlertType)
+{	
 }
 
 void Application::platform_init()

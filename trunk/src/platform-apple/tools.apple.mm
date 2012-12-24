@@ -5,16 +5,16 @@
  *
  */
 
-#include <CoreFoundation/CoreFoundation.h>
-#include <Foundation/Foundation.h>
-
 #include <sys/time.h>
 #include <et/platform/platform.h>
 #include <et/core/tools.h>
 #include <et/core/containers.h>
 
 #if (ET_PLATFORM_MAC)
-#	include <AppKit/AppKit.h>
+#	include <AppKit/NSWorkspace.h>
+#	include <Foundation/NSFileManager.h>
+#	include <Foundation/NSPredicate.h>
+#	include <Foundation/NSURL.h>
 #endif
 
 using namespace std;
