@@ -94,7 +94,8 @@ static etApplication* _sharedInstance = nil;
 		NSValue* value = [change objectForKey:@"new"];
 		[value getValue:&frame];
 		
-		vec2i size = vec2i(static_cast<int>(frame.size.width), static_cast<int>(frame.size.height));
+		float scaleFactor = [[UIScreen mainScreen] scale];
+		vec2i size = vec2i(static_cast<int>(scaleFactor * frame.size.width), static_cast<int>(scaleFactor * frame.size.height));
 		RenderContext* rc = _notifier->accessRenderContext();
 		if (rc->sizei() != size)
 		{
