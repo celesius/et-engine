@@ -5,7 +5,12 @@
  *
  */
 
-#include <AppKit/AppKit.h>
+#include <AppKit/NSWindow.h>
+#include <AppKit/NSOpenGL.h>
+#include <AppKit/NSOpenGLView.h>
+#include <AppKit/NSScreen.h>
+#include <CoreVideo/CVDisplayLink.h>
+
 #include <et/opengl/openglcaps.h>
 #include <et/input/input.h>
 #include <et/app/applicationnotifier.h>

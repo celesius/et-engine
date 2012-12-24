@@ -5,7 +5,7 @@
  *
  */
 
-#include <AppKit/AppKit.h>
+#include <AppKit/NSOpenPanel.h>
 #include <et/platform/platformtools.h>
 
 using namespace et;
