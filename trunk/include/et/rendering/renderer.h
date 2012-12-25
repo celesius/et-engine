@@ -31,6 +31,8 @@ namespace et
 		void renderTexture(const Texture&, const vec2i& position, const vec2i& size = vec2i(-1));
 
 		void drawElements(const IndexBuffer& ib, size_t first, size_t count);
+		void drawElements(PrimitiveType primitiveType, const IndexBuffer& ib, size_t first, size_t count);
+		
 		void drawElementsBaseIndex(const VertexArrayObject& vao, int base, size_t first, size_t count);
 
 		vec2 windowCoordinatesToScene(const vec2i& coord);

@@ -465,16 +465,16 @@ namespace et
 	{
 		switch (w)
 		{
-		case TextureWrap_Repeat:
-			return GL_REPEAT;
-		case TextureWrap_ClampToEdge:
-			return GL_CLAMP_TO_EDGE;
-		case TextureWrap_MirrorRepeat:
-			return GL_MIRRORED_REPEAT;
-		default:
-			assert(0 && "Unrecognized texture wrap.");
+			case TextureWrap_Repeat:
+				return GL_REPEAT;
+			case TextureWrap_ClampToEdge:
+				return GL_CLAMP_TO_EDGE;
+			case TextureWrap_MirrorRepeat:
+				return GL_MIRRORED_REPEAT;
+			default:
+				assert(0 && "Unrecognized texture wrap.");
 		}
-
+		
 		return 0;
 	}
 
@@ -482,22 +482,22 @@ namespace et
 	{
 		switch (f)
 		{
-		case TextureFiltration_Nearest:
-			return GL_NEAREST;
-		case TextureFiltration_Linear:
-			return GL_LINEAR;
-		case TextureFiltration_NearestMipMapNearest:
-			return GL_NEAREST_MIPMAP_NEAREST;
-		case TextureFiltration_NearestMipMapLinear:
-			return GL_NEAREST_MIPMAP_LINEAR;
-		case TextureFiltration_LinearMipMapNearest:
-			return GL_LINEAR_MIPMAP_NEAREST;
-		case TextureFiltration_LinearMipMapLinear:
-			return GL_LINEAR_MIPMAP_LINEAR;
-		default:
-			assert(0 && "Unrecognized texture filtration.");
+			case TextureFiltration_Nearest:
+				return GL_NEAREST;
+			case TextureFiltration_Linear:
+				return GL_LINEAR;
+			case TextureFiltration_NearestMipMapNearest:
+				return GL_NEAREST_MIPMAP_NEAREST;
+			case TextureFiltration_NearestMipMapLinear:
+				return GL_NEAREST_MIPMAP_LINEAR;
+			case TextureFiltration_LinearMipMapNearest:
+				return GL_LINEAR_MIPMAP_NEAREST;
+			case TextureFiltration_LinearMipMapLinear:
+				return GL_LINEAR_MIPMAP_LINEAR;
+			default:
+				assert(0 && "Unrecognized texture filtration.");
 		}
-
+		
 		return 0;
 	}
 
@@ -505,16 +505,37 @@ namespace et
 	{
 		switch (t)
 		{
-		case BufferDrawType_Static:
-			return GL_STATIC_DRAW;
-		case BufferDrawType_Dynamic:
-			return GL_DYNAMIC_DRAW;
-		case BufferDrawType_Stream:
-			return GL_STREAM_DRAW;
-		default:
-			assert(0 && "Unrecognized draw type");
+			case BufferDrawType_Static:
+				return GL_STATIC_DRAW;
+			case BufferDrawType_Dynamic:
+				return GL_DYNAMIC_DRAW;
+			case BufferDrawType_Stream:
+				return GL_STREAM_DRAW;
+			default:
+				assert(0 && "Unrecognized draw type");
 		}
-
+		
+		return 0;
+	}
+	
+	int primitiveTypeValue(PrimitiveType t)
+	{
+		switch (t)
+		{
+			case PrimitiveType_Points:
+				return GL_POINTS;
+			case PrimitiveType_Lines:
+				return GL_LINES;
+			case PrimitiveType_LineStrip:
+				return GL_LINE_STRIP;
+			case PrimitiveType_Triangles:
+				return GL_TRIANGLES;
+			case PrimitiveType_TriangleStrips:
+				return GL_TRIANGLE_STRIP;
+			default:
+				assert(0 && "Invalid PrimitiveType value");
+		}
+		
 		return 0;
 	}
 

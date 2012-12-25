@@ -11,7 +11,7 @@ using namespace et;
 using namespace et::gui;
 
 RenderingElement::RenderingElement(RenderContext* rc) : _rs(rc->renderState()),
-	_indexArray(new IndexArray(IndexArrayFormat_16bit, 0, IndexArrayContentType_Triangles)), _changed(false)
+	_indexArray(new IndexArray(IndexArrayFormat_16bit, 0, PrimitiveType_Triangles)), _changed(false)
 {
 	VertexDeclaration decl(true, Usage_Position, Type_Vec3);
 	decl.push_back(Usage_TexCoord0, Type_Vec4);

@@ -107,6 +107,16 @@ namespace et
 		TextureFiltration_max
 	};
 	
+	enum PrimitiveType
+	{
+		PrimitiveType_Points,
+		PrimitiveType_Lines,
+		PrimitiveType_LineStrip,
+		PrimitiveType_Triangles,
+		PrimitiveType_TriangleStrips,
+		PrimitiveType_max
+	};
+	
 	enum
 	{
 		MaxTextureUnits	= 8
@@ -161,4 +171,5 @@ namespace et
 	int textureWrapValue(TextureWrap);
 	int textureFiltrationValue(TextureFiltration);
 	int drawTypeValue(BufferDrawType);
+	int primitiveTypeValue(PrimitiveType);
 }

@@ -19,8 +19,8 @@ namespace et
 		IndexBufferData(RenderState& rs, IndexArray::Pointer i, BufferDrawType drawType, const std::string& name = std::string());
 		~IndexBufferData();
 
-		GLenum geometryType() const
-			{ return _geometryType; }
+		GLenum primitiveType() const
+			{ return _primitiveType; }
 		
 		GLenum dataType() const
 			{ return _dataType; }
@@ -51,7 +51,7 @@ namespace et
 		size_t _sourceTag;
 		GLuint _indexBuffer;
 		GLenum _dataType;
-		GLenum _geometryType;
+		GLenum _primitiveType;
 		BufferDrawType _drawType;
 	};
 }

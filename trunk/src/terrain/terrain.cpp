@@ -495,7 +495,7 @@ void Terrain::generateBuffer()
 {
 	releaseData();
 	
-	IndexArray::Pointer indices(new IndexArray(IndexArrayFormat_16bit, 0, IndexArrayContentType_Triangles));
+	IndexArray::Pointer indices(new IndexArray(IndexArrayFormat_16bit, 0, PrimitiveType_Triangles));
 	_lods = new TerrainLODLevels(indices, this);
 	generateChunks();
 	indices->compact();

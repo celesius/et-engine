@@ -9,6 +9,7 @@
 
 #include <et/core/intrusiveptr.h>
 #include <et/core/containers.h>
+#include <et/opengl/opengl.h>
 
 namespace et
 {
@@ -25,15 +26,6 @@ namespace et
 		IndexArrayFormat_max
 	};
 
-	enum IndexArrayContentType
-	{
-		IndexArrayContentType_Points,
-		IndexArrayContentType_Lines,
-		IndexArrayContentType_Triangles,
-		IndexArrayContentType_TriangleStrips,
-		IndexArrayContentType_max
-	};
-
 	class IndexArray : public Shared
 	{
 	public:
@@ -45,7 +37,7 @@ namespace et
 		int tag;
 
 	public:
-		IndexArray(IndexArrayFormat format, size_t size, IndexArrayContentType content);
+		IndexArray(IndexArrayFormat format, size_t size, PrimitiveType primitiveType);
 		void linearize();
 
 		const unsigned char* data() const 
@@ -60,8 +52,8 @@ namespace et
 		IndexArrayFormat format() const
 			{ return _format; }
 
-		IndexArrayContentType contentType() const
-			{ return _contentType; }
+		PrimitiveType primitiveType() const
+			{ return _primitiveType; }
 
 		size_t actualSize() const
 			{ return _actualSize; }
@@ -143,7 +135,7 @@ namespace et
 		BinaryDataStorage _data;
 		size_t _actualSize;
 		IndexArrayFormat _format;
-		IndexArrayContentType _contentType;
+		PrimitiveType _primitiveType;
 	};
 
 	typedef std::vector<IndexArray::Pointer> IndexArrayList;

@@ -23,7 +23,7 @@ Renderer::Renderer(RenderContext* rc) : _rc(rc)
 {
 	checkOpenGLError("Renderer::Renderer");
 
-	IndexArray::Pointer ib(new IndexArray(IndexArrayFormat_8bit, 4, IndexArrayContentType_TriangleStrips));
+	IndexArray::Pointer ib(new IndexArray(IndexArrayFormat_8bit, 4, PrimitiveType_TriangleStrips));
 	ib->linearize();
 	
 	VertexArray::Pointer vb(new VertexArray(VertexDeclaration(false, Usage_Position, Type_Vec2), 4));
@@ -116,7 +116,13 @@ void Renderer::renderTexture(const Texture& texture, const vec2i& position, cons
 void Renderer::drawElements(const IndexBuffer& ib, size_t first, size_t count)
 {
 	if (ib.valid())
-		etDrawElements(ib->geometryType(), static_cast<GLsizei>(count), ib->dataType(), ib->indexOffset(first));
+		etDrawElements(ib->primitiveType(), static_cast<GLsizei>(count), ib->dataType(), ib->indexOffset(first));
+}
+
+void Renderer::drawElements(PrimitiveType primitiveType, const IndexBuffer& ib, size_t first, size_t count)
+{
+	if (ib.valid())
+		etDrawElements(primitiveTypeValue(primitiveType), static_cast<GLsizei>(count), ib->dataType(), ib->indexOffset(first));
 }
 
 void Renderer::drawElementsBaseIndex(const VertexArrayObject& vao, int base, size_t first, size_t count)
@@ -130,7 +136,7 @@ void Renderer::drawElementsBaseIndex(const VertexArrayObject& vao, int base, siz
 	rs.bindVertexArray(vao);
 	rs.bindBuffer(vb);
 	rs.setVertexAttributesBaseIndex(vb->declaration(), base);
-	etDrawElements(ib->geometryType(), static_cast<GLsizei>(count), ib->dataType(), ib->indexOffset(first));
+	etDrawElements(ib->primitiveType(), static_cast<GLsizei>(count), ib->dataType(), ib->indexOffset(first));
 #else	
 	etDrawElementsBaseVertex(ib->geometryType(), static_cast<GLsizei>(count), ib->dataType(), ib->indexOffset(first), base);
 #endif	
