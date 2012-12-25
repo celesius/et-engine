@@ -111,7 +111,7 @@ void TerrainData::generateVertexData(const FloatDataStorage& hm)
 	_bounds = AABB(0.5f * (_minVertex + _maxVertex), _maxVertex - _minVertex);
 
 	size_t numTriangles = Primitives::indexCountForRegularMesh(_dimension, GL_TRIANGLES);
-	IndexArray::Pointer tempIB(new IndexArray(IndexArrayFormat_32bit, numTriangles, IndexArrayContentType_Triangles));
+	IndexArray::Pointer tempIB(new IndexArray(IndexArrayFormat_32bit, numTriangles, PrimitiveType_Triangles));
 	Primitives::buildTrianglesIndexes(tempIB, _dimension, 0, 0);
 
 	std::cout << "Computing normals..." << std::endl;

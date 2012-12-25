@@ -11,7 +11,8 @@
 using namespace et;
 
 IndexBufferData::IndexBufferData(RenderState& rs, IndexArray::Pointer i, BufferDrawType drawType, const std::string& name) : 
-	APIObjectData(name), _rs(rs), _size(i->actualSize()), _sourceTag(0), _indexBuffer(0), _dataType(0), _geometryType(0), _drawType(drawType)
+	APIObjectData(name), _rs(rs), _size(i->actualSize()), _sourceTag(0), _indexBuffer(0), _dataType(0),
+	_primitiveType(0), _drawType(drawType)
 {
 	build(i);
 }
@@ -30,50 +31,26 @@ void IndexBufferData::setProperties(const IndexArray::Pointer& i)
 
 	switch (i->format())
 	{
-	case IndexArrayFormat_8bit:
+		case IndexArrayFormat_8bit:
 		{
 			_dataType = GL_UNSIGNED_BYTE;
 			break;
 		}
-	case IndexArrayFormat_16bit:
+		case IndexArrayFormat_16bit:
 		{
 			_dataType = GL_UNSIGNED_SHORT;
 			break;
 		}
-	case IndexArrayFormat_32bit:
+		case IndexArrayFormat_32bit:
 		{
 			_dataType = GL_UNSIGNED_INT;
 			break;
 		}
-	default:
-		{
-			std::cout << "Unknown IndexArray format" << std::endl;
-		}
+		default:
+			assert(0 && "Invalud IndexArrayFormat value");
 	}
 
-	switch (i->contentType())
-	{
-	case IndexArrayContentType_Lines:
-		{
-			_geometryType = GL_LINES;
-			break;
-		}
-
-	case IndexArrayContentType_Triangles:
-		{
-			_geometryType = GL_TRIANGLES;
-			break;
-		}
-
-	case IndexArrayContentType_TriangleStrips:
-		{
-			_geometryType = GL_TRIANGLE_STRIP;
-			break;
-		}
-
-	default:
-		_geometryType = GL_POINTS;
-	}
+	_primitiveType = primitiveTypeValue(i->primitiveType());
 }
 
 void IndexBufferData::build(const IndexArray::Pointer& i)

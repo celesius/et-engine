@@ -18,10 +18,10 @@ const IndexType IndexArray::MaxSmallIndex = 256;
 const int IndexArrayId_1 = 'IAV1';
 const int IndexArrayCurrentId = IndexArrayId_1;
 
-IndexArray::IndexArray(IndexArrayFormat format, size_t size, IndexArrayContentType content) : 
-_data(size * format), _actualSize(0), _format(format), _contentType(content)
+IndexArray::IndexArray(IndexArrayFormat format, size_t size, PrimitiveType content) : 
+	_data(size * format), _actualSize(0), _format(format), _primitiveType(content)
 {
-	if (content == IndexArrayContentType_Points)
+	if (content == PrimitiveType_Points)
 		linearize();
 }
 
@@ -81,18 +81,18 @@ void IndexArray::push_back(IndexType value)
 
 size_t IndexArray::primitivesCount() const
 {
-	switch (_contentType)
+	switch (_primitiveType)
 	{
-		case IndexArrayContentType_Points:
+		case PrimitiveType_Points:
 			return _actualSize;
 			
-		case IndexArrayContentType_Lines:
+		case PrimitiveType_Lines:
 			return _actualSize / 2;
 			
-		case IndexArrayContentType_Triangles:
+		case PrimitiveType_Triangles:
 			return _actualSize / 3;
 			
-		case IndexArrayContentType_TriangleStrips:
+		case PrimitiveType_TriangleStrips:
 			return _actualSize - 2;
 			
 		default:
@@ -130,19 +130,19 @@ IndexArray::PrimitiveIterator IndexArray::end() const
 IndexArray::PrimitiveIterator IndexArray::primitive(size_t index) const
 {
 	size_t primitiveIndex = 0;
-	switch (_contentType)
+	switch (_primitiveType)
 	{
-		case IndexArrayContentType_Lines:
+		case PrimitiveType_Lines:
 		{
 			primitiveIndex = 2 * index;
 			break;
 		}
-		case IndexArrayContentType_Triangles:
+		case PrimitiveType_Triangles:
 		{
 			primitiveIndex = 3 * index;
 			break;
 		}
-		case IndexArrayContentType_TriangleStrips:
+		case PrimitiveType_TriangleStrips:
 		{
 			primitiveIndex = index == 0 ? 0 : (2 + index);
 			break;
@@ -186,25 +186,29 @@ void IndexArray::PrimitiveIterator::configure(size_t p)
 	IndexType i1 = p;
 	IndexType i2 = p;
 
-	if (_ib->contentType() == IndexArrayContentType_Points)
+	if (_ib->primitiveType() == PrimitiveType_Points)
 	{
 		i1 = InvalidIndex;
 		i2 = InvalidIndex;
 	}
-	else if (_ib->contentType() == IndexArrayContentType_Lines)
+	else if (_ib->primitiveType() == PrimitiveType_Lines)
 	{
 		i1 = p + 1;
 		i2 = InvalidIndex;
 	}
-	else if (_ib->contentType() == IndexArrayContentType_Triangles)
+	else if (_ib->primitiveType() == PrimitiveType_Triangles)
 	{
 		i1 = p + 1;
 		i2 = p + 2;
 	}
-	else if (_ib->contentType() == IndexArrayContentType_TriangleStrips)
+	else if (_ib->primitiveType() == PrimitiveType_TriangleStrips)
 	{
 		i1 = p + 1;
 		i2 = p + 2;
+	}
+	else
+	{
+		assert(0 && "Invalid PrimitiveType value");
 	}
 
 	size_t ibSize = _ib->capacity();
@@ -223,9 +227,9 @@ IndexArray::PrimitiveIterator& IndexArray::PrimitiveIterator::operator = (const 
 
 IndexArray::PrimitiveIterator& IndexArray::PrimitiveIterator::operator ++()
 {
-	switch (_ib->contentType())
+	switch (_ib->primitiveType())
 	{
-	case IndexArrayContentType_Triangles:
+	case PrimitiveType_Triangles:
 		{
 			_pos += 3;
 			break;
@@ -264,7 +268,7 @@ void IndexArray::serialize(std::ostream& stream)
 {
 	serializeInt(stream, IndexArrayCurrentId);
 	serializeInt(stream, _format);
-	serializeInt(stream, _contentType);
+	serializeInt(stream, _primitiveType);
 	serializeInt(stream, static_cast<int>(_actualSize));
 	serializeInt(stream, static_cast<int>(_data.dataSize()));
 	stream.write(_data.binary(), _data.dataSize());
@@ -276,7 +280,7 @@ void IndexArray::deserialize(std::istream& stream)
 	if (id == IndexArrayId_1)
 	{
 		_format = static_cast<IndexArrayFormat>(deserializeInt(stream));
-		_contentType = static_cast<IndexArrayContentType>(deserializeInt(stream));
+		_primitiveType = static_cast<PrimitiveType>(deserializeInt(stream));
 		_actualSize = deserializeInt(stream);
 		_data.resize(deserializeInt(stream));
 		stream.read(_data.binary(), _data.dataSize());

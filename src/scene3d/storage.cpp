@@ -13,7 +13,7 @@ using namespace et;
 using namespace et::s3d;
 
 Scene3dStorage::Scene3dStorage(const std::string& name, Element* parent) : 
-	ElementContainer(name, parent), _indexArray(new IndexArray(IndexArrayFormat_16bit, 0, IndexArrayContentType_Triangles))
+	ElementContainer(name, parent), _indexArray(new IndexArray(IndexArrayFormat_16bit, 0, PrimitiveType_Triangles))
 {
 }
 
