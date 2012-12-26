@@ -187,3 +187,33 @@ mat3 et::rotation2DMatrix3(float angle)
 	m[2][2] = m[3][3] = 1.0f;
 	return m;
 }
+
+template <>
+vector2<float> et::bezierCurve(const std::vector< vector2<float> >& points, float time)
+{
+	assert(points.size() > 0);
+	
+	if (points.size() == 1)
+	{
+		return points.front();
+	}
+	else if (points.size() == 2)
+	{
+		return mix(points.front(), points.back(), time);
+	}
+	else
+	{
+		std::vector< vector2<float> > firstPoints(points.size() - 1);
+		std::vector< vector2<float> > lastPoints(points.size() - 1);
+		
+		for (size_t i = 0; i < points.size() - 1; ++i)
+		{
+			firstPoints[i] = points[i];
+			lastPoints[i] = points[i+1];
+		}
+		
+		return mix( bezierCurve(firstPoints, time), bezierCurve(lastPoints, time), time );
+	}
+	
+	return vector2<float>(0.0f);
+}
