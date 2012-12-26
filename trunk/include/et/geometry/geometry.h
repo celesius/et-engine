@@ -8,7 +8,8 @@
 #pragma once
 
 #include <stdlib.h>
-#include <math.h>
+#include <cmath>
+#include <et/core/debug.h>
 #include <et/core/constants.h>
 #include <et/geometry/vector4.h>
 #include <et/geometry/matrix3.h>
@@ -451,15 +452,19 @@ namespace et
 	}
 	
 	quaternion matrixToQuaternion(const mat3& m);
+	
 	void decomposeMatrix(mat4 mat, vec3& translation, quaternion& rotation, vec3& scale);
+	
 	vec3 removeMatrixScale(mat3& m);
 	vec3 removeMatrixScale(mat4& m);
 	vec3 removeMatrixScaleRowMajor(mat3& mat);
 
 	vec3 randVector(float sx = 1.0f, float sy = 1.0f, float sz = 1.0f);
+	
 	float randf(float low = -1.0f, float up = 1.0f);
 	float sign(float s);
 	float sign_nz(float s);
+	
 	vec3ub vec3fto3ubscaled(const vec3 &fv);
 	vec3ub vec3fto3ublinear(const vec3& fv);
 	vec4ub vec4f_to_4ub(const vec4 &fv);
@@ -467,4 +472,7 @@ namespace et
 	mat4 rotation2DMatrix(float angle);
 	mat4 transform2DMatrix(float a, const vec2& scale, const vec2& translate);
 	mat3 rotation2DMatrix3(float angle);
+	
+	template <typename T>
+	vector2<T> bezierCurve(const std::vector< vector2<T> >& points, T time);
 }

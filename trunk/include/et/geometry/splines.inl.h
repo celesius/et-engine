@@ -6,21 +6,21 @@
  */
 
 template <typename T, int size, typename GenType>
-et::Ce2Polynome<T, size, GenType>::Ce2Polynome()
+et::Polynome<T, size, GenType>::Polynome()
 { 
 	for (int i = 0; i < size; ++i)
 		_coefficients[i] = T(0);
 }
 
 template <typename T, int size, typename GenType>
-et::Ce2Polynome<T, size, GenType>::Ce2Polynome(const T* coefficients)
+et::Polynome<T, size, GenType>::Polynome(const T* coefficients)
 { 
 	for (int i = 0; i < size; ++i)
 		_coefficients[i] = coefficients[i];
 }
 
 template <typename T, int size, typename GenType>
-T et::Ce2Polynome<T, size, GenType>::calculate(GenType time) const
+T et::Polynome<T, size, GenType>::calculate(GenType time) const
 {
 	T result = 0.0;
 	T local_time = 1.0;
@@ -33,7 +33,7 @@ T et::Ce2Polynome<T, size, GenType>::calculate(GenType time) const
 }
 
 template <typename T, int size, typename GenType>
-T et::Ce2Polynome<T, size, GenType>::curvature(int derivativeOrder, GenType time) const
+T et::Polynome<T, size, GenType>::curvature(int derivativeOrder, GenType time) const
 {
 	T df = derivative(1 + derivativeOrder, time);
 	T ddf = derivative(2 + derivativeOrder, time);
@@ -41,21 +41,8 @@ T et::Ce2Polynome<T, size, GenType>::curvature(int derivativeOrder, GenType time
 	return abs(ddf) / (denominator * sqrt(denominator));
 }
 
-template <typename T>
-inline T __intPower(T value, int power)
-{
-	if (power == 0) return 1;
-
-	T result = 1.0;
-	for (int i = 1; i <= power; ++i)
-	{
-		result *= value; 
-	}
-	return result;
-}
-
 template <typename T, int size, typename GenType>
-T et::Ce2Polynome<T, size, GenType>::derivative(int order, GenType time) const
+T et::Polynome<T, size, GenType>::derivative(int order, GenType time) const
 {
 	T local_coefficients[size];
 	for (int i = 0; i < size; ++i)
@@ -71,7 +58,7 @@ T et::Ce2Polynome<T, size, GenType>::derivative(int order, GenType time) const
 		int p = i - order;
 		if (p < 0) p = 0;
 
-		T local_time = (p == 0) ? 1 : __intPower(time, p);
+		T local_time = (p == 0) ? 1 : intPower(time, p);
 		result += local_coefficients[i] * local_time;
 	}
 
@@ -79,18 +66,20 @@ T et::Ce2Polynome<T, size, GenType>::derivative(int order, GenType time) const
 }
 
 template <typename T, int size, typename GenType>
-T et::Ce2Polynome<T, size, GenType>::numericDerivative(int order, GenType time, GenType dt)
+T et::Polynome<T, size, GenType>::numericDerivative(int order, GenType time, GenType dt)
 {
 	T pp = derivative(order - 1, time - dt);
 	T np = derivative(order - 1, time + dt);
 	return (np - pp) / (2 * dt);
 }
 
-/**
-* Fully Qualified Spline
-**/
+/*
+ *
+ * Fully Qualified Spline
+ *
+ */
 template <typename T, typename GenType>
-et::Ce2FullyQualifiedSpline<T, GenType>::Ce2FullyQualifiedSpline()
+et::FullyQualifiedSpline<T, GenType>::FullyQualifiedSpline()
 {
 	_p0 = _dp0 = _ddp0 = T(0);
 	_pT = _dpT = _ddpT = T(0);
@@ -99,7 +88,8 @@ et::Ce2FullyQualifiedSpline<T, GenType>::Ce2FullyQualifiedSpline()
 }
 
 template <typename T, typename GenType>
-et::Ce2FullyQualifiedSpline<T, GenType>::Ce2FullyQualifiedSpline(ET_IN_TYPE p0, ET_IN_TYPE dp0, ET_IN_TYPE ddp0, ET_IN_TYPE pT, ET_IN_TYPE dpT, ET_IN_TYPE ddpT, GenType time)
+et::FullyQualifiedSpline<T, GenType>::FullyQualifiedSpline(const T& p0, const T& dp0, const T& ddp0,
+	const T& pT, const T& dpT, const T& ddpT, GenType time)
 {
 	_p0 = p0;
 	_dp0 = dp0;
@@ -112,7 +102,7 @@ et::Ce2FullyQualifiedSpline<T, GenType>::Ce2FullyQualifiedSpline(ET_IN_TYPE p0, 
 }
 
 template <typename T, typename GenType>
-et::Ce2FullyQualifiedSpline<T, GenType>::Ce2FullyQualifiedSpline(const Ce2FullyQualifiedSpline& prev, ET_IN_TYPE pT, ET_IN_TYPE dpT, ET_IN_TYPE ddpT, GenType time)
+et::FullyQualifiedSpline<T, GenType>::FullyQualifiedSpline(const FullyQualifiedSpline& prev, const T& pT, const T& dpT, const T& ddpT, GenType time)
 {
 	_p0 = prev._pT;
 	_dp0 = prev._dpT;
@@ -125,7 +115,7 @@ et::Ce2FullyQualifiedSpline<T, GenType>::Ce2FullyQualifiedSpline(const Ce2FullyQ
 }
 
 template <typename T, typename GenType>
-Ce2FullyQualifiedSpline<T, GenType>::Ce2FullyQualifiedSpline(const Ce2PartialyQualifiedSpline<T, GenType>& partial)
+FullyQualifiedSpline<T, GenType>::FullyQualifiedSpline(const PartialyQualifiedSpline<T, GenType>& partial)
 {
 	_p0 = partial.startPoint();
 	_dp0 = partial.startPointVelocity();
@@ -138,7 +128,7 @@ Ce2FullyQualifiedSpline<T, GenType>::Ce2FullyQualifiedSpline(const Ce2PartialyQu
 }
 
 template <typename T, typename GenType>
-Ce2FullyQualifiedSpline<T, GenType>::Ce2FullyQualifiedSpline(const Ce2MinimallyQualifiedSpline<T, GenType>& minimal)
+FullyQualifiedSpline<T, GenType>::FullyQualifiedSpline(const MinimallyQualifiedSpline<T, GenType>& minimal)
 {
 	_p0 = minimal.startPoint();
 	_dp0 = minimal.startPointVelocity();
@@ -151,7 +141,7 @@ Ce2FullyQualifiedSpline<T, GenType>::Ce2FullyQualifiedSpline(const Ce2MinimallyQ
 }
 
 template <typename T, typename GenType>
-void Ce2FullyQualifiedSpline<T, GenType>::genPolynomial()
+void FullyQualifiedSpline<T, GenType>::genPolynomial()
 {
 	this->_coefficients[0] = _p0;
 	this->_coefficients[1] = _dp0;
@@ -162,7 +152,7 @@ void Ce2FullyQualifiedSpline<T, GenType>::genPolynomial()
 }
 
 template <typename T, typename GenType>
-T Ce2FullyQualifiedSpline<T, GenType>::_get_c3(ET_IN_TYPE q0, ET_IN_TYPE qT, ET_IN_TYPE dq0, ET_IN_TYPE dqT, ET_IN_TYPE ddq0, ET_IN_TYPE ddqT, GenType time) const
+T FullyQualifiedSpline<T, GenType>::_get_c3(const T& q0, const T& qT, const T& dq0, const T& dqT, const T& ddq0, const T& ddqT, GenType time) const
 {
 	GenType tp2 = time * time;
 	return  (GenType( -1.5)*ddq0 + GenType( 0.5) * ddqT) / (time) +
@@ -171,7 +161,7 @@ T Ce2FullyQualifiedSpline<T, GenType>::_get_c3(ET_IN_TYPE q0, ET_IN_TYPE qT, ET_
 }
 
 template <typename T, typename GenType>
-T Ce2FullyQualifiedSpline<T, GenType>::_get_c4(ET_IN_TYPE q0, ET_IN_TYPE qT, ET_IN_TYPE dq0, ET_IN_TYPE dqT, ET_IN_TYPE ddq0, ET_IN_TYPE ddqT, GenType time) const
+T FullyQualifiedSpline<T, GenType>::_get_c4(const T& q0, const T& qT, const T& dq0, const T& dqT, const T& ddq0, const T& ddqT, GenType time) const
 {
 	GenType tp2 = time*time;
 	return (GenType(1.50) * ddq0 + GenType( -1.0)*ddqT) / (tp2) +
@@ -180,7 +170,7 @@ T Ce2FullyQualifiedSpline<T, GenType>::_get_c4(ET_IN_TYPE q0, ET_IN_TYPE qT, ET_
 }
 
 template <typename T, typename GenType>
-T Ce2FullyQualifiedSpline<T, GenType>::_get_c5(ET_IN_TYPE q0, ET_IN_TYPE qT, ET_IN_TYPE dq0, ET_IN_TYPE dqT, ET_IN_TYPE ddq0, ET_IN_TYPE ddqT, GenType time) const
+T FullyQualifiedSpline<T, GenType>::_get_c5(const T& q0, const T& qT, const T& dq0, const T& dqT, const T& ddq0, const T& ddqT, GenType time) const
 {
 	GenType tp2 = time*time;
 	GenType tp4 = tp2 * tp2;
@@ -189,11 +179,13 @@ T Ce2FullyQualifiedSpline<T, GenType>::_get_c5(ET_IN_TYPE q0, ET_IN_TYPE qT, ET_
 		(GenType(-6.0)*q0   + GenType( 6.0)*qT)   / (tp4 * time);
 }
 
-/**
-* Minimally Qualified Spline
-**/
+/*
+ *
+ * Minimally Qualified Spline
+ *
+ */
 template <typename T, typename GenType>
-et::Ce2MinimallyQualifiedSpline<T, GenType>::Ce2MinimallyQualifiedSpline(ET_IN_TYPE p0, ET_IN_TYPE dp0, ET_IN_TYPE pT, ET_IN_TYPE dpT, GenType time)
+et::MinimallyQualifiedSpline<T, GenType>::MinimallyQualifiedSpline(const T& p0, const T& dp0, const T& pT, const T& dpT, GenType time)
 { 
 	_p0 = p0;
 	_dp0 = dp0;
@@ -204,7 +196,7 @@ et::Ce2MinimallyQualifiedSpline<T, GenType>::Ce2MinimallyQualifiedSpline(ET_IN_T
 }
 
 template <typename T, typename GenType>
-T et::Ce2MinimallyQualifiedSpline<T, GenType>::_get_c2(ET_IN_TYPE p0, ET_IN_TYPE dp0, ET_IN_TYPE pT, ET_IN_TYPE dpT, GenType time) const
+T et::MinimallyQualifiedSpline<T, GenType>::_get_c2(const T& p0, const T& dp0, const T& pT, const T& dpT, GenType time) const
 {
 	GenType tp2 = time * time;
 	return (GenType(-1) * dpT + GenType(-2) * dp0) / time + 
@@ -212,7 +204,7 @@ T et::Ce2MinimallyQualifiedSpline<T, GenType>::_get_c2(ET_IN_TYPE p0, ET_IN_TYPE
 }
 
 template <typename T, typename GenType>
-T et::Ce2MinimallyQualifiedSpline<T, GenType>::_get_c3(ET_IN_TYPE p0, ET_IN_TYPE dp0, ET_IN_TYPE pT, ET_IN_TYPE dpT, GenType time) const
+T et::MinimallyQualifiedSpline<T, GenType>::_get_c3(const T& p0, const T& dp0, const T& pT, const T& dpT, GenType time) const
 {
 	GenType tp2 = time * time;
 	GenType tp3 = tp2 * time;
@@ -221,7 +213,7 @@ T et::Ce2MinimallyQualifiedSpline<T, GenType>::_get_c3(ET_IN_TYPE p0, ET_IN_TYPE
 }
 
 template <typename T, typename GenType>
-void et::Ce2MinimallyQualifiedSpline<T, GenType>::genPolynomial()
+void et::MinimallyQualifiedSpline<T, GenType>::genPolynomial()
 {
 	this->_coefficients[0] = _p0;
 	this->_coefficients[1] = _dp0;
@@ -230,30 +222,31 @@ void et::Ce2MinimallyQualifiedSpline<T, GenType>::genPolynomial()
 }
 
 template <typename T, typename GenType>
-const T et::Ce2MinimallyQualifiedSpline<T, GenType>::startPointAcceleration() const
+const T et::MinimallyQualifiedSpline<T, GenType>::startPointAcceleration() const
 {
 	return this->derivative(2, 0);
 }
 
 template <typename T, typename GenType>
-const T et::Ce2MinimallyQualifiedSpline<T, GenType>::midPointAcceleration() const
+const T et::MinimallyQualifiedSpline<T, GenType>::midPointAcceleration() const
 {
 	return derivative(2, _time / GenType(2));
 }
 
 template <typename T, typename GenType>
-const T et::Ce2MinimallyQualifiedSpline<T, GenType>::endPointAcceleration() const
+const T et::MinimallyQualifiedSpline<T, GenType>::endPointAcceleration() const
 {
 	return derivative(2, _time);
 }
 
-
-
-/**
-* Parialy Qualified Spline
-**/
+/*
+ *
+ * Parialy Qualified Spline
+ *
+ */
 template <typename T, typename GenType>
-et::Ce2PartialyQualifiedSpline<T, GenType>::Ce2PartialyQualifiedSpline(ET_IN_TYPE p0, ET_IN_TYPE dp0, ET_IN_TYPE ddp0, ET_IN_TYPE pT, ET_IN_TYPE dpT, GenType time)
+et::PartialyQualifiedSpline<T, GenType>::PartialyQualifiedSpline(const T& p0, const T& dp0, const T& ddp0,
+	const T& pT, const T& dpT, GenType time)
 {
 	_p0 = p0;
 	_dp0 = dp0;
@@ -265,7 +258,8 @@ et::Ce2PartialyQualifiedSpline<T, GenType>::Ce2PartialyQualifiedSpline(ET_IN_TYP
 }
 
 template <typename T, typename GenType>
-et::Ce2PartialyQualifiedSpline<T, GenType>::Ce2PartialyQualifiedSpline(const Ce2PartialyQualifiedSpline& prev, ET_IN_TYPE pT, ET_IN_TYPE dpT, GenType time)
+et::PartialyQualifiedSpline<T, GenType>::PartialyQualifiedSpline(const PartialyQualifiedSpline& prev,
+	const T& pT, const T& dpT, GenType time)
 {
 	_p0 = prev._pT;
 	_dp0 = prev._dpT;
@@ -277,7 +271,7 @@ et::Ce2PartialyQualifiedSpline<T, GenType>::Ce2PartialyQualifiedSpline(const Ce2
 }
 
 template <typename T, typename GenType>
-void Ce2PartialyQualifiedSpline<T, GenType>::genPolynomial()
+void PartialyQualifiedSpline<T, GenType>::genPolynomial()
 {
 	this->_coefficients[0] = _p0;
 	this->_coefficients[1] = _dp0;
@@ -287,16 +281,16 @@ void Ce2PartialyQualifiedSpline<T, GenType>::genPolynomial()
 }
 
 template <typename T, typename GenType>
-T Ce2PartialyQualifiedSpline<T, GenType>::_get_c3(ET_IN_TYPE q0, ET_IN_TYPE qT, ET_IN_TYPE dq0, ET_IN_TYPE dqT, ET_IN_TYPE ddq0, GenType time) const
+T PartialyQualifiedSpline<T, GenType>::_get_c3(const T& q0, const T& qT, const T& dq0,
+	const T& dqT, const T& ddq0, GenType time) const
 {
 	GenType tp2 = time * time;
-	return (                               -ddq0) / (time) + 
-		(           -dqT + GenType(-3) * dq0)  / (tp2) + 
-		(GenType(4) * qT + GenType(-4) * q0)   / (tp2 * time);
+	return	(-ddq0) / (time) + (dqT + GenType(-3) * dq0)  / (tp2) + (GenType(4) * qT + GenType(-4) * q0)   / (tp2 * time);
 } 
 
 template <typename T, typename GenType>
-T Ce2PartialyQualifiedSpline<T, GenType>::_get_c4(ET_IN_TYPE q0, ET_IN_TYPE qT, ET_IN_TYPE dq0, ET_IN_TYPE dqT, ET_IN_TYPE ddq0, GenType time) const
+T PartialyQualifiedSpline<T, GenType>::_get_c4(const T& q0, const T& qT, const T& dq0,
+	const T& dqT, const T& ddq0, GenType time) const
 {
 	GenType tp2 = time * time;
 	GenType tp4 = tp2 * tp2;
@@ -304,29 +298,30 @@ T Ce2PartialyQualifiedSpline<T, GenType>::_get_c4(ET_IN_TYPE q0, ET_IN_TYPE qT, 
 }
 
 template <typename T, typename GenType>
-const T Ce2PartialyQualifiedSpline<T, GenType>::endPointAcceleration() const
+const T PartialyQualifiedSpline<T, GenType>::endPointAcceleration() const
 {
 	return derivative(2, _time);
 }
 
-/**
-* Spline sequence
-**/
-
+/*
+ *
+ * Spline sequence
+ *
+ */
 template <typename T, typename GenType>
-Ce2SplineSequence<T, GenType>::Ce2SplineSequence()
+SplineSequence<T, GenType>::SplineSequence()
 {
 }
 
 template <typename T, typename GenType>
-Ce2SplineSequence<T, GenType>::Ce2SplineSequence(const Ce2SplinePointList& points)
+SplineSequence<T, GenType>::SplineSequence(const SplinePointList& points)
 {
 	_points = points;
 	buildSequence();
 }
 
 template <typename T, typename GenType>
-Ce2SplineSequence<T, GenType>::Ce2SplineSequence(const Ce2SplineBasePointList& points)
+SplineSequence<T, GenType>::SplineSequence(const SplineBasePointList& points)
 {
 	_points.resize(points.size());
 
@@ -357,78 +352,43 @@ Ce2SplineSequence<T, GenType>::Ce2SplineSequence(const Ce2SplineBasePointList& p
 		int n = k + 1;
 		GenType time_1 = GenType(2) * length(_points[k].position - _points[m].position) / (length(_points[k].velocity + _points[m].velocity));
 		GenType time_2 = GenType(2) * length(_points[n].position - _points[k].position) / (length(_points[n].velocity + _points[k].velocity));
-		Ce2MinimallyQualifiedSpline<T, GenType> mqs_1(_points[m].position, _points[m].velocity, _points[k].position, _points[k].velocity, time_1);
-		Ce2MinimallyQualifiedSpline<T, GenType> mqs_2(_points[k].position, _points[k].velocity, _points[n].position, _points[n].velocity, time_2);
+		MinimallyQualifiedSpline<T, GenType> mqs_1(_points[m].position, _points[m].velocity, _points[k].position, _points[k].velocity, time_1);
+		MinimallyQualifiedSpline<T, GenType> mqs_2(_points[k].position, _points[k].velocity, _points[n].position, _points[n].velocity, time_2);
 		_points[k].acceleration = GenType(0.5) * (mqs_1.endPointAcceleration() + mqs_2.startPointAcceleration());
 	}
 
 	buildSequence();
-	/*
-	std::vector<T> midpoint_accelerations;
-	midpoint_accelerations.resize( _splines.size() );
-
-	bool solved = false;
-	GenType difference = 0;
-
-	int iterations = 0;
-	int max_iterations = 1000;
-	while (!solved && (iterations++ < max_iterations))
-	{
-	int n = 0;
-	difference = 0;
-
-	for (Ce2FullyQualifiedSplineList::iterator i = _splines.begin(), e = _splines.end(); i != e; ++i, ++n)
-	midpoint_accelerations[n] = i->midPointAcceleration();
-
-	for (size_t i = 1, e = _points.size() - 1; i < e; ++i)
-	{
-	T average_acceleration = (midpoint_accelerations[i - 1] + midpoint_accelerations[i]) / GenType(2);
-	difference += length(_points[i].acceleration - average_acceleration);
-	_points[i].acceleration = average_acceleration;
-	}
-
-	buildSequence();
-	solved = (difference <= GenType(1.0e-5));
-	}
-	*/
 }
 
 template <typename T, typename GenType>
-void Ce2SplineSequence<T, GenType>::buildSequence()
+void SplineSequence<T, GenType>::buildSequence()
 {
 	_splines.resize(_points.size() - 1);
 	_duration = GenType(0);
 
 	int k = 0;
-	for (typename Ce2FullyQualifiedSplineList::iterator i = _splines.begin(), e = _splines.end(); i != e; ++i)
+	for (typename FullyQualifiedSplineList::iterator i = _splines.begin(), e = _splines.end(); i != e; ++i)
 	{ 
 		int m = k + 1;
 
 		GenType time = GenType(2) * length(_points[k].position - _points[m].position) / (length(_points[k].velocity + _points[m].velocity));
-		*i = Ce2FullyQualifiedSpline<T, GenType>(_points[k].position, _points[k].velocity, _points[k].acceleration, _points[m].position, _points[m].velocity, _points[m].acceleration, time);
+		*i = FullyQualifiedSpline<T, GenType>(_points[k].position, _points[k].velocity, _points[k].acceleration, _points[m].position, _points[m].velocity, _points[m].acceleration, time);
 
 		_duration += time;
 		++k;
 	}
-
-	/*
-	for (Ce2SplinePointList::iterator i = _points.begin(), e = _points.end() - 1; i != e; ++i)
-	{
-	Ce2SplinePointList::iterator j = i + 1;
-	}
-	*/
 }
 
 template <typename T, typename GenType>
-typename Ce2SplineSequence<T, GenType>::Ce2SplinePoint Ce2SplineSequence<T, GenType>::sample(GenType time)
+typename SplineSequence<T, GenType>::SplinePoint SplineSequence<T, GenType>::sample(GenType time)
 {
-	typename Ce2SplineSequence<T, GenType>::Ce2SplinePoint result;
+	typename SplineSequence<T, GenType>::SplinePoint result;
 	result.position = T(0);
 	result.velocity = T(0);
 	result.acceleration = T(0);
 
 	GenType local_time = time;
-	for (typename Ce2FullyQualifiedSplineList::iterator i = _splines.begin(), e = _splines.end(); i != e; ++i)
+	for (typename FullyQualifiedSplineList::iterator i = _splines.begin(), e = _splines.end(); i != e; ++i)
 	{
 		if (local_time < i->duration())
 		{
@@ -447,9 +407,9 @@ typename Ce2SplineSequence<T, GenType>::Ce2SplinePoint Ce2SplineSequence<T, GenT
 }
 
 template <typename T, typename GenType>
-typename Ce2SplineSequence<T, GenType>::Ce2SplinePoint splinePoint(T position, T velocity, T acceleration)
+typename SplineSequence<T, GenType>::SplinePoint splinePoint(T position, T velocity, T acceleration)
 {
-	typename Ce2SplineSequence<T, GenType>::Ce2SplinePoint result;
+	typename SplineSequence<T, GenType>::SplinePoint result;
 	result.position = position;
 	result.velocity = velocity;
 	result.acceleration = acceleration;
@@ -457,18 +417,18 @@ typename Ce2SplineSequence<T, GenType>::Ce2SplinePoint splinePoint(T position, T
 }
 
 template <typename T, typename GenType>
-typename Ce2SplineSequence<T, GenType>::Ce2SplineBasePoint splineBasePoint(T position, GenType velocityModule)
+typename SplineSequence<T, GenType>::SplineBasePoint splineBasePoint(T position, GenType velocityModule)
 {
-	typename Ce2SplineSequence<T, GenType>::Ce2SplineBasePoint result;
+	typename SplineSequence<T, GenType>::SplineBasePoint result;
 	result.position = position;
 	result.velocityModule = velocityModule;
 	return result;
 }
 
 template <typename GenType>
-typename Ce2SplineSequence<vector3<GenType>, GenType>::Ce2SplineBasePoint splineBasePoint(GenType x, GenType y, GenType z, GenType velocityModule)
+typename SplineSequence<vector3<GenType>, GenType>::SplineBasePoint splineBasePoint(GenType x, GenType y, GenType z, GenType velocityModule)
 {
-	typename Ce2SplineSequence<vector3<GenType>, GenType>::Ce2SplineBasePoint result;
+	typename SplineSequence<vector3<GenType>, GenType>::SplineBasePoint result;
 	result.position = vector3<GenType>(x, y, z);
 	result.velocityModule = velocityModule;
 	return result;

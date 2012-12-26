@@ -7,17 +7,17 @@
 
 #pragma once
 
-#define ET_IN_TYPE const T&
+#include <et/core/debug.h>
+#include <et/geometry/vector3.h>
 
 namespace et
 {
-
 	template <typename T, int size, typename GenType = T>
-	class Ce2Polynome
+	class Polynome
 	{
 	public: 
-		Ce2Polynome();
-		Ce2Polynome(const T* coefficients);
+		Polynome();
+		Polynome(const T* coefficients);
 
 		T calculate(GenType time) const;
 		T derivative(int order, GenType time) const;
@@ -29,18 +29,25 @@ namespace et
 	};
 
 	template <typename T, typename GenType = T>
-	class Ce2MinimallyQualifiedSpline : public Ce2Polynome<T, 5, GenType>
+	class MinimallyQualifiedSpline : public Polynome<T, 5, GenType>
 	{
 	public:
-		Ce2MinimallyQualifiedSpline(ET_IN_TYPE p0, ET_IN_TYPE dp0, ET_IN_TYPE pT, ET_IN_TYPE dpT, GenType time);
+		MinimallyQualifiedSpline(const T& p0, const T& dp0, const T& pT, const T& dpT, GenType time);
 
-		inline const GenType duration() const {return _time;}
+		const GenType duration() const
+			{ return _time; }
 
-		inline const T startPoint() const {return _p0;}
-		inline const T startPointVelocity() const {return _dp0;}
+		const T startPoint() const
+			{ return _p0; }
+		
+		const T startPointVelocity() const
+			{ return _dp0; }
 
-		inline const T endPoint() const {return _pT;}
-		inline const T endPointVelocity() const {return _dpT;}
+		const T endPoint() const
+			{ return _pT; }
+		
+		const T endPointVelocity() const
+			{ return _dpT; }
 
 		const T startPointAcceleration() const;
 		const T midPointAcceleration() const;
@@ -48,8 +55,8 @@ namespace et
 
 	private:
 		void genPolynomial();
-		T _get_c2(ET_IN_TYPE p0, ET_IN_TYPE dp0, ET_IN_TYPE pT, ET_IN_TYPE dpT, GenType time) const;
-		T _get_c3(ET_IN_TYPE p0, ET_IN_TYPE dp0, ET_IN_TYPE pT, ET_IN_TYPE dpT, GenType time) const;
+		T _get_c2(const T& p0, const T& dp0, const T& pT, const T& dpT, GenType time) const;
+		T _get_c3(const T& p0, const T& dp0, const T& pT, const T& dpT, GenType time) const;
 
 	private:
 		T _p0;
@@ -60,25 +67,36 @@ namespace et
 	};
 
 	template <typename T, typename GenType = T>
-	class Ce2PartialyQualifiedSpline : public Ce2Polynome<T, 5, GenType>
+	class PartialyQualifiedSpline : public Polynome<T, 5, GenType>
 	{
 	public:
-		Ce2PartialyQualifiedSpline(ET_IN_TYPE p0, ET_IN_TYPE dp0, ET_IN_TYPE ddp0, ET_IN_TYPE pT, ET_IN_TYPE dpT, GenType time);
-		Ce2PartialyQualifiedSpline(const Ce2PartialyQualifiedSpline& prev, ET_IN_TYPE pT, ET_IN_TYPE dpT, GenType time);
+		PartialyQualifiedSpline(const T& p0, const T& dp0, const T& ddp0, const T& pT, const T& dpT, GenType time);
+		PartialyQualifiedSpline(const PartialyQualifiedSpline& prev, const T& pT, const T& dpT, GenType time);
 
-		inline const GenType duration() const {return _time;}
-		inline const T startPoint() const {return _p0;}
-		inline const T startPointVelocity() const {return _dp0;}
-		inline const T startPointAcceleration() const {return _ddp0;}
-		inline const T endPoint() const {return _pT;}
-		inline const T endPointVelocity() const {return _dpT;}
+		const GenType duration() const
+			{ return _time; }
+		
+		const T startPoint() const
+			{ return _p0; }
+		
+		const T startPointVelocity() const
+			{ return _dp0; }
+		
+		const T startPointAcceleration() const
+			{ return _ddp0; }
+		
+		const T endPoint() const
+			{ return _pT; }
+		
+		const T endPointVelocity() const
+			{ return _dpT; }
 
 		const T endPointAcceleration() const;
 
 	private: 
 		void genPolynomial();
-		T _get_c3(ET_IN_TYPE q0, ET_IN_TYPE qT, ET_IN_TYPE dq0, ET_IN_TYPE dqT, ET_IN_TYPE ddq0, GenType time) const;
-		T _get_c4(ET_IN_TYPE q0, ET_IN_TYPE qT, ET_IN_TYPE dq0, ET_IN_TYPE dqT, ET_IN_TYPE ddq0, GenType time) const;
+		T _get_c3(const T& q0, const T& qT, const T& dq0, const T& dqT, const T& ddq0, GenType time) const;
+		T _get_c4(const T& q0, const T& qT, const T& dq0, const T& dqT, const T& ddq0, GenType time) const;
 
 	private:
 		T _p0;
@@ -90,35 +108,53 @@ namespace et
 	};
 
 	template <typename T, typename GenType = T>
-	class Ce2FullyQualifiedSpline : public Ce2Polynome<T, 6, GenType>
+	class FullyQualifiedSpline : public Polynome<T, 6, GenType>
 	{
 	public:
-		Ce2FullyQualifiedSpline(ET_IN_TYPE p0, ET_IN_TYPE dp0, ET_IN_TYPE ddp0, ET_IN_TYPE pT, ET_IN_TYPE dpT, ET_IN_TYPE ddpT, GenType time);
+		FullyQualifiedSpline(const T& p0, const T& dp0, const T& ddp0, const T& pT, const T& dpT, const T& ddpT, GenType time);
 
-		Ce2FullyQualifiedSpline();
-		Ce2FullyQualifiedSpline(const Ce2MinimallyQualifiedSpline<T, GenType>& minimal);
-		Ce2FullyQualifiedSpline(const Ce2PartialyQualifiedSpline<T, GenType>& partial);
-		Ce2FullyQualifiedSpline(const Ce2PartialyQualifiedSpline<T, GenType>& prev, ET_IN_TYPE pT, ET_IN_TYPE dpT, ET_IN_TYPE ddpT, GenType time);
-		Ce2FullyQualifiedSpline(const Ce2FullyQualifiedSpline& prev, ET_IN_TYPE pT, ET_IN_TYPE dpT, ET_IN_TYPE ddpT, GenType time);
+		FullyQualifiedSpline();
+		FullyQualifiedSpline(const MinimallyQualifiedSpline<T, GenType>& minimal);
+		FullyQualifiedSpline(const PartialyQualifiedSpline<T, GenType>& partial);
+		FullyQualifiedSpline(const PartialyQualifiedSpline<T, GenType>& prev, const T& pT, const T& dpT, const T& ddpT, GenType time);
+		FullyQualifiedSpline(const FullyQualifiedSpline& prev, const T& pT, const T& dpT, const T& ddpT, GenType time);
 
-		inline const GenType duration() const {return _time;}
-		inline const T startPoint() const {return _p0;}
-		inline const T startPointVelocity() const {return _dp0;}
-		inline const T startPointAcceleration() const {return _ddp0;}
+		const GenType duration() const
+			{ return _time; }
+		
+		const T startPoint() const
+			{ return _p0; }
+		
+		const T startPointVelocity() const
+			{ return _dp0; }
+		
+		const T startPointAcceleration() const
+			{ return _ddp0; }
 
-		inline const T midPoint() const {return derivative(0, _time / GenType(2));}
-		inline const T midPointVelocity() const {return derivative(1, _time / GenType(2));}
-		inline const T midPointAcceleration() const {return derivative(2, _time / GenType(2));}
+		const T midPoint() const
+			{ return derivative(0, _time / GenType(2)); }
+		
+		const T midPointVelocity() const
+			{ return derivative(1, _time / GenType(2)); }
+		
+		const T midPointAcceleration() const
+			{ return derivative(2, _time / GenType(2)); }
 
-		inline const T endPoint() const {return _pT;}
-		inline const T endPointVelocity() const {return _dpT;}
-		inline const T endPointAcceleration() const {return _ddpT;}
+		const T endPoint() const
+			{ return _pT; }
+		
+		const T endPointVelocity() const
+			{ return _dpT; }
+		
+		const T endPointAcceleration() const
+			{ return _ddpT; }
 
 	private:
 		void genPolynomial();
-		T _get_c3(ET_IN_TYPE q0, ET_IN_TYPE qT, ET_IN_TYPE dq0, ET_IN_TYPE dqT, ET_IN_TYPE ddq0, ET_IN_TYPE ddqT, GenType time) const;
-		T _get_c4(ET_IN_TYPE q0, ET_IN_TYPE qT, ET_IN_TYPE dq0, ET_IN_TYPE dqT, ET_IN_TYPE ddq0, ET_IN_TYPE ddqT, GenType time) const;
-		T _get_c5(ET_IN_TYPE q0, ET_IN_TYPE qT, ET_IN_TYPE dq0, ET_IN_TYPE dqT, ET_IN_TYPE ddq0, ET_IN_TYPE ddqT, GenType time) const;
+		
+		T _get_c3(const T& q0, const T& qT, const T& dq0, const T& dqT, const T& ddq0, const T& ddqT, GenType time) const;
+		T _get_c4(const T& q0, const T& qT, const T& dq0, const T& dqT, const T& ddq0, const T& ddqT, GenType time) const;
+		T _get_c5(const T& q0, const T& qT, const T& dq0, const T& dqT, const T& ddq0, const T& ddqT, GenType time) const;
 
 	private:
 		T _p0;
@@ -131,43 +167,51 @@ namespace et
 	};
 
 	template <typename T, typename GenType = T>
-	class Ce2SplineSequence
+	class SplineSequence
 	{
 	public:
-		struct Ce2SplinePoint
+		struct SplinePoint
 		{
 			T position;
 			T velocity;
 			T acceleration;
 		};
-		struct Ce2SplineBasePoint
+		
+		struct SplineBasePoint
 		{
 			T position;
 			GenType velocityModule;
 
-			Ce2SplineBasePoint() : position(0), velocityModule(0) { }
-			Ce2SplineBasePoint(T pos, GenType vel) : position(pos), velocityModule(vel) { }
+			SplineBasePoint() :
+				position(0), velocityModule(0) { }
+			
+			SplineBasePoint(T pos, GenType vel) :
+				position(pos), velocityModule(vel) { }
 		};
-		typedef std::vector<Ce2SplinePoint> Ce2SplinePointList;
-		typedef std::vector<Ce2SplineBasePoint> Ce2SplineBasePointList;
-		typedef std::vector<Ce2FullyQualifiedSpline<T, GenType> > Ce2FullyQualifiedSplineList;
+		
+		typedef std::vector<SplinePoint> SplinePointList;
+		typedef std::vector<SplineBasePoint> SplineBasePointList;
+		typedef std::vector<FullyQualifiedSpline<T, GenType> > FullyQualifiedSplineList;
+		
+	public:
+		SplineSequence();
+		SplineSequence(const SplinePointList& points);
+		SplineSequence(const SplineBasePointList& points);
 
-		Ce2SplineSequence();
-		Ce2SplineSequence(const Ce2SplinePointList& points);
-		Ce2SplineSequence(const Ce2SplineBasePointList& points);
-
-		const GenType& duration() const {return _duration;}
-		Ce2SplinePoint sample(GenType time);
+		const GenType& duration() const
+			{ return _duration; }
+		
+		SplinePoint sample(GenType time);
 
 	private:
 		void buildSequence();
-
-		bool _closedTrajectory;
+		
+	private:
 		GenType _duration;
-		Ce2SplinePointList _points;
-		Ce2FullyQualifiedSplineList _splines;
+		SplinePointList _points;
+		FullyQualifiedSplineList _splines;
+		bool _closedTrajectory;
 	};
 
 	#include <et/geometry/splines.inl.h>
-
 }
