@@ -28,10 +28,14 @@ namespace et
 		void setWhiteBalanceLocked(bool isLocked);
 		void setExposureLocked(bool isLocked);
 		
+		void beginConfiguration();
+		void endConfiguration();
+		
 	private:
 		VideoCapture* _owner;
 		VideoCaptureProxy* _proxy;
 		AVCaptureSession* _session;
+		size_t _configurationCounter;
 	};
 }
 
@@ -83,22 +87,34 @@ void VideoCapture::stop()
 
 void VideoCapture::setFlags(size_t flags)
 {
+	if (flags)
+		_private->beginConfiguration();
+	
 	if ((flags & VideoCaptureFlag_LockFocus) == VideoCaptureFlag_LockFocus)
 		_private->setFocusLocked(true);
 	if ((flags & VideoCaptureFlag_LockExposure) == VideoCaptureFlag_LockExposure)
 		_private->setExposureLocked(true);
 	if ((flags & VideoCaptureFlag_LockWhiteBalance) == VideoCaptureFlag_LockWhiteBalance)
 		_private->setWhiteBalanceLocked(true);
+	
+	if (flags)
+		_private->endConfiguration();
 }
 
 void VideoCapture::removeFlags(size_t flags)
 {
+	if (flags)
+		_private->beginConfiguration();
+	
 	if ((flags & VideoCaptureFlag_LockFocus) == VideoCaptureFlag_LockFocus)
 		_private->setFocusLocked(false);
 	if ((flags & VideoCaptureFlag_LockExposure) == VideoCaptureFlag_LockExposure)
 		_private->setExposureLocked(false);
 	if ((flags & VideoCaptureFlag_LockWhiteBalance) == VideoCaptureFlag_LockWhiteBalance)
 		_private->setWhiteBalanceLocked(false);
+	
+	if (flags)
+		_private->endConfiguration();
 }
 
 bool VideoCapture::available()
@@ -177,8 +193,8 @@ void VideoCapturePrivate::stop()
 void VideoCapturePrivate::setFocusLocked(bool isLocked)
 {
 	if (_session == nullptr) return;
-	
-	[_session beginConfiguration];
+
+	beginConfiguration();
 	
 	NSArray* devices = [AVCaptureDevice devices];
 	NSError* error = nil;
@@ -202,14 +218,14 @@ void VideoCapturePrivate::setFocusLocked(bool isLocked)
 		}
 	}
 	
-	[_session commitConfiguration];
+	endConfiguration();
 }
 
 void VideoCapturePrivate::setWhiteBalanceLocked(bool isLocked)
 {
 	if (_session == nullptr) return;
 	
-	[_session beginConfiguration];
+	beginConfiguration();
 	
 	NSArray* devices = [AVCaptureDevice devices];
 	NSError* error = nil;
@@ -233,14 +249,14 @@ void VideoCapturePrivate::setWhiteBalanceLocked(bool isLocked)
 		}
 	}
 	
-	[_session commitConfiguration];
+	endConfiguration();
 }
 
 void VideoCapturePrivate::setExposureLocked(bool isLocked)
 {
 	if (_session == nullptr) return;
-	
-	[_session beginConfiguration];
+
+	beginConfiguration();
 	
 	NSArray* devices = [AVCaptureDevice devices];
 	NSError* error = nil;
@@ -264,5 +280,21 @@ void VideoCapturePrivate::setExposureLocked(bool isLocked)
 		}
 	}
 	
-	[_session commitConfiguration];
+	endConfiguration();
+}
+
+void VideoCapturePrivate::beginConfiguration()
+{
+	if (_configurationCounter == 0)
+		[_session beginConfiguration];
+	
+	++_configurationCounter;
+}
+
+void VideoCapturePrivate::endConfiguration()
+{
+	--_configurationCounter;
+	
+	if (_configurationCounter == 0)
+		[_session commitConfiguration];
 }
