@@ -5,7 +5,6 @@
  *
  */
 
-#include <math.h>
 #include <et/timers/sequence.h>
 
 using namespace et;
