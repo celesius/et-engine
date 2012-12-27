@@ -9,7 +9,6 @@
 
 namespace et
 {
-
 	template <typename T>
 	struct Quaternion
 	{

@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <stdlib.h>
-#include <cmath>
 #include <et/core/debug.h>
 #include <et/core/constants.h>
 #include <et/geometry/vector4.h>

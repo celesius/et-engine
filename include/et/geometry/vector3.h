@@ -20,14 +20,26 @@ namespace et
 			T c[3];
 		};
 
-		vector3() : x(static_cast<T>(0)), y(static_cast<T>(0)), z(static_cast<T>(0)) { }
-		vector3(const vector3& m) : x(m.x), y(m.y), z(m.z) { }
-		vector3(vector3&& m) : x(m.x), y(m.y), z(m.z) { }
+		vector3() :
+			x(static_cast<T>(0)), y(static_cast<T>(0)), z(static_cast<T>(0)) { }
 		
-		explicit vector3(T val) : x(val), y(val), z(val) { }
-		vector3(T i_x, T i_y) : x(i_x), y(i_y), z(static_cast<T>(0)) { }
-		vector3(T i_x, T i_y, T i_z) : x(i_x), y(i_y), z(i_z) { }
-		vector3(vector2<T>i_xy, T i_z) : x(i_xy.x), y(i_xy.y), z(i_z) { }
+		vector3(const vector3& m) :
+			x(m.x), y(m.y), z(m.z) { }
+		
+		vector3(vector3&& m) :
+			x(m.x), y(m.y), z(m.z) { }
+		
+		explicit vector3(T val) :
+			x(val), y(val), z(val) { }
+		
+		vector3(T i_x, T i_y) :
+			x(i_x), y(i_y), z(static_cast<T>(0)) { }
+		
+		vector3(T i_x, T i_y, T i_z) :
+			x(i_x), y(i_y), z(i_z) { }
+		
+		vector3(const vector2<T>& i_xy, T i_z) :
+			x(i_xy.x), y(i_xy.y), z(i_z) { }
 
 		T* data() 
 			{ return c; }
@@ -106,16 +118,16 @@ namespace et
 
 		const vector2<T>& xy() const
 			{ return *((vector2<T>*)(c)); }
-
-		vector3<T>& normalize()
-		{ 
-			T len = dotSelf();
-			if (len > 0)
+		
+		vector3 normalize()
+		{
+			T lenSquare = dotSelf();
+			if (lenSquare > 0)
 			{
-				len = sqrt(len);
-				x /= len;
-				y /= len;
-				z /= len;
+				lenSquare = sqrt(lenSquare);
+				x /= lenSquare;
+				y /= lenSquare;
+				z /= lenSquare;
 			}
 			return *this;
 		}

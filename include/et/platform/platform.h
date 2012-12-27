@@ -7,12 +7,15 @@
 
 #pragma once
 
+#include <cmath>
 #include <string>
 #include <vector>
 #include <iostream>
 #include <assert.h>
 #include <string.h>
 #include <stddef.h>
+
+#include <et/platform/compileoptions.h>
 
 #if defined(__MACH__)
 #	include <TargetConditionals.h>

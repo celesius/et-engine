@@ -7,8 +7,7 @@
 
 #pragma once
 
-#include <math.h>
-#include <et/platform/compileoptions.h>
+#include <et/platform/platform.h>
 
 namespace et 
 {
@@ -21,9 +20,14 @@ namespace et
 			T c[2];
 		};
 
-		vector2() : x(static_cast<T>(0)), y(static_cast<T>(0)) { }
-		explicit vector2(T value) : x(value), y(value) { }
-		vector2(T _x, T _y) : x(_x), y(_y) { }
+		vector2() :
+			x(static_cast<T>(0)), y(static_cast<T>(0)) { }
+		
+		explicit vector2(T value) :
+			x(value), y(value) { }
+		
+		vector2(T _x, T _y) :
+			x(_x), y(_y) { }
 
 		T& operator [](int i)
 			{ return c[i]; }
@@ -103,6 +107,17 @@ namespace et
 		T aspect() const
 			{ return x / y; }
 
+		vector2 normalize()
+		{
+			T lenSquare = dotSelf();
+			if (lenSquare > 0)
+			{
+				lenSquare = sqrt(lenSquare);
+				x /= lenSquare;
+				y /= lenSquare;
+			}
+			return this;
+		}
 	};
 
 	template <typename T>
