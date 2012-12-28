@@ -11,7 +11,7 @@
 
 namespace et
 {
-	class ApplicationIdentifier;
+	struct ApplicationIdentifier;
 	
 	class AppEnvironment
 	{

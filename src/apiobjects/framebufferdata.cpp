@@ -372,7 +372,7 @@ std::string FramebufferStatusToString(GLenum status)
 	}
 }
 
-const GLenum renderbufferTargets[FramebufferData::MaxRenderTargets]
+const GLenum renderbufferTargets[FramebufferData::MaxRenderTargets] = 
 {
 #if defined(GL_COLOR_ATTACHMENT0)
 	GL_COLOR_ATTACHMENT0,
