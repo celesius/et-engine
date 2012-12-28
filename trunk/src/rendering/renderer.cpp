@@ -132,13 +132,19 @@ void Renderer::drawElementsBaseIndex(const VertexArrayObject& vao, int base, siz
 	if (!ib.valid() || !vb.valid()) return;
 
 #if (ET_OPENGLES)
+	
 	RenderState& rs = _rc->renderState();
 	rs.bindVertexArray(vao);
 	rs.bindBuffer(vb);
 	rs.setVertexAttributesBaseIndex(vb->declaration(), base);
-	etDrawElements(ib->primitiveType(), static_cast<GLsizei>(count), ib->dataType(), ib->indexOffset(first));
+	etDrawElements(ib->primitiveType(), static_cast<GLsizei>(count),
+		ib->dataType(), ib->indexOffset(first));
+	
 #else	
-	etDrawElementsBaseVertex(ib->geometryType(), static_cast<GLsizei>(count), ib->dataType(), ib->indexOffset(first), base);
+	
+	etDrawElementsBaseVertex(ib->primitiveType(), static_cast<GLsizei>(count),
+		ib->dataType(), ib->indexOffset(first), base);
+	
 #endif	
 }
 

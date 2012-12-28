@@ -9,6 +9,7 @@
 #include <AppKit/NSOpenGL.h>
 #include <AppKit/NSOpenGLView.h>
 #include <AppKit/NSScreen.h>
+#include <AppKit/NSMenu.h>
 #include <CoreVideo/CVDisplayLink.h>
 
 #include <et/opengl/openglcaps.h>
@@ -17,6 +18,10 @@
 #include <et/rendering/rendercontext.h>
 
 using namespace et;
+
+@interface etWindowDelegate : NSObject<NSWindowDelegate>
+
+@end
 
 class et::RenderContextPrivate
 {
@@ -34,6 +39,8 @@ public:
 	NSOpenGLContext* _openGlContext;
 	NSOpenGLView* _openGlView;
 	CVDisplayLinkRef _displayLink;
+	
+	etWindowDelegate* _windowDelegate;
 };
 
 @interface etOpenGLView : NSOpenGLView
@@ -162,11 +169,15 @@ RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContex
 
 	_pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes] autorelease];
 	
-	_mainWindow = [[NSWindow alloc] initWithContentRect:contentRect styleMask:NSTitledWindowMask | NSClosableWindowMask
+	_mainWindow = [[NSWindow alloc] initWithContentRect:contentRect
+											  styleMask:NSTitledWindowMask | NSClosableWindowMask
 												backing:NSBackingStoreBuffered defer:YES];
 	
+	_windowDelegate = [etWindowDelegate new];
+	[_mainWindow setDelegate:_windowDelegate];
+	
 	_openGlView = [[etOpenGLView alloc] initWithFrame:openglRect pixelFormat:_pixelFormat];
-	_openGlContext = [_openGlView openGLContext];
+	_openGlContext = [[_openGlView openGLContext] retain];
 	
 	[_mainWindow setContentView:_openGlView];
 	[_mainWindow makeKeyAndOrderFront:NSApp];
@@ -174,7 +185,10 @@ RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContex
 
 RenderContextPrivate::~RenderContextPrivate()
 {
-	
+//	[_mainWindow release];
+	[_openGlView release];
+	[_openGlContext release];
+	[_windowDelegate release];
 }
 
 void RenderContextPrivate::run()
@@ -205,7 +219,9 @@ void RenderContextPrivate::displayLinkSynchronized()
 	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
 	vec2 np = p / vec2(ownFrame.size.width, ownFrame.size.height);
 
-	_pointerInputSource.pointerPressed(PointerInputInfo(PointerType_General, p, np, 0, 1, [theEvent timestamp]));
+	NSLog(@"Down, number = %d", theEvent.eventNumber);
+	_pointerInputSource.pointerPressed(PointerInputInfo(PointerType_General, p, np, 0,
+		[theEvent eventNumber], [theEvent timestamp]));
 }
 
 - (void)mouseUp:(NSEvent *)theEvent
@@ -216,7 +232,8 @@ void RenderContextPrivate::displayLinkSynchronized()
 	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
 	vec2 np = p / vec2(ownFrame.size.width, ownFrame.size.height);
 	
-	_pointerInputSource.pointerReleased(PointerInputInfo(PointerType_General, p, np, 0, 1, [theEvent timestamp]));
+	_pointerInputSource.pointerReleased(PointerInputInfo(PointerType_General, p, np, 0,
+		[theEvent eventNumber], [theEvent timestamp]));
 }
 
 - (void)mouseMoved:(NSEvent *)theEvent
@@ -227,7 +244,8 @@ void RenderContextPrivate::displayLinkSynchronized()
 	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
 	vec2 np = p / vec2(ownFrame.size.width, ownFrame.size.height);
 	
-	_pointerInputSource.pointerMoved(PointerInputInfo(PointerType_General, p, np, 0, 1, [theEvent timestamp]));
+	_pointerInputSource.pointerMoved(PointerInputInfo(PointerType_General, p, np, 0,
+		[theEvent eventNumber], [theEvent timestamp]));
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent
@@ -238,7 +256,8 @@ void RenderContextPrivate::displayLinkSynchronized()
 	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
 	vec2 np = p / vec2(ownFrame.size.width, ownFrame.size.height);
 	
-	_pointerInputSource.pointerMoved(PointerInputInfo(PointerType_General, p, np, 0, 1, [theEvent timestamp]));
+	_pointerInputSource.pointerMoved(PointerInputInfo(PointerType_General, p, np, 0,
+		[theEvent eventNumber], [theEvent timestamp]));
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent
@@ -249,7 +268,12 @@ void RenderContextPrivate::displayLinkSynchronized()
 	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
 	vec2 np = p / vec2(ownFrame.size.width, ownFrame.size.height);
 	
-	_pointerInputSource.pointerScrolled(PointerInputInfo(PointerType_General, p, np, [theEvent deltaY], [theEvent hash], [theEvent timestamp]));
+	_pointerInputSource.pointerScrolled(PointerInputInfo(PointerType_General, p, np,
+		[theEvent deltaY], [theEvent hash], [theEvent timestamp]));
 }
+
+@end
+
+@implementation etWindowDelegate
 
 @end
