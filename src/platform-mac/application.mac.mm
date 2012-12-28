@@ -5,7 +5,9 @@
  *
  */
 
-#include <AppKit/AppKit.h>
+#include <Foundation/NSTimer.h>
+#include <AppKit/NSApplication.h>
+#include <AppKit/NSMenu.h>
 #include <et/app/applicationnotifier.h>
 
 using namespace et;
@@ -39,6 +41,19 @@ void Application::loaded()
 	
 	_renderContext = new RenderContext(parameters, this);
 	_renderContext->init();
+	
+	NSMenu* mainMenu = [[[NSMenu allocWithZone:[NSMenu menuZone]] init] autorelease];
+	NSMenuItem* applicationMenuItem = [[[NSMenuItem allocWithZone:[NSMenu menuZone]] init] autorelease];
+	[mainMenu addItem:applicationMenuItem];
+	[[NSApplication sharedApplication] setMainMenu:mainMenu];
+	
+	NSString* quitTitle = [NSString stringWithFormat:@"Quit %@", [[NSProcessInfo processInfo] processName]];
+	NSMenuItem* quitItem = [[[NSMenuItem allocWithZone:[NSMenu menuZone]] initWithTitle:quitTitle
+		action:@selector(terminate:) keyEquivalent:@"q"] autorelease];
+	
+	NSMenu* applicationMenu = [[[NSMenu allocWithZone:[NSMenu menuZone]] init] autorelease];
+	[applicationMenu addItem:quitItem];
+	[applicationMenuItem setSubmenu:applicationMenu];
 	
 	etApplicationDelegate* appDelegate = [[NSApplication sharedApplication] delegate];
 	[appDelegate run];
