@@ -120,7 +120,7 @@ std::string et::applicationDataFolder()
 	return appPath + "data\\";
 }
 
-std::string et::applicationDocumentsFolder()
+std::string et::applicationDocumentsBaseFolder()
 {
 	return applicationDataFolder();
 }
@@ -160,7 +160,7 @@ void et::findSubfolders(const std::string& folder, bool recursive, StringList& l
 
 	list.insert(list.end(), folderList.begin(), folderList.end());
 }
-
+/*
 std::string et::selectFile(const StringList& mask)
 {
 	size_t maskLen = 1;
@@ -198,6 +198,7 @@ std::string et::selectFile(const std::string& description, const std::string& ex
 	m.push_back(ext);
 	return selectFile(m);
 }
+*/
 
 void et::openUrl(const std::string& url)
 {
