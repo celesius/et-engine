@@ -211,53 +211,51 @@ void RenderContextPrivate::displayLinkSynchronized()
 
 @implementation etOpenGLView
 
+- (PointerInputInfo)mousePointerInfo:(NSEvent*)theEvent withType:(PointerType)type;
+{
+	NSRect ownFrame = self.frame;
+	
+	NSPoint nativePoint = [theEvent locationInWindow];
+	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
+	vec2 np(2.0f * p.x / ownFrame.size.width - 1.0f, 1.0f - 2.0f * p.y / ownFrame.size.height);
+	
+	return PointerInputInfo(type, p, np, 0, [theEvent eventNumber], [theEvent timestamp]);
+}
+
 - (void)mouseDown:(NSEvent *)theEvent
 {
-	NSRect ownFrame = self.frame;
-	
-	NSPoint nativePoint = [theEvent locationInWindow];
-	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
-	vec2 np = p / vec2(ownFrame.size.width, ownFrame.size.height);
-
-	NSLog(@"Down, number = %d", theEvent.eventNumber);
-	_pointerInputSource.pointerPressed(PointerInputInfo(PointerType_General, p, np, 0,
-		[theEvent eventNumber], [theEvent timestamp]));
-}
-
-- (void)mouseUp:(NSEvent *)theEvent
-{
-	NSRect ownFrame = self.frame;
-	
-	NSPoint nativePoint = [theEvent locationInWindow];
-	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
-	vec2 np = p / vec2(ownFrame.size.width, ownFrame.size.height);
-	
-	_pointerInputSource.pointerReleased(PointerInputInfo(PointerType_General, p, np, 0,
-		[theEvent eventNumber], [theEvent timestamp]));
-}
-
-- (void)mouseMoved:(NSEvent *)theEvent
-{
-	NSRect ownFrame = self.frame;
-	
-	NSPoint nativePoint = [theEvent locationInWindow];
-	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
-	vec2 np = p / vec2(ownFrame.size.width, ownFrame.size.height);
-	
-	_pointerInputSource.pointerMoved(PointerInputInfo(PointerType_General, p, np, 0,
-		[theEvent eventNumber], [theEvent timestamp]));
+	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_General];
+	_pointerInputSource.pointerPressed(info);
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent
 {
-	NSRect ownFrame = self.frame;
-	
-	NSPoint nativePoint = [theEvent locationInWindow];
-	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
-	vec2 np = p / vec2(ownFrame.size.width, ownFrame.size.height);
-	
-	_pointerInputSource.pointerMoved(PointerInputInfo(PointerType_General, p, np, 0,
-		[theEvent eventNumber], [theEvent timestamp]));
+	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_General];
+	_pointerInputSource.pointerMoved(info);
+}
+
+- (void)mouseUp:(NSEvent *)theEvent
+{
+	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_General];
+	_pointerInputSource.pointerReleased(info);
+}
+
+- (void)rightMouseDown:(NSEvent *)theEvent
+{
+	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_RightButton];
+	_pointerInputSource.pointerPressed(info);
+}
+
+- (void)rightMouseDragged:(NSEvent *)theEvent
+{
+	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_RightButton];
+	_pointerInputSource.pointerMoved(info);
+}
+
+- (void)rightMouseUp:(NSEvent *)theEvent
+{
+	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_RightButton];
+	_pointerInputSource.pointerReleased(info);
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent
@@ -266,7 +264,7 @@ void RenderContextPrivate::displayLinkSynchronized()
 	
 	NSPoint nativePoint = [theEvent locationInWindow];
 	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
-	vec2 np = p / vec2(ownFrame.size.width, ownFrame.size.height);
+	vec2 np(2.0f * p.x / ownFrame.size.width - 1.0f, 1.0f - 2.0f * p.y / ownFrame.size.height);
 	
 	_pointerInputSource.pointerScrolled(PointerInputInfo(PointerType_General, p, np,
 		[theEvent deltaY], [theEvent hash], [theEvent timestamp]));
