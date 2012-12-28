@@ -90,11 +90,15 @@ static etApplication* _sharedInstance = nil;
 {
 	if ([keyPath isEqualToString:@"frame"])
 	{
+		float scaleFactor = [[UIScreen mainScreen] scale];
+		
 		CGRect frame = { };
 		NSValue* value = [change objectForKey:@"new"];
 		[value getValue:&frame];
 		
-		float scaleFactor = [[UIScreen mainScreen] scale];
+		if (UIInterfaceOrientationIsLandscape([CCDirector sharedDirector].interfaceOrientation))
+			frame.size = CGSizeMake(frame.size.height, frame.size.width);
+		
 		vec2i size = vec2i(static_cast<int>(scaleFactor * frame.size.width), static_cast<int>(scaleFactor * frame.size.height));
 		RenderContext* rc = _notifier->accessRenderContext();
 		if (rc->sizei() != size)
@@ -104,7 +108,6 @@ static etApplication* _sharedInstance = nil;
 		}
 	}
 }
-
 
 - (et::RenderContext*)renderContext
 {
