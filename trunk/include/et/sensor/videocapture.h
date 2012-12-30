@@ -36,6 +36,13 @@ namespace et
 			VideoCaptureFlag_LockFocus | VideoCaptureFlag_LockWhiteBalance | VideoCaptureFlag_LockExposure
 	};
 	
+	enum VideoCaptureQuality
+	{
+		VideoCaptureQuality_Low,
+		VideoCaptureQuality_Medium,
+		VideoCaptureQuality_High
+	};
+	
 	class VideoCapturePrivate;
 	class VideoCapture : public EventReceiver
 	{
@@ -43,7 +50,7 @@ namespace et
         static bool available();
         
 	public:
-		VideoCapture();
+		VideoCapture(VideoCaptureQuality = VideoCaptureQuality_Medium);
 		~VideoCapture();
         
         void run();

@@ -17,7 +17,7 @@ namespace et
 	class VideoCapturePrivate
 	{
 	public:
-		VideoCapturePrivate(VideoCapture* owner);
+		VideoCapturePrivate(VideoCapture* owner, VideoCaptureQuality q);
 		~VideoCapturePrivate();
 		
 		void handleSampleBuffer(CMSampleBufferRef);
@@ -73,8 +73,8 @@ using namespace et;
 
 @end
 
-VideoCapture::VideoCapture()
-	{ _private = new VideoCapturePrivate(this); }
+VideoCapture::VideoCapture(VideoCaptureQuality q)
+	{ _private = new VideoCapturePrivate(this, q); }
 
 VideoCapture::~VideoCapture()
 	{ delete _private; }
@@ -122,7 +122,8 @@ bool VideoCapture::available()
     return [[AVCaptureDevice devices] count] > 0;
 }
 
-VideoCapturePrivate::VideoCapturePrivate(VideoCapture* owner) : _owner(owner)
+VideoCapturePrivate::VideoCapturePrivate(VideoCapture* owner, VideoCaptureQuality q) :
+	_owner(owner)
 {
 	NSArray* devices = [AVCaptureDevice devices];
     if ([devices count] == 0) return;
@@ -130,7 +131,13 @@ VideoCapturePrivate::VideoCapturePrivate(VideoCapture* owner) : _owner(owner)
 	_proxy = [[VideoCaptureProxy alloc] initWithVideoCapturePrivate:this];
 
 	_session = [[AVCaptureSession alloc] init];
-	_session.sessionPreset = AVCaptureSessionPresetMedium;
+	
+	if (q == VideoCaptureQuality_Low)
+		_session.sessionPreset = AVCaptureSessionPresetLow;
+	else if (q == VideoCaptureQuality_High)
+		_session.sessionPreset = AVCaptureSessionPresetHigh;
+	else
+		_session.sessionPreset = AVCaptureSessionPresetMedium;
 
 	NSError* error = nil;
 	AVCaptureDeviceInput* _input = [AVCaptureDeviceInput deviceInputWithDevice:[devices objectAtIndex:0] error:&error];
