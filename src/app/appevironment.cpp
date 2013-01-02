@@ -14,10 +14,10 @@ AppEnvironment::AppEnvironment() :
 	_appPath(et::applicationPath()), _dataFolder(et::applicationDataFolder())
 {
 	addSearchPath(_appPath);
+
 	addSearchPath(_dataFolder);
-    
     addSearchPath(_dataFolder + "../");
-	addSearchPath(_dataFolder + "../");
+	addSearchPath(_dataFolder + "../../");
 
 	addSearchPath(_dataFolder + "data/");
 	addSearchPath(_dataFolder + "../data/");
@@ -32,11 +32,6 @@ AppEnvironment::AppEnvironment() :
 	addSearchPath(_dataFolder + "data/shaders/" );
 	addSearchPath(_dataFolder + "../data/shaders/" );
 	addSearchPath(_dataFolder + "../../data/shaders/" );
-
-	addSearchPath(_dataFolder + "ui/" );
-	addSearchPath(_dataFolder + "data/ui/" );
-	addSearchPath(_dataFolder + "../data/ui/" );
-	addSearchPath(_dataFolder + "../../data/ui/" );
 }
 
 const std::string& AppEnvironment::applicationDocumentsFolder() const
