@@ -16,7 +16,7 @@ namespace et
 
 using namespace et;
 
-VideoCapture::VideoCapture() : _private(0)
+VideoCapture::VideoCapture(VideoCaptureQuality) : _private(0)
 {
 }
 

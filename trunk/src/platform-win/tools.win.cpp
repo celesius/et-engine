@@ -107,20 +107,15 @@ void et::findFiles(const std::string& folder, const std::string& mask, bool recu
 
 std::string et::applicationDataFolder()
 {
-	std::string appPath = applicationPath();
-
-	std::string value = appPath + "..\\data\\"; 
-	if (et::fileExists(value))
-		return value;
-
-	value = appPath + "..\\..\\data\\"; 
-	if (et::fileExists(value))
-		return value;
-
-	return appPath + "data\\";
+	return applicationPath();
 }
 
 std::string et::applicationDocumentsBaseFolder()
+{
+	return applicationDataFolder();
+}
+
+std::string et::applicationLibraryBaseFolder()
 {
 	return applicationDataFolder();
 }

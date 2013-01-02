@@ -11,4 +11,5 @@
 #	pragma warning(disable:4201)
 #	pragma warning(disable:4996)
 #	pragma warning(disable:4131)
+#	pragma warning(disable:4204)
 #endif
