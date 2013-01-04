@@ -26,9 +26,10 @@ namespace et
 		ImagePicker();
 		~ImagePicker();
 		
-		void selectImage(ImagePickerSource souce = ImagePickerSource_PreferCamera);
+		void selectImage(ImagePickerSource source = ImagePickerSource_PreferCamera);
 		
 		ET_DECLARE_EVENT1(imageSelected, TextureDescription::Pointer)
+		ET_DECLARE_EVENT0(cancelled)
 		
 	private:
 		ImagePickerPrivate* _private;
