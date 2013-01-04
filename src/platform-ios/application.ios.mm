@@ -7,7 +7,7 @@
 
 #include <mach/mach.h>
 
-#include <et/core/tools.h>
+#include <et/core/tools.base.h>
 #include <et/app/application.h>
 #include <et/opengl/opengl.h>
 #include <et/platform-ios/applicationdelegate.h>

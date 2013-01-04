@@ -6,6 +6,7 @@
  */
 
 #include <sstream>
+#include <et/core/tools.h>
 #include <et/app/application.h>
 #include <et/resources/textureloader.h>
 #include <et/gui/textureatlas.h>

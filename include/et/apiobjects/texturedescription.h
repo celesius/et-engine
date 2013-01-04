@@ -8,7 +8,6 @@
 #pragma once
 
 #include <et/core/intrusiveptr.h>
-#include <et/core/tools.h>
 #include <et/core/containers.h>
 #include <et/geometry/geometry.h>
 

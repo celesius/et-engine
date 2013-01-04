@@ -5,6 +5,7 @@
  *
  */
 
+#include <et/core/tools.h>
 #include <et/scene3d/mesh.h>
 #include <et/scene3d/storage.h>
 

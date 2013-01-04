@@ -5,7 +5,7 @@
  *
  */
 
-#include <et/core/tools.h>
+#include <et/core/tools.base.h>
 #include <et/opengl/openglcaps.h>
 #include <et/app/application.h>
 #include <et/apiobjects/texture.h>
