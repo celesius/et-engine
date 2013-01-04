@@ -8,7 +8,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <libkern/OSAtomic.h>
-#include <et/core/tools.h>
+#include <et/core/tools.base.h>
 #include <et/threading/thread.h>
 
 namespace et

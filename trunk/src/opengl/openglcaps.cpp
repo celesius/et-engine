@@ -6,7 +6,7 @@
  */
 
 #include <et/opengl/openglcaps.h>
-#include <et/core/tools.h>
+#include <et/core/tools.base.h>
 
 using namespace et;
 
@@ -32,7 +32,7 @@ void OpenGLCapabilites::checkCaps()
 	_version = strToInt(_glslVersion) < 130 ? OpenGLVersion_Old : OpenGLVersion_New;
 	
 	std::cout << "OpenGL version: " << _openGlVersion << std::endl <<
-	"GLSL version: " << _glslVersionString << " (" << _glslVersion << ")" << std::endl;
+				 "GLSL version: " << _glslVersionString << " (" << _glslVersion << ")" << std::endl;
 	
 #if (ET_OPENGLES)
 	_drawelements_basevertex = false;

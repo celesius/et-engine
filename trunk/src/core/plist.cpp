@@ -6,10 +6,8 @@
  */
 
 #include <fstream>
-#include <assert.h>
-#include <et/core/tools.h>
 #include <et/core/plist.h>
-#include <et/app/application.h>
+#include <et/core/tools.h>
 
 using namespace et;
 using namespace et::plist;
@@ -34,14 +32,16 @@ DictionaryValueRef Reader::load(const std::string& filename)
 {
 	DictionaryValueRef result(new DictionaryValue());
 
-	std::string foundFile = application().environment().findFile(filename);
-	if (!fileExists(foundFile)) return result;
+	if (!fileExists(filename))
+		return result;
 
-	std::ifstream file(foundFile.c_str(), std::ios::binary);
+	std::ifstream file(filename.c_str(), std::ios::binary);
 	if (file.fail()) return result;
+	
 	BinaryDataStorage buffer(streamSize(file) + 1, 0);
 	file.read(buffer.binary(), buffer.size() - 1);
 	parseBuffer(buffer, static_cast<DictionaryValue*>(result.ptr()));
+	
 	return result;
 }
 

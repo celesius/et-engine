@@ -6,7 +6,7 @@
  */
 
 #include <fstream>
-#include <et/core/tools.h>
+#include <et/core/tools.base.h>
 #include <et/app/application.h>
 #include <et/camera/camera.h>
 #include <et/rendering/rendering.h>

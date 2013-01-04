@@ -5,6 +5,7 @@
  *
  */
 
+#include <et/core/tools.base.h>
 #include <et/gui/guirenderer.h>
 #include <et/gui/label.h>
 

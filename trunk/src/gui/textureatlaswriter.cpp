@@ -5,6 +5,7 @@
  *
  */
 
+#include <et/core/tools.h>
 #include <et/imaging/imagewriter.h>
 #include <et/imaging/pngloader.h>
 #include <et/imaging/imageoperations.h>

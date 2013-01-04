@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <et/core/constants.h>
 #include <et/core/containers.h>
 #include <et/vertexbuffer/indexarray.h>
 #include <et/vertexbuffer/vertexarray.h>

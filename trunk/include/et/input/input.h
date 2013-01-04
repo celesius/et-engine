@@ -7,9 +7,10 @@
 
 #pragma once
 
-#include <et/core/tools.h>
+#include <et/core/tools.base.h>
 #include <et/core/singleton.h>
 #include <et/core/containers.h>
+#include <et/geometry/geometry.h>
 #include <et/app/events.h>
 
 namespace et

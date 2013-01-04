@@ -5,9 +5,10 @@
 *
 */
 
+#include <et/core/serialization.h>
+#include <et/core/tools.h>
 #include <et/rendering/rendercontext.h>
 #include <et/scene3d/material.h>
-#include <et/core/serialization.h>
 
 using namespace et;
 

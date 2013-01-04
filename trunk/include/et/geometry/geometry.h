@@ -269,7 +269,7 @@ namespace et
 	template <typename T>
 	Triangle<T> operator * (const matrix4<T>& m, const Triangle<T>& t)
 		{ return Triangle<T>(m * t.v1(), m * t.v2(), m * t.v3()); }
-
+	
 	template <typename T>
 	inline matrix4<T> translationMatrix(T x, T y, T z)
 	{
@@ -448,6 +448,16 @@ namespace et
 		while (angle > DOUBLE_PI) angle -= DOUBLE_PI;
 		while (angle < DOUBLE_PI) angle += DOUBLE_PI;
 	}
+	
+	template <typename T>
+	inline T intPower(T value, int power)
+	{
+		T result = static_cast<T>(1);
+		for (int i = 1; i <= power; ++i)
+			result *= value;
+		return result;
+	}
+
 	
 	quaternion matrixToQuaternion(const mat3& m);
 	

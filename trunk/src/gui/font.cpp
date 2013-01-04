@@ -6,10 +6,10 @@
  */
 
 #include <fstream>
-#include <et/core/tools.h>
 #include <et/core/serialization.h>
-#include <et/gui/font.h>
+#include <et/core/tools.h>
 #include <et/app/application.h>
+#include <et/gui/font.h>
 
 using namespace et;
 using namespace et::gui;

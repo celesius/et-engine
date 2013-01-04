@@ -6,8 +6,8 @@
  */
 
 #include <time.h>
+#include <et/core/tools.base.h>
 #include <et/apiobjects/apiobject.h>
-#include <et/core/tools.h>
 
 using namespace et;
 
