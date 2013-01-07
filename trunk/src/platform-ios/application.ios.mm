@@ -19,18 +19,26 @@
 
 using namespace et;
 
-void Application::platform_init()
+void Application::platformInit()
 {
 	_env.updateDocumentsFolder(_identifier);
 }
 
-void Application::platform_finalize()
+void Application::platformFinalize()
 {
 	delete _delegate, _delegate = nullptr;
 	delete _renderContext, _delegate = nullptr;
 }
 
-int Application::platform_run()
+void Application::platformActivate()
+{
+}
+
+void Application::platformDeactivate()
+{
+}
+
+int Application::platformRun()
 {
 #if defined(ET_EMBEDDED_APPLICATION)
 	

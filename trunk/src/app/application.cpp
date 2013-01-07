@@ -18,10 +18,12 @@ Application::Application() : _renderContext(0), _exitCode(0), _lastQueuedTimeMSe
 	threading();
 	delegate();
 	platformInit();
+	platformActivate();
 }
 
 Application::~Application()
 {
+	platformDeactivate();
 	platformFinalize();
 }
 
@@ -71,18 +73,17 @@ void Application::idle()
 	}
 	else 
 	{
-		uint64_t sleepInterval = (_fpsLimitMSec - elapsedTime) + (rand() % 1000 > _fpsLimitMSecFractPart ? 0 : -1);
-//		uint64_t t0 = queryTimeMSec();
+		uint64_t sleepInterval = (_fpsLimitMSec - elapsedTime) +
+			(rand() % 1000 > _fpsLimitMSecFractPart ? 0 : -1);
+		
 		Thread::sleepMSec(sleepInterval);
-//		uint64_t dt = queryTimeMSec() - t0;
-//		std::cout << "Requested: " << sleepInterval << ", took: " << dt << std::endl;
 	}
 }
 
 void Application::setFrameRateLimit(size_t value)
 {
 	_fpsLimitMSec = (value == 0) ? 0 : 1000 / value;
-	_fpsLimitMSecFractPart = 1000000 / value - 1000 * _fpsLimitMSec;
+	_fpsLimitMSecFractPart = (value == 0) ? 0 : (1000000 / value - 1000 * _fpsLimitMSec);
 }
 
 void Application::setActive(bool active)
