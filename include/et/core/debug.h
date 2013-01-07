@@ -32,7 +32,6 @@
 #
 #	define ET_CALL_FUNCTION					__PRETTY_FUNCTION__
 #	define ET_SUPPORT_RANGE_BASED_FOR		__has_feature(cxx_range_for)
-#	define ET_FORCE_INLINE					__att
 #
 #	if (ET_PLATFORM_MAC)
 #		define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
