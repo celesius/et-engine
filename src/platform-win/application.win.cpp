@@ -22,12 +22,10 @@ void Application::platformInit()
 #endif
 	
 	_env.updateDocumentsFolder(_identifier);
-	platformActivate();
 }
 
 void Application::platformFinalize()
 {
-	platformDeactivate();
 }
 
 void Application::platformActivate()

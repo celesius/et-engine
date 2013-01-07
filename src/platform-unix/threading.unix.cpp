@@ -58,7 +58,7 @@ size_t Threading::coresCount()
 	return numCPU;
 }
 
-double Threading::cpuUsage()
+float Threading::cpuUsage()
 {
-	return 0.0;
+	return 0.0f;
 }

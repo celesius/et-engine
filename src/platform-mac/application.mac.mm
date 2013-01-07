@@ -75,12 +75,12 @@ void Application::alert(const std::string&, const std::string&, AlertType)
 {	
 }
 
-void Application::platform_init()
+void Application::platformInit()
 {
 	_env.updateDocumentsFolder(_identifier);
 }
 
-int Application::platform_run()
+int Application::platformRun()
 {
 	@autoreleasepool
 	{
@@ -90,10 +90,18 @@ int Application::platform_run()
 	}
 }
 
-void Application::platform_finalize()
+void Application::platformFinalize()
 {
 	delete _delegate, _delegate = nullptr;
 	delete _renderContext, _renderContext = nullptr;
+}
+
+void Application::platformActivate()
+{
+}
+
+void Application::platformDeactivate()
+{
 }
 
 /*
