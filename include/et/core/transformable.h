@@ -14,7 +14,7 @@ namespace et
 	class MatrixTransformable
 	{ 
 	public:
-		MatrixTransformable() : _transform(IDENTITY_MATRIX)
+		MatrixTransformable() : _transform(identityMatrix)
 			{ }
 
 		MatrixTransformable(const mat4& t) : _transform(t)

@@ -6,7 +6,7 @@
  */
 
 #include <fstream>
-#include <et/core/tools.base.h>
+#include <et/core/tools.h>
 #include <et/opengl/opengl.h>
 #include <et/imaging/pvrloader.h>
 

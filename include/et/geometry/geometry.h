@@ -48,24 +48,10 @@ namespace et
 	extern const vec3 unitX;
 	extern const vec3 unitY;
 	extern const vec3 unitZ;
-
-	static const mat3 IDENTITY_MATRIX3( 
-		vec3(1.0f, 0.0f, 0.0f),
-		vec3(0.0f, 1.0f, 0.0f),
-		vec3(0.0f, 0.0f, 1.0f));
-
-	static const mat4 IDENTITY_MATRIX(
-		vec4(1.0f, 0.0f, 0.0f, 0.0f), 
-		vec4(0.0f, 1.0f, 0.0f, 0.0f),
-		vec4(0.0f, 0.0f, 1.0f, 0.0f),
-		vec4(0.0f, 0.0f, 0.0f, 1.0f) );
-
-	static const mat4 MATRIX_LIGHT_PROJECTION(
-		vec4(0.5f, 0.0f, 0.0f, 0.0f),
-		vec4(0.0f, 0.5f, 0.0f, 0.0f),
-		vec4(0.0f, 0.0f, 0.5f, 0.0f),
-		vec4(0.5f, 0.5f, 0.5f, 1.0f) );
-
+	extern const mat3 identityMatrix3;
+	extern const mat4 identityMatrix;
+	extern const mat4 lightProjectionMatrix;
+	
 	template<typename T>
 	inline T sqr(T value) 
 		{ return value*value; }
@@ -173,21 +159,27 @@ namespace et
 	inline vector4<T> mix(vector4<T> v1, vector4<T> v2, T t)
 	{
 		T nt = 1 - t;
-		return vector4<T>(v1.x * nt + v2.x * t, v1.y * nt + v2.y * t, v1.z * nt + v2.z * t, v1.w * nt + v2.w * t);
+		return vector4<T>(v1.x * nt + v2.x * t,
+						  v1.y * nt + v2.y * t,
+						  v1.z * nt + v2.z * t,
+						  v1.w * nt + v2.w * t);
 	}
 
 	template<typename T>
 	inline vector3<T> mix(vector3<T> v1, vector3<T> v2, T t)
 	{ 
 		T nt = 1 - t;
-		return vector3<T>(v1.x * nt + v2.x * t, v1.y * nt + v2.y * t, v1.z * nt + v2.z * t);
+		return vector3<T>(v1.x * nt + v2.x * t,
+						  v1.y * nt + v2.y * t,
+						  v1.z * nt + v2.z * t);
 	}
 
 	template<typename T>
-	inline vector2<T> mix(vector2<T> v1, vector2<T> v2, float t)
+	inline vector2<T> mix(vector2<T> v1, vector2<T> v2, T t)
 	{
-		float nt = static_cast<T>(1) - t;
-		return vector2<T>(T(v1.x * nt + v2.x * t), T(v1.y * nt + v2.y * t));
+		T nt = 1 - t;
+		return vector2<T>(v1.x * nt + v2.x * t,
+						  v1.y * nt + v2.y * t);
 	}
 
 	template<typename T>
@@ -274,10 +266,8 @@ namespace et
 	inline matrix4<T> translationMatrix(T x, T y, T z)
 	{
 		matrix4<T> M;
-		M[0][0] = M[1][1] = M[2][2] = M[3][3] = T(1);
-		M[3][0] = x;
-		M[3][1] = y;
-		M[3][2] = z;
+		M[0][0] = M[1][1] = M[2][2] = static_cast<T>(1);
+		M[3] = vector4<T>(x, y, z, static_cast<T>(1));
 		return M;
 	}
 
@@ -288,11 +278,7 @@ namespace et
 		M[0][0] = sx;
 		M[1][1] = sy;
 		M[2][2] = sz;
-		M[3][3] = T(1);
-
-		M[3][0] = tx;
-		M[3][1] = ty;
-		M[3][2] = tz;
+		M[3] = vector4<T>(tx, ty, tz, static_cast<T>(1));
 		return M;
 	}
 
@@ -303,7 +289,7 @@ namespace et
 		M[0][0] = x;
 		M[1][1] = y;
 		M[2][2] = z;
-		M[3][3] = T(1);
+		M[3][3] = static_cast<T>(1);
 		return M;
 	}
 
@@ -389,8 +375,8 @@ namespace et
 
 		m[0][0] =  cz*cy - sz*sx*sy; m[0][1] = -cx*sz; m[0][2] = cz*sy + sz*sx*cy;
 		m[1][0] =  sz*cy + cz*sx*sy; m[1][1] =  cx*cz; m[1][2] = sz*sy - cz*sx*cy;
-		m[2][0] = -cx*sy;            m[2][1] =  sx;    m[2][2] = cx*cy;           
-		m[3][0] = tx;                m[3][1] =  ty;    m[3][2] = tz; 
+		m[2][0] = -cx*sy;            m[2][1] =  sx;    m[2][2] = cx*cy;
+		m[3][0] =  tx;               m[3][1] =  ty;    m[3][2] = tz; 
 
 		m[3][3] = 1;
 
@@ -401,8 +387,8 @@ namespace et
 	inline matrix4<T> orientationForNormal(const vector3<T>& n) 
 	{
 		vector3<T> up = normalize(n);
-		T theta = asin(up.y) - static_cast<T>(1.570796326795);
-		T phi = atan2(up.z, up.x) + static_cast<T>(1.570796326795);
+		T theta = asin(up.y) - static_cast<T>(HALF_PI);
+		T phi = atan2(up.z, up.x) + static_cast<T>(HALF_PI);
 		T csTheta = cos(theta);
 		vector3<T> side2(csTheta * cos(phi), sin(theta), csTheta * sin(phi));
 		vector3<T> side1 = up.cross(side2);
@@ -420,7 +406,10 @@ namespace et
 
 	template <typename T>
 	inline vector2<T> operator * (const matrix4<T>& m, const vector2<T>& v)
-		{ return vector2<T>(m[0][0] * v.x + m[1][0] * v.y + m[3][0], m[0][1] * v.x + m[1][1] * v.y + m[3][1] ); }
+	{
+		return vector2<T>(m[0][0] * v.x + m[1][0] * v.y + m[3][0],
+						  m[0][1] * v.x + m[1][1] * v.y + m[3][1]);
+	}
 
 	inline mat4 translationMatrix(const vec3& v)
 		{ return translationMatrix<float>(v.x, v.y, v.z); }

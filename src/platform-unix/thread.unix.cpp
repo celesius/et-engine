@@ -8,7 +8,6 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <libkern/OSAtomic.h>
-#include <et/core/tools.base.h>
 #include <et/threading/thread.h>
 
 namespace et
@@ -16,8 +15,11 @@ namespace et
 	class ThreadPrivate
 	{
 	public:
-		ThreadPrivate() : threadId(0), running(0), suspended(0) { }
+		ThreadPrivate() :
+			threadId(0), running(0), suspended(0) { }
+		
 		~ThreadPrivate();
+		
 		static void* threadProc(void* context);
 		
 	public:
@@ -130,4 +132,9 @@ ThreadId Thread::id() const
 void Thread::sleep(float seconds)
 {
     usleep(static_cast<useconds_t>(seconds * 1000000.0f));
+}
+
+void Thread::sleepMSec(uint64_t msec)
+{
+    usleep(static_cast<useconds_t>(msec) * 1000);
 }

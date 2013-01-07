@@ -19,29 +19,34 @@
 
 using namespace std;
 
-static double startTime = 0.0;
+static uint64_t startTime = 0;
 static bool startTimeInitialized = false;
 
 char et::pathDelimiter = '/';
 
-double __queryTime();
-
-float et::queryTime()
-{
-	if (!startTimeInitialized)
-	{
-		startTime = __queryTime();
-		startTimeInitialized = true;
-	};
-	
-	return static_cast<float>(__queryTime() - startTime);
-}
-
-double __queryTime()
+uint64_t queryActualTime()
 {
 	timeval tv = { };
 	gettimeofday(&tv, 0);
-	return static_cast<double>(tv.tv_sec) + static_cast<double>(tv.tv_usec) / 1000000.0;
+	
+	return static_cast<uint64_t>(tv.tv_sec) * 1000 +
+			static_cast<uint64_t>(tv.tv_usec) / 1000;
+}
+
+float et::queryTime()
+{
+	return static_cast<float>(queryTimeMSec()) / 1000.0f;
+}
+
+uint64_t et::queryTimeMSec()
+{
+	if (!startTimeInitialized)
+	{
+		startTime = queryActualTime();
+		startTimeInitialized = true;
+	};
+	
+	return queryActualTime() - startTime;
 }
 
 std::string et::applicationPath()

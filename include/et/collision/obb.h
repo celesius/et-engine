@@ -21,7 +21,7 @@ namespace et
 			{ };
 
 		OBB(const vec3& c, const vec3& d) : 
-			center(c), dimension(d), transform(IDENTITY_MATRIX3) { }
+			center(c), dimension(d), transform(identityMatrix3) { }
 
 		OBB(const vec3& c, const vec3& d, const mat3& t) : 
 			center(c), dimension(d), transform(t) { }

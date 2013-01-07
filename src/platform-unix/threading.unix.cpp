@@ -12,15 +12,27 @@
 using namespace et;
 
 ThreadId Threading::_mainThread;
+ThreadId Threading::_renderingThread;
 
 Threading::Threading()
 {
 	_mainThread = reinterpret_cast<ThreadId>(pthread_self());
+	_renderingThread = _mainThread;
 }
 
 unsigned long Threading::currentThread()
 {
 	return reinterpret_cast<ThreadId>(pthread_self());
+}
+
+void Threading::setMainThread(ThreadId t)
+{
+	_mainThread = t;
+}
+
+void Threading::setRenderingThread(ThreadId t)
+{
+	_renderingThread = t;
 }
 
 size_t Threading::coresCount()

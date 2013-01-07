@@ -5,8 +5,8 @@
  *
  */
 
+#include <et/core/tools.h>
 #include <et/opengl/openglcaps.h>
-#include <et/core/tools.base.h>
 
 using namespace et;
 

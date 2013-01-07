@@ -7,36 +7,36 @@
 
 #pragma once
 
-#include <et/core/tools.base.h>
+#include <et/core/tools.h>
 
 namespace et
 {
 	class IntervalTimer
 	{
 	public:
-		IntervalTimer(bool runNow) : _startTime(0.0f), _endTime(0.0f) 
+		IntervalTimer(bool runNow) : _startTimeMSec(0), _endTimeMSec(0.0f)
 			{ if (runNow) run(); }
 
 		void run() 
 		{ 
-			_runTime = queryTime();
-			_startTime = _runTime; 
+			_runTimeMSec = queryTimeMSec();
+			_startTimeMSec = _runTimeMSec;
 		}
 
 		float lap()
 		{
-			_endTime = queryTime();
-			float dt = _endTime - _startTime;
-			_startTime = _endTime;
-			return dt;
+			_endTimeMSec = queryTimeMSec();
+			uint64_t dt = _endTimeMSec - _startTimeMSec;
+			_startTimeMSec = _endTimeMSec;
+			return static_cast<float>(dt) / 1000.0f;
 		}
 
 		float duration()
-			{ return queryTime() - _runTime; }
+			{ return static_cast<float>(queryTimeMSec() - _runTimeMSec) / 1000.0f; }
 
 	private:
-		float _runTime;
-		float _startTime;
-		float _endTime;
+		uint64_t _runTimeMSec;
+		uint64_t _startTimeMSec;
+		uint64_t _endTimeMSec;
 	};
 }

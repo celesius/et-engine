@@ -5,8 +5,8 @@
 *
 */
 
+#include <et/core/tools.h>
 #include <et/opengl/opengl.h>
-#include <et/core/tools.base.h>
 
 namespace et
 {

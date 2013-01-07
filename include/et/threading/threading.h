@@ -18,9 +18,17 @@ namespace et
 	public:
 		static size_t coresCount();
 		static double cpuUsage();
+		
 		static ThreadId currentThread();
-		static ThreadId mainThread() 
+		
+		static ThreadId mainThread()
 			{ return _mainThread; }
+		
+		static ThreadId renderingThread()
+			{ return _renderingThread; }
+		
+		static void setMainThread(ThreadId);
+		static void setRenderingThread(ThreadId);
 
 	private:
 		Threading();
@@ -28,7 +36,9 @@ namespace et
 
 	private:
 		static ThreadId _mainThread;
+		static ThreadId _renderingThread;
 	};
 
-	inline Threading& threading() { return Threading::instance(); }
+	inline Threading& threading()
+		{ return Threading::instance(); }
 }

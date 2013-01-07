@@ -10,7 +10,7 @@
 
 using namespace et;
 
-ComponentTransformable::ComponentTransformable() : _cachedTransform(IDENTITY_MATRIX), 
+ComponentTransformable::ComponentTransformable() : _cachedTransform(identityMatrix), 
 	_translation(0.0f), _scale(1.0f), _orientation(), _flags(0)
 {
 }

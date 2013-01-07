@@ -8,7 +8,7 @@
 #pragma once
 
 #include <et/core/singleton.h>
-#include <et/core/tools.base.h>
+#include <et/core/tools.h>
 #include <et/app/events.h>
 #include <et/app/runloop.h>
 #include <et/app/appevironment.h>
@@ -60,6 +60,7 @@ namespace et
 			{ return _active; }
 
 		size_t memoryUsage() const;
+		float cpuLoad() const;
 
 		void setTitle(const std::string& s);
 		void setFrameRateLimit(size_t value);
@@ -106,9 +107,10 @@ namespace et
 		StringList _parameters;
 
 		int _exitCode;
+		
 		size_t _renderingContextHandle;
-		float _lastQueuedTime;
-		float _fpsLimit;
+		uint64_t _lastQueuedTimeMSec;
+		uint64_t _fpsLimitMSec;
 
 		volatile bool _running;
 		volatile bool _active;

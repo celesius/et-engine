@@ -5,7 +5,6 @@
  *
  */
 
-#include <et/core/tools.h>
 #include <et/app/application.h>
 #include <et/opengl/openglcaps.h>
 #include <et/rendering/rendercontext.h>

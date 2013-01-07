@@ -12,8 +12,8 @@ using namespace et;
 
 IApplicationDelegate* et::Application::_delegate = 0;
 
-Application::Application() : _renderContext(0), _exitCode(0), _lastQueuedTime(queryTime()), 
-	_fpsLimit(0), _running(false), _active(false)
+Application::Application() : _renderContext(0), _exitCode(0), _lastQueuedTimeMSec(queryTimeMSec()),
+	_fpsLimitMSec(0), _running(false), _active(false)
 {
 	threading();
 	delegate();
@@ -56,22 +56,23 @@ void Application::idle()
 {
 	assert(_running);
 
-	float _lastQueuedTime = queryTime();
-
+	_lastQueuedTimeMSec = queryTimeMSec();
+	
 	if (_active)
 	{
-		_runLoop->update(_lastQueuedTime);
+		_runLoop->update(_lastQueuedTimeMSec);
 		_delegate->idle(_runLoop->mainTimerPool()->actualTime());
 		performRendering();
 	}
-
-	float frameTime = queryTime() - _lastQueuedTime;
-	Thread::sleep(etMax(0.0f, _fpsLimit - frameTime));
+	
+	uint64_t deltaTime = queryTimeMSec() - _lastQueuedTimeMSec;
+	if (_fpsLimitMSec >= deltaTime)
+		Thread::sleepMSec(_fpsLimitMSec - deltaTime);
 }
 
 void Application::setFrameRateLimit(size_t value)
 {
-	_fpsLimit = (value == 0) ? 0.0f : (1.0f / static_cast<float>(value));
+	_fpsLimitMSec = (value == 0) ? 0 : 1000 / value;
 }
 
 void Application::setActive(bool active)
@@ -82,8 +83,8 @@ void Application::setActive(bool active)
 
 	if (_active)
 	{
-		_lastQueuedTime = queryTime();
-		_runLoop->update(_lastQueuedTime);
+		_lastQueuedTimeMSec = queryTimeMSec();
+		_runLoop->update(_lastQueuedTimeMSec);
 		_runLoop->resume();
 		_delegate->applicationWillActivate();
 	}
@@ -101,4 +102,9 @@ void Application::contextResized(const vec2i& size)
 		_delegate->applicationWillResizeContext(size);
 		performRendering();
 	}
+}
+
+float Application::cpuLoad() const
+{
+	return Threading::cpuUsage();
 }
