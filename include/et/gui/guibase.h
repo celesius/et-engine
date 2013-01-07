@@ -86,10 +86,10 @@ namespace et
 				{ return 1.0f; }
 
 			virtual mat4 finalTransform() 
-				{ return IDENTITY_MATRIX; }
+				{ return identityMatrix; }
 
 			virtual mat4 finalInverseTransform() 
-				{ return IDENTITY_MATRIX; }
+				{ return identityMatrix; }
 
 			virtual void layout(const vec2&) 
 				{ layoutChildren(); }
@@ -148,7 +148,7 @@ namespace et
 				{ _inverseTransformValid = v; }
 
 			virtual mat4 parentFinalTransform()
-				{ return parent() ? parent()->finalTransform() : IDENTITY_MATRIX; }
+				{ return parent() ? parent()->finalTransform() : identityMatrix; }
 
 			virtual void animatorUpdated(BaseAnimator*) 
 				{ /* virtual */ }

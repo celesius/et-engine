@@ -6,7 +6,7 @@
  */
 
 #include <fstream>
-#include <et/core/tools.base.h>
+#include <et/core/tools.h>
 #include <et/rendering/rendercontext.h>
 #include <et/scene3d/scene3d.h>
 #include <et/scene3d/serialization.h>

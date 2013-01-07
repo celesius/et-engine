@@ -80,7 +80,7 @@ void GuiRenderer::setProjectionMatrices(const vec2& contextSize)
 		tempClipStack.pop();
 	}
 	
-	_defaultTransform = IDENTITY_MATRIX;
+	_defaultTransform = identityMatrix;
 	_defaultTransform[0][0] =  2.0f / contextSize.x;
 	_defaultTransform[1][1] = -2.0f / contextSize.y;
 	_defaultTransform[3][0] = -1.0f;
