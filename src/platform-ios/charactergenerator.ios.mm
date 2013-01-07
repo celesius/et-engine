@@ -15,8 +15,11 @@ class et::gui::CharacterGeneratorPrivate
 		CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size);
 		~CharacterGeneratorPrivate();
 
-		void updateTexture(RenderContext* rc, const vec2i& position, const vec2i& size, Texture texture, BinaryDataStorage& data);
-		void renderCharacter(NSString* value, const vec2i& position, const vec2i& size, bool bold, BinaryDataStorage& data);
+		void updateTexture(RenderContext* rc, const vec2i& position, const vec2i& size,
+			Texture texture, BinaryDataStorage& data);
+	
+		void renderCharacter(NSString* value, const vec2i& position, const vec2i& size,
+			bool bold, BinaryDataStorage& data);
 
 	public:
 		std::string _fontFace;
@@ -30,7 +33,8 @@ class et::gui::CharacterGeneratorPrivate
 		CGColorSpaceRef _colorSpace;
 };
 
-CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face, const std::string& boldFace, size_t size) : _rc(rc),
+CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face,
+	const std::string& boldFace, size_t size) : _rc(rc),
 	_private(new CharacterGeneratorPrivate(face, boldFace, size)), _face(face), _size(size)
 {
 	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(defaultTextureSize),
@@ -45,7 +49,8 @@ CharacterGenerator::~CharacterGenerator()
 CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTexture)
 {
 	wchar_t string[2] = { value, 0 };
-    NSString* wString = [[NSString alloc] initWithBytes:string length:sizeof(string) encoding:NSUTF32LittleEndianStringEncoding];
+    NSString* wString = [[NSString alloc] initWithBytes:string length:sizeof(string)
+											   encoding:NSUTF32LittleEndianStringEncoding];
     CGSize characterSize = [wString sizeWithFont:_private->_font];
 	vec2i charSize = vec2i(characterSize.width, characterSize.height);
 	
@@ -73,7 +78,9 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTextu
 CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateTexture)
 {
 	wchar_t string[2] = { value, 0 };
-    NSString* wString = [[NSString alloc] initWithBytes:string length:sizeof(string) encoding:NSUTF32LittleEndianStringEncoding];
+    NSString* wString = [[NSString alloc] initWithBytes:string length:sizeof(string)
+											   encoding:NSUTF32LittleEndianStringEncoding];
+	
     CGSize characterSize = [wString sizeWithFont:_private->_boldFont];
 	vec2i charSize = vec2i(characterSize.width, characterSize.height);
 	
@@ -102,8 +109,9 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateT
  * Private
  */
 
-CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size) :
-	_fontFace(face), _fontSize(size), _placer(vec2i(defaultTextureSize), true)
+CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
+	const std::string& boldFace, size_t size) : _fontFace(face), _fontSize(size),
+	_placer(vec2i(defaultTextureSize), true)
 {
     NSString* cFace = [NSString stringWithCString:face.c_str() encoding:NSASCIIStringEncoding];
     NSString* cBoldFace = [NSString stringWithCString:boldFace.c_str() encoding:NSASCIIStringEncoding];
@@ -118,20 +126,24 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face, co
 CharacterGeneratorPrivate::~CharacterGeneratorPrivate()
 {
     [_font release];
+	[_boldFont release];
 }
 
-void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& position, const vec2i& size, Texture texture, BinaryDataStorage& data)
+void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& position,
+	const vec2i& size, Texture texture, BinaryDataStorage& data)
 {
 	vec2i dest(position.x, defaultTextureSize - position.y - size.y);
 	texture->updatePartialDataDirectly(rc, dest, size, data.binary(), data.dataSize());
 }
 
-void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i& position, const vec2i& size, bool bold, BinaryDataStorage& data)
+void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i& position,
+	const vec2i& size, bool bold, BinaryDataStorage& data)
 {
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 	assert(colorSpace);
 	
-	CGContextRef context = CGBitmapContextCreateWithData(data.data(), size.x, size.y, 8, 4 * size.x, colorSpace, kCGImageAlphaPremultipliedLast, 0, 0);
+	CGContextRef context = CGBitmapContextCreateWithData(data.data(), size.x, size.y, 8,
+		4 * size.x, colorSpace, kCGImageAlphaPremultipliedLast, 0, 0);
 	assert(context);
 	
 	CGContextSetTextDrawingMode(context, kCGTextFill);

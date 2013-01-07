@@ -35,7 +35,6 @@ void Application::loaded()
 	delegate()->setRenderContextParameters(parameters);
 	
 	_renderContext = new RenderContext(parameters, this);
-	_renderContext->init();
 	
 	NSMenu* mainMenu = [[[NSMenu allocWithZone:[NSMenu menuZone]] init] autorelease];
 	NSMenuItem* applicationMenuItem = [[[NSMenuItem allocWithZone:[NSMenu menuZone]] init] autorelease];
@@ -57,7 +56,10 @@ void Application::enterRunLoop()
 {
 	_active = true;
 	_running = true;
+	
 	delegate()->applicationDidLoad(_renderContext);
+	
+	_renderContext->init();
 }
 
 void Application::quit(int exitCode)
