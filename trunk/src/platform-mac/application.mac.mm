@@ -5,7 +5,6 @@
  *
  */
 
-#include <Foundation/NSTimer.h>
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSMenu.h>
 #include <et/app/applicationnotifier.h>
@@ -19,11 +18,7 @@ using namespace et;
 @interface etApplicationDelegate : NSObject<NSApplicationDelegate>
 {
 	ApplicationNotifier _notifier;
-	NSTimer* _updateTimer;
 }
-
-- (void)run;
-- (void)onTick:(id)sender;
 
 @end
 
@@ -32,9 +27,9 @@ using namespace et;
  */
 void Application::loaded()
 {
-	_lastQueuedTime = queryTime();
+	_lastQueuedTimeMSec = queryTimeMSec();
 	_runLoop = RunLoop(new RunLoopObject);
-	_runLoop->update(_lastQueuedTime);
+	_runLoop->update(_lastQueuedTimeMSec);
 	
 	RenderContextParameters parameters;
 	delegate()->setRenderContextParameters(parameters);
@@ -54,16 +49,13 @@ void Application::loaded()
 	NSMenu* applicationMenu = [[[NSMenu allocWithZone:[NSMenu menuZone]] init] autorelease];
 	[applicationMenu addItem:quitItem];
 	[applicationMenuItem setSubmenu:applicationMenu];
-	
-	etApplicationDelegate* appDelegate = [[NSApplication sharedApplication] delegate];
-	[appDelegate run];
-	
-	_active = true;
+		
 	enterRunLoop();
 }
 
 void Application::enterRunLoop()
 {
+	_active = true;
 	_running = true;
 	delegate()->applicationDidLoad(_renderContext);
 }
@@ -103,7 +95,9 @@ void Application::platform_finalize()
 }
 
 /*
+ *
  * etApplicationDelegate implementation
+ *
  */
 
 @implementation etApplicationDelegate
@@ -113,43 +107,29 @@ void Application::platform_finalize()
 	_notifier.notifyLoaded();
 }
 
-- (void)run
+- (void)applicationWillBecomeActive:(NSNotification *)notification
 {
-	_updateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f / 60.0f	target:self selector:@selector(onTick:)
-												  userInfo:nil repeats:YES];
+	_notifier.notifyActivated();
 }
 
-- (void)stop
+- (void)applicationWillResignActive:(NSNotification *)notification
 {
-	[_updateTimer invalidate], _updateTimer = nil;
 	_notifier.notifyDeactivated();
-}
-
-- (void)onTick:(id)sender
-{
-	_notifier.notifyIdle();
-}
-
-- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
-{
-	[self stop];
-	return YES;
 }
 
 - (void)applicationDidHide:(NSNotification *)notification
 {
-	[self stop];
+	_notifier.notifyDeactivated();
 }
 
 - (void)applicationDidUnhide:(NSNotification *)notification
 {
-	[self run];
 	_notifier.notifyActivated();
 }
 
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
-	[self stop];
+	_notifier.notifyDeactivated();
 }
 
 @end

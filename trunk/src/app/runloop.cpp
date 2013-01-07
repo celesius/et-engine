@@ -12,7 +12,7 @@
 using namespace et;
 
 RunLoopObject::RunLoopObject() :
-	_actualTime(0.0f), _time(0.0f), _activityTime(0.0f), _started(false), _active(true)
+	_actualTimeMSec(0), _time(0.0f), _activityTimeMSec(0), _started(false), _active(true)
 {
 	attachTimerPool(TimerPool(new TimerPoolObject(this)));
 }
@@ -24,7 +24,7 @@ RunLoopObject::~RunLoopObject()
 	tp->referenceCount();
 }
 
-void RunLoopObject::update(float t)
+void RunLoopObject::update(uint64_t t)
 {
 	updateTime(t);
 
@@ -76,8 +76,9 @@ void RunLoopObject::detachTimerPool(TimerPool pool)
 
 void RunLoopObject::detachAllTimerPools()
 {
-	for (TimerPoolList::iterator i = _timerPools.begin(), e = _timerPools.end(); i != e; ++i)
-		(*i)->setOwner(0);
+	for (auto& i : _timerPools)
+		i->setOwner(0);
+	
 	_timerPools.clear();
 }
 
@@ -91,22 +92,22 @@ void RunLoopObject::resume()
 	if (_active) return;
 
 	_active = true;
-	_activityTime = _actualTime;
+	_activityTimeMSec = _actualTimeMSec;
 }
 
-void RunLoopObject::updateTime(float t)
+void RunLoopObject::updateTime(uint64_t t)
 {
-	_actualTime = t;
-
+	_actualTimeMSec = t;
+	
 	if (!_started)
 	{
 		_started = true;
-		_activityTime = _actualTime;
+		_activityTimeMSec = _actualTimeMSec;
 	}
 
 	if (_active) 
 	{
-		_time += t - _activityTime;
-		_activityTime = t;
+		_time += static_cast<float>(t - _activityTimeMSec) / 1000.0f;
+		_activityTimeMSec = t;
 	}
 }

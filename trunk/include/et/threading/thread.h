@@ -7,17 +7,20 @@
 
 #pragma once
 
+#include <et/platform/platform.h>
+
 namespace et
 {
 	typedef unsigned long ThreadResult;
-	typedef unsigned long ThreadId;
+	typedef size_t ThreadId;
 
 	class ThreadPrivate;
 	class Thread
 	{
 	public:
 		static void sleep(float seconds);
-
+		static void sleepMSec(uint64_t msec);
+		
 	public:
 		Thread(bool start = true);
 		virtual ~Thread();

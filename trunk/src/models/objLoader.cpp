@@ -609,7 +609,7 @@ void OBJLoader::processLoadedData()
 	if (totalVertices > 65535)
 		fmt = IndexArrayFormat_32bit;
 		
-	_indices = IndexArray::Pointer(new IndexArray(fmt, totalVertices, IndexArrayContentType_Triangles));
+	_indices = IndexArray::Pointer(new IndexArray(fmt, totalVertices, PrimitiveType_Triangles));
 	_indices->linearize();
 
 	_vertexData.reset(new VertexArray(decl, totalVertices));

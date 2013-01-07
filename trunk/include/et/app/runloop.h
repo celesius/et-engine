@@ -18,7 +18,7 @@ namespace et
 		RunLoopObject();
 		~RunLoopObject();
 		
-		void update(float t);
+		void update(uint64_t t);
 		void pause();
 		void resume();
 
@@ -35,14 +35,16 @@ namespace et
 		void addTask(Task* t, float delay = 0.0f);
 
 	private:
-		void updateTime(float t);
+		void updateTime(uint64_t t);
 
 	private:
 		TimerPoolList _timerPools;
 		TaskPool _taskPool;
-		float _actualTime;
+		
+		uint64_t _actualTimeMSec;
+		uint64_t _activityTimeMSec;
+		
 		float _time;
-		float _activityTime;
 		bool _started;
 		bool _active;
 	};

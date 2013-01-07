@@ -7,7 +7,6 @@
 
 #include <mach/mach.h>
 
-#include <et/core/tools.base.h>
 #include <et/app/application.h>
 #include <et/opengl/opengl.h>
 #include <et/platform-ios/applicationdelegate.h>
@@ -45,7 +44,8 @@ int Application::platform_run()
 		std::string appName = _parameters.front();
 		StringDataStorage appNameData(appName.size());
 		etCopyMemory(appNameData.data(), appName.c_str(), appName.size());
-        return UIApplicationMain(1, (char*[]){ appNameData.data() }, nil, NSStringFromClass([etApplicationDelegate class]));
+		NSString* delegateClass = NSStringFromClass([etApplicationDelegate class]);
+        return UIApplicationMain(1, (char*[]){ appNameData.data() }, nil, delegateClass);
     }
 	
 #endif	
@@ -66,7 +66,7 @@ void Application::loaded()
 	_renderingContextHandle = _renderContext->renderingContextHandle();
 	
 	_runLoop = RunLoop(new RunLoopObject);
-	_runLoop->update(_lastQueuedTime);
+	_runLoop->update(_lastQueuedTimeMSec);
 	
 	_renderContext->init();
     

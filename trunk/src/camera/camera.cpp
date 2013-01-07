@@ -32,7 +32,7 @@ void Camera::lookAt(const vec3& pos, const vec3& point, const vec3& up)
 
 const mat4& Camera::perspectiveProjection(float fov, float aspect, float zNear, float zFar)
 {
-	_projectionMatrix = IDENTITY_MATRIX;
+	_projectionMatrix = identityMatrix;
 
 	float fHalfFOV = 0.5f * fov;
 	float cotan = cos(fHalfFOV) / sin(fHalfFOV);
@@ -51,7 +51,7 @@ const mat4& Camera::perspectiveProjection(float fov, float aspect, float zNear, 
 
 const mat4& Camera::customPerspectiveProjection(const vec2& fullFov, float zNear, float zFar)
 {
-	_projectionMatrix = IDENTITY_MATRIX;
+	_projectionMatrix = identityMatrix;
 	
 	vec2 fov = 0.5f * fullFov;
 	float cotanX = cos(fov.x) / sin(fov.x);
@@ -71,7 +71,7 @@ const mat4& Camera::customPerspectiveProjection(const vec2& fullFov, float zNear
 
 const mat4& Camera::orthogonalProjection(float left, float right, float top, float bottom, float zNear, float zFar)
 {
-	_projectionMatrix = IDENTITY_MATRIX;
+	_projectionMatrix = identityMatrix;
 
 	_projectionMatrix[0][0] = 2.0f / (right - left);
 	_projectionMatrix[1][1] = 2.0f / (top - bottom);
@@ -87,7 +87,7 @@ const mat4& Camera::orthogonalProjection(float left, float right, float top, flo
 
 const mat4& Camera::windowProjection(const vec2& windowSize)
 {
-	_projectionMatrix = IDENTITY_MATRIX;
+	_projectionMatrix = identityMatrix;
 	
 	_projectionMatrix[0][0] = 2.0f / windowSize.x;
 	_projectionMatrix[1][1] = -2.0f / windowSize.y;

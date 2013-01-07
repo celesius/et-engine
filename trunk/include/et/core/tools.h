@@ -8,14 +8,16 @@
 #pragma once
 
 #include <fstream>
-#include <et/core/tools.base.h>
 #include <et/geometry/geometry.h>
 
 namespace et
 {
 	// platform-specific code
 	extern char pathDelimiter;
+	
 	float queryTime();
+	uint64_t queryTimeMSec();
+	
 	std::string applicationPath();
 	std::string applicationDataFolder();
 	
@@ -36,7 +38,7 @@ namespace et
 	std::wstring utf8ToUnicode(const std::string& mbcs);
 	
 	std::string applicationIdentifierForCurrentProject();
-
+	
 	/*
 	 * Common code
 	 */
@@ -47,21 +49,21 @@ namespace et
 			str[i] = static_cast<char>(tolower(str[i]));
 		return str;
 	}
-
+	
 	inline void lowercase(std::string& str)
 	{
 		for (size_t i = 0; i < str.length(); i++)
 			str[i] = static_cast<char>(tolower(str[i]));
-	}	
-
+	}
+	
 	inline size_t streamSize(std::istream& s)
 	{
 		std::streamoff currentPos = s.tellg();
-
+		
 		s.seekg(0, std::ios::end);
 		std::streamoff endPos = s.tellg();
 		s.seekg(currentPos, std::ios::beg);
-
+		
 		return static_cast<size_t>(endPos);
 	}
 	
@@ -75,37 +77,93 @@ namespace et
 		x |= (x >> 16);
 		return x + 1;
 	}
-
+	
 	template <typename T>
-	inline std::ostream& operator << (std::ostream& stream, const vector2<T>& value) 
-	{ 
+	inline std::ostream& operator << (std::ostream& stream, const vector2<T>& value)
+	{
 		stream << value.x << ET_CSV_DELIMITER << value.y;
 		return stream;
 	}
-
+	
 	template <typename T>
-	inline std::ostream& operator << (std::ostream& stream, const vector3<T>& value) 
-	{ 
+	inline std::ostream& operator << (std::ostream& stream, const vector3<T>& value)
+	{
 		stream << value.x << ET_CSV_DELIMITER << value.y << ET_CSV_DELIMITER << value.z;
 		return stream;
 	}
-
+	
 	template <typename T>
-	inline std::ostream& operator << (std::ostream& stream, const vector4<T>& value) 
-	{ 
-		stream << value.x << ET_CSV_DELIMITER << value.y << ET_CSV_DELIMITER << value.z << ET_CSV_DELIMITER << value.w;
+	inline std::ostream& operator << (std::ostream& stream, const vector4<T>& value)
+	{
+		stream << value.x << ET_CSV_DELIMITER << value.y << ET_CSV_DELIMITER <<
+			value.z << ET_CSV_DELIMITER << value.w;
 		return stream;
 	}
-
+	
 	template <typename T>
-	inline std::ostream& operator << (std::ostream& stream, const matrix4<T>& value) 
-	{ 
-		stream << "{" << std::endl << "\t" << value[0] << std::endl << 
+	inline std::ostream& operator << (std::ostream& stream, const matrix4<T>& value)
+	{
+		stream << "{" << std::endl << "\t" << value[0] << std::endl <<
 			"\t" << value[1] << std::endl << "\t" << value[2] << std::endl <<
 			"\t" << value[3] << std::endl << "}" << std::endl;
 		return stream;
 	}
-
+	
+	inline int strToInt(const std::string& value)
+		{ return atoi(value.c_str()); }
+	
+	inline std::string intToStr(int value)
+	{
+		char buffer[32] = { };
+		sprintf(buffer, "%d", value);
+		return buffer;
+	}
+	
+	inline std::string intToStr(unsigned long value)
+	{
+		char buffer[32] = { };
+		sprintf(buffer, "%lu", value);
+		return buffer;
+	}
+	
+	inline std::string intToStr(unsigned int value)
+	{
+		char buffer[32] = { };
+		sprintf(buffer, "%u", value);
+		return buffer;
+	}
+	
+	inline bool isPowerOfTwo(int value)
+		{ return (value & (value - 1)) == 0; }
+	
+	inline bool isNewLineChar(char c)
+		{ return (c == ET_RETURN) || (c == ET_NEWLINE); }
+	
+	inline bool isNewLineChar(wchar_t c)
+		{ return (c == ET_RETURN) || (c == ET_NEWLINE); }
+	
+	inline bool isWhitespaceChar(char c)
+		{ return (c == ET_SPACE) || (c == ET_RETURN) || (c == ET_NEWLINE) || (c == ET_TAB); }
+	
+	inline bool isWhitespaceChar(wchar_t c)
+		{ return (c == ET_SPACE) || (c == ET_RETURN) || (c == ET_NEWLINE) || (c == ET_TAB); }
+	
+	std::ostream& operator << (std::ostream& stream, const StringList& list);
+	
+	std::string getFilePath(const std::string& name);
+	std::string getFileName(const std::string& fullPath);
+	std::string removeUpDir(std::string name);
+	std::string getFileExt(std::string name);
+	std::string& trim(std::string &str);
+	std::string floatToStr(float value, int precission = 5);
+	std::string floatToTimeStr(float value, bool showMSec = true);
+	std::string loadTextFile(const std::string& fileName);
+	std::string addTrailingSlash(const std::string& path);
+	std::string replaceFileExt(const std::string& fileName, const std::string& newExt);
+	std::string removeFileExt(const std::string& fileName);
+	
+	float extractFloat(std::string& s);
+	
 	vec4 strToVec4(const std::string& s, const std::string& delimiter = ";");
 	vec4 strToVec4(std::string& s, const std::string& delimiter = ";");
 	

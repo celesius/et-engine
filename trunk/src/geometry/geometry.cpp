@@ -15,9 +15,23 @@ const vec3 et::unitX(1.0f, 0.0f, 0.0f);
 const vec3 et::unitY(0.0f, 1.0f, 0.0f);
 const vec3 et::unitZ(0.0f, 0.0f, 1.0f);
 
+const mat3 et::identityMatrix3(vec3(1.0f, 0.0f, 0.0f),
+							   vec3(0.0f, 1.0f, 0.0f),
+							   vec3(0.0f, 0.0f, 1.0f));
+
+const mat4 et::identityMatrix(vec4(1.0f, 0.0f, 0.0f, 0.0f),
+							  vec4(0.0f, 1.0f, 0.0f, 0.0f),
+							  vec4(0.0f, 0.0f, 1.0f, 0.0f),
+							  vec4(0.0f, 0.0f, 0.0f, 1.0f));
+
+const mat4 et::lightProjectionMatrix(vec4(0.5f, 0.0f, 0.0f, 0.0f),
+									 vec4(0.0f, 0.5f, 0.0f, 0.0f),
+									 vec4(0.0f, 0.0f, 0.5f, 0.0f),
+									 vec4(0.5f, 0.5f, 0.5f, 1.0f));
+
 float et::sign(float s)
 {
-	return (s == 0.0f) ? 0.0f : s / fabs(s); 
+	return (s == 0.0f) ? 0.0f : s / fabs(s);
 }
 
 float et::sign_nz(float s)

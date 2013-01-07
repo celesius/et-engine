@@ -22,7 +22,8 @@ TextureFactory::~TextureFactory()
 	_loadingThread->terminate();
 }
 
-Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache, bool async, TextureLoaderDelegate* delegate)
+Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache,
+	bool async, TextureLoaderDelegate* delegate)
 {
 	if (file.length() == 0) return Texture();
 
@@ -31,7 +32,7 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
     Texture texture = cache.findTexture(file);
 	if (texture.invalid())
 	{
-		bool calledFromAnotherThread = Threading::currentThread() != threading().mainThread();
+		bool calledFromAnotherThread = Threading::currentThread() != threading().renderingThread();
 		size_t screenScale = renderContext()->screenScaleFactor();
 		
 		TextureDescription::Pointer desc = async ? 
@@ -45,7 +46,8 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
 			
 			if (async)
 			{
-				_loadingThread->addRequest(desc->source, renderContext()->screenScaleFactor(), texture, delegate);
+				_loadingThread->addRequest(desc->source,
+					renderContext()->screenScaleFactor(), texture, delegate);
 
 				Invocation1 i;
 				i.setTarget(delegate, &TextureLoaderDelegate::textureDidStartLoading, texture);
@@ -53,7 +55,7 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
 			}
 			else if (calledFromAnotherThread)
 			{
-				std::cout << "ERROR: Unable to load texture synchronously from secondary thread." << std::endl;
+				assert(0 && "ERROR: Unable to load texture synchronously from non-rendering thread.");
 			}
 		}
 		
@@ -89,7 +91,8 @@ Texture TextureFactory::genTexture(GLenum target, GLint internalformat, const ve
 	return Texture(new TextureData(renderContext(), desc, id, false));
 }
 
-Texture TextureFactory::genCubeTexture(GLint internalformat, GLsizei size, GLenum format, GLenum type, const std::string& id)
+Texture TextureFactory::genCubeTexture(GLint internalformat, GLsizei size, GLenum format, GLenum type,
+	const std::string& id)
 {
 	TextureDescription::Pointer desc(new TextureDescription);
 	desc->target = GL_TEXTURE_CUBE_MAP;
@@ -115,13 +118,10 @@ Texture TextureFactory::genNoiseTexture(const vec2i& size, bool norm, const std:
 	DataStorage<vec4ub> randata(size.square());
 	for (size_t i = 0; i < randata.size(); ++i)
 	{ 
-		vec4 rand_f = 2.0f * vec4(static_cast<float>(rand()) / RAND_MAXF, static_cast<float>(rand()) / RAND_MAXF, 
-			static_cast<float>(rand()) / RAND_MAXF, static_cast<float>(rand()) / RAND_MAXF ) - vec4(1.0);
-
-		if (norm)
-			rand_f.xyz() = normalize( rand_f.xyz() );
-
-		randata[i] = vec4f_to_4ub(rand_f);
+		vec4 rand_f = vec4(static_cast<float>(rand()) / RAND_MAXF, static_cast<float>(rand()) / RAND_MAXF,
+						   static_cast<float>(rand()) / RAND_MAXF, static_cast<float>(rand()) / RAND_MAXF);
+		rand_f = 2.0f * rand_f - vec4(1.0f);
+		randata[i] = vec4f_to_4ub(norm ? vec4(rand_f.xyz().normalize(), rand_f.w) : rand_f);
 	}
 
 	TextureDescription::Pointer desc(new TextureDescription);
@@ -153,8 +153,9 @@ void TextureFactory::textureLoadingThreadDidLoadTextureData(TextureLoadingReques
 	delete request;
 }
 
-Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std::string& negx, const std::string& posy,
-	const std::string& negy, const std::string& posz, const std::string& negz, TextureCache& cache)
+Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std::string& negx,
+	const std::string& posy, const std::string& negy, const std::string& posz, const std::string& negz,
+	TextureCache& cache)
 {
 	size_t screenScale = renderContext()->screenScaleFactor();
 	TextureDescription::Pointer layers[6] = 

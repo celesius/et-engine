@@ -15,11 +15,24 @@
 #include <et/opengl/openglcaps.h>
 #include <et/input/input.h>
 #include <et/app/applicationnotifier.h>
+#include <et/threading/threading.h>
 #include <et/rendering/rendercontext.h>
 
 using namespace et;
 
 @interface etWindowDelegate : NSObject<NSWindowDelegate>
+{
+@public
+	ApplicationNotifier applicationNotifier;
+}
+@end
+
+@interface etOpenGLView : NSOpenGLView
+{
+@public
+	Input::PointerInputSource pointerInputSource;
+	ApplicationNotifier applicationNotifier;
+}
 
 @end
 
@@ -34,20 +47,16 @@ public:
 	
 public:
 	RenderContext* _rc;
+	etWindowDelegate* _windowDelegate;
+	etOpenGLView* _openGlView;
+	
 	NSWindow* _mainWindow;
 	NSOpenGLPixelFormat* _pixelFormat;
 	NSOpenGLContext* _openGlContext;
-	NSOpenGLView* _openGlView;
 	CVDisplayLinkRef _displayLink;
 	
-	etWindowDelegate* _windowDelegate;
+	bool firstSync;
 };
-
-@interface etOpenGLView : NSOpenGLView
-{
-	Input::PointerInputSource _pointerInputSource;
-}
-@end
 
 RenderContext::RenderContext(const RenderContextParameters& params, Application* app) : _params(params),
 	_app(app), _programFactory(0), _textureFactory(0), _framebufferFactory(0), _vertexBufferFactory(0),
@@ -86,8 +95,6 @@ size_t RenderContext::renderingContextHandle()
 
 void RenderContext::beginRender()
 {
-	[_private->_openGlContext makeCurrentContext];
-	
 	OpenGLCounters::reset();
 	checkOpenGLError("RenderContext::beginRender");
 }
@@ -96,8 +103,6 @@ void RenderContext::endRender()
 {
 	checkOpenGLError("RenderContext::endRender");
 
-	[_private->_openGlContext flushBuffer];
-	
 	++_info.averageFramePerSecond;
 	_info.averageDIPPerSecond += OpenGLCounters::DIPCounter;
 	_info.averagePolygonsPerSecond += OpenGLCounters::primitiveCounter;
@@ -132,18 +137,23 @@ void RenderContext::updateScreenScale(const vec2i& screenSize)
 }
 
 /*
+ *
  * RenderContextPrivate
+ *
  */
-CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *inNow, const CVTimeStamp *inOutputTime,
-									 CVOptionFlags flagsIn, CVOptionFlags *flagsOut, void *displayLinkContext)
+CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *inNow,
+	const CVTimeStamp *inOutputTime, CVOptionFlags flagsIn, CVOptionFlags *flagsOut, void *displayLinkContext)
 {
-	RenderContextPrivate* notifier = reinterpret_cast<RenderContextPrivate*>(displayLinkContext);
-	notifier->displayLinkSynchronized();
-	return kCVReturnSuccess;
+	@autoreleasepool
+	{
+		RenderContextPrivate* notifier = reinterpret_cast<RenderContextPrivate*>(displayLinkContext);
+		notifier->displayLinkSynchronized();
+		return kCVReturnSuccess;
+	}
 }
 
 RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params) : _rc(rc),
-	_mainWindow(0), _pixelFormat(0), _openGlContext(0), _openGlView(0), _displayLink(0)
+	_mainWindow(0), _pixelFormat(0), _openGlContext(0), _openGlView(0), _displayLink(0), firstSync(true)
 {
 	NSRect screenRect = [[NSScreen mainScreen] frame];
 	
@@ -156,18 +166,23 @@ RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContex
 	NSOpenGLPixelFormatAttribute pixelFormatAttributes[] =
 		{
 			NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
+			
 			NSOpenGLPFAColorSize, 24,
 			NSOpenGLPFAAlphaSize, 8,
 			NSOpenGLPFADepthSize, 32,
+			
 			NSOpenGLPFAAccelerated,
 			NSOpenGLPFADoubleBuffer,
+
 			NSOpenGLPFAMultisample,
 			NSOpenGLPFASampleBuffers, 4,
 			NSOpenGLPFASamples, 16,
+
 			0
 		};
 
 	_pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes] autorelease];
+	assert(_pixelFormat != nil);
 	
 	_mainWindow = [[NSWindow alloc] initWithContentRect:contentRect
 											  styleMask:NSTitledWindowMask | NSClosableWindowMask
@@ -179,13 +194,15 @@ RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContex
 	_openGlView = [[etOpenGLView alloc] initWithFrame:openglRect pixelFormat:_pixelFormat];
 	_openGlContext = [[_openGlView openGLContext] retain];
 	
+	[_openGlContext makeCurrentContext];
+	
 	[_mainWindow setContentView:_openGlView];
 	[_mainWindow makeKeyAndOrderFront:NSApp];
 }
 
 RenderContextPrivate::~RenderContextPrivate()
 {
-//	[_mainWindow release];
+	[_mainWindow release];
 	[_openGlView release];
 	[_openGlContext release];
 	[_windowDelegate release];
@@ -207,6 +224,24 @@ void RenderContextPrivate::run()
 
 void RenderContextPrivate::displayLinkSynchronized()
 {
+	if (firstSync)
+	{
+		ThreadId currentThread = Threading::currentThread();
+		Threading::setMainThread(currentThread);
+		Threading::setRenderingThread(currentThread);
+		firstSync = false;
+	}
+	
+	if (application().active())
+	{
+		CGLLockContext(reinterpret_cast<CGLContextObj>([_openGlContext CGLContextObj]));
+		[_openGlContext makeCurrentContext];
+		
+		_windowDelegate->applicationNotifier.notifyIdle();
+		
+		[_openGlContext flushBuffer];
+		CGLUnlockContext(reinterpret_cast<CGLContextObj>([_openGlContext CGLContextObj]));
+	}
 }
 
 @implementation etOpenGLView
@@ -225,37 +260,37 @@ void RenderContextPrivate::displayLinkSynchronized()
 - (void)mouseDown:(NSEvent *)theEvent
 {
 	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_General];
-	_pointerInputSource.pointerPressed(info);
+	pointerInputSource.pointerPressed(info);
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent
 {
 	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_General];
-	_pointerInputSource.pointerMoved(info);
+	pointerInputSource.pointerMoved(info);
 }
 
 - (void)mouseUp:(NSEvent *)theEvent
 {
 	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_General];
-	_pointerInputSource.pointerReleased(info);
+	pointerInputSource.pointerReleased(info);
 }
 
 - (void)rightMouseDown:(NSEvent *)theEvent
 {
 	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_RightButton];
-	_pointerInputSource.pointerPressed(info);
+	pointerInputSource.pointerPressed(info);
 }
 
 - (void)rightMouseDragged:(NSEvent *)theEvent
 {
 	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_RightButton];
-	_pointerInputSource.pointerMoved(info);
+	pointerInputSource.pointerMoved(info);
 }
 
 - (void)rightMouseUp:(NSEvent *)theEvent
 {
 	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_RightButton];
-	_pointerInputSource.pointerReleased(info);
+	pointerInputSource.pointerReleased(info);
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent
@@ -266,12 +301,18 @@ void RenderContextPrivate::displayLinkSynchronized()
 	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
 	vec2 np(2.0f * p.x / ownFrame.size.width - 1.0f, 1.0f - 2.0f * p.y / ownFrame.size.height);
 	
-	_pointerInputSource.pointerScrolled(PointerInputInfo(PointerType_General, p, np,
+	pointerInputSource.pointerScrolled(PointerInputInfo(PointerType_General, p, np,
 		[theEvent deltaY], [theEvent hash], [theEvent timestamp]));
 }
 
 @end
 
 @implementation etWindowDelegate
+
+- (BOOL)windowShouldClose:(id)sender
+{
+	applicationNotifier.notifyDeactivated();
+	return YES;
+}
 
 @end
