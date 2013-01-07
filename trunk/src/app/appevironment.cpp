@@ -67,7 +67,7 @@ void AppEnvironment::addRelativeSearchPath(const std::string& path)
 }
 
 std::string AppEnvironment::findFile(const std::string& name) const
-{ 
+{
 	if (fileExists(name)) return name;
 
 	ET_ITERATE(_searchPath, const std::string&, i,
