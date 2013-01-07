@@ -9,25 +9,38 @@
 #include <et/core/tools.h>
 #include <et/core/containers.h>
 
-static bool shouldInitializeFrequency = true;
-static double performanceFrequency = 0.0;
+static bool shouldInitializeTime = true;
+static uint64_t performanceFrequency = 0;
+static uint64_t initialCounter = 0;
 
-void initPerformanceFrequency()
+void initTime()
 {
-	__int64 freq = 0;
-	QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&freq));
-	performanceFrequency = 1.0 / static_cast<double>(freq);
-	shouldInitializeFrequency = false;
+	LARGE_INTEGER c = { };
+	LARGE_INTEGER f = { };
+
+	shouldInitializeTime = false;
+
+	QueryPerformanceCounter(&c);
+	QueryPerformanceFrequency(&f);
+
+	initialCounter = c.QuadPart;
+	performanceFrequency = f.QuadPart;
+}
+
+uint64_t et::queryTimeMSec()
+{
+	if (shouldInitializeTime)
+		initTime();
+
+	LARGE_INTEGER c = { };
+	QueryPerformanceCounter(&c);
+
+	return 1000 * (c.QuadPart - initialCounter) / performanceFrequency;
 }
 
 float et::queryTime()
 {
-	if (shouldInitializeFrequency)
-		initPerformanceFrequency();
-
-	__int64 counter = 0;
-	QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&counter));
-	return static_cast<float>(static_cast<double>(counter) * performanceFrequency);
+	return static_cast<float>(queryTimeMSec()) / 1000.0f;
 } 
 
 char et::pathDelimiter = '\\';

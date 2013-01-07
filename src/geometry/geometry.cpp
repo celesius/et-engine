@@ -206,26 +206,16 @@ vector2<float> et::bezierCurve(const std::vector< vector2<float> >& points, floa
 	assert(points.size() > 0);
 	
 	if (points.size() == 1)
-	{
 		return points.front();
-	}
 	else if (points.size() == 2)
-	{
 		return mix(points.front(), points.back(), time);
-	}
-	else
+
+	std::vector< vector2<float> > firstPoints(points.size() - 1);
+	std::vector< vector2<float> > lastPoints(points.size() - 1);
+	for (size_t i = 0; i < points.size() - 1; ++i)
 	{
-		std::vector< vector2<float> > firstPoints(points.size() - 1);
-		std::vector< vector2<float> > lastPoints(points.size() - 1);
-		
-		for (size_t i = 0; i < points.size() - 1; ++i)
-		{
-			firstPoints[i] = points[i];
-			lastPoints[i] = points[i+1];
-		}
-		
-		return mix( bezierCurve(firstPoints, time), bezierCurve(lastPoints, time), time );
+		firstPoints[i] = points[i];
+		lastPoints[i] = points[i+1];
 	}
-	
-	return vector2<float>(0.0f);
+	return mix( bezierCurve(firstPoints, time), bezierCurve(lastPoints, time), time );
 }
