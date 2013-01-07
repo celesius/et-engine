@@ -77,10 +77,12 @@ namespace et
 		void setActive(bool active);
 		void contextResized(const vec2i& size);
 		
-		void platform_init();
-		void platform_finalize();
+		void platformInit();
+		void platformFinalize();
+		void platformActivate();
+		void platformDeactivate();
 		
-		int platform_run();
+		int platformRun();
 		
 	private:
 		friend class ApplicationNotifier;
@@ -111,6 +113,7 @@ namespace et
 		size_t _renderingContextHandle;
 		uint64_t _lastQueuedTimeMSec;
 		uint64_t _fpsLimitMSec;
+		uint64_t _fpsLimitMSecFractPart;
 
 		volatile bool _running;
 		volatile bool _active;

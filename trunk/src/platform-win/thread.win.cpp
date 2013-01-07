@@ -66,7 +66,12 @@ void Thread::run()
 
 void Thread::sleep(float sec)
 {
-	SleepEx(static_cast<DWORD>(1000.0f * sec), 0);
+	SleepEx(static_cast<DWORD>(1000.0f * sec), TRUE);
+}
+
+void Thread::sleepMSec(uint64_t msec)
+{
+	SleepEx(static_cast<DWORD>(msec), TRUE);
 }
 
 ThreadResult Thread::main()

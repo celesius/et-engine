@@ -14,6 +14,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #include <et/platform/compileoptions.h>
 

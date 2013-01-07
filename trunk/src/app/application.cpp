@@ -13,16 +13,16 @@ using namespace et;
 IApplicationDelegate* et::Application::_delegate = 0;
 
 Application::Application() : _renderContext(0), _exitCode(0), _lastQueuedTimeMSec(queryTimeMSec()),
-	_fpsLimitMSec(0), _running(false), _active(false)
+	_fpsLimitMSec(0), _fpsLimitMSecFractPart(0), _running(false), _active(false)
 {
 	threading();
 	delegate();
-	platform_init();
+	platformInit();
 }
 
 Application::~Application()
 {
-	platform_finalize();
+	platformFinalize();
 }
 
 IApplicationDelegate* Application::delegate()
@@ -42,7 +42,7 @@ int Application::run(int argc, char* argv[])
 	for (int i = 0; i < argc; ++i)
 		_parameters.push_back(argv[i]);
 
-	return platform_run();
+	return platformRun();
 }
 
 void Application::performRendering()
@@ -56,23 +56,33 @@ void Application::idle()
 {
 	assert(_running);
 
-	_lastQueuedTimeMSec = queryTimeMSec();
-	
-	if (_active)
+	uint64_t currentTime = queryTimeMSec();
+	uint64_t elapsedTime = currentTime - _lastQueuedTimeMSec;
+
+	if (elapsedTime >= _fpsLimitMSec)
 	{
-		_runLoop->update(_lastQueuedTimeMSec);
-		_delegate->idle(_runLoop->mainTimerPool()->actualTime());
-		performRendering();
+		if (_active)
+		{
+			_runLoop->update(currentTime);
+			_delegate->idle(_runLoop->mainTimerPool()->actualTime());
+			performRendering();
+		}
+		_lastQueuedTimeMSec = queryTimeMSec();
 	}
-	
-	uint64_t deltaTime = queryTimeMSec() - _lastQueuedTimeMSec;
-	if (_fpsLimitMSec >= deltaTime)
-		Thread::sleepMSec(_fpsLimitMSec - deltaTime);
+	else 
+	{
+		uint64_t sleepInterval = (_fpsLimitMSec - elapsedTime) + (rand() % 1000 > _fpsLimitMSecFractPart ? 0 : -1);
+//		uint64_t t0 = queryTimeMSec();
+		Thread::sleepMSec(sleepInterval);
+//		uint64_t dt = queryTimeMSec() - t0;
+//		std::cout << "Requested: " << sleepInterval << ", took: " << dt << std::endl;
+	}
 }
 
 void Application::setFrameRateLimit(size_t value)
 {
 	_fpsLimitMSec = (value == 0) ? 0 : 1000 / value;
+	_fpsLimitMSecFractPart = 1000000 / value - 1000 * _fpsLimitMSec;
 }
 
 void Application::setActive(bool active)
@@ -83,6 +93,7 @@ void Application::setActive(bool active)
 
 	if (_active)
 	{
+		platformActivate();
 		_lastQueuedTimeMSec = queryTimeMSec();
 		_runLoop->update(_lastQueuedTimeMSec);
 		_runLoop->resume();
@@ -92,6 +103,7 @@ void Application::setActive(bool active)
 	{
 		_runLoop->pause();
 		_delegate->applicationWillDeactivate();
+		platformDeactivate();
 	}
 }
 

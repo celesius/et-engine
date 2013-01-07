@@ -14,7 +14,7 @@ namespace et
 	class IntervalTimer
 	{
 	public:
-		IntervalTimer(bool runNow) : _startTimeMSec(0), _endTimeMSec(0.0f)
+		IntervalTimer(bool runNow) : _startTimeMSec(0), _endTimeMSec(0)
 			{ if (runNow) run(); }
 
 		void run() 

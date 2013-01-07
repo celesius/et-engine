@@ -17,7 +17,7 @@ namespace et
 	{
 	public:
 		static size_t coresCount();
-		static double cpuUsage();
+		static float cpuUsage();
 		
 		static ThreadId currentThread();
 		

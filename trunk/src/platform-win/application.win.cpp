@@ -11,20 +11,36 @@
 
 using namespace et;
 
-void Application::platform_init()
+#if defined(_MSC_VER)
+#	pragma comment(lib, "winmm.lib")
+#endif
+
+void Application::platformInit()
 {
 #if (ET_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 	
 	_env.updateDocumentsFolder(_identifier);
+	platformActivate();
 }
 
-void Application::platform_finalize()
+void Application::platformFinalize()
 {
+	platformDeactivate();
 }
 
-int Application::platform_run()
+void Application::platformActivate()
+{
+	timeBeginPeriod(1);
+}
+
+void Application::platformDeactivate()
+{
+	timeEndPeriod(1);
+}
+
+int Application::platformRun()
 {
 	RenderContextParameters params;
 	delegate()->setRenderContextParameters(params); 
@@ -34,16 +50,17 @@ int Application::platform_run()
 	{
 		_active = true;
 
-		_lastQueuedTime = queryTime();
+		_lastQueuedTimeMSec = queryTimeMSec();
 		_runLoop = RunLoop(new RunLoopObject);
-		_runLoop->update(_lastQueuedTime);
+		_runLoop->update(_lastQueuedTimeMSec);
 
 		_renderingContextHandle = _renderContext->renderingContextHandle();
 		_renderContext->init();
 
 		_delegate->applicationDidLoad(_renderContext);
 		_delegate->applicationWillResizeContext(_renderContext->sizei());
-		_lastQueuedTime = queryTime();
+
+		_lastQueuedTimeMSec = queryTimeMSec();
 
 		enterRunLoop(); 
 

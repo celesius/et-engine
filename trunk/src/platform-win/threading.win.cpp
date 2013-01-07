@@ -12,15 +12,27 @@
 using namespace et;
 
 ThreadId Threading::_mainThread;
+ThreadId Threading::_renderingThread;
 
 Threading::Threading()
 {
 	_mainThread = GetCurrentThreadId();
+	_renderingThread = _mainThread;
 }
 
 ThreadId Threading::currentThread()
 {
 	return GetCurrentThreadId();
+}
+
+void Threading::setMainThread(ThreadId t)
+{
+	_mainThread = t;
+}
+
+void Threading::setRenderingThread(ThreadId t)
+{
+	_renderingThread = t;
 }
 
 size_t Threading::coresCount()
@@ -30,7 +42,7 @@ size_t Threading::coresCount()
 	return info.dwNumberOfProcessors;
 }
 
-double Threading::cpuUsage()
+float Threading::cpuUsage()
 {
 	static ULONGLONG idle = 0;
 	static ULONGLONG kern = 0;
@@ -49,5 +61,5 @@ double Threading::cpuUsage()
 	kern = kern_c;
 	user = user_c;
 
-	return static_cast<double>(dSys - dIdle) / static_cast<double>(dSys) * 100.0;
+	return static_cast<float>(dSys - dIdle) / static_cast<float>(dSys) * 100.0f;
 }
