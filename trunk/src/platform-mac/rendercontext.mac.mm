@@ -63,14 +63,18 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 	_renderer(0), _screenScaleFactor(1)
 {
 	_private = new RenderContextPrivate(this, params);
-	_renderState.setMainViewportSize(params.contextSize);
 	
 	openGLCapabilites().checkCaps();
+	_renderState.setMainViewportSize(params.contextSize);
 	
 	_textureFactory = new TextureFactory(this);
 	_framebufferFactory = new FramebufferFactory(this, _textureFactory);
 	_programFactory = new ProgramFactory(this);
 	_vertexBufferFactory = new VertexBufferFactory(_renderState);
+
+	_renderer = new Renderer(this);
+	
+	_fpsTimer.expired.connect(this, &RenderContext::onFPSTimerExpired);
 }
 
 RenderContext::~RenderContext()
@@ -80,11 +84,7 @@ RenderContext::~RenderContext()
 
 void RenderContext::init()
 {
-	_renderer = new Renderer(this);
-	
-	_fpsTimer.expired.connect(this, &RenderContext::onFPSTimerExpired);
 	_fpsTimer.start(mainTimerPool(), 1.0f, -1);
-	
 	_private->run();
 }
 

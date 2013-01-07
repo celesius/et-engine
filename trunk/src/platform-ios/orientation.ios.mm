@@ -8,7 +8,7 @@ namespace et
 	private:
 		static mat4 transformFromCMRotationMatrix(const CMRotationMatrix& m)
 		{
-			mat4 mout = IDENTITY_MATRIX;
+			mat4 mout = identityMatrix;
 			mout[0][0] = static_cast<float>(m.m11);
 			mout[0][1] = static_cast<float>(m.m21);
 			mout[0][2] = static_cast<float>(m.m31);
