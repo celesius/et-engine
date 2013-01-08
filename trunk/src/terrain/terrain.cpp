@@ -6,7 +6,7 @@
  */
 
 #include <fstream>
-#include <et/core/tools.base.h>
+#include <et/core/tools.h>
 #include <et/app/application.h>
 #include <et/primitives/primitives.h>
 #include <et/terrain/terrain.h>
