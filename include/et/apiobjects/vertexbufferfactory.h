@@ -20,9 +20,12 @@ namespace et
 	public:
 		VertexBufferFactory(RenderState& rs) : _rs(rs) { }
 
-		VertexBuffer createVertexBuffer(const std::string& name, VertexArray::Pointer data, BufferDrawType drawType);
-		IndexBuffer createIndexBuffer(const std::string& name, IndexArray::Pointer data, BufferDrawType drawType);
-
+		VertexBuffer createVertexBuffer(const std::string& name,
+			VertexArray::Pointer data, BufferDrawType drawType);
+		
+		IndexBuffer createIndexBuffer(const std::string& name,
+			IndexArray::Pointer data, BufferDrawType drawType);
+		
 		VertexArrayObject createVertexArrayObject(const std::string& name);
 
 		VertexArrayObject createVertexArrayObject(const std::string& name, 
