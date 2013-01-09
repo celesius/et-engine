@@ -58,24 +58,24 @@ namespace et
 
 	template<typename T>
 	inline vector2<T> absv(const vector2<T>& value) 
-		{ return vector2<T>(::fabs(value.x), ::fabs(value.y)); }
+		{ return vector2<T>(std::fabs(value.x), std::fabs(value.y)); }
 
 	template<typename T>
 	inline vector3<T> absv(const vector3<T>& value) 
-		{ return vector3<T>(::fabs(value.x), ::fabs(value.y), ::fabs(value.z)); }
+		{ return vector3<T>(std::fabs(value.x), std::fabs(value.y), std::fabs(value.z)); }
 
 	template<typename T>
 	inline vector4<T> absv(const vector4<T>& value) 
-		{ return vector4<T>(::fabs(value.x), ::fabs(value.y), ::fabs(value.z), ::fabs(value.w)); }
+		{ return vector4<T>(std::fabs(value.x), std::fabs(value.y), std::fabs(value.z), std::fabs(value.w)); }
 
 	inline vector2<int> absv(const vector2<int>& value) 
-		{ return vector2<int>(::abs(value.x), ::abs(value.y)); }
+		{ return vector2<int>(std::abs(value.x), std::abs(value.y)); }
 	
 	inline vector3<int> absv(const vector3<int>& value) 
-		{ return vector3<int>(::abs(value.x), ::abs(value.y), ::abs(value.z)); }
+		{ return vector3<int>(std::abs(value.x), std::abs(value.y), std::abs(value.z)); }
 	
 	inline vector4<int> absv(const vector4<int>& value) 
-		{ return vector4<int>(::abs(value.x), ::abs(value.y), ::abs(value.z), ::abs(value.w)); }
+		{ return vector4<int>(std::abs(value.x), std::abs(value.y), std::abs(value.z), std::abs(value.w)); }
 	
 	template <typename T>
 	inline T etMin(const T& v1, const T& v2)
@@ -111,27 +111,27 @@ namespace et
 
 	template <typename T>
 	inline vector2<T> floorv(const vector2<T>& v)
-		{ return vector2<T>(::floor(v.x), ::floor(v.y)); }
+		{ return vector2<T>(std::floor(v.x), std::floor(v.y)); }
 
 	template <typename T>
 	inline vector3<T> floorv(const vector3<T>& v)
-		{ return vector3<T>(::floor(v.x), ::floor(v.y), ::floor(v.z)); }
+		{ return vector3<T>(std::floor(v.x), std::floor(v.y), std::floor(v.z)); }
 
 	template <typename T>
 	inline vector4<T> floorv(const vector4<T>& v)
-		{ return vector4<T>(::floor(v.x), ::floor(v.y), ::floor(v.z), ::floor(v.w)); }
+		{ return vector4<T>(std::floor(v.x), ::floor(v.y), std::floor(v.z), std::floor(v.w)); }
 
 	template <typename T>
 	inline vector4<T> sqrtv(const vector4<T>& v)
-		{ return vector4<T>(::sqrt(v.x), ::sqrt(v.y), ::sqrt(v.z), ::sqrt(v.w)); }
+		{ return vector4<T>(std::sqrt(v.x), std::sqrt(v.y), std::sqrt(v.z), std::sqrt(v.w)); }
 	
 	template <typename T>
 	inline vector3<T> sqrtv(const vector3<T>& v)
-		{ return vector3<T>(::sqrt(v.x), ::sqrt(v.y), ::sqrt(v.z)); }
+		{ return vector3<T>(std::sqrt(v.x), std::sqrt(v.y), std::sqrt(v.z)); }
 	
 	template <typename T>
 	inline vector2<T> sqrtv(const vector2<T>& v)
-		{ return vector2<T>(::sqrt(v.x), ::sqrt(v.y)); }
+		{ return vector2<T>(std::sqrt(v.x), std::sqrt(v.y)); }
 	
 	template <typename T>
 	inline T length(const vector2<T>& v)
@@ -207,35 +207,35 @@ namespace et
 	inline vector2<T> normalize(const vector2<T>& v) 
 	{ 
 		T l = v.dotSelf();
-		return (l > 0) ? v / ::sqrt(l) : vector2<T>(0);
+		return (l > 0) ? v / std::sqrt(l) : vector2<T>(0);
 	}
 
 	template <typename T>
 	inline vector3<T> normalize(const vector3<T>& v) 
 	{ 
 		T l = v.dotSelf();
-		return (l > 0) ? v / ::sqrt(l) : vector3<T>(0);
+		return (l > 0) ? v / std::sqrt(l) : vector3<T>(0);
 	}
 
 	template <typename T>
 	inline vector4<T> normalize(const vector4<T>& v) 
 	{ 
 		T l = v.dotSelf();
-		return (l > 0) ? v / ::sqrt(l) : vector4<T>(0);
+		return (l > 0) ? v / std::sqrt(l) : vector4<T>(0);
 	}
 
 	template <typename T>
 	inline Quaternion<T> normalize(const Quaternion<T>& q) 
 	{ 
 		T l = q.length();
-		return (l > 0) ? q / ::sqrt(l) : Quaternion<T>();
+		return (l > 0) ? q / std::sqrt(l) : Quaternion<T>();
 	}
 
 	template <typename T>
 	inline vector4<T> normalizePlane(const vector4<T>& v) 
 	{ 
 		T l = v.xyz().dotSelf();
-		return (l > 0) ? v / ::sqrt(l) : vector4<T>(0);
+		return (l > 0) ? v / std::sqrt(l) : vector4<T>(0);
 	}
 
 	template <typename T>
