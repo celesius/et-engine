@@ -52,8 +52,15 @@ int Application::platformRun()
 		std::string appName = _parameters.front();
 		StringDataStorage appNameData(appName.size());
 		etCopyMemory(appNameData.data(), appName.c_str(), appName.size());
-		NSString* delegateClass = NSStringFromClass([etApplicationDelegate class]);
-        return UIApplicationMain(1, (char*[]){ appNameData.data() }, nil, delegateClass);
+		@try
+		{
+			NSString* delegateClass = NSStringFromClass([etApplicationDelegate class]);
+			return UIApplicationMain(1, (char*[]){ appNameData.data(), nil }, nil, delegateClass);
+		}
+		@catch (NSException *exception)
+		{
+			NSLog(@"%@, %@", exception, [exception callStackSymbols]);
+		}
     }
 	
 #endif	
