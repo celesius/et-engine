@@ -390,7 +390,7 @@ float Scroll::scrollUpperDefaultValue() const
 
 float Scroll::scrollLowerDefaultValue() const
 {
-	return _contentSize.y - size().y;
+	return etMax(0.0f, _contentSize.y - size().y);
 }
 
 void Scroll::internal_setOffset(const vec2& o)
