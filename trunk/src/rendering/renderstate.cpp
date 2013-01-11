@@ -21,10 +21,10 @@ static const char* keyEnableVertexAttribArray = "glEnableVertexAttribArray(...)"
 static const char* keyDisableVertexAttribArray = "glDisableVertexAttribArray(...)";
 static const char* keyVertexAttribPointer = "glVertexAttribPointer(...)";
 
-RenderState::State::State() : 
-	activeTextureUnit(0), boundFramebuffer(0), boundArrayBuffer(0), boundElementArrayBuffer(0), boundVertexArrayObject(0), 
-	boundProgram(0), polygonOffsetFactor(0.0f), polygonOffsetUnits(0.0f), blendEnabled(false), depthTestEnabled(false),
-	depthMaskEnabled(true), polygonOffsetFillEnabled(false), wireframe(false), lastBlend(Blend_Disabled), 
+RenderState::State::State() : activeTextureUnit(0), boundFramebuffer(0), boundArrayBuffer(0),
+	boundElementArrayBuffer(0), boundVertexArrayObject(0), boundProgram(0), clearDepth(1.0f),
+	polygonOffsetFactor(0.0f), polygonOffsetUnits(0.0f), blendEnabled(false), depthTestEnabled(false),
+	depthMaskEnabled(true), polygonOffsetFillEnabled(false), wireframe(false), lastBlend(Blend_Disabled),
 	lastCull(CullState_None), lastDepthFunc(DepthFunc_Less)
 {
 	(void)keyCurrentStateBegin;
@@ -256,12 +256,12 @@ void RenderState::setDepthFunc(DepthFunc func)
 	_currentState.lastDepthFunc = func;
 	switch (_currentState.lastDepthFunc)
 	{
-	case DepthFunc_Always:
+	case DepthFunc_Less:
 		{
-			glDepthFunc(GL_ALWAYS);
+			glDepthFunc(GL_LESS);
 			break;
 		}
-
+			
 	case DepthFunc_LessOrEqual:
 		{
 			glDepthFunc(GL_LEQUAL);
@@ -273,12 +273,27 @@ void RenderState::setDepthFunc(DepthFunc func)
 			glDepthFunc(GL_EQUAL);
 			break;
 		}
-
-	default:
+			
+	case DepthFunc_GreaterOrEqual:
 		{
-			glDepthFunc(GL_LESS);
+			glDepthFunc(GL_GEQUAL);
 			break;
 		}
+			
+	case DepthFunc_Greater:
+		{
+			glDepthFunc(GL_GREATER);
+			break;
+		}
+			
+	case DepthFunc_Always:
+		{
+			glDepthFunc(GL_ALWAYS);
+			break;
+		}
+
+		default:
+			assert(0 && "Invalid DepthFunc value");
 	}
 }
 
@@ -475,6 +490,14 @@ void RenderState::setClearColor(const vec4& color)
 	glClearColor(color.x, color.y, color.z, color.w);
 }
 
+void RenderState::setClearDepth(float depth)
+{
+	if (_currentState.clearDepth == depth) return;
+	
+	_currentState.clearDepth = depth;
+	glClearDepth(depth);
+}
+
 void RenderState::setClip(bool enable, const recti& clip)
 {
 	if (enable != _currentState.clipEnabled)
@@ -606,15 +629,24 @@ RenderState::State RenderState::currentState()
 	
 	value = 0;
 	glGetIntegerv(GL_DEPTH_FUNC, &value);
-	s.lastDepthFunc = DepthFunc_Less;
+	
+	if (value == GL_LESS)
+		s.lastDepthFunc = DepthFunc_Less;
 	if (value == GL_LEQUAL)
 		s.lastDepthFunc = DepthFunc_LessOrEqual;
 	else if (value == GL_EQUAL)
 		s.lastDepthFunc = DepthFunc_Equal;
+	else if (value == GL_GEQUAL)
+		s.lastDepthFunc = DepthFunc_GreaterOrEqual;
+	else if (value == GL_GREATER)
+		s.lastDepthFunc = DepthFunc_Greater;
 	else if (value == GL_ALWAYS)
 		s.lastDepthFunc = DepthFunc_Always;
+	else
+		assert(0 && "Unknown GL_DEPTH_FUNC value");
 
 	glGetFloatv(GL_COLOR_CLEAR_VALUE, s.clearColor.data());
+	glGetFloatv(GL_DEPTH_CLEAR_VALUE, &s.clearDepth);
 
 	// TODO: get this from state, too lazy now.
 	s.wireframe = false;

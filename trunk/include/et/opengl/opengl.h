@@ -57,13 +57,17 @@
 #	define glGenVertexArrays						glGenVertexArraysOES
 #	define glBindVertexArray						glBindVertexArrayOES
 #	define glIsVertexArray							glIsVertexArrayOES
+#	define glClearDepth								glClearDepthf
 #
 #	if !defined(glDeleteVertexArrays)
 #		define glDeleteVertexArrays					glDeleteVertexArraysOES
 #	endif
 #
 #	if !defined(glFramebufferTexture)
-#		define glFramebufferTexture(target, attachment, texture, level) glFramebufferTexture2D(target, attachment, GL_TEXTURE_2D, texture, level)
+#
+#		define glFramebufferTexture(target, attachment, texture, level) \
+			glFramebufferTexture2D(target, attachment, GL_TEXTURE_2D, texture, level)
+#
 #	endif
 #
 #	define GL_TEXTURE_MAX_LEVEL						GL_TEXTURE_MAX_LEVEL_APPLE
@@ -73,9 +77,14 @@
 #endif
 
 #if (ET_DEBUG)
-#	define checkOpenGLError(tag) checkOpenGLErrorEx(ET_CALL_FUNCTION, __FILE__, ET_TOCONSTCHAR(__LINE__), tag)
+#
+#	define checkOpenGLError(tag) \
+		checkOpenGLErrorEx(ET_CALL_FUNCTION, __FILE__, ET_TOCONSTCHAR(__LINE__), tag)
+#
 #else
+#
 #	define checkOpenGLError(tag)
+#
 #endif
 
 namespace et
