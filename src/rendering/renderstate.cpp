@@ -632,7 +632,7 @@ RenderState::State RenderState::currentState()
 	
 	if (value == GL_LESS)
 		s.lastDepthFunc = DepthFunc_Less;
-	if (value == GL_LEQUAL)
+	else if (value == GL_LEQUAL)
 		s.lastDepthFunc = DepthFunc_LessOrEqual;
 	else if (value == GL_EQUAL)
 		s.lastDepthFunc = DepthFunc_Equal;
