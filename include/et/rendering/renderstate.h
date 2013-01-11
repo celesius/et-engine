@@ -36,6 +36,8 @@ namespace et
 		DepthFunc_Less,
 		DepthFunc_LessOrEqual,
 		DepthFunc_Equal,
+		DepthFunc_GreaterOrEqual,
+		DepthFunc_Greater,
 		DepthFunc_Always
 	};
 
@@ -71,6 +73,7 @@ namespace et
 			vec2 viewportSizeFloat;
 
 			vec4 clearColor;
+			float clearDepth;
 			
 			float polygonOffsetFactor;
 			float polygonOffsetUnits;
@@ -188,6 +191,7 @@ namespace et
 		void setPolygonOffsetFill(bool enabled, float factor = 0.0f, float units = 0.0f);
 		void setWireframeRendering(bool wire);
 		void setClearColor(const vec4& color);
+		void setClearDepth(float depth);
 		void setClip(bool enable, const recti& clip);
 
 		/*
