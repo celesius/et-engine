@@ -8,9 +8,13 @@
 #include <et/app/application.h>
 #include <et/platform-ios/imagepicker.h>
 
+@interface UIImagePickerWorkaround : UIImagePickerController
+
+@end
+
 @interface ImagePickerProxy : NSObject<UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 {
-	UIImagePickerController* _picker;
+	UIImagePickerWorkaround* _picker;
 	UIPopoverController* _popover;
 	et::ImagePickerPrivate* _p;
 }
@@ -69,7 +73,15 @@ ImagePickerPrivate::~ImagePickerPrivate()
 
 void ImagePickerPrivate::pick(ImagePickerSource s)
 {
-	[proxy pick:s];
+	@try
+	{
+		[proxy pick:s];
+	}
+	@catch (NSException* e)
+	{
+		NSLog(@"%@, %@", e, [e callStackSymbols]);
+		abort();
+	}
 }
 
 /*
@@ -102,7 +114,7 @@ void ImagePickerPrivate::pick(ImagePickerSource s)
 	
 	if (_picker == nil)
 	{
-		_picker = [[UIImagePickerController alloc] init];
+		_picker = [[UIImagePickerWorkaround alloc] init];
 		_picker.delegate = self;
 	}
 	
@@ -227,6 +239,22 @@ void ImagePickerPrivate::pick(ImagePickerSource s)
 	{
 		assert(0 && "Not implemented yet");
 	}
+}
+
+@end
+
+@implementation UIImagePickerWorkaround
+
+- (BOOL)shouldAutorotate
+{
+	UIViewController* vc = reinterpret_cast<UIViewController*>(application().renderingContextHandle());
+	return [vc shouldAutorotate];
+}
+
+- (NSUInteger)supportedInterfaceOrientations
+{
+	UIViewController* vc = reinterpret_cast<UIViewController*>(application().renderingContextHandle());
+	return [vc supportedInterfaceOrientations];
 }
 
 @end

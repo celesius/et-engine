@@ -95,4 +95,10 @@ using namespace et;
 	_displayLink = nil;	
 }
 
+- (NSUInteger)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window
+{
+	UIViewController* vc = reinterpret_cast<UIViewController*>(et::application().renderingContextHandle());
+	return [vc supportedInterfaceOrientations];
+}
+
 @end
