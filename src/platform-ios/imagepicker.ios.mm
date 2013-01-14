@@ -245,6 +245,8 @@ void ImagePickerPrivate::pick(ImagePickerSource s)
 
 @implementation UIImagePickerWorkaround
 
+#if defined(__IPHONE_6_0)
+
 - (BOOL)shouldAutorotate
 {
 	UIViewController* vc = reinterpret_cast<UIViewController*>(application().renderingContextHandle());
@@ -256,5 +258,7 @@ void ImagePickerPrivate::pick(ImagePickerSource s)
 	UIViewController* vc = reinterpret_cast<UIViewController*>(application().renderingContextHandle());
 	return [vc supportedInterfaceOrientations];
 }
+
+#endif
 
 @end
