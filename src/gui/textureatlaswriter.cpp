@@ -17,7 +17,9 @@ using namespace et::gui;
 TextureAtlasWriter::TextureAtlasItem& TextureAtlasWriter::addItem(const vec2i& textureSize)
 {
 	_items.push_back(TextureAtlasItem());
+	
 	TextureAtlasItem& item = _items.back();
+	item.texture = et::TextureDescription::Pointer(new et::TextureDescription);
 	item.texture->size = textureSize;
 	return item;
 }
