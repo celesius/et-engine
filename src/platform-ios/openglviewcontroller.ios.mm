@@ -76,6 +76,8 @@ using namespace et;
 	_context = nil;	
 }
 
+#if defined(__IPHONE_6_0)
+
 - (BOOL)shouldAutorotate
 {
 	return (_params.supportedInterfaceOrientations > 0);
@@ -96,7 +98,9 @@ using namespace et;
 	
 	return result;
 }
-				   
+
+#else
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
     if ((toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) &&
@@ -113,6 +117,8 @@ using namespace et;
     
     return NO;
 }
+
+#endif
 
 - (void)beginRender
 {
