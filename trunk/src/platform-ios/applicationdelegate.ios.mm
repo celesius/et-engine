@@ -96,11 +96,13 @@ using namespace et;
 }
 
 #if defined(__IPHONE_6_0)
+
 - (NSUInteger)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window
 {
 	UIViewController* vc = reinterpret_cast<UIViewController*>(et::application().renderingContextHandle());
 	return [vc supportedInterfaceOrientations];
 }
+
 #endif
 
 @end
