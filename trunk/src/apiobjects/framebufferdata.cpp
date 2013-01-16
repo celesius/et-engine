@@ -229,9 +229,12 @@ bool FramebufferData::setCurrentRenderTarget(const Texture& texture)
 {
 	_rc->renderState().bindFramebuffer(_id);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture->target(), texture->glID(), 0);
-	checkOpenGLError("Framebuffer::setCurrentRenderTarget -> glFramebufferTexture2D(..., GL_COLOR_ATTACHMENT0 " + name());
-
+	if (openGLCapabilites().version() == OpenGLVersion_New)
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture->glID(), 0);
+	else
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture->target(), texture->glID(), 0);
+	
+	checkOpenGLError("FramebufferData::setCurrentRenderTarget");
 	return checkStatus();
 }
 
@@ -240,16 +243,11 @@ bool FramebufferData::setCurrentRenderTarget(const Texture& texture, GLenum targ
 	_rc->renderState().bindFramebuffer(_id);
 
 	if (openGLCapabilites().version() == OpenGLVersion_New)
-	{
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture->glID(), 0);
-	}
 	else
-	{
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, texture->glID(), 0);
-	}
-	
-	checkOpenGLError("Framebuffer::setCurrentRenderTarget -> glFramebufferTexture2D(..., GL_COLOR_ATTACHMENT0 " + name());
 
+	checkOpenGLError("FramebufferData::setCurrentRenderTarget");
 	return checkStatus();
 }
 
