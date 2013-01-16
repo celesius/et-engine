@@ -108,7 +108,6 @@ void Application::enterRunLoop()
 	
 	_running = true;
 	delegate()->applicationDidLoad(_renderContext);
-	delegate()->applicationWillResizeContext(_renderContext->sizei());
 }
 
 void Application::quit(int exitCode)
