@@ -114,7 +114,7 @@ void Locale::parseLanguageFile(const std::string& fileName)
 	}
 
 	inQuote = false;
-	size_t sourceLength = keyValues.currentIndex();
+	size_t sourceLength = keyValues.offset();
 	StringDataStorage source(sourceLength + 1, 0);
 	for (size_t i = 0; i < sourceLength; ++i)
 	{

@@ -35,7 +35,7 @@ namespace et
 
 			size_t addVertices(const GuiVertexList& vertices, const Texture& texture, ElementClass cls, GuiRenderLayer layer);
 			
-			int measuseVerticesCountForImageDescriptor(const ImageDescriptor& desc);
+			int measusevertexCountForImageDescriptor(const ImageDescriptor& desc);
 			
 			void createStringVertices(GuiVertexList& vertices, const CharDescriptorList& chars, 
 									  ElementAlignment hAlign, ElementAlignment vAlign, const vec2& pos, 

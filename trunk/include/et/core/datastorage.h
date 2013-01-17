@@ -18,18 +18,18 @@ namespace et
 		typedef T DataFormat;
 
 		DataStorage() : 
-			_mutableData(0), _size(0), _dataSize(0), _index(0),
+			_mutableData(0), _size(0), _dataSize(0), _offset(0),
 			_flags(DataStorageFlag_OwnsMutableData) { }
 
 		explicit DataStorage(size_t size) :
-			_mutableData(0), _size(0), _dataSize(0), _index(0),
+			_mutableData(0), _size(0), _dataSize(0), _offset(0),
 			_flags(DataStorageFlag_OwnsMutableData)
 		{
 			resize(size); 
 		}
 
 		DataStorage(size_t size, int initValue) :
-			_mutableData(0), _size(0), _dataSize(0), _index(0),
+			_mutableData(0), _size(0), _dataSize(0), _offset(0),
 			_flags(DataStorageFlag_OwnsMutableData)
 		{
 			resize(size); 
@@ -37,7 +37,7 @@ namespace et
 		}
 
 		DataStorage(const DataStorage& copy) :
-			_mutableData(0), _size(0), _dataSize(0), _index(0),
+			_mutableData(0), _size(0), _dataSize(0), _offset(0),
 			_flags(DataStorageFlag_OwnsMutableData)
 		{
 			resize(copy.size());
@@ -46,13 +46,13 @@ namespace et
 		}
 		
 		DataStorage(T* data, size_t dataSize) :
-			_mutableData(data), _size(dataSize / sizeof(T)), _dataSize(dataSize), _index(0),
+			_mutableData(data), _size(dataSize / sizeof(T)), _dataSize(dataSize), _offset(0),
 			_flags(DataStorageFlag_Mutable)
 		{
 		}
 
 		DataStorage(const T* data, size_t dataSize) :
-			_constData(data), _size(dataSize / sizeof(T)), _dataSize(dataSize), _index(0),
+			_immutableData(data), _size(dataSize / sizeof(T)), _dataSize(dataSize), _offset(0),
 			_flags(0)
 		{
 		}
@@ -68,7 +68,7 @@ namespace et
 		{
 			if (buf.ownsData())
 			{
-				_index = buf._index;
+				_offset = buf._offset;
 				_flags = buf._flags;
 				resize(buf.size());
 				if (buf.size() > 0)
@@ -78,7 +78,7 @@ namespace et
 			}
 			else
 			{
-				_index = 0;
+				_offset = 0;
 				_mutableData = buf._mutableData;
 				_dataSize = buf._dataSize;
 				_flags = buf._flags;
@@ -101,10 +101,10 @@ namespace et
 			{ assert(mutableData() && (aIndex < _size)); return _mutableData[aIndex]; }
 		
 		T& current()
-			{ assert(mutableData() && (_index < _size)); return _mutableData[_index]; }
+			{ assert(mutableData() && (_offset < _size)); return _mutableData[_offset]; }
 
 		T* current_ptr()
-			{ assert(mutableData() && (_index < _size)); return &_mutableData[_index]; }
+			{ assert(mutableData() && (_offset < _size)); return &_mutableData[_offset]; }
 		
 		T* element_ptr(size_t aIndex)
 			{ assert(aIndex < _size); return &_mutableData[aIndex]; }
@@ -113,26 +113,23 @@ namespace et
 		 * const accessors
 		 */
 		const T* data() const
-			{ return _constData; }
+			{ return _immutableData; }
 
 		const char* binary() const
-			{ return reinterpret_cast<const char*>(_constData); }
+			{ return reinterpret_cast<const char*>(_immutableData); }
 
 		const T& operator [](size_t i) const
-			{ assert(i < _size); return _constData[i]; }
+			{ assert(i < _size); return _immutableData[i]; }
 		
 		const T& current() const
-			{ assert(_index < _size); return _constData[_index]; }
+			{ assert(_offset < _size); return _immutableData[_offset]; }
 
 		const T* current_ptr() const
-			{ assert(_index < _size); return &_constData[_index]; }
+			{ assert(_offset < _size); return &_immutableData[_offset]; }
 		
 		const T* element_ptr(size_t i) const
-			{ assert(i < _size); return &_constData[i]; }
+			{ assert(i < _size); return &_immutableData[i]; }
 		
-		const size_t currentIndex() const
-			{ return _index; }
-
 		const size_t size() const
 			{ return _size; }
 		
@@ -167,11 +164,11 @@ namespace et
 			{
 				new_data = new T[size];
 				if (min_size > 0)
-					etCopyMemory(new_data, _constData, min_size * sizeof(T));
+					etCopyMemory(new_data, _immutableData, min_size * sizeof(T));
 			}
 			else
 			{
-				_index = 0;
+				_offset = 0;
 			}
 			
 			if (ownsData())
@@ -185,8 +182,8 @@ namespace et
 		{
 			assert(mutableData());
 			fitToSize(1);
-			assert(_index < _size);
-			_mutableData[_index++] = value;
+			assert(_offset < _size);
+			_mutableData[_offset++] = value;
 		}
 		
 		T* extract()
@@ -195,22 +192,25 @@ namespace et
 			_mutableData = 0;
 			_size = 0;
 			_dataSize = 0;
-			_index = 0;
+			_offset = 0;
 			return value;
 		}
 
 		void fitToSize(size_t size)
 		{
-			size_t need_size = _index + size;
+			size_t need_size = _offset + size;
 			if (need_size > _size)
 				resize(need_size);
 		}
 
-		void offset(size_t o) 
-			{  assert(mutableData()); _index += o; }
+		const size_t offset() const
+			{ return _offset; }
+		
+		void applyOffset(size_t o)
+			{  assert(mutableData()); _offset += o; }
 
 		void setOffset(size_t o) 
-			{ assert(mutableData()); _index = o; }
+			{ assert(mutableData()); _offset = o; }
 
 	private:
 		enum
@@ -230,13 +230,13 @@ namespace et
 		union
 		{
 			T* _mutableData;
-			const T* _constData;
+			const T* _immutableData;
 		};
 		
 	private:
 		size_t _size;
 		size_t _dataSize;
-		size_t _index;
+		size_t _offset;
 		size_t _flags;
 	};
 

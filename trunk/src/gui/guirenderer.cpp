@@ -25,12 +25,12 @@ GuiRenderer::GuiRenderer(RenderContext* rc, bool saveFillRate) : _rc(rc), _custo
 	if (saveFillRate)
 	{
 		_guiProgram = rc->programFactory().genProgram(gui_savefillrate_vertex_src, std::string(), gui_savefillrate_frag_src,
-													  ProgramDefinesList(),  std::string(), "shader-gui");
+			ProgramDefinesList(),  std::string(), "shader-gui");
 	}
 	else 
 	{
 		_guiProgram = rc->programFactory().genProgram(gui_default_vertex_src, std::string(), gui_default_frag_src,
-													  ProgramDefinesList(),  std::string(), "shader-gui");
+			ProgramDefinesList(),  std::string(), "shader-gui");
 	}
 
 	_guiDefaultTransformUniform = _guiProgram->getUniformLocation("mDefaultTransform");
@@ -95,7 +95,7 @@ void GuiRenderer::alloc(size_t count)
 {
 	if (_renderingElement.invalid()) return;
 
-	size_t currentOffset = _renderingElement->_vertexList.currentIndex();
+	size_t currentOffset = _renderingElement->_vertexList.offset();
 	size_t currentSize = _renderingElement->_vertexList.size();
 
 	if (currentOffset + count >= currentSize)
@@ -115,7 +115,7 @@ GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& text
 	layer = shouldAdd ? GuiRenderLayer_Layer0 : layer;
 	
 	_renderingElement->_changed = true;
-	size_t i0 = _renderingElement->_vertexList.currentIndex();
+	size_t i0 = _renderingElement->_vertexList.offset();
 
 	if (_renderingElement->_chunks.size())
 	{
@@ -138,7 +138,7 @@ GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& text
 			_lastTextures[GuiRenderLayer_Layer0], _lastTextures[GuiRenderLayer_Layer1], _clip.top(), cls));
 	}
 	alloc(count);
-	_renderingElement->_vertexList.offset(count);
+	_renderingElement->_vertexList.applyOffset(count);
 
 	assert(i0 < _renderingElement->_vertexList.size());
 	assert(i0 * _renderingElement->_vertexList.typeSize() < _renderingElement->_vertexList.dataSize());
@@ -149,11 +149,11 @@ GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& text
 size_t GuiRenderer::addVertices(const GuiVertexList& vertices, const Texture& texture, ElementClass cls, GuiRenderLayer layer)
 {
 	size_t current = 0;
-	size_t count = vertices.currentIndex();
+	size_t count = vertices.offset();
 
 	if (_renderingElement.valid() && (count > 0))
 	{
-		current = _renderingElement->_vertexList.currentIndex();
+		current = _renderingElement->_vertexList.offset();
 		GuiVertex* v0 = allocateVertices(count, texture, cls, layer);
 		memcpy(v0, vertices.data(), count * vertices.typeSize());
 	}
@@ -295,7 +295,7 @@ void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescri
 	})
 }
 
-int GuiRenderer::measuseVerticesCountForImageDescriptor(const ImageDescriptor& desc)
+int GuiRenderer::measusevertexCountForImageDescriptor(const ImageDescriptor& desc)
 {
 	bool hasLeftSafe = desc.contentOffset.left > 0;
 	bool hasTopSafe = desc.contentOffset.top > 0;

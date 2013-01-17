@@ -26,10 +26,10 @@ void TextField::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, gr);
 
-	if (_imageVertices.currentIndex())
+	if (_imageVertices.offset() > 0)
 		gr.addVertices(_imageVertices, _background.texture, ElementClass_2d, GuiRenderLayer_Layer0);
 	
-	if (_textVertices.currentIndex())
+	if (_textVertices.offset() > 0)
 		gr.addVertices(_textVertices, _font->texture(), ElementClass_2d, GuiRenderLayer_Layer1);
 }
 
