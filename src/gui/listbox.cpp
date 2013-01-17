@@ -110,13 +110,13 @@ void ListboxPopup::addToRenderQueue(RenderContext*, GuiRenderer& gr)
 	if (!contentValid() || !transformValid())
 		buildVertices(gr);
 
-	if (_backgroundVertices.currentIndex())
+	if (_backgroundVertices.offset() > 0)
 		gr.addVertices(_backgroundVertices, _owner->_background.texture, ElementClass_2d, GuiRenderLayer_Layer0);
 
-	if (_selectionVertices.currentIndex())
+	if (_selectionVertices.offset() > 0)
 		gr.addVertices(_selectionVertices, _owner->_selection.texture, ElementClass_2d, GuiRenderLayer_Layer0);
 
-	if (_textVertices.currentIndex())
+	if (_textVertices.offset() > 0)
 		gr.addVertices(_textVertices, _owner->_font->texture(), ElementClass_2d, GuiRenderLayer_Layer1);
 }
 

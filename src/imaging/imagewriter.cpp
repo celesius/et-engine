@@ -62,7 +62,7 @@ void internal_func_writePNGtoBuffer(png_structp png_ptr, png_bytep data, png_siz
 
 	buffer->fitToSize(length);
 	memcpy(buffer->current_ptr(), data, length);
-	buffer->offset(length);
+	buffer->applyOffset(length);
 }
 
 bool internal_writePNGtoBuffer(BinaryDataStorage& buffer, const BinaryDataStorage& data, const vec2i& size, int components, int bitsPerComponent)

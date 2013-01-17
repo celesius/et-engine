@@ -10,7 +10,7 @@
 using namespace et;
 using namespace gui;
 
-ImageView::ImageView(const Texture& texture, Element2d* parent) : 	Element2d(parent), 
+ImageView::ImageView(const Texture& texture, Element2d* parent) : Element2d(parent),
 	_texture(texture), _descriptor(ImageDescriptor(texture)), _contentMode(ImageView::ContentMode_Stretch)
 {
 	setSize(_descriptor.size);
@@ -33,7 +33,7 @@ void ImageView::addToRenderQueue(RenderContext* rc, GuiRenderer& g)
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, g);
 
-	if (_vertices.currentIndex())
+	if (_vertices.offset())
 		g.addVertices(_vertices, _texture, ElementClass_2d, GuiRenderLayer_Layer0);
 }
 
@@ -108,7 +108,7 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 		int repeatsWidth = static_cast<int>(size().x / imageWidth);
 		int repeatsHeight = static_cast<int>(size().y / imageHeight);
 		
-		_vertices.fitToSize(repeatsWidth * repeatsHeight * g.measuseVerticesCountForImageDescriptor(_descriptor));
+		_vertices.fitToSize(repeatsWidth * repeatsHeight * g.measusevertexCountForImageDescriptor(_descriptor));
 		_vertices.setOffset(0);
 		
 		for (int v = 0; v < repeatsHeight; ++v)

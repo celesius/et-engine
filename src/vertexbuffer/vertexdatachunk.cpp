@@ -30,7 +30,7 @@ void VertexDataChunkData::serialize(std::ostream& stream)
 	serializeInt(stream, _usage);
 	serializeInt(stream, _type);
 	serializeInt(stream, static_cast<int>(_data.dataSize()));
-	serializeInt(stream, _data.currentIndex());
+	serializeInt(stream, _data.offset());
 	stream.write(_data.binary(), _data.dataSize());
 }
 

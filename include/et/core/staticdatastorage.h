@@ -26,10 +26,10 @@ namespace et
 			{ etFillMemory(data, value, dataSize()); }
 
 		T& operator [](int i)
-			{ return data[i]; }
+			{ assert(i < count); return data[i]; }
 		
 		const T& operator [](int i) const
-			{ return data[i]; }
+			{ assert(i < count); return data[i]; }
 
 		char* binary()
 			{ return reinterpret_cast<char*>(data); }
