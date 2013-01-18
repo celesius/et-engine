@@ -76,6 +76,11 @@
 #
 #endif
 
+#if !defined(GL_COLOR_ATTACHMENT0)
+#	define GL_COLOR_ATTACHMENT0						0
+#endif
+
+
 #if (ET_DEBUG)
 #
 #	define checkOpenGLError(tag) \

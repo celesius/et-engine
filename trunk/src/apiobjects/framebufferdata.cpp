@@ -147,21 +147,21 @@ bool FramebufferData::addRenderTarget(const Texture& rt)
 
 	if (openGLCapabilites().version() == OpenGLVersion_New)
 	{
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _numTargets, rt->glID(), 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, renderbufferTargets[_numTargets], rt->glID(), 0);
 		checkOpenGLError("Framebuffer::addRenderTarget -> glFramebufferTexture(..., GL_COLOR_ATTACHMENT0 " + name());
 	}
 	else
 	{
 		if (rt->target() == GL_TEXTURE_2D)
 		{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _numTargets, GL_TEXTURE_2D, rt->glID(), 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, renderbufferTargets[_numTargets], GL_TEXTURE_2D, rt->glID(), 0);
 			checkOpenGLError("Framebuffer::addRenderTarget -> glFramebufferTexture(..., GL_COLOR_ATTACHMENT0 " + name());
 		}
 		else if (rt->target() == GL_TEXTURE_CUBE_MAP)
 		{
 			for (size_t i = 0; i < 6; ++i)
 			{
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + _numTargets, 
+				glFramebufferTexture2D(GL_FRAMEBUFFER, renderbufferTargets[_numTargets], 
 					GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, rt->glID(), 0);
 			}
 			checkOpenGLError("Framebuffer::addRenderTarget -> glFramebufferTexture(..., GL_COLOR_ATTACHMENT0 " + name());
@@ -227,6 +227,7 @@ void FramebufferData::addSameRendertarget()
 
 bool FramebufferData::setCurrentRenderTarget(const Texture& texture)
 {
+	assert(texture.valid());
 	_rc->renderState().bindFramebuffer(_id);
 
 	if (openGLCapabilites().version() == OpenGLVersion_New)
@@ -240,6 +241,7 @@ bool FramebufferData::setCurrentRenderTarget(const Texture& texture)
 
 bool FramebufferData::setCurrentRenderTarget(const Texture& texture, GLenum target)
 {
+	assert(texture.valid());
 	_rc->renderState().bindFramebuffer(_id);
 
 	if (openGLCapabilites().version() == OpenGLVersion_New)
@@ -370,53 +372,49 @@ std::string FramebufferStatusToString(GLenum status)
 	}
 }
 
-const GLenum renderbufferTargets[FramebufferData::MaxRenderTargets] = 
+const GLenum renderbufferTargets[FramebufferData::MaxRenderTargets] =
 {
-#if defined(GL_COLOR_ATTACHMENT0)
 	GL_COLOR_ATTACHMENT0,
-#else
-	0,
-#endif
 	
 #if defined(GL_COLOR_ATTACHMENT1)
 	GL_COLOR_ATTACHMENT1,
 #else
-	0,
+	GL_COLOR_ATTACHMENT0,
 #endif
 	
 #if defined(GL_COLOR_ATTACHMENT2)
 	GL_COLOR_ATTACHMENT2,
 #else
-	0,
+	GL_COLOR_ATTACHMENT0,
 #endif
 	
 #if defined(GL_COLOR_ATTACHMENT3)
 	GL_COLOR_ATTACHMENT3,
 #else
-	0,
+	GL_COLOR_ATTACHMENT0,
 #endif
 	
 #if defined(GL_COLOR_ATTACHMENT4)
 	GL_COLOR_ATTACHMENT4,
 #else
-	0,
+	GL_COLOR_ATTACHMENT0,
 #endif
 	
 #if defined(GL_COLOR_ATTACHMENT5)
 	GL_COLOR_ATTACHMENT5,
 #else
-	0,
+	GL_COLOR_ATTACHMENT0,
 #endif
 	
 #if defined(GL_COLOR_ATTACHMENT6)
 	GL_COLOR_ATTACHMENT6,
 #else
-	0,
+	GL_COLOR_ATTACHMENT0,
 #endif
 	
 #if defined(GL_COLOR_ATTACHMENT7)
 	GL_COLOR_ATTACHMENT7,
 #else
-	0,
+	GL_COLOR_ATTACHMENT0,
 #endif
 };
