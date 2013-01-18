@@ -227,7 +227,7 @@ bool et::intersect::rayTriangles(const ray& r, const triangle* triangles, const 
 	return false;
 }
 
-bool et::intersect::segmentPlane(const segment& s, const plane& p, vec3* intersection_pt)
+bool et::intersect::segmentPlane(const segment3d& s, const plane& p, vec3* intersection_pt)
 {
 	vec3 ds = s.end - s.start;
 	float d = dot(ds, p.normal());
@@ -242,7 +242,7 @@ bool et::intersect::segmentPlane(const segment& s, const plane& p, vec3* interse
 	return true;
 }
 
-bool et::intersect::segmentTriangle(const segment& s, const triangle& t, vec3* intersection_pt)
+bool et::intersect::segmentTriangle(const segment3d& s, const triangle& t, vec3* intersection_pt)
 {
 	vec3 ip;
 	if (!segmentPlane(s, plane(t), &ip)) return false;
@@ -426,7 +426,7 @@ bool et::intersect::sphereTriangle(const vec3& sphereCenter, const float radius,
 	float distanceSqr = contactToCentre.dotSelf();
 	if (distanceSqr > radiusSqr) return false;
 
-	if (distanceSqr > 0.00001f)
+	if (distanceSqr > std::numeric_limits<float>::epsilon())
 	{
 		normal = contactToCentre.normalize();
 		penetration = radius - sqrtf(distanceSqr);

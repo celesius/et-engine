@@ -316,7 +316,7 @@ void Gui::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor d
 	oldLayout->layoutDoesntNeedKeyboard.disconnect(this);
 	oldLayout->layoutRequiresKeyboard.disconnect(this);
 
-	if ((desc.flags == AnimationFlag_None) || (fabsf(desc.duration) < 0.001f))
+	if ((desc.flags == AnimationFlag_None) || (fabsf(desc.duration) < std::numeric_limits<float>::epsilon()))
 	{
 		oldLayout->didDisappear();
 		removeLayoutFromList(oldLayout);
@@ -349,7 +349,8 @@ void Gui::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntryObject* n
 	newLayout->layoutRequiresKeyboard.connect(this, &Gui::onKeyboardNeeded);
 	newLayout->layoutDoesntNeedKeyboard.connect(this, &Gui::onKeyboardResigned);
 
-	if ((animationFlags == AnimationFlag_None) || (fabsf(duration) < 0.001f))
+	bool smallDuration = std::abs(duration) < std::numeric_limits<float>::epsilon();
+	if ((animationFlags == AnimationFlag_None) || smallDuration)
 	{
 		newLayout->didAppear();
 		layoutDidAppear.invoke(newLayout);

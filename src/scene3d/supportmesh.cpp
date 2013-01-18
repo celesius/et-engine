@@ -67,7 +67,7 @@ void SupportMesh::fillCollisionData(VertexArray::Pointer v, IndexArray::Pointer 
 		++index;
 	}
 
-	_size = maxv(0.5f * (maxOffset - minOffset), vec3(0.0001f));
+	_size = maxv(0.5f * (maxOffset - minOffset), vec3(std::numeric_limits<float>::epsilon()));
 	_center = 0.5f * (maxOffset + minOffset);
 	_radius = distance;
 }

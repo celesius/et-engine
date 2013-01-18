@@ -15,7 +15,8 @@
 #include <et/geometry/ray.h>
 #include <et/geometry/triangle.h>
 #include <et/geometry/rect.h>
-#include <et/geometry/segment.h>
+#include <et/geometry/segment2d.h>
+#include <et/geometry/segment3d.h>
 #include <et/geometry/plane.h>
 #include <et/geometry/quaternion.h>
 #include <et/geometry/parallelepiped.h>
@@ -41,9 +42,11 @@ namespace et
 	typedef Rect<int> recti;
 	typedef Parallelepiped<float> parallelepiped;
 	typedef Ray<float> ray;
-	typedef Segment<float> segment;
+	typedef Segment2d<float> segment2d;
+	typedef Segment3d<float> segment3d;
 	typedef Triangle<float> triangle;
 	typedef Plane<float> plane;
+	typedef Line2d<float> line2d;
 
 	extern const vec3 unitX;
 	extern const vec3 unitY;
@@ -447,20 +450,17 @@ namespace et
 		return result;
 	}
 
-	
 	quaternion matrixToQuaternion(const mat3& m);
-	
-	void decomposeMatrix(mat4 mat, vec3& translation, quaternion& rotation, vec3& scale);
-	
 	vec3 removeMatrixScale(mat3& m);
 	vec3 removeMatrixScale(mat4& m);
 	vec3 removeMatrixScaleRowMajor(mat3& mat);
-
+	void decomposeMatrix(mat4 mat, vec3& translation, quaternion& rotation, vec3& scale);
+	
 	vec3 randVector(float sx = 1.0f, float sy = 1.0f, float sz = 1.0f);
 	
 	float randf(float low = -1.0f, float up = 1.0f);
 	float sign(float s);
-	float sign_nz(float s);
+	float signNoZero(float s);
 	
 	vec3ub vec3fto3ubscaled(const vec3 &fv);
 	vec3ub vec3fto3ublinear(const vec3& fv);
@@ -472,4 +472,6 @@ namespace et
 	
 	template <typename T>
 	vector2<T> bezierCurve(const std::vector< vector2<T> >& points, T time);
+	
+	vec3 circleFromPoints(const vec2& p1, const vec2& p2, const vec2& p3);
 }

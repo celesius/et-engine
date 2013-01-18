@@ -42,8 +42,8 @@ namespace et
 		bool raySphere(const ray& r, const Sphere& s, vec3* intersection_pt);
 		bool rayPlane(const ray& r, const plane& p, vec3* intersection_pt);
 
-		bool segmentPlane(const segment& s, const plane& p, vec3* intersection_pt);
-		bool segmentTriangle(const segment& s, const triangle& t, vec3* intersection_pt);
+		bool segmentPlane(const segment3d& s, const plane& p, vec3* intersection_pt);
+		bool segmentTriangle(const segment3d& s, const triangle& t, vec3* intersection_pt);
 
 		bool triangleTriangle(const triangle& t1, const triangle& t2);
 
