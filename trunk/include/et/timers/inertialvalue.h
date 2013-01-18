@@ -18,10 +18,12 @@ namespace et
 	{
 	public:
 		InertialValue() : 
-			_velocity(0), _value(0), _deccelerationRate(1.0f), _time(0.0f), _precision(0.00001f) { }
+			_velocity(0), _value(0), _deccelerationRate(1.0f), _time(0.0f),
+			_precision(std::numeric_limits<float>::epsilon()) { }
 
 		InertialValue(const T& val) :
-			_velocity(0), _value(val), _deccelerationRate(1.0f), _time(0.0f), _precision(0.00001f) { }
+			_velocity(0), _value(val), _deccelerationRate(1.0f), _time(0.0f),
+			_precision(std::numeric_limits<float>::epsilon()) { }
 
 		const T& velocity() const
 			{ return _velocity; }

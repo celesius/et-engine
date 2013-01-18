@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <limits>
 #include <assert.h>
 #include <string.h>
 #include <stddef.h>

@@ -31,10 +31,10 @@ const mat4 et::lightProjectionMatrix(vec4(0.5f, 0.0f, 0.0f, 0.0f),
 
 float et::sign(float s)
 {
-	return (s == 0.0f) ? 0.0f : s / fabs(s);
+	return (s == 0.0f) ? 0.0f : s / std::abs(s);
 }
 
-float et::sign_nz(float s)
+float et::signNoZero(float s)
 {
 	return (s < 0.0f) ? -1.0f : 1.0f; 
 }
@@ -64,27 +64,27 @@ quaternion et::matrixToQuaternion(const mat3& r)
 	q3 = (q3 < 0.0f) ? 0.0f : sqrt(q3);
 	if ((q0 >= q1) && (q0 >= q2) && (q0 >= q3))
 	{
-		q1 *= sign_nz(r[2][1] - r[1][2]);
-		q2 *= sign_nz(r[0][2] - r[2][0]);
-		q3 *= sign_nz(r[1][0] - r[0][1]);
+		q1 *= signNoZero(r[2][1] - r[1][2]);
+		q2 *= signNoZero(r[0][2] - r[2][0]);
+		q3 *= signNoZero(r[1][0] - r[0][1]);
 	} 
 	else if ((q1 >= q0) && (q1 >= q2) && (q1 >= q3))
 	{
-		q0 *= sign_nz(r[2][1] - r[1][2]);
-		q2 *= sign_nz(r[1][0] + r[0][1]);
-		q3 *= sign_nz(r[0][2] + r[2][0]);
+		q0 *= signNoZero(r[2][1] - r[1][2]);
+		q2 *= signNoZero(r[1][0] + r[0][1]);
+		q3 *= signNoZero(r[0][2] + r[2][0]);
 	} 
 	else if ((q2 >= q0) && (q2 >= q1) && (q2 >= q3))
 	{
-		q0 *= sign_nz(r[0][2] - r[2][0]);
-		q1 *= sign_nz(r[1][0] + r[0][1]);
-		q3 *= sign_nz(r[2][1] + r[1][2]);
+		q0 *= signNoZero(r[0][2] - r[2][0]);
+		q1 *= signNoZero(r[1][0] + r[0][1]);
+		q3 *= signNoZero(r[2][1] + r[1][2]);
 	} 
 	else if ((q3 >= q0) && (q3 >= q1) && (q3 >= q2))
 	{
-		q0 *= sign_nz(r[1][0] - r[0][1]);
-		q1 *= sign_nz(r[2][0] + r[0][2]);
-		q2 *= sign_nz(r[2][1] + r[1][2]);
+		q0 *= signNoZero(r[1][0] - r[0][1]);
+		q1 *= signNoZero(r[2][0] + r[0][2]);
+		q2 *= signNoZero(r[2][1] + r[1][2]);
 	} 
 	else 
 	{
@@ -218,4 +218,15 @@ vector2<float> et::bezierCurve(const std::vector< vector2<float> >& points, floa
 		lastPoints[i] = points[i+1];
 	}
 	return mix( bezierCurve(firstPoints, time), bezierCurve(lastPoints, time), time );
+}
+
+vec3 et::circleFromPoints(const vec2& p1, const vec2& p2, const vec2& p3)
+{
+	vec2 segment21 = p2 - p1;
+	vec2 segment32 = p3 - p2;
+	
+	vec2 midPointS21 = p1 + 0.5f * segment21;
+	vec2 midPointS32 = p2 + 0.5f * segment32;
+	
+	return vec3(midPointS32, 30.0);
 }
