@@ -96,9 +96,12 @@ using namespace et;
 	
 	_rc->renderState().bindDefaultFramebuffer();
 	
+	GLenum depthAttachment = GL_DEPTH_ATTACHMENT;
+	glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, &depthAttachment);
+	
 	glBindRenderbuffer(GL_RENDERBUFFER, _defaultFramebuffer->colorRenderbuffer());
 	checkOpenGLError("glBindRenderbuffer(GL_RENDERBUFFER, " + intToStr(_defaultFramebuffer->colorRenderbuffer())+ ")");
-	
+
 	BOOL done = [_context presentRenderbuffer:GL_RENDERBUFFER];
 	checkOpenGLError("[_context presentRenderbuffer:GL_RENDERBUFFER]");
 	
