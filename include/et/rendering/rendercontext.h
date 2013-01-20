@@ -82,7 +82,8 @@ namespace et
 		void endRender();
 
 		size_t renderingContextHandle();
-		
+
+	public:
 		ET_DECLARE_EVENT1(renderingInfoUpdated, const RenderingInfo&)
 		ET_DECLARE_EVENT1(screenScaleFactorChanged, size_t)
 

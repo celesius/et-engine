@@ -61,7 +61,8 @@ namespace et
 		}
 	}
 
-	void checkOpenGLErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const char* tag)
+	void checkOpenGLErrorEx(const char* caller, const char* sourceFile,
+		const char* lineNumber, const char* tag)
 	{
 		GLenum error = glGetError();
 		if (error != GL_NO_ERROR)
@@ -71,7 +72,8 @@ namespace et
 
 			std::string errorStr = glErrorToString(error);
 
-			size_t outputLength = formatStrLength + strlen(sourceFile) + strlen(lineNumber) + strlen(caller) + strlen(tag);
+			size_t outputLength = formatStrLength + strlen(sourceFile) +
+				strlen(lineNumber) + strlen(caller) + strlen(tag);
 
 			char* buffer = new char[2 * outputLength];
 			etFillMemory(buffer, 0, outputLength);
@@ -81,11 +83,15 @@ namespace et
 			fflush(stdout);
 
 			delete [] buffer;
+
+#			if defined(ET_STOP_ON_OPENGL_ERROR)
+			assert(0 && "Check stdout for details.");
+#			endif
 		}
 	}
 
-	void checkOpenGLErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const std::string& tag)
-		{ checkOpenGLErrorEx(caller, sourceFile, lineNumber, tag.c_str()); }
+	void checkOpenGLErrorEx(const char* caller, const char* sourceFile, const char* lineNumber,
+		const std::string& tag) { checkOpenGLErrorEx(caller, sourceFile, lineNumber, tag.c_str()); }
 
 	size_t primitiveCount(GLenum mode, GLsizei count)
 	{

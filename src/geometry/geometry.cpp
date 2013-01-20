@@ -222,11 +222,5 @@ vector2<float> et::bezierCurve(const std::vector< vector2<float> >& points, floa
 
 vec3 et::circleFromPoints(const vec2& p1, const vec2& p2, const vec2& p3)
 {
-	vec2 segment21 = p2 - p1;
-	vec2 segment32 = p3 - p2;
-	
-	vec2 midPointS21 = p1 + 0.5f * segment21;
-	vec2 midPointS32 = p2 + 0.5f * segment32;
-	
-	return vec3(midPointS32, 30.0);
+	return vec3(0.0f);
 }
