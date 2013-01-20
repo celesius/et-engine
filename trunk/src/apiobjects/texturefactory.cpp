@@ -86,8 +86,21 @@ Texture TextureFactory::genTexture(GLenum target, GLint internalformat, const ve
 	desc->size = size;
 	desc->mipMapCount = 1;
 	desc->layersCount = 1;
-    // TODO: fix to actual values
-    desc->bitsPerPixel = format == GL_RGBA ? 32 : 24;
+	
+	if (format == GL_RGBA)
+		desc->bitsPerPixel = 32;
+	else if (format == GL_RGB)
+		desc->bitsPerPixel = 24;
+	else if (format == GL_DEPTH_COMPONENT)
+		desc->bitsPerPixel = 16;
+	else
+	{
+		assert(0 && "Unsupported format for TextureFactory::genTexture method.");
+	}
+
+	// not sure if we should initialize texture with empty data
+	// desc->data = BinaryDataStorage(desc->size.square() * desc->bitsPerPixel / 8);
+
 	return Texture(new TextureData(renderContext(), desc, id, false));
 }
 
