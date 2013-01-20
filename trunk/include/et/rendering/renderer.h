@@ -8,6 +8,8 @@
 #pragma once
 
 #include <et/core/autoptr.h>
+#include <et/core/properties.h>
+
 #include <et/rendering/renderstate.h>
 #include <et/apiobjects/vertexarrayobject.h>
 #include <et/apiobjects/texture.h>
@@ -37,6 +39,8 @@ namespace et
 
 		vec2 windowCoordinatesToScene(const vec2i& coord);
 		vec2 windowSizeToScene(const vec2i& size);
+
+		ET_DECLARE_PROPERTY(size_t, defaultTextureBindingUnit, setDefaultTextureBindingUnit)
 
 	private:
 		Renderer& operator = (const Renderer&) 

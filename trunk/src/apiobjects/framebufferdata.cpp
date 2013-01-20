@@ -255,7 +255,10 @@ bool FramebufferData::setCurrentRenderTarget(const Texture& texture, GLenum targ
 
 bool FramebufferData::setCurrentRenderTarget(size_t index)
 {
-	return (index < _numTargets) ? setCurrentRenderTarget(_renderTargets[index]) : false;
+	assert(index < _numTargets);
+	assert(_renderTargets[index].valid());
+
+	return setCurrentRenderTarget(_renderTargets[index]);
 }
 
 void FramebufferData::setDrawBuffersCount(int count)
