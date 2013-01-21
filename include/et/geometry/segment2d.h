@@ -52,7 +52,7 @@ namespace et
 			vector2<T> i;
 			if (line().intersects(s.line(), &i))
 			{
-				if (containsPoint(i))
+				if (containsPoint(i) && s.containsPoint(i))
 				{
 					if (point)
 						*point = i;
