@@ -98,6 +98,8 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 					_capturedElement = active;
 					_dragging = true;
 					_dragInitialPosition = active->position();
+					_dragInitialOffset = active->positionInElement(p.pos);
+					
 					_capturedElement->dragStarted.invoke(_capturedElement,
 						ElementDragInfo(_dragInitialPosition, _dragInitialPosition, p.normalizedPos));
 
@@ -127,12 +129,14 @@ bool Layout::pointerMoved(const et::PointerInputInfo& p)
 		if (!input().canGetCurrentPointerInfo() && (p.type == PointerType_General) && _dragging)
 		{
 			vec2 currentPos = _capturedElement->parent()->positionInElement(p.pos);
-			_capturedElement->setPosition(currentPos);
-			_capturedElement->dragged.invoke(_capturedElement, ElementDragInfo(currentPos, _dragInitialPosition, p.normalizedPos));
+			
+			_capturedElement->setPosition(currentPos - _dragInitialOffset);
+			_capturedElement->dragged.invoke(_capturedElement,
+				ElementDragInfo(currentPos, _dragInitialPosition, p.normalizedPos));
 		}
 
-		_capturedElement->pointerMoved(PointerInputInfo(p.type, _capturedElement->positionInElement(p.pos), 
-			p.normalizedPos, p.scroll, p.id, p.timestamp));
+		_capturedElement->pointerMoved(PointerInputInfo(p.type,
+			_capturedElement->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp));
 
 		return true;
 	}
@@ -247,21 +251,22 @@ Element* Layout::activeElement(const PointerInputInfo& p)
 	return active;
 }
 
-Element* Layout::getActiveElement(const PointerInputInfo& p, Element* e)
+Element* Layout::getActiveElement(const PointerInputInfo& p, Element* el)
 {
-	if (!e->visible() || !e->enabled() || !e->containsPoint(p.pos, p.normalizedPos)) return 0;
+	if (!el->visible() || !el->enabled() || !el->containsPoint(p.pos, p.normalizedPos))
+		return nullptr;
 	
-	if (e->hasFlag(ElementFlag_HandlesChildEvents))
-		return e;
+	if (el->hasFlag(ElementFlag_HandlesChildEvents))
+		return el;
 
-	for (Element::List::reverse_iterator ei = e->children().rbegin(), ee = e->children().rend(); ei != ee; ++ei)
+	for (auto ei = el->children().rbegin(), ee = el->children().rend(); ei != ee; ++ei)
 	{
 		Element* element = getActiveElement(p, ei->ptr());
 		if (element)
 			return element;
 	}
 
-	return e->hasFlag(ElementFlag_TransparentForPointer) ? 0 : e;
+	return el->hasFlag(ElementFlag_TransparentForPointer) ? nullptr : el;
 }
 
 void Layout::setCurrentElement(const PointerInputInfo& p, Element* e)
@@ -286,7 +291,8 @@ void Layout::update(float)
 		if ((currentPos - _capturedElement->position()).dotSelf() > 0.01f)
 		{
 			_capturedElement->setPosition(0.5f * (currentPos + _capturedElement->position()));
-			_capturedElement->dragged.invoke(_capturedElement, ElementDragInfo(currentPos, _dragInitialPosition, pi.normalizedPos));
+			_capturedElement->dragged.invoke(_capturedElement,
+				ElementDragInfo(currentPos, _dragInitialPosition, pi.normalizedPos));
 		}
 	}
 }
