@@ -107,7 +107,7 @@ namespace et
 		T aspect() const
 			{ return x / y; }
 
-		vector2 normalize()
+		vector2& normalize()
 		{
 			T lenSquare = dotSelf();
 			if (lenSquare > 0)
@@ -116,7 +116,7 @@ namespace et
 				x /= lenSquare;
 				y /= lenSquare;
 			}
-			return this;
+			return *this;
 		}
 	};
 

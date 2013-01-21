@@ -32,11 +32,13 @@ namespace et
 		
 		bool containsPoint(const vector2<T>& pt) const
 		{
+			static const T epsilon = static_cast<T>(0.01);
+			
 			vector2<T> startToEnd = end - start;
 			vector2<T> startToPoint = pt - start;
 			
 			T outerProduct = std::abs(startToEnd.x * startToPoint.y - startToEnd.y * startToPoint.x);
-			if (outerProduct <= std::numeric_limits<T>::epsilon())
+			if (outerProduct <= epsilon)
 			{
 				if (dot(startToEnd, startToPoint) >= 0.0)
 					return dot(start - end, pt - end) >= 0.0;
