@@ -222,5 +222,34 @@ vector2<float> et::bezierCurve(const std::vector< vector2<float> >& points, floa
 
 vec3 et::circleFromPoints(const vec2& p1, const vec2& p2, const vec2& p3)
 {
-	return vec3(0.0f);
+	// determine if some of points are same
+	if (((p1 - p2).dotSelf() < std::numeric_limits<float>::epsilon()) ||
+		((p3 - p2).dotSelf() < std::numeric_limits<float>::epsilon()))
+	{
+		return vec3(0.0f);
+	}
+	
+	// determine is some points on one line
+	vec2 n1 = normalize(vec2(p2.x - p1.x, p2.y - p1.y));
+	vec2 n2 = normalize(vec2(p2.x - p3.x, p2.y - p3.y));
+	
+	if (fabsf(n1.x * n2.y - n2.x * n1.y) < std::numeric_limits<float>::epsilon())
+		return vec3(0.0f);
+	
+	vec2 c1(0.5f * (p1 + p2));
+	n1 = vec2(n1.y, -n1.x);
+	
+	vec2 c2(0.5f * (p3 + p2));
+	n2 = vec2(n2.y, -n2.x);
+	
+	vec3 pl1(n1.y, -n1.x, c1.x * n1.y - c1.y * n1.x);
+	vec3 pl2(n2.y, -n2.x, c2.x * n2.y - c2.y * n2.x);
+	
+	float d = pl1.x * pl2.y - pl2.x * pl1.y;
+	float dx = pl1.z * pl2.y - pl2.z * pl1.y;
+	float dy = pl1.x * pl2.z - pl2.x * pl1.z;
+	
+	vec2 pos(dx / d, dy / d);
+	
+	return vec3(pos.x, pos.y, (pos - p2).length());
 }
