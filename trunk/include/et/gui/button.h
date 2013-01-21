@@ -18,6 +18,7 @@ namespace et
 		{
 		public:
 			typedef IntrusivePtr<Button> Pointer;
+			typedef std::list<Pointer> List;
 
 			enum Type
 			{
@@ -110,7 +111,6 @@ namespace et
 			vec4 _textPressedColor;
 			vec4 _backgroundColor;
 			vec2 _textSize;
-			vec2 _imageSize;
 			vec2 _contentOffset;
 
 			Type _type;

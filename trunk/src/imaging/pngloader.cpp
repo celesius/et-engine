@@ -89,9 +89,10 @@ void PNGLoader::loadFromStream(std::istream& source, TextureDescription& desc)
 
 	desc.data = BinaryDataStorage(desc.size.square() * desc.bitsPerPixel / 8);
 	png_bytepp rowPtrs = new png_bytep[desc.size.y]; 
-
-	for (int i = 0; i < desc.size.y; i++) 
-		rowPtrs[i] = reinterpret_cast<png_bytep>(desc.data.binary()) + (desc.size.y - 1 - i) * rowBytes;   
+	png_bytep ptr0 = desc.data.data();
+	
+	for (int i = 0; i < desc.size.y; i++)
+		rowPtrs[i] = ptr0 + (desc.size.y - 1 - i) * rowBytes;   
 
 	png_read_image(pngPtr, rowPtrs); 
 
