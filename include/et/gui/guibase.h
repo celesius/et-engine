@@ -24,8 +24,10 @@ namespace et
 	{
 		class Element;
 		class Layout;
+		
 		typedef Hierarchy<Element> ElementHierarchy;
-		class Element : public ElementHierarchy, public Flags, public EventReceiver, public TimedObject, public AnimatorDelegate
+		class Element : public ElementHierarchy, public Flags, public EventReceiver,
+			public TimedObject, public AnimatorDelegate
 		{
 		public:
 			typedef IntrusivePtr<Element> Pointer;
@@ -109,8 +111,8 @@ namespace et
 			void sendToBack(Element* c);
 
 			/*
-			* Required Methods
-			*/
+			 * Required Methods
+			 */
 			virtual ElementClass elementClass() const = 0;
 			virtual const vec2& position() const = 0;
 			virtual vec2 origin() const = 0;
@@ -119,8 +121,8 @@ namespace et
 			virtual bool containsPoint(const vec2&, const vec2&) = 0;
 
 			/*
-			* Events
-			*/
+			 * Events
+			 */
 			ET_DECLARE_EVENT2(dragStarted, Element*, const ElementDragInfo&)
 			ET_DECLARE_EVENT2(dragged, Element*, const ElementDragInfo&)
 			ET_DECLARE_EVENT2(dragFinished, Element*, const ElementDragInfo&)

@@ -74,6 +74,7 @@ namespace et
 			Element* _capturedElement;
 			Element::List _topmostElements;
 			vec2 _dragInitialPosition;
+			vec2 _dragInitialOffset;
 			bool _valid;
 			bool _dragging;
 		};

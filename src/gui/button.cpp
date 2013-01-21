@@ -92,7 +92,9 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 
 	if (_image.texture.valid())
 	{
-		vec4 aColor = _state == ElementState_Pressed ? vec4(0.5f, 0.5f, 0.5f, 1.0f) : vec4(1.0f);
+		vec4 aColor = _state == ElementState_Pressed ?
+			color() * vec4(0.5f, 0.5f, 0.5f, 1.0f) : color();
+		
 		if (aColor.w > 0.0f)
 		{
 			gr.createImageVertices(_imageVertices, _image.texture, _image.descriptor, 
