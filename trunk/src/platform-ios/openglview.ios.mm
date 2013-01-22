@@ -200,7 +200,7 @@ using namespace et;
 		PointerInputInfo pt;
 		pt.id = [touch hash];
 		pt.pos = vec2(touchPoint.x, touchPoint.y);
-		pt.scroll = 0;
+		pt.scroll = vec2(0.0f);
 		pt.timestamp = touch.timestamp;
 		pt.type = PointerType_General;
 		
@@ -228,7 +228,7 @@ using namespace et;
 		PointerInputInfo pt;
 		pt.id = [touch hash];
 		pt.pos = vec2(touchPoint.x, touchPoint.y);
-		pt.scroll = 0;
+		pt.scroll = vec2(0.0f);
 		pt.timestamp = touch.timestamp;
 		pt.type = PointerType_General;
 		
@@ -256,7 +256,7 @@ using namespace et;
 		PointerInputInfo pt;
 		pt.id = [touch hash];
 		pt.pos = vec2(touchPoint.x, touchPoint.y);
-		pt.scroll = 0;
+		pt.scroll = vec2(0.0f);
 		pt.timestamp = touch.timestamp;
 		pt.type = PointerType_General;
 		
@@ -284,7 +284,7 @@ using namespace et;
 		PointerInputInfo pt;
 		pt.id = [touch hash];
 		pt.pos = vec2(touchPoint.x, touchPoint.y);
-		pt.scroll = 0;
+		pt.scroll = vec2(0.0f);
 		pt.timestamp = touch.timestamp;
 		pt.type = PointerType_General;
 		
