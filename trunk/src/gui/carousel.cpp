@@ -443,7 +443,9 @@ void Carousel::pointerLeaved(const PointerInputInfo&)
 
 bool Carousel::containsPoint(const vec2& p, const vec2& np)
 {
-	CarouselItem::Pointer item = itemForInputInfo(PointerInputInfo(PointerType_General, p, np, 0, 0, 0.0f), 0);
+	CarouselItem::Pointer item =
+		itemForInputInfo(PointerInputInfo(PointerType_General, p, np, vec2(0.0f), 0, 0.0f), 0);
+	
 	return (_alpha > 0.0f) && (_dragOnlyItems ? item.valid() : true);
 }
 

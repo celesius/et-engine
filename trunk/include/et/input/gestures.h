@@ -19,13 +19,13 @@ namespace et
 		GesturesRecognizer(bool automaticMode = true);
 
 	public:
-		ET_DECLARE_PROPERTY(float, scrollZoomScale, setScrollZoomScale)
 		ET_DECLARE_PROPERTY(float, clickThreshold, setClickThreshold)
 		ET_DECLARE_PROPERTY(float, doubleClickThreshold, setDoubleClickThreshold)
 		ET_DECLARE_PROPERTY(float, holdThreshold, setHoldThreshold)
 
 	public:
 		ET_DECLARE_EVENT1(zoom, float)
+		ET_DECLARE_EVENT1(scroll, vec2)
 
 		ET_DECLARE_EVENT2(pressed, vec2, PointerType)
 		ET_DECLARE_EVENT2(drag, vec2, PointerType)
@@ -37,17 +37,19 @@ namespace et
 		ET_DECLARE_EVENT0(hold)
 		ET_DECLARE_EVENT0(cancelled)
 
-		ET_DECLARE_EVENT1(pointerPressed, et::PointerInputInfo);
-		ET_DECLARE_EVENT1(pointerMoved, et::PointerInputInfo);
-		ET_DECLARE_EVENT1(pointerReleased, et::PointerInputInfo);
-		ET_DECLARE_EVENT1(pointerCancelled, et::PointerInputInfo);
+		ET_DECLARE_EVENT1(pointerPressed, PointerInputInfo);
+		ET_DECLARE_EVENT1(pointerMoved, PointerInputInfo);
+		ET_DECLARE_EVENT1(pointerReleased, PointerInputInfo);
+		ET_DECLARE_EVENT1(pointerCancelled, PointerInputInfo);
 
 	public:
-		void onPointerPressed(et::PointerInputInfo);
-		void onPointerMoved(et::PointerInputInfo);
-		void onPointerReleased(et::PointerInputInfo);
-        void onPointerCancelled(et::PointerInputInfo);
-		void onPointerScrolled(et::PointerInputInfo);
+		void onPointerPressed(PointerInputInfo);
+		void onPointerMoved(PointerInputInfo);
+		void onPointerReleased(PointerInputInfo);
+        void onPointerCancelled(PointerInputInfo);
+		void onPointerScrolled(PointerInputInfo);
+
+		void onGesturePerformed(GestureInputInfo);
 
 	private:
 		void update(float);

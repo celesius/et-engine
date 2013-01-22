@@ -11,8 +11,9 @@
 using namespace et;
 
 GesturesRecognizer::GesturesRecognizer(bool automaticMode) : InputHandler(automaticMode),
-	_scrollZoomScale(0.1f), _clickThreshold(0.2f), _doubleClickThreshold(0.25f), _holdThreshold(1.0f), _singlePointerType(0),
-	_actualTime(0.0f), _clickStartTime(0.0f), _expectClick(false), _expectDoubleClick(false), _clickTimeoutActive(false)
+	_clickThreshold(0.2f), _doubleClickThreshold(0.25f), _holdThreshold(1.0f),
+	_singlePointerType(0), _actualTime(0.0f), _clickStartTime(0.0f), _expectClick(false),
+	_expectDoubleClick(false), _clickTimeoutActive(false)
 {
 }
 
@@ -22,11 +23,13 @@ void GesturesRecognizer::handlePointersMovement()
     {
         vec2 currentPositions[2];
         vec2 previousPositions[2];
+		
         size_t index = 0;
-        for (PointersInputDeltaMap::iterator i = _pointers.begin(), e = _pointers.end(); i != e; ++i, ++index)
+        for (auto i : _pointers)
         {
-            currentPositions[index] = i->second.current.normalizedPos;
-            previousPositions[index] = i->second.previous.normalizedPos;
+            currentPositions[index] = i.second.current.normalizedPos;
+            previousPositions[index] = i.second.previous.normalizedPos;
+			++index;
         }
         
         float currentDistance = (currentPositions[0] - currentPositions[1]).length();
@@ -83,7 +86,8 @@ void GesturesRecognizer::onPointerMoved(et::PointerInputInfo pi)
 		const PointerInputInfo& pCurr = _pointers[pi.id].current; 
 
 		moved.invoke(pi.normalizedPos, pi.type);
-		drag.invoke((pCurr.normalizedPos - pPrev.normalizedPos) / etMax(0.01f, pCurr.timestamp - pPrev.timestamp), pi.type);
+		drag.invoke((pCurr.normalizedPos - pPrev.normalizedPos) /
+			etMax(0.01f, pCurr.timestamp - pPrev.timestamp), pi.type);
 	}
 	else
 	{
@@ -113,7 +117,7 @@ void GesturesRecognizer::onPointerCancelled(et::PointerInputInfo pi)
 
 void GesturesRecognizer::onPointerScrolled(et::PointerInputInfo i)
 {
-	zoom.invoke(1.0f + static_cast<float>(i.scroll) * _scrollZoomScale);
+	scroll.invoke(i.scroll);
 }
 
 void GesturesRecognizer::update(float t)
@@ -153,4 +157,13 @@ void GesturesRecognizer::cancelWaitingForClicks()
 	_expectClick = false;
 	_expectDoubleClick = false;
 	cancelUpdates();
+}
+
+void GesturesRecognizer::onGesturePerformed(GestureInputInfo i)
+{
+	if ((i.mask & GestureTypeMask_Zoom) == GestureTypeMask_Zoom)
+		zoom.invoke(1.0 - i.values.z);
+
+	if ((i.mask & GestureTypeMask_Swipe) == GestureTypeMask_Swipe)
+		drag.invoke(i.values.xy(), PointerType_None);
 }
