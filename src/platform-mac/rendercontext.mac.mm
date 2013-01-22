@@ -202,7 +202,6 @@ RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContex
 
 RenderContextPrivate::~RenderContextPrivate()
 {
-	[_mainWindow release];
 	[_openGlView release];
 	[_openGlContext release];
 	[_windowDelegate release];

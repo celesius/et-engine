@@ -61,7 +61,7 @@ void internal_func_writePNGtoBuffer(png_structp png_ptr, png_bytep data, png_siz
 	BinaryDataStorage* buffer = reinterpret_cast<BinaryDataStorage*>(png_get_io_ptr(png_ptr));
 
 	buffer->fitToSize(length);
-	memcpy(buffer->current_ptr(), data, length);
+	etCopyMemory(buffer->current_ptr(), data, length);
 	buffer->applyOffset(length);
 }
 

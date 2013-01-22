@@ -193,7 +193,7 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 	default: 
 		{
 			char fourcc_str[5] = { };
-			memcpy(fourcc_str, &header.ddspf.dwFourCC, 4);
+			etCopyMemory(fourcc_str, &header.ddspf.dwFourCC, 4);
 			std::cout << "Unsupported FOURCC: " << header.ddspf.dwFourCC << ", text: " << fourcc_str << std::endl;
 			return;
 		}

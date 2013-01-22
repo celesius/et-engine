@@ -142,4 +142,9 @@ void Application::platformDeactivate()
 	_notifier.notifyDeactivated();
 }
 
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
+{
+	return YES;
+}
+
 @end
