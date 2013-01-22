@@ -18,16 +18,18 @@ void OpenGLCapabilites::checkCaps()
 	_glslVersion = std::string();
 	_openGlVersion = std::string(glv ? glv : "<Unknown OpenGL version>");
 	_glslVersionString = std::string(glslv ? glslv : "<Unknown GLSL version>");
-	
-	const char* ptr = glslv;
-	do
+
+	if (glslv != nullptr)
 	{
-		if (_glslVersion.size() && (*ptr == ET_SPACE)) break;
-		
-		if ((*ptr >= '0') && (*ptr <= '9'))
-			_glslVersion.push_back(*ptr);
+		do
+		{
+			if ((_glslVersion.size() > 0) && (*glslv == ET_SPACE)) break;
+
+			if ((*glslv >= '0') && (*glslv <= '9'))
+				_glslVersion.push_back(*glslv);
+		}
+		while (*glslv++);
 	}
-	while (*ptr++);
 	
 	_version = strToInt(_glslVersion) < 130 ? OpenGLVersion_Old : OpenGLVersion_New;
 	
@@ -37,11 +39,16 @@ void OpenGLCapabilites::checkCaps()
 #if (ET_OPENGLES)
 	_drawelements_basevertex = false;
 #else
-	_drawelements_basevertex = glDrawElementsBaseVertex != 0;
+	_drawelements_basevertex = glDrawElementsBaseVertex != nullptr;
 #endif
 	
-	_mipmap_generation = glGenerateMipmap != 0;
-	_vertex_attrib_arrays = glVertexAttribPointer != 0;
-	_vertex_buffers = (glGenBuffers != 0) && (glBindBuffer != 0) && (glBufferData != 0);
-	_shaders = (glShaderSource != 0) && (glCreateProgram != 0) && (glCompileShader != 0) && (glLinkProgram != 0);
+	_mipmap_generation = glGenerateMipmap != nullptr;
+	
+	_vertex_attrib_arrays = glVertexAttribPointer != nullptr;
+
+	_vertex_buffers = (glGenBuffers != nullptr) && (glBindBuffer != nullptr) &&
+		(glBufferData != nullptr);
+
+	_shaders = (glShaderSource != nullptr) && (glCreateProgram != nullptr) &&
+		(glCompileShader != nullptr) && (glLinkProgram != nullptr);
 };
