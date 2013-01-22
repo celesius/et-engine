@@ -155,7 +155,7 @@ size_t GuiRenderer::addVertices(const GuiVertexList& vertices, const Texture& te
 	{
 		current = _renderingElement->_vertexList.offset();
 		GuiVertex* v0 = allocateVertices(count, texture, cls, layer);
-		memcpy(v0, vertices.data(), count * vertices.typeSize());
+		etCopyMemory(v0, vertices.data(), count * vertices.typeSize());
 	}
 
 	return current;
