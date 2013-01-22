@@ -44,7 +44,7 @@ namespace et
 		float timestamp;
 		vec2 pos;
 		vec2 normalizedPos;
-		short scroll;
+		vec2 scroll;
 		PointerType type;
 		char tag;
 
@@ -55,24 +55,56 @@ namespace et
 			id(p.id), timestamp(p.timestamp), pos(p.pos), normalizedPos(p.normalizedPos), scroll(p.scroll), 
 			type(p.type), tag(p.tag) { }
 
+		PointerInputInfo(PointerInputInfo&& r) : id(r.id), timestamp(r.timestamp), pos(r.pos),
+			normalizedPos(r.normalizedPos), scroll(r.scroll), type(r.type), tag(r.tag) { }
+		
+		PointerInputInfo(PointerType t, const vec2& p, const vec2& np, const vec2& aScroll,
+			long aId, float time) : id(aId), timestamp(time), pos(p), normalizedPos(np),
+			scroll(aScroll), type(t), tag(0) { }
+
 		PointerInputInfo& operator = (const PointerInputInfo& p)
 		{
 			id = p.id;
 			timestamp = p.timestamp;
 			pos = p.pos;
 			normalizedPos = p.normalizedPos;
-			scroll = p.scroll; 
+			scroll = p.scroll;
 			type = p.type;
 			tag = p.tag;
 			return *this;
 		}
-		
-		PointerInputInfo(PointerInputInfo&& r) : id(r.id), timestamp(r.timestamp), pos(r.pos),
-			normalizedPos(r.normalizedPos), scroll(r.scroll), type(r.type), tag(r.tag) { }
-		
-		PointerInputInfo(PointerType t, const vec2& p, const vec2& np, short aScroll, long aId, float time) : 
-			id(aId), timestamp(time), pos(p), normalizedPos(np), scroll(aScroll), type(t), tag(0) { }
+	};
 
+	enum GestureTypeMask
+	{
+		GestureTypeMask_Zoom = 0x01,
+		GestureTypeMask_Rotate = 0x02,
+		GestureTypeMask_Swipe = 0x04
+	};
+
+	struct GestureInputInfo
+	{
+		/*
+		 * x, y - swipe
+		 * z - zoom
+		 * w - rotation
+		 */
+		vec4 values;
+		size_t mask;
+
+		GestureInputInfo() :
+			values(0.0f), mask(0) { }
+
+		GestureInputInfo(size_t m, float v) : mask(m)
+		{
+			if ((m & GestureTypeMask_Zoom) == GestureTypeMask_Zoom)
+				values.z = v;
+			else if ((m & GestureTypeMask_Rotate) == GestureTypeMask_Rotate)
+				values.w = v;
+		}
+
+		GestureInputInfo(size_t m, float x, float y) :
+			values(x, y, 0.0f, 0.0f), mask(m) { }
 	};
 
 	class Input : public Singleton<Input>
@@ -100,6 +132,8 @@ namespace et
 		ET_DECLARE_EVENT1(pointerCancelled, PointerInputInfo)
 		ET_DECLARE_EVENT1(pointerScrolled, PointerInputInfo)
 
+		ET_DECLARE_EVENT1(gesturePerformed, GestureInputInfo)
+
 	private:
 		Input();
 		ET_SINGLETON_COPY_DENY(Input)
@@ -109,6 +143,7 @@ namespace et
 
 		void pushKeyboardInputAction(unsigned char key, InputAction action);
 		void pushPointerInputAction(const PointerInputInfo& info, InputAction action);
+		void pushGestureInputAction(const GestureInputInfo&);
 
 		void addPointerInfo(const PointerInputInfo& info);
 		void updatePointerInfo(const PointerInputInfo& info);
@@ -117,7 +152,7 @@ namespace et
 	private:
 		typedef std::vector<PointerInputInfo> PointerInputInfoList;
 
-		StaticDataStorage<bool, 256> _keys;
+		StaticDataStorage<size_t, 256> _keys;
 		PointerInputInfoList _pointers;
 	};
 
@@ -137,20 +172,23 @@ namespace et
 	class Input::PointerInputSource 
 	{
 	public:
-		virtual void pointerPressed(const PointerInputInfo& info)
+		void pointerPressed(const PointerInputInfo& info)
 			{ Input::instance().pushPointerInputAction(info, InputAction_PointerPressed); }
 
-		virtual void pointerMoved(const PointerInputInfo& info)
+		void pointerMoved(const PointerInputInfo& info)
 			{ Input::instance().pushPointerInputAction(info, InputAction_PointerMoved); }
 
-		virtual void pointerReleased(const PointerInputInfo& info)
+		void pointerReleased(const PointerInputInfo& info)
 			{ Input::instance().pushPointerInputAction(info, InputAction_PointerReleased); }
 
-		virtual void pointerCancelled(const PointerInputInfo& info)
+		void pointerCancelled(const PointerInputInfo& info)
             { Input::instance().pushPointerInputAction(info, InputAction_PointerCancelled); }
         
-		virtual void pointerScrolled(const PointerInputInfo& info)
+		void pointerScrolled(const PointerInputInfo& info)
 			{ Input::instance().pushPointerInputAction(info, InputAction_PointerScrolled); }
+
+		void gesturePerformed(const GestureInputInfo& info)
+			{ Input::instance().pushGestureInputAction(info); }
 	};
 
 	class InputHandler : virtual public EventReceiver
@@ -167,10 +205,16 @@ namespace et
 		virtual void onPointerReleased(et::PointerInputInfo) { }
 		virtual void onPointerCancelled(et::PointerInputInfo) { }
 		virtual void onPointerScrolled(et::PointerInputInfo) { }
+		
 		virtual void onKeyPressed(unsigned char) { }
 		virtual void onCharEnterer(unsigned char) { }
 		virtual void onKeyReleased(unsigned char) { }
+
+		virtual void onGesturePerformed(et::GestureInputInfo) { }
 	};
 
-	inline Input& input() { return Input::instance(); }
+	inline Input& input()
+		{ return Input::instance(); }
+
+	std::ostream& operator << (std::ostream&, const PointerInputInfo&);
 }

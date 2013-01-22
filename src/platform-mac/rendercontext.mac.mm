@@ -254,7 +254,7 @@ void RenderContextPrivate::displayLinkSynchronized()
 	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
 	vec2 np(2.0f * p.x / ownFrame.size.width - 1.0f, 1.0f - 2.0f * p.y / ownFrame.size.height);
 	
-	return PointerInputInfo(type, p, np, 0, [theEvent eventNumber], [theEvent timestamp]);
+	return PointerInputInfo(type, p, np, vec2(0.0f), [theEvent eventNumber], [theEvent timestamp]);
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
@@ -296,13 +296,40 @@ void RenderContextPrivate::displayLinkSynchronized()
 - (void)scrollWheel:(NSEvent *)theEvent
 {
 	NSRect ownFrame = self.frame;
-	
 	NSPoint nativePoint = [theEvent locationInWindow];
+
 	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
 	vec2 np(2.0f * p.x / ownFrame.size.width - 1.0f, 1.0f - 2.0f * p.y / ownFrame.size.height);
+	vec2 scroll([theEvent deltaX] / ownFrame.size.width, [theEvent deltaY] / ownFrame.size.height);
 	
 	pointerInputSource.pointerScrolled(PointerInputInfo(PointerType_General, p, np,
-		[theEvent deltaY], [theEvent hash], [theEvent timestamp]));
+		scroll, [theEvent hash], [theEvent timestamp]));
+}
+
+- (void)beginGestureWithEvent:(NSEvent *)event
+{
+}
+
+- (void)magnifyWithEvent:(NSEvent *)event
+{
+	pointerInputSource.gesturePerformed(
+		GestureInputInfo(GestureTypeMask_Zoom, event.magnification));
+}
+
+- (void)swipeWithEvent:(NSEvent *)event
+{
+	pointerInputSource.gesturePerformed(
+		GestureInputInfo(GestureTypeMask_Swipe, event.deltaX, event.deltaY));
+}
+
+- (void)rotateWithEvent:(NSEvent *)event
+{
+	pointerInputSource.gesturePerformed(
+		GestureInputInfo(GestureTypeMask_Rotate, event.rotation));
+}
+
+- (void)endGestureWithEvent:(NSEvent *)event
+{
 }
 
 @end

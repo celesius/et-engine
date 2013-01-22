@@ -9,21 +9,20 @@
 
 using namespace et;
 
-Input::Input()
+Input::Input() : _keys(0)
 {
-	_keys.fill(0);
 }
 
 void Input::pushKeyboardInputAction(unsigned char key, InputAction action)
 {
 	if (action == InputAction_KeyDown)
 	{
-		_keys[key] = true;
+		_keys[key] = 1;
 		keyPressed.invokeInMainRunLoop(key);
 	} 
 	else if (action == InputAction_KeyUp)
 	{
-		_keys[key] = false;
+		_keys[key] = 0;
 		keyReleased.invokeInMainRunLoop(key);
 	}
 	else if (action == InputAction_Char)
@@ -76,7 +75,7 @@ void Input::pushPointerInputAction(const PointerInputInfo& info, InputAction act
 
 bool Input::isPointerPressed(PointerType type) const
 {
-	for (PointerInputInfoList::const_iterator i = _pointers.begin(), e = _pointers.end(); i != e; ++i)
+	for (auto i = _pointers.begin(), e = _pointers.end(); i != e; ++i)
 	{
 		if (i->type == type)
 			return true;
@@ -92,7 +91,7 @@ void Input::addPointerInfo(const PointerInputInfo& info)
 
 void Input::updatePointerInfo(const PointerInputInfo& info)
 {
-	for (PointerInputInfoList::iterator i = _pointers.begin(), e = _pointers.end(); i != e; ++i)
+	for (auto i = _pointers.begin(), e = _pointers.end(); i != e; ++i)
 	{
 		if ((i->id == info.id) && (i->type == info.type))
 		{
@@ -104,7 +103,7 @@ void Input::updatePointerInfo(const PointerInputInfo& info)
 
 void Input::removePointerInfo(const PointerInputInfo& info)
 {
-	for (PointerInputInfoList::iterator i = _pointers.begin(), e = _pointers.end(); i != e; ++i)
+	for (auto i = _pointers.begin(), e = _pointers.end(); i != e; ++i)
 	{
 		if ((i->id == info.id) && (i->type == info.type))
 		{
@@ -113,6 +112,12 @@ void Input::removePointerInfo(const PointerInputInfo& info)
 		}
 	}
 }
+
+void Input::pushGestureInputAction(const et::GestureInputInfo& g)
+{
+	gesturePerformed.invokeInMainRunLoop(g);
+}
+
 
 /*
  * Input Handler
@@ -146,4 +151,14 @@ void InputHandler::connectInputEvents()
 	input().pointerReleased.connect(this, &InputHandler::onPointerReleased);
 	input().pointerCancelled.connect(this, &InputHandler::onPointerCancelled);
 	input().pointerScrolled.connect(this, &InputHandler::onPointerScrolled);
+	input().gesturePerformed.connect(this, &InputHandler::onGesturePerformed);
+}
+
+/*
+ * Support functions
+ */
+std::ostream& et::operator << (std::ostream& s, const PointerInputInfo& p)
+{
+	s << "Pointer {" << p.type << ", pos: " << p.pos << "}" << std::endl;
+	return s;
 }
