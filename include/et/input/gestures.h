@@ -37,10 +37,10 @@ namespace et
 		ET_DECLARE_EVENT0(hold)
 		ET_DECLARE_EVENT0(cancelled)
 
-		ET_DECLARE_EVENT1(pointerPressed, PointerInputInfo);
-		ET_DECLARE_EVENT1(pointerMoved, PointerInputInfo);
-		ET_DECLARE_EVENT1(pointerReleased, PointerInputInfo);
-		ET_DECLARE_EVENT1(pointerCancelled, PointerInputInfo);
+		ET_DECLARE_EVENT1(pointerPressed, PointerInputInfo)
+		ET_DECLARE_EVENT1(pointerMoved, PointerInputInfo)
+		ET_DECLARE_EVENT1(pointerReleased, PointerInputInfo)
+		ET_DECLARE_EVENT1(pointerCancelled, PointerInputInfo)
 
 	public:
 		void onPointerPressed(PointerInputInfo);
