@@ -37,7 +37,9 @@ namespace et
 
 			T len = startToEnd.dotSelf();
 			T epsilonScale = len * std::log(std::sqrt(len)) * INV_LN_2;
-			T epsilon = std::numeric_limits<float>::epsilon() * epsilonScale;
+			
+			T epsilon = std::numeric_limits<float>::epsilon() *
+				(epsilonScale > static_cast<T>(1) ? epsilonScale : static_cast<T>(1));
 			
 			T outerProduct = std::abs(startToEnd.x * startToPoint.y - startToEnd.y * startToPoint.x);
 			if (outerProduct <= epsilon)

@@ -79,7 +79,7 @@ namespace et
 		const Frustum& frustum() const
 			{ return _frustum; }
 
-		ray castRay(const vec2& pt) const;
+		ray3d castRay(const vec2& pt) const;
 
 		void setModelViewMatrix(const mat4& m)
 			{ _modelViewMatrix = m; modelViewUpdated(); }

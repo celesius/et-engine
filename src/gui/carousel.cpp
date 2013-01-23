@@ -106,7 +106,7 @@ bool CarouselItem::containsPoint(const vec2&, const vec2&)
 	return false;
 }
 
-bool CarouselItem::rayIntersect(const ray& r)
+bool CarouselItem::rayIntersect(const ray3d& r)
 {
 	if ((fabsf(_color.w) <= 1.0e-4) || !contentValid()) 	return false;
 
@@ -534,7 +534,7 @@ CarouselItem::Pointer Carousel::itemForInputInfo(const PointerInputInfo& p, int*
 {
 	int aIndex = 0;
 
-	ray r =	camera().castRay(p.normalizedPos);
+	ray3d r = camera().castRay(p.normalizedPos);
 	for (CarouselItemList::iterator i = _items.begin(), e = _items.end(); i != e; ++i, ++aIndex)
 	{
 		CarouselItem::Pointer& item = *i;
