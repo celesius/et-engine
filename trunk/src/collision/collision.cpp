@@ -5,6 +5,7 @@
  *
  */
 
+#include <et/core/tools.h>
 #include <et/collision/collision.h>
 
 using namespace et;
@@ -164,7 +165,7 @@ bool et::pointInsideTriangle(const vec3& p, const triangle& t, const vec3& n)
 	return ((r1 > 0) && (r2 > 0) && (r3 > 0)) || ((r1 <= 0) && (r2 <= 0) && (r3 <= 0));
 }
 
-bool et::intersect::raySphere(const ray& r, const Sphere& s, vec3* intersection_pt)
+bool et::intersect::raySphere(const ray3d& r, const Sphere& s, vec3* intersection_pt)
 {
 	vec3 dv = r.origin - s.center();
 	float b = 2.0f * dot(r.direction, dv);
@@ -185,7 +186,7 @@ bool et::intersect::raySphere(const ray& r, const Sphere& s, vec3* intersection_
 	return true;
 }
 
-bool et::intersect::rayPlane(const ray& r, const plane& p, vec3* intersection_pt)
+bool et::intersect::rayPlane(const ray3d& r, const plane& p, vec3* intersection_pt)
 {
 	float d = dot(r.direction, p.normal());
 	if (d >= 0.0f) return false;
@@ -201,7 +202,7 @@ bool et::intersect::rayPlane(const ray& r, const plane& p, vec3* intersection_pt
 	return true;
 }
 
-bool et::intersect::rayTriangle(const ray& r, const triangle& t, vec3* intersection_pt)
+bool et::intersect::rayTriangle(const ray3d& r, const triangle& t, vec3* intersection_pt)
 {
 	vec3 ip;
 	if (!rayPlane(r, plane(t), &ip)) return false;
@@ -216,7 +217,8 @@ bool et::intersect::rayTriangle(const ray& r, const triangle& t, vec3* intersect
 	return false;
 }
 
-bool et::intersect::rayTriangles(const ray& r, const triangle* triangles, const size_t triangleCount, vec3* intersection_pt)
+bool et::intersect::rayTriangles(const ray3d& r, const triangle* triangles, size_t triangleCount,
+	vec3* intersection_pt)
 {
 	for (size_t i = 0; i < triangleCount; ++i)
 	{
@@ -348,7 +350,8 @@ bool et::intersect::sphereSphere(const Sphere& s1, const Sphere& s2, vec3* amoun
 	return collised;
 }
 
-bool et::intersect::sphereBox(const vec3& sphereCenter, float sphereRadius, const vec3& boxCenter, const vec3& boxExtent)
+bool et::intersect::sphereBox(const vec3& sphereCenter, float sphereRadius, const vec3& boxCenter,
+	const vec3& boxExtent)
 {
 	vec3 bMin = boxCenter - boxExtent;
 	vec3 bMax = boxCenter + boxExtent;
@@ -378,7 +381,8 @@ bool et::intersect::sphereAABB(const Sphere& s, const AABB& b)
 
 bool et::intersect::sphereOBB(const Sphere& s, const OBB& b)
 {
-	return sphereBox(b.center + b.transform.transpose() * (s.center() - b.center), s.radius(), b.center, b.dimension);
+	return sphereBox(b.center + b.transform.transpose() *
+		(s.center() - b.center), s.radius(), b.center, b.dimension);
 }
 
 bool et::intersect::aabbAABB(const AABB& a1, const AABB& a2)
@@ -439,13 +443,14 @@ bool et::intersect::sphereTriangle(const vec3& sphereCenter, const float radius,
 	return true;
 }
 
-bool et::intersect::sphereTriangle(const Sphere& s, const triangle& t, vec3& point, vec3& normal, float& penetration)
+bool et::intersect::sphereTriangle(const Sphere& s, const triangle& t, vec3& point, vec3& normal,
+	float& penetration)
 {
 	return sphereTriangle(s.center(), s.radius(), t, point, normal, penetration);
 }
 
 bool et::intersect::sphereTriangle(const Sphere& s, const vec3& sphereVelocity, const triangle& t, 
-								   vec3& point, vec3& normal, float& penetration, float& intersectionTime)
+	vec3& point, vec3& normal, float& penetration, float& intersectionTime)
 {
 	plane p(t);
 	if (p.distanceToPoint(s.center()) <= s.radius())
@@ -460,8 +465,8 @@ bool et::intersect::sphereTriangle(const Sphere& s, const vec3& sphereVelocity, 
 	return sphereTriangle(movedCenter, s.radius(), t, point, normal, penetration);
 }
 
-bool et::intersect::sphereTriangles(const Sphere& s, const triangle* triangles, const size_t triangleCount, 
-									vec3& point, vec3& normal, float& penetration)
+bool et::intersect::sphereTriangles(const Sphere& s, const triangle* triangles,
+	size_t triangleCount, vec3& point, vec3& normal, float& penetration)
 {
 	for (size_t i = 0; i < triangleCount; ++i)
 	{
@@ -471,14 +476,75 @@ bool et::intersect::sphereTriangles(const Sphere& s, const triangle* triangles, 
 	return false;
 }
 
-bool et::intersect::sphereTriangles(const Sphere& s, const vec3& sphereVelocity, const triangle* triangles, const size_t triangleCount, 
-								vec3& point, vec3& normal, float& penetration, float& intersectionTime)
+bool et::intersect::sphereTriangles(const Sphere& s, const vec3& sphereVelocity,
+	const triangle* triangles, size_t triangleCount, vec3& point, vec3& normal,
+	float& penetration, float& intersectionTime)
 {
 	for (size_t i = 0; i < triangleCount; ++i)
 	{
-		if (sphereTriangle(s, sphereVelocity, triangles[i], point, normal, penetration, intersectionTime))
-			return true;
+		if (sphereTriangle(s, sphereVelocity, triangles[i], point, normal,
+			penetration, intersectionTime)) return true;
 	}
-
 	return false;
+}
+
+bool et::intersect::raySegment(const ray2d& ray, const segment2d& segment, vec2* intersectionPoint)
+{
+	vec2 lp;
+	
+	if (ray.line().intersects(segment.line(), &lp))
+	{
+		if (segment.containsPoint(lp))
+		{
+			bool rightDirection = dot(ray.direction, lp - ray.origin) >= 0.0f;
+			
+			if (rightDirection && (intersectionPoint != nullptr))
+				*intersectionPoint = lp;
+			
+			return rightDirection;
+		}
+	}
+	
+	return false;
+}
+
+bool et::pointInsidePolygon(const vec2& p, const std::vector<vec2>& polygon)
+{
+	size_t intersectionCount = 0;
+	
+	ray2d ray(p, vec2(1.0f, 0.0f));
+	for (size_t i = 0, e = polygon.size(); i != e; ++i)
+	{
+		size_t nextIndex = (i + 1) % polygon.size();
+		
+		vec2 v0 = polygon.at(i);
+		vec2 v1 = polygon.at(nextIndex);
+		
+		vec2 direction = normalize(v1 - v0);
+		v0 += std::numeric_limits<float>::epsilon() * direction;
+		v1 += std::numeric_limits<float>::epsilon() * direction;
+
+		vec2 ip;
+		if (intersect::raySegment(ray, segment2d(v0, v1), &ip))
+		{
+			if (length(ip - v0) <= std::numeric_limits<float>::epsilon())
+			{
+				size_t prevIndex = ((i == 0) ? polygon.size() : i) - 1;
+				float op = outerProduct(polygon.at(prevIndex) - v0, v1 - v0) ;
+				intersectionCount += (op > 0.0f) ? 2 : 1;
+			}
+			else if (length(ip - v1) <= std::numeric_limits<float>::epsilon())
+			{
+				size_t nextNextIndex = (nextIndex + 1) % polygon.size();
+				float op = outerProduct(v0 - v1, polygon.at(nextNextIndex) - v1);
+				intersectionCount += (op > 0.0f) ? 2 : 1;
+			}
+			else
+			{
+				intersectionCount++;
+			}
+		}
+	}
+	
+	return (intersectionCount % 2) == 1;
 }

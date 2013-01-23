@@ -41,12 +41,17 @@ namespace et
 	typedef Rect<float> rect;
 	typedef Rect<int> recti;
 	typedef Parallelepiped<float> parallelepiped;
-	typedef Ray<float> ray;
+	
+	typedef Line2d<float> line2d;
+	
+	typedef Ray2d<float> ray2d;
+	typedef Ray3d<float> ray3d;
+	
 	typedef Segment2d<float> segment2d;
 	typedef Segment3d<float> segment3d;
+	
 	typedef Triangle<float> triangle;
 	typedef Plane<float> plane;
-	typedef Line2d<float> line2d;
 
 	extern const vec3 unitX;
 	extern const vec3 unitY;
@@ -253,6 +258,10 @@ namespace et
 	inline T dot(const vector3<T>& v1, const vector3<T>& v2) 
 		{ return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z; }
 
+	template <typename T>
+	inline T outerProduct(const vector2<T>& v1, const vector2<T>& v2)
+		{ return v1.x * v2.y - v1.y * v2.x; }
+	
 	template <typename T> 
 	inline vector3<T> reflect(const vector3<T>& v, const vector3<T>& n)
 		{ return v - static_cast<T>(2) * dot(v, n) * n; }
