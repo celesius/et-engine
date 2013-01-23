@@ -36,7 +36,8 @@ namespace et
 		private:
             Track(const std::string& fileName);
 			Track(Description::Pointer data);
-			ET_SINGLETON_COPY_DENY(Track);
+
+			ET_SINGLETON_COPY_DENY(Track)
 
 		private:
 			void init(Description::Pointer data);
@@ -76,7 +77,7 @@ namespace et
         private:
 			Player();
             Player(Track::Pointer track);
-			ET_SINGLETON_COPY_DENY(Player);
+			ET_SINGLETON_COPY_DENY(Player)
 
 			void init();
 			void linkTrack(Track::Pointer);
@@ -112,7 +113,7 @@ namespace et
 			void nativeRelease();
            
         private:
-            ET_SINGLETON_COPY_DENY(Manager);
+            ET_SINGLETON_COPY_DENY(Manager)
             
         private:
             friend class ManagerPrivate;
