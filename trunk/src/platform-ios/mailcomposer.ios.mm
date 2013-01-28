@@ -59,16 +59,21 @@ MailComposerProxy* _sharedInstance = nil;
 	_private = p;
 }
 
-- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+- (void)mailComposeController:(MFMailComposeViewController *)controller
+	didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
-	UIViewController* mainViewController = reinterpret_cast<UIViewController*>(application().renderingContextHandle());
+	UIViewController* mainViewController =
+		reinterpret_cast<UIViewController*>(application().renderingContextHandle());
+	
 	[mainViewController dismissModalViewControllerAnimated:YES];
 }
 						   
 @end
 
 /*
+ *
  * MailComposer
+ *
  */
 
 MailComposer::MailComposer() : _private(new MailComposerPrivate())
@@ -82,16 +87,32 @@ MailComposer::~MailComposer()
 	delete _private;
 }
 
-void MailComposer::composeEmail(const std::string& recepient, const std::string& title, const std::string& text)
+void MailComposer::composeEmail(const std::string& recepient, const std::string& title,
+	const std::string& text, const std::string& attachmentFileName)
 {
 	MFMailComposeViewController* viewController = [[MFMailComposeViewController alloc] init];
     if (viewController == nil) return;
     
-	UIViewController* mainViewController = reinterpret_cast<UIViewController*>(application().renderingContextHandle());
-	[viewController setSubject:[NSString stringWithUTF8String:title.c_str()]];
-	[viewController setToRecipients:[NSArray arrayWithObject:[NSString stringWithUTF8String:recepient.c_str()]]];
-	[viewController setMessageBody:[NSString stringWithUTF8String:text.c_str()] isHTML:NO];
-	[viewController setMailComposeDelegate:[MailComposerProxy sharedInstanceWithPrivatePtr:_private]];
+	UIViewController* mainViewController =
+		reinterpret_cast<UIViewController*>(application().renderingContextHandle());
+	
+	[viewController setSubject:
+		[NSString stringWithUTF8String:title.c_str()]];
+
+	[viewController setToRecipients:
+		[NSArray arrayWithObject:[NSString stringWithUTF8String:recepient.c_str()]]];
+	
+	[viewController setMessageBody:
+		[NSString stringWithUTF8String:text.c_str()] isHTML:NO];
+	
+	[viewController setMailComposeDelegate:
+		[MailComposerProxy sharedInstanceWithPrivatePtr:_private]];
+
+	if (!attachmentFileName.empty())
+	{
+		NSData* data = [NSData data];
+	}
+	
 	[mainViewController presentModalViewController:[viewController autorelease] animated:YES];
 }
 
