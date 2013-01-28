@@ -118,7 +118,7 @@ namespace et
 		sprintf(buffer, "%d", value);
 		return buffer;
 	}
-	
+
 	inline std::string intToStr(unsigned long value)
 	{
 		char buffer[32] = { };
@@ -132,7 +132,14 @@ namespace et
 		sprintf(buffer, "%u", value);
 		return buffer;
 	}
-	
+
+	inline std::string intToStr(void* value)
+	{
+		char buffer[32] = { };
+		sprintf(buffer, "%08zX", reinterpret_cast<size_t>(value));
+		return buffer;
+	}
+
 	inline bool isPowerOfTwo(int value)
 		{ return (value & (value - 1)) == 0; }
 	

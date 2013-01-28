@@ -13,6 +13,8 @@ using namespace et;
 
 class et::MailComposerPrivate
 {
+public:
+	MFMailComposeViewController* viewController;
 };
 
 /*
@@ -88,32 +90,47 @@ MailComposer::~MailComposer()
 }
 
 void MailComposer::composeEmail(const std::string& recepient, const std::string& title,
-	const std::string& text, const std::string& attachmentFileName)
+	const std::string& text)
 {
-	MFMailComposeViewController* viewController = [[MFMailComposeViewController alloc] init];
-    if (viewController == nil) return;
-    
+	_private->viewController = [[MFMailComposeViewController alloc] init];
+    if (_private->viewController == nil) return;
+    	
+	[_private->viewController setSubject:
+		[NSString stringWithUTF8String:title.c_str()]];
+
+	[_private->viewController setToRecipients:
+		[NSArray arrayWithObject:[NSString stringWithUTF8String:recepient.c_str()]]];
+	
+	[_private->viewController setMessageBody:
+		[NSString stringWithUTF8String:text.c_str()] isHTML:NO];
+	
+	[_private->viewController setMailComposeDelegate:
+		[MailComposerProxy sharedInstanceWithPrivatePtr:_private]];
+}
+void MailComposer::attachFile(const std::string& attachmentFileName)
+{
+	assert(_private->viewController);
+
+	NSData* data = [NSData dataWithContentsOfFile:
+		[NSString stringWithUTF8String:attachmentFileName.c_str()]];
+
+	if (data != nil)
+	{
+		NSString* fileName = [NSString stringWithUTF8String:getFileName(attachmentFileName).c_str()];
+		[_private->viewController addAttachmentData:data
+			mimeType:@"application/octet-stream" fileName:fileName];
+	}
+}
+
+void MailComposer::present()
+{
 	UIViewController* mainViewController =
 		reinterpret_cast<UIViewController*>(application().renderingContextHandle());
 	
-	[viewController setSubject:
-		[NSString stringWithUTF8String:title.c_str()]];
-
-	[viewController setToRecipients:
-		[NSArray arrayWithObject:[NSString stringWithUTF8String:recepient.c_str()]]];
+	[mainViewController presentModalViewController:
+		[_private->viewController autorelease] animated:YES];
 	
-	[viewController setMessageBody:
-		[NSString stringWithUTF8String:text.c_str()] isHTML:NO];
-	
-	[viewController setMailComposeDelegate:
-		[MailComposerProxy sharedInstanceWithPrivatePtr:_private]];
-
-	if (!attachmentFileName.empty())
-	{
-		NSData* data = [NSData data];
-	}
-	
-	[mainViewController presentModalViewController:[viewController autorelease] animated:YES];
+	_private->viewController = nil;
 }
 
 bool MailComposer::canSendEmail() const
