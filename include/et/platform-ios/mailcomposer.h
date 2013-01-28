@@ -19,8 +19,10 @@ namespace et
     {
     public:
 		bool canSendEmail() const;
-        void composeEmail(const std::string& recepient, const std::string& title, const std::string& text);
-		
+        void composeEmail(const std::string& recepient,
+			const std::string& title, const std::string& text,
+			const std::string& attachmentFileName);
+
 	private:
 		MailComposer();
         ~MailComposer();
