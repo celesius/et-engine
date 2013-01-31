@@ -99,26 +99,24 @@ using namespace et;
 	return result;
 }
 
-#else
+#endif
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
     if ((toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) &&
-        ((_params.supportedInterfaceOrientations & InterfaceOrientation_LandscapeLeft) == InterfaceOrientation_LandscapeLeft)) return YES;
+        (_params.supportedInterfaceOrientations & InterfaceOrientation_LandscapeLeft)) return YES;
     
     if ((toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) &&
-        ((_params.supportedInterfaceOrientations & InterfaceOrientation_LandscapeRight) == InterfaceOrientation_LandscapeRight)) return YES;
+        (_params.supportedInterfaceOrientations & InterfaceOrientation_LandscapeRight)) return YES;
     
     if ((toInterfaceOrientation == UIInterfaceOrientationPortrait) &&
-        ((_params.supportedInterfaceOrientations & InterfaceOrientation_Portrait) == InterfaceOrientation_Portrait)) return YES;
+        (_params.supportedInterfaceOrientations & InterfaceOrientation_Portrait)) return YES;
     
     if ((toInterfaceOrientation == UIInterfaceOrientationPortraitUpsideDown) &&
-        ((_params.supportedInterfaceOrientations & InterfaceOrientation_PortraitUpsideDown) == InterfaceOrientation_PortraitUpsideDown)) return YES;
+        (_params.supportedInterfaceOrientations & InterfaceOrientation_PortraitUpsideDown)) return YES;
     
     return NO;
 }
-
-#endif
 
 - (void)beginRender
 {

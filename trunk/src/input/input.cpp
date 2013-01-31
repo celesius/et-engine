@@ -9,20 +9,20 @@
 
 using namespace et;
 
-Input::Input() : _keys(0)
+Input::Input()
 {
 }
 
-void Input::pushKeyboardInputAction(unsigned char key, InputAction action)
+void Input::pushKeyboardInputAction(size_t key, InputAction action)
 {
 	if (action == InputAction_KeyDown)
 	{
-		_keys[key] = 1;
+		_pressedKeys[key] = 1;
 		keyPressed.invokeInMainRunLoop(key);
 	} 
 	else if (action == InputAction_KeyUp)
 	{
-		_keys[key] = 0;
+		_pressedKeys.erase(_pressedKeys.find(key));
 		keyReleased.invokeInMainRunLoop(key);
 	}
 	else if (action == InputAction_Char)

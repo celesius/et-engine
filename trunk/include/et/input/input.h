@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <map>
 #include <et/core/tools.h>
 #include <et/core/singleton.h>
 #include <et/core/containers.h>
@@ -113,18 +114,21 @@ namespace et
 		class KeyboardInputSource;
 		class PointerInputSource;
 
-		bool isKeyPressed(short key) const
-			{ return _keys[key]; }
-
+		bool isKeyPressed(size_t key) const
+			{ return _pressedKeys.count(key) > 0; }
+				
 		bool isPointerPressed(PointerType type) const;
 
 		bool canGetCurrentPointerInfo() const;
 		PointerInputInfo currentPointer() const;
+		
+		void activateSoftwareKeyboard();
+		void deactivateSoftwareKeyboard();
 
 	public:
-		ET_DECLARE_EVENT1(keyPressed, unsigned char)  
-		ET_DECLARE_EVENT1(charEntered, unsigned char)
-		ET_DECLARE_EVENT1(keyReleased, unsigned char)  
+		ET_DECLARE_EVENT1(keyPressed, size_t)  
+		ET_DECLARE_EVENT1(charEntered, size_t)
+		ET_DECLARE_EVENT1(keyReleased, size_t)  
 
 		ET_DECLARE_EVENT1(pointerPressed, PointerInputInfo)
 		ET_DECLARE_EVENT1(pointerMoved, PointerInputInfo)
@@ -141,7 +145,7 @@ namespace et
 		friend class KeyboardInputSource;
 		friend class PointerInputSource;
 
-		void pushKeyboardInputAction(unsigned char key, InputAction action);
+		void pushKeyboardInputAction(size_t key, InputAction action);
 		void pushPointerInputAction(const PointerInputInfo& info, InputAction action);
 		void pushGestureInputAction(const GestureInputInfo&);
 
@@ -151,8 +155,9 @@ namespace et
 
 	private:
 		typedef std::vector<PointerInputInfo> PointerInputInfoList;
-
-		StaticDataStorage<size_t, 256> _keys;
+		typedef std::map<size_t, size_t> KeysMap;
+		
+		KeysMap _pressedKeys;
 		PointerInputInfoList _pointers;
 	};
 
@@ -206,9 +211,9 @@ namespace et
 		virtual void onPointerCancelled(et::PointerInputInfo) { }
 		virtual void onPointerScrolled(et::PointerInputInfo) { }
 		
-		virtual void onKeyPressed(unsigned char) { }
-		virtual void onCharEnterer(unsigned char) { }
-		virtual void onKeyReleased(unsigned char) { }
+		virtual void onKeyPressed(size_t) { }
+		virtual void onCharEnterer(size_t) { }
+		virtual void onKeyReleased(size_t) { }
 
 		virtual void onGesturePerformed(et::GestureInputInfo) { }
 	};

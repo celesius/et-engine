@@ -49,6 +49,7 @@ namespace et
 			virtual bool enabled() const;
 			virtual void setEnabled(bool enabled);
 
+			virtual void broardcastMessage(const GuiMessage&);
 			virtual void processMessage(const GuiMessage&) { }
 
 			virtual void addToRenderQueue(RenderContext*, GuiRenderer&);

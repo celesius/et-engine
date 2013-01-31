@@ -8,14 +8,13 @@
 #pragma once
 
 #include <et/gui/element2d.h>
-#include <et/gui/keyboard.h>
 #include <et/gui/imageview.h>
 
 namespace et
 {
 	namespace gui
 	{
-		class Layout : public Element2d, public KeyboardDelegate
+		class Layout : public Element2d
 		{
 		public:
 			typedef IntrusivePtr<Layout> Pointer;
@@ -37,7 +36,7 @@ namespace et
 			virtual void resetVerticalOffset();
 			
 			void setActiveElement(Element* e);
-
+			
 			ET_DECLARE_EVENT2(layoutRequiresKeyboard, Layout*, Element*)
 			ET_DECLARE_EVENT1(layoutDoesntNeedKeyboard, Layout*)
 

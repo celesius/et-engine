@@ -26,3 +26,11 @@ PointerInputInfo Input::currentPointer() const
 	result.pos = vec2(loc.x, loc.y);
 	return result;
 }
+
+void Input::activateSoftwareKeyboard()
+{
+}
+
+void Input::deactivateSoftwareKeyboard()
+{
+}

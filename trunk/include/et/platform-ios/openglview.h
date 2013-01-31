@@ -13,7 +13,7 @@
 #import <et/input/input.h>
 #import <et/rendering/rendercontextparams.h>
 
-@interface etOpenGLView : UIView
+@interface etOpenGLView : UIView <UIKeyInput>
 
 - (id)initWithFrame:(CGRect)frame parameters:(et::RenderContextParameters&)params;
 - (void)setRenderContext:(et::RenderContext*)rc;

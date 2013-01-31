@@ -147,6 +147,7 @@ namespace et
 
 			union Parameter
 			{
+				size_t szValue;
 				unsigned int uintValue;
 				int intValue;
 				unsigned short ushortValues[2];
@@ -156,13 +157,13 @@ namespace et
 			};
 
 			size_t type;
-			Parameter p1;
-			Parameter p2;
+			Parameter param;
+			Parameter data;
 
-			GuiMessage(size_t t, int param) : type(t)
+			GuiMessage(size_t t, size_t p1, size_t p2 = 0) : type(t)
 			{ 
-				p1.intValue = param;
-				p2.intValue = 0;
+				param.szValue = p1;
+				data.szValue = p2;
 			}
 		};
 
