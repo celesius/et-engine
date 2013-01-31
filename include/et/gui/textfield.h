@@ -33,6 +33,8 @@ namespace et
 
 			void setFocus();
 			void resignFocus(Element*);
+			
+			void setBackgroundColor(const vec4& color);
 
 		private:
 			void buildVertices(RenderContext*, GuiRenderer&);
@@ -45,7 +47,9 @@ namespace et
 			CharDescriptorList _charList;
 			GuiVertexList _imageVertices;
 			GuiVertexList _textVertices;
+			GuiVertexList _backgroundVertices;
 			NotifyTimer _caretBlinkTimer;
+			vec4 _backgroundColor;
 			bool _secured;
 			bool _caretVisible;
 		};

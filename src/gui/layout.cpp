@@ -350,7 +350,9 @@ void Layout::initRenderingElement(et::RenderContext* rc)
 }
 
 /*
+ *
  * Modal Layout
+ *
  */
 
 ModalLayout::ModalLayout()

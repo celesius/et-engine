@@ -5,8 +5,8 @@
  *
  */
 
+#include <et/gui/layout.h>
 #include <et/gui/textfield.h>
-#include <et/gui/guirenderer.h>
 
 using namespace et;
 using namespace et::gui;
@@ -15,8 +15,11 @@ const short caretChar = '|';
 const short securedChar = '*';
 
 TextField::TextField(const Image& background, const std::string& text, Font font, Element* parent) : 
-	Element2d(parent), _font(font), _background(background), _text(text), _secured(false), _caretVisible(false)
+	Element2d(parent), _font(font), _background(background), _text(text), _secured(false),
+	_caretVisible(false)
 {
+	setSize(font->measureStringSize(text));
+	
 	setFlag(ElementFlag_RequiresKeyboard);
 	_caretBlinkTimer.expired.connect(this, &TextField::onCreateBlinkTimerExpired);
 }
@@ -25,6 +28,9 @@ void TextField::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 {
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, gr);
+	
+	if (_backgroundVertices.offset() > 0)
+		gr.addVertices(_backgroundVertices, _background.texture, ElementClass_2d, GuiRenderLayer_Layer0);
 
 	if (_imageVertices.offset() > 0)
 		gr.addVertices(_imageVertices, _background.texture, ElementClass_2d, GuiRenderLayer_Layer0);
@@ -37,25 +43,42 @@ void TextField::buildVertices(RenderContext*, GuiRenderer& gr)
 {
 	vec4 alphaVector = vec4(1.0f, 1.0f, 1.0f, alpha());
 	mat4 transform = finalTransform();
+	rect wholeRect(vec2(0.0), size());
 
+	_backgroundVertices.setOffset(0);
 	_imageVertices.setOffset(0);
-	gr.createImageVertices(_imageVertices, _background.texture, _background.descriptor, 
-		rect(vec2(0.0), size()), alphaVector, transform, GuiRenderLayer_Layer0);
+	_textVertices.setOffset(0);
+	
+	if (_backgroundColor.w > 0.0f)
+	{
+		gr.createColorVertices(_backgroundVertices, wholeRect, _backgroundColor,
+			transform, GuiRenderLayer_Layer0);
+	}
+	
+	if (_background.texture.valid())
+	{
+		gr.createImageVertices(_imageVertices, _background.texture, _background.descriptor,
+			wholeRect, alphaVector, transform, GuiRenderLayer_Layer0);
+	}
 
-	_charList = _secured ? CharDescriptorList(_text.length(), _font->charDescription(securedChar)) : 
-							_font->buildString(_text);
-
-	vec2 textSize = _charList.size() ? _font->measureStringSize(_charList) : vec2(0.0f, _font->lineHeight());
+	_charList = _secured ?
+		CharDescriptorList(_text.length(), _font->charDescription(securedChar)) :
+		_font->buildString(_text);
+	
+	vec2 textSize = _charList.size() ?
+		_font->measureStringSize(_charList) : vec2(0.0f, _font->lineHeight());
 
 	if (_caretVisible)
+	{
 		_charList.push_back(_font->charDescription(caretChar));
-
-	_textVertices.setOffset(0);
+	}
+	
 	if (_charList.size())
 	{
 		gr.createStringVertices(_textVertices, _charList, ElementAlignment_Near, ElementAlignment_Near,
 								0.5f * (size() - textSize), color() * alphaVector, transform, GuiRenderLayer_Layer1);
 	}
+	
 	setContentValid();
 }
 
@@ -69,9 +92,16 @@ void TextField::processMessage(const GuiMessage& msg)
 {
 	if (msg.type == GuiMessage::Type_TextInput)
 	{
-		switch (msg.p1.ucharValues[0])
+		switch (msg.param.szValue)
 		{
-		case 8:
+		case ET_RETURN:
+		case ET_NEWLINE:
+			{
+				owner()->setActiveElement(nullptr);
+				break;
+			}
+				
+		case ET_BACKSPACE:
 			{
 				if (_text.length())
 					_text = _text.substr(0, _text.length() - 1);
@@ -80,7 +110,7 @@ void TextField::processMessage(const GuiMessage& msg)
 
 		default:
 			{
-				char text[2] = { static_cast<char>(msg.p1.ucharValues[0]), 0 };
+				char text[2] = { static_cast<char>(msg.param.szValue & 0xff), 0 };
 				_text += text;
 			}
 		}
@@ -118,4 +148,10 @@ void TextField::onCreateBlinkTimerExpired(NotifyTimer*)
 const std::string& TextField::text() const
 {
 	return _text;
+}
+
+void TextField::setBackgroundColor(const vec4& color)
+{
+	_backgroundColor = color;
+	invalidateContent();
 }

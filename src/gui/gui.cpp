@@ -14,10 +14,6 @@ using namespace et::gui;
 
 Gui::Gui(RenderContext* rc, TextureCache& texCache) : _rc(rc), _textureCache(texCache), _renderer(rc, true), 
 	_renderingElementBackground(new RenderingElement(rc)),
-#if (ET_ENABLE_CUSTOM_KEYBOARD)
-	_renderingElementKeyboard(new RenderingElement(rc)),
-	_keyboard(rc, Font(CharacterGenerator::Pointer(new CharacterGenerator(rc, "System", "System", 14))), _textureCache),
-#endif
 	_background(Texture(), 0), _backgroundValid(true)
 {
 	_background.setPivotPoint(vec2(0.5f));
@@ -29,110 +25,72 @@ bool Gui::pointerPressed(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
 
-#if (ET_ENABLE_CUSTOM_KEYBOARD)
-	bool processed = _keyboard.visible() && _keyboard.pointerPressed(p);
-#else
-	bool processed = false;
-#endif
-	
-	if (!processed)
+	for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
-		for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
-		{
-			if ((*i)->layout->pointerPressed(p))
-				return true;
-		}
+		if ((*i)->layout->pointerPressed(p))
+			return true;
 	}
-
-	return processed;
+	return false;
 }
 
 bool Gui::pointerMoved(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
 
-#if (ET_ENABLE_CUSTOM_KEYBOARD)
-	bool processed = _keyboard.visible() && _keyboard.pointerMoved(p);
-#else
-	bool processed = false;
-#endif
-
-	if (!processed)
+	for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
-		for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
-		{
-			if ((*i)->layout->pointerMoved(p))
-				return true;
-		}
+		if ((*i)->layout->pointerMoved(p))
+			return true;
 	}
 
-	return processed;
+	return false;
 }
 
 bool Gui::pointerReleased(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
 
-#if (ET_ENABLE_CUSTOM_KEYBOARD)
-	bool processed = _keyboard.visible() && _keyboard.pointerReleased(p);
-#else
-	bool processed = false;
-#endif
-	
-	if (!processed)
+	for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
-		for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
-		{
-			if ((*i)->layout->pointerReleased(p))
-				return true;
-		}
+		if ((*i)->layout->pointerReleased(p))
+			return true;
 	}
 
-	return processed;
+	return false;
 }
 
 bool Gui::pointerCancelled(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
 	
-#if (ET_ENABLE_CUSTOM_KEYBOARD)
-	bool processed = _keyboard.visible() && _keyboard.pointerCancelled(p);
-#else
-	bool processed = false;
-#endif
-	
-	if (!processed)
+	for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
-		for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
-		{
-			if ((*i)->layout->pointerCancelled(p))
-				return true;
-		}
+		if ((*i)->layout->pointerCancelled(p))
+			return true;
 	}
 	
-	return processed;
+	return false;
 }
 
 bool Gui::pointerScrolled(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
 
-#if (ET_ENABLE_CUSTOM_KEYBOARD)
-	bool processed = _keyboard.visible() && _keyboard.pointerScrolled(p);
-#else
-	bool processed = false;
-#endif
-	
-	if (!processed)
+	for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
-		for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
-		{
-			if ((*i)->layout->pointerScrolled(p))
-				return true;
-		}
+		if ((*i)->layout->pointerScrolled(p))
+			return true;
 	}
 
-	return processed;
+	return false;
+}
+
+bool Gui::characterEntered(size_t p)
+{
+	if (_keyboardFocusedLayout.invalid() && _keyboardFocusedElement.invalid()) return false;
+	
+	_keyboardFocusedElement->processMessage(GuiMessage(GuiMessage::Type_TextInput, p));
+	return true;
 }
 
 void Gui::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer element, Layout::Pointer layout)
@@ -145,19 +103,6 @@ void Gui::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer eleme
 		layout->addToRenderQueue(rc, _renderer);
 	}
 }
-
-#if (ET_ENABLE_CUSTOM_KEYBOARD)
-void Gui::buildKeyboardVertices(RenderContext* rc)
-{
-	if (_keyboard.invalid())
-	{
-		_renderingElementKeyboard->clear();
-		_keyboard.addToRenderQueue(rc, _renderer);
-	}
-}
-#else
-void Gui::buildKeyboardVertices(RenderContext*) { }
-#endif
 
 void Gui::buildBackgroundVertices(RenderContext* rc)
 {
@@ -175,10 +120,6 @@ void Gui::layout(const vec2& size)
 	_renderer.setProjectionMatrices(size);
 	_background.setFrame(0.5f * size, size);
 	_backgroundValid = false;
-	
-#if (ET_ENABLE_CUSTOM_KEYBOARD)
-	_keyboard.layout(size);
-#endif
 	
 	for (LayoutEntryStack::iterator i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
 		(*i)->layout->layout(size);
@@ -206,17 +147,6 @@ void Gui::render(RenderContext* rc)
 		_renderer.render(rc);
 	}
 
-#if (ET_ENABLE_CUSTOM_KEYBOARD)
-	if (_keyboard.visible())
-	{
-		_renderer.setRendernigElement(_renderingElementKeyboard);
-		buildKeyboardVertices(rc);
-		_renderer.setCustomAlpha(1.0f);
-		_renderer.setCustomOffset(vec2(0.0f));
-		_renderer.render(rc);
-	}
-#endif
-	
 	_renderer.endRender(rc);
 }
 
@@ -226,35 +156,19 @@ void Gui::setBackgroundImage(const Image& img)
 	_backgroundValid = false;
 }
 
-#if (ET_ENABLE_CUSTOM_KEYBOARD)
 void Gui::onKeyboardNeeded(Layout* l, Element* element)
 {
-	if (!platformHasHardwareKeyboard())
-	{
-		vec2 size = element->size();
-		vec2 middlePoint = element->finalTransform() * vec2(0.0f);
-		float dy = (middlePoint.y + 0.5f * size.y) - _keyboard.topOrigin();
-		if (dy > 0.0f)
-			l->adjustVerticalOffset(-dy - size.y);
-	}
-
-	_keyboard.show(true, element);
-	_keyboard.setDelegate(l);
+	_keyboardFocusedElement = Element::Pointer(element);
+	_keyboardFocusedLayout = Layout::Pointer(l);
+	input().activateSoftwareKeyboard();
 }
-#else
-void Gui::onKeyboardNeeded(Layout*, Element*) { }
-#endif
 
-#if (ET_ENABLE_CUSTOM_KEYBOARD)
-void Gui::onKeyboardResigned(Layout* l)
+void Gui::onKeyboardResigned(Layout*)
 {
-	if (!platformHasHardwareKeyboard() && _keyboard.visible())
-		l->resetVerticalOffset();
-	_keyboard.hide(true);
+	input().deactivateSoftwareKeyboard();
+	_keyboardFocusedElement.reset(0);
+	_keyboardFocusedLayout.reset(0);
 }
-#else
-void Gui::onKeyboardResigned(Layout*) { }
-#endif
 
 void Gui::getAnimationParams(size_t flags, vec3* nextSrc, vec3* nextDst, vec3* currDst)
 {

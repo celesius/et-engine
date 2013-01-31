@@ -13,7 +13,6 @@
 #include <et/gui/guirenderer.h>
 #include <et/gui/layout.h>
 #include <et/gui/fullscreenelement.h>
-#include <et/gui/keyboard.h>
 #include <et/gui/imageview.h>
 #include <et/gui/label.h>
 #include <et/gui/button.h>
@@ -45,11 +44,20 @@ namespace et
 
 			bool hasLayout(Layout::Pointer aLayout);
 			
-			void replaceTopmostLayout(Layout::Pointer newLayout, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
-			void popTopmostLayout(size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
-			void replaceLayout(Layout::Pointer oldLayout, Layout::Pointer newLayout, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
-			void removeLayout(Layout::Pointer oldLayout, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
-			void pushLayout(Layout::Pointer newLayout, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
+			void replaceTopmostLayout(Layout::Pointer newLayout,
+				size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
+			
+			void popTopmostLayout(size_t animationFlags = AnimationFlag_None,
+				float duration = 0.3f);
+			
+			void replaceLayout(Layout::Pointer oldLayout, Layout::Pointer newLayout,
+				size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
+			
+			void removeLayout(Layout::Pointer oldLayout, size_t animationFlags = AnimationFlag_None,
+				float duration = 0.3f);
+			
+			void pushLayout(Layout::Pointer newLayout, size_t animationFlags = AnimationFlag_None,
+				float duration = 0.3f);
 
 			void setBackgroundImage(const Image& img);
 
@@ -59,7 +67,10 @@ namespace et
 			bool pointerCancelled(const et::PointerInputInfo&);
 			bool pointerScrolled(const et::PointerInputInfo&);
 			
-			void showMessageView(MessageView::Pointer mv, size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
+			bool characterEntered(size_t);
+			
+			void showMessageView(MessageView::Pointer mv,
+				size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
 			
 			ET_DECLARE_EVENT1(layoutDidAppear, Layout::Pointer)
 			ET_DECLARE_EVENT1(layoutDidDisappear, Layout::Pointer)
@@ -78,9 +89,10 @@ namespace et
 					oldLayout(o), newLayout(n) { }
 			};
 
-			void buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer element, Layout::Pointer layout);
+			void buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer element,
+				Layout::Pointer layout);
+			
 			void buildBackgroundVertices(RenderContext* rc);
-			void buildKeyboardVertices(RenderContext* rc);
 
 			void onKeyboardNeeded(Layout* l, Element* e);
 			void onKeyboardResigned(Layout* l);
@@ -94,7 +106,9 @@ namespace et
 			LayoutEntryObject* entryForLayout(Layout::Pointer);
 			bool animatingTransition();
 			
-			void animateLayoutAppearing(Layout::Pointer, LayoutEntryObject* newEntry, size_t animationFlags, float duration);
+			void animateLayoutAppearing(Layout::Pointer, LayoutEntryObject* newEntry,
+				size_t animationFlags, float duration);
+			
 			void onMessageViewButtonClicked(MessageView* view, MessageViewButton);
 
 			void internal_replaceTopmostLayout(Layout::Pointer, AnimationDescriptor);
@@ -147,11 +161,10 @@ namespace et
 
 			RenderingElement::Pointer _renderingElementBackground;
 			ImageView _background;
+			
+			Layout::Pointer _keyboardFocusedLayout;
+			Element::Pointer _keyboardFocusedElement;
 
-#if (ET_ENABLE_CUSTOM_KEYBOARD)
-			RenderingElement::Pointer _renderingElementKeyboard;
-			Keyboard _keyboard;
-#endif
 			LayoutEntryStack _layouts;
 			vec2 _screenSize;
 			bool _backgroundValid;

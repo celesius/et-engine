@@ -113,3 +113,12 @@ void Element::sendToBack(Element* c)
 	ElementHierarchy::sendToBack(c);
 	invalidateContent();
 }
+
+void Element::broardcastMessage(const GuiMessage& msg)
+{
+	for (auto c : children())
+	{
+		c->processMessage(msg);
+		c->broardcastMessage(msg);
+	}
+}

@@ -9,6 +9,9 @@
 #import <et/platform-ios/openglview.h>
 #import <et/rendering/rendercontext.h>
 
+extern NSString* etKeyboardRequiredNotification;
+extern NSString* etKeyboardNotRequiredNotification;
+
 class et::RenderContextNotifier
 {
 public:
@@ -20,16 +23,18 @@ using namespace et;
 
 @interface etOpenGLView()
 {
-@private
     EAGLContext* _context;
 	et::Framebuffer _defaultFramebuffer;
 	et::RenderContext* _rc;
 	et::RenderContextNotifier* _rcNotifier;
-	et::Input::PointerInputSource _inputSource;
+	et::Input::PointerInputSource _pointerInputSource;
+	et::Input::KeyboardInputSource _keyboardInputSource;
+	BOOL _keyboardAllowed;
 }
 
 - (void)createFramebuffer;
 - (void)deleteFramebuffer;
+- (void)onNotificationRecevied:(NSNotification*)notification;
 
 @end
 
@@ -57,6 +62,16 @@ using namespace et;
                                         kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
 		_context = nil;
 		self.multipleTouchEnabled = params.multipleTouch;
+		
+		_keyboardAllowed = NO;
+		
+		[[NSNotificationCenter defaultCenter] addObserver:self
+			selector:@selector(onNotificationRecevied:) name:etKeyboardRequiredNotification
+			object:nil];
+		
+		[[NSNotificationCenter defaultCenter] addObserver:self
+			selector:@selector(onNotificationRecevied:) name:etKeyboardNotRequiredNotification
+			object:nil];
 	}
 	
 	return self;
@@ -207,7 +222,7 @@ using namespace et;
 		float nx = 2.0f * pt.pos.x / ownSize.width - 1.0f;
 		float ny = 1.0f - 2.0f * pt.pos.y / ownSize.height;
 		pt.normalizedPos = vec2(nx, ny);
-		_inputSource.pointerPressed(pt);
+		_pointerInputSource.pointerPressed(pt);
 	}
 }
 
@@ -235,7 +250,7 @@ using namespace et;
 		float nx = 2.0f * pt.pos.x / ownSize.width - 1.0f;
 		float ny = 1.0f - 2.0f * pt.pos.y / ownSize.height;
 		pt.normalizedPos = vec2(nx, ny);
-		_inputSource.pointerMoved(pt);
+		_pointerInputSource.pointerMoved(pt);
 	}
 }
 
@@ -263,7 +278,7 @@ using namespace et;
 		float nx = 2.0f * pt.pos.x / ownSize.width - 1.0f;
 		float ny = 1.0f - 2.0f * pt.pos.y / ownSize.height;
 		pt.normalizedPos = vec2(nx, ny);
-		_inputSource.pointerReleased(pt);
+		_pointerInputSource.pointerReleased(pt);
 	}
 }
 
@@ -291,8 +306,63 @@ using namespace et;
 		float nx = 2.0f * pt.pos.x / ownSize.width - 1.0f;
 		float ny = 1.0f - 2.0f * pt.pos.y / ownSize.height;
 		pt.normalizedPos = vec2(nx, ny);
-		_inputSource.pointerCancelled(pt);
+		_pointerInputSource.pointerCancelled(pt);
 	}
+}
+
+- (void)onNotificationRecevied:(NSNotification*)notification
+{
+	if ([notification.name isEqualToString:etKeyboardRequiredNotification])
+	{
+		_keyboardAllowed = YES;
+		[self becomeFirstResponder];
+	}
+	else if ([notification.name isEqualToString:etKeyboardNotRequiredNotification])
+	{
+		[self resignFirstResponder];
+		_keyboardAllowed = NO;
+	}
+}
+
+- (BOOL)canBecomeFirstResponder
+{
+	return _keyboardAllowed;
+}
+
+- (BOOL)hasText
+{
+	return YES;
+}
+
+- (void)insertText:(NSString *)text
+{
+	size_t charValue = 0;
+	
+	if ([text canBeConvertedToEncoding:NSUTF32LittleEndianStringEncoding])
+	{
+		NSUInteger actualLength = 0;
+		
+		[text getBytes:0 maxLength:0 usedLength:&actualLength
+		   encoding:NSUTF32LittleEndianStringEncoding options:0 range:NSMakeRange(0, [text length]) remainingRange:0];
+		
+		DataStorage<wchar_t> result(actualLength + 1);
+		
+		[text getBytes:result.data() maxLength:result.dataSize() usedLength:0
+		   encoding:NSUTF32LittleEndianStringEncoding options:0 range:NSMakeRange(0, [text length]) remainingRange:0];
+		
+		charValue = result[0];
+	}
+	else
+	{
+		NSLog(@"Unable to convert %@ to NSUTF32LittleEndianStringEncoding", text);
+	}
+	
+	_keyboardInputSource.charEntered(charValue);
+}
+
+- (void)deleteBackward
+{
+	_keyboardInputSource.charEntered(ET_BACKSPACE);
 }
 
 @end

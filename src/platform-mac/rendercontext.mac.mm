@@ -307,6 +307,7 @@ void RenderContextPrivate::displayLinkSynchronized()
 
 - (void)beginGestureWithEvent:(NSEvent *)event
 {
+	
 }
 
 - (void)magnifyWithEvent:(NSEvent *)event
@@ -329,6 +330,16 @@ void RenderContextPrivate::displayLinkSynchronized()
 
 - (void)endGestureWithEvent:(NSEvent *)event
 {
+}
+
+- (void)keyDown:(NSEvent *)theEvent
+{
+	
+}
+
+- (void)keyUp:(NSEvent *)theEvent
+{
+	
 }
 
 @end

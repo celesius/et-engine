@@ -35,9 +35,14 @@ namespace et
         InterfaceOrientation_LandscapeLeft = 0x04,
         InterfaceOrientation_LandscapeRight = 0x08,
         
-        InterfaceOrientation_AnyPortrait = InterfaceOrientation_Portrait + InterfaceOrientation_PortraitUpsideDown,
-        InterfaceOrientation_AnyLandscape = InterfaceOrientation_LandscapeLeft + InterfaceOrientation_LandscapeRight,
-        InterfaceOrientation_Any = InterfaceOrientation_AnyPortrait + InterfaceOrientation_AnyLandscape
+        InterfaceOrientation_AnyPortrait =
+			InterfaceOrientation_Portrait | InterfaceOrientation_PortraitUpsideDown,
+		
+        InterfaceOrientation_AnyLandscape =
+			InterfaceOrientation_LandscapeLeft | InterfaceOrientation_LandscapeRight,
+		
+        InterfaceOrientation_Any =
+			InterfaceOrientation_AnyPortrait | InterfaceOrientation_AnyLandscape
     };
 	
 	struct RenderContextParameters
