@@ -23,9 +23,9 @@ const float slowdownCoefficient = 10.0f;
 const float movementScale = 1300.0f;
 const float maxVelocity = 30.0f;
 
-CarouselItem::CarouselItem(const Camera& camera, const Texture& texture, const ImageDescriptor& desc, 
-	size_t aTag, Carousel* parent) : Element3D(camera, parent), _texture(texture),
-	_desc(desc), _scale(1.0f), _color(1.0f), _angle(1.0f)
+CarouselItem::CarouselItem(const Camera& camera, const Texture& texture,
+	const ImageDescriptor& desc, size_t aTag, Carousel* parent) : Element3D(camera, parent),
+	_texture(texture), _desc(desc), _scale(1.0f), _color(1.0f), _angle(1.0f)
 {
 	tag = aTag;
 	_scale.y *= desc.size.y / desc.size.x;
@@ -108,11 +108,12 @@ bool CarouselItem::containsPoint(const vec2&, const vec2&)
 
 bool CarouselItem::rayIntersect(const ray3d& r)
 {
-	if ((fabsf(_color.w) <= 1.0e-4) || !contentValid()) 	return false;
+	if ((fabsf(_color.w) <= 1.0e-4) || !contentValid()) return false;
 
 	for (size_t t = 0; t < _vertices.size(); t += 3)
 	{
-		if (intersect::rayTriangle(r, triangle(_vertices[t].position, _vertices[t+1].position, _vertices[t+2].position), 0))
+		triangle tri(_vertices[t].position, _vertices[t+1].position, _vertices[t+2].position);
+		if (intersect::rayTriangle(r, tri, 0))
 			return true;
 	}
 
@@ -120,13 +121,15 @@ bool CarouselItem::rayIntersect(const ray3d& r)
 }
 
 /*
+ *
  * Carousel
+ *
  */ 
 Carousel::Carousel(const Camera& camera, Element* parent) : Element3D(camera, parent), 
-	_setItemAnimator(0), _positionAnimator(0), _alphaAnimator(0), 
-	_selectedItem(0.0f), _lastUpdateTime(0.0f), _scale(1.0f), _direction(1.0f, 0.0f), _velocity(0.0f), _clickTime(0.0f),
-	_alpha(1.0f), _type(CarouselType_Ribbon), _pointerPressed(false), _dragging(false), _animating(false), 
-	_waitingClick(false), _dragOnlyItems(false)
+	_setItemAnimator(0), _positionAnimator(0), _alphaAnimator(0),  _selectedItem(0.0f),
+	_lastUpdateTime(0.0f), _scale(1.0f), _direction(1.0f, 0.0f), _velocity(0.0f), _clickTime(0.0f),
+	_alpha(1.0f), _type(CarouselType_Ribbon), _pointerPressed(false), _dragging(false),
+	_animating(false), _waitingClick(false), _dragOnlyItems(false)
 {
 	startUpdates();
 	_lastUpdateTime = actualTime();
@@ -169,17 +172,20 @@ CarouselItem::Pointer Carousel::addItem(int tag, const Image& desc)
 	return addItem(tag, desc.texture, desc.descriptor);
 }
 
-CarouselItem::Pointer Carousel::appendItem(int tag, const Texture& tex, const ImageDescriptor& desc)
+CarouselItem::Pointer Carousel::appendItem(int tag, const Texture& tex,
+	const ImageDescriptor& desc)
 {
 	return insertItemAtIndex(static_cast<int>(_items.size()), tag, tex, desc);
 }
 
-CarouselItem::Pointer Carousel::prependItem(int tag, const Texture& tex, const ImageDescriptor& desc)
+CarouselItem::Pointer Carousel::prependItem(int tag, const Texture& tex,
+	const ImageDescriptor& desc)
 {
 	return insertItemAtIndex(0, tag, tex, desc);
 }
 
-CarouselItem::Pointer Carousel::insertItemAtIndex(int index, int tag, const Texture& tex, const ImageDescriptor& desc)
+CarouselItem::Pointer Carousel::insertItemAtIndex(int index, int tag,
+	const Texture& tex, const ImageDescriptor& desc)
 {
 	CarouselItem::Pointer item(new CarouselItem(camera(), tex, desc, tag, this));
 	item->setScale(_scale);
@@ -223,9 +229,12 @@ void Carousel::buildRibbonItems()
 		float actualIndex = (index - _selectedItem) / maxItems;
 		float linear = clamp(actualIndex, -1.0f, 1.0f);
 		float fvalue = etMax(0.0f, linear * linear - 0.5f);
-		float angleScale = ((linear < 0.0f) ? -maxAngle : maxAngle) * (sqrtf(fabs(linear)) - powf(fvalue, 8.0f));
+		float angleScale =
+			((linear < 0.0f) ? -maxAngle : maxAngle) * (sqrtf(fabs(linear)) - powf(fvalue, 8.0f));
 
-		vec3 t(_direction.x * xOffset * linear + _center.x, _direction.y * yOffset * linear + _center.y, -fabsf(zOffset * linear));
+		vec3 t(_direction.x * xOffset * linear + _center.x,
+			   _direction.y * yOffset * linear + _center.y, -fabsf(zOffset * linear));
+		
 		vec3 r(_direction.y * angleScale, _direction.x * angleScale, 0.0f);
 
 		item->setActualIndex(actualIndex);
@@ -249,7 +258,7 @@ void Carousel::buildRoundItems()
 	for (CarouselItemList::iterator i = _items.begin(), e = _items.end(); i != e; ++i)
 	{
 		float alpha = 0.5f + 0.5f * cos(selectedItemAlpha + a);
-		(*i)->setTransform( translationMatrix(0.0f, 0.0f, z_distance) * rotationYXZMatrix(0.0f, a, 0.0f) );
+		(*i)->setTransform(translationMatrix(0.0f, 0.0f, z_distance) * rotationYXZMatrix(0.0f, a, 0.0f));
 		(*i)->setAngle(a);
 		(*i)->setColor(vec4(1.0f, 1.0f, 1.0f, alpha));
 

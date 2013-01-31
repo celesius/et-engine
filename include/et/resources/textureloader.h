@@ -15,12 +15,17 @@ namespace et
 	class TextureLoader
 	{
 	public:
-		static TextureDescription::Pointer loadDescription(const std::string& name, size_t scaleFactor, bool initWithZero);
+		static TextureDescription::Pointer loadDescription(const std::string& name,
+			size_t scaleFactor, bool initWithZero);
+		
 		static TextureDescription::Pointer load(const std::string& name, size_t scaleFactor);
 
 		static const StringList& preferredExtensions();
 
-		static std::string resolveScalableFileName(const std::string& name, size_t screenScale, std::string* ext = 0, bool silent = false);
-		static std::string resolveFileName(const std::string& name, std::string* ext = 0, bool silent = false);
+		static std::string resolveScalableFileName(const std::string& name, size_t screenScale,
+			std::string* ext = nullptr, bool silent = false);
+		
+		static std::string resolveFileName(const std::string& name, std::string* ext = nullptr,
+			bool silent = false);
 	};
 }
