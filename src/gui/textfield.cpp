@@ -18,9 +18,8 @@ TextField::TextField(const Image& background, const std::string& text, Font font
 	Element2d(parent), _font(font), _background(background), _text(text), _secured(false),
 	_caretVisible(false)
 {
-	setSize(font->measureStringSize(text));
-	
 	setFlag(ElementFlag_RequiresKeyboard);
+	setSize(font->measureStringSize(text));
 	_caretBlinkTimer.expired.connect(this, &TextField::onCreateBlinkTimerExpired);
 }
 
