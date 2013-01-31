@@ -35,7 +35,11 @@ namespace et
 			void resignFocus(Element*);
 			
 			void setBackgroundColor(const vec4& color);
-
+			
+			ET_DECLARE_EVENT1(editingStarted, TextField*)
+			ET_DECLARE_EVENT1(textChanged, TextField*)
+			ET_DECLARE_EVENT1(editingFinished, TextField*)
+			
 		private:
 			void buildVertices(RenderContext*, GuiRenderer&);
 			void onCreateBlinkTimerExpired(NotifyTimer* t);
