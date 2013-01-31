@@ -104,6 +104,7 @@ void TextField::processMessage(const GuiMessage& msg)
 			{
 				if (_text.length())
 					_text = _text.substr(0, _text.length() - 1);
+				textChanged.invoke(this);
 				break;
 			}
 
@@ -111,6 +112,7 @@ void TextField::processMessage(const GuiMessage& msg)
 			{
 				char text[2] = { static_cast<char>(msg.param.szValue & 0xff), 0 };
 				_text += text;
+				textChanged.invoke(this);
 			}
 		}
 
@@ -129,6 +131,8 @@ void TextField::setFocus()
 	_caretBlinkTimer.start(timerPool(), 0.5f, NotifyTimer::RepeatForever);
 	_caretVisible = true;
 	invalidateContent();
+	
+	editingStarted.invoke(this);
 }
 
 void TextField::resignFocus(Element*)
@@ -136,6 +140,8 @@ void TextField::resignFocus(Element*)
 	_caretBlinkTimer.cancelUpdates();
 	_caretVisible = false;
 	invalidateContent();
+	
+	editingFinished.invoke(this);
 }
 
 void TextField::onCreateBlinkTimerExpired(NotifyTimer*)
