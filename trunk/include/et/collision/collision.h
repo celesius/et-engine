@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et/geometry/plane.h>
+#include <et/geometry/geometry.h>
 #include <et/collision/sphere.h>
 #include <et/collision/aabb.h>
 #include <et/collision/obb.h>

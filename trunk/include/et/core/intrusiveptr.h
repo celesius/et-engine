@@ -84,7 +84,7 @@ namespace et
 		bool operator != (const IntrusivePtr& r) const
 			{ return _data != r._data; }
 
-		ReferenceCounterType referenceCount() const
+		ReferenceCounter referenceCount() const
 			{ return _data ? _data->referenceCount() : 0; }
 
 		IntrusivePtr<T>& operator = (const IntrusivePtr<T>& r)

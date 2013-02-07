@@ -29,8 +29,8 @@ namespace et
 		BaseAnimator(const TimerPool& tp) : 
 			_tag(0), _delegate(0), _timerPool(tp) { }
 
-		ET_DECLARE_PROPERTY_SETTER_COPY(AnimatorDelegate*, delegate, setDelegate);
-		ET_DECLARE_PROPERTY(int, tag, setTag);
+		ET_DECLARE_PROPERTY_SETTER_COPY(AnimatorDelegate*, delegate, setDelegate)
+		ET_DECLARE_PROPERTY(int, tag, setTag)
 
 	protected:
 		BaseAnimator(AnimatorDelegate* delegate, int tag, const TimerPool& tp) : 

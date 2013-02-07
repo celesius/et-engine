@@ -7,22 +7,6 @@
 
 #pragma once
 
-#include <cmath>
-#include <string>
-#include <vector>
-#include <iostream>
-#include <limits>
-#include <assert.h>
-#include <string.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#include <et/platform/compileoptions.h>
-
-#if defined(__MACH__)
-#	include <TargetConditionals.h>
-#endif
-
 #if defined(_WIN32) || defined(_WIN64)
 #
 #	define ET_PLATFORM_WIN				1

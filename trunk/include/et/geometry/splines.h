@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et/core/debug.h>
+#include <et/core/et.h>
 #include <et/geometry/vector3.h>
 
 namespace et

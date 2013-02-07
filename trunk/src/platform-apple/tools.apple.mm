@@ -6,7 +6,6 @@
  */
 
 #include <sys/time.h>
-#include <et/platform/platform.h>
 #include <et/core/datastorage.h>
 #include <et/core/tools.h>
 

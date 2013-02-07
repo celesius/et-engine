@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <et/platform/platform.h>
-
 namespace et
 {
 	typedef unsigned long ThreadResult;

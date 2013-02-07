@@ -5,7 +5,6 @@
  *
  */
 
-#include <utility>
 #include <et/collision/collision.h>
 #include <et/terrain/terrain.h>
 #include <et/timers/intervaltimer.h>
