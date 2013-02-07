@@ -87,7 +87,7 @@ Texture TextureFactory::genTexture(GLenum target, GLint internalformat, const ve
 	desc->mipMapCount = 1;
 	desc->layersCount = 1;
 	
-	if (format == GL_RGBA)
+	if ((format == GL_RGBA) || (format == GL_BGRA))
 		desc->bitsPerPixel = 32;
 	else if (format == GL_RGB)
 		desc->bitsPerPixel = 24;
