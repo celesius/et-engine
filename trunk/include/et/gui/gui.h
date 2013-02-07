@@ -31,8 +31,8 @@ namespace et
 			typedef IntrusivePtr<Gui> Pointer;
 			
 		public:
-			Gui(RenderContext* rc, TextureCache& texCache);
-
+			Gui(RenderContext* rc);
+			
 			void layout(const vec2& size);
 			void render(RenderContext* rc);
 
@@ -156,7 +156,6 @@ namespace et
 
 		private:
 			RenderContext* _rc;
-			TextureCache& _textureCache;
 			GuiRenderer _renderer;
 
 			RenderingElement::Pointer _renderingElementBackground;

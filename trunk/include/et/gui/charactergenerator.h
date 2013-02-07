@@ -24,7 +24,9 @@ namespace et
 			typedef et::IntrusivePtr<CharacterGenerator> Pointer;
 
 		public:
-			CharacterGenerator(RenderContext* _rc, const std::string& face, const std::string& boldFace, size_t size);
+			CharacterGenerator(RenderContext* _rc, const std::string& face,
+				const std::string& boldFace, size_t size);
+			
 			~CharacterGenerator();
 
 			const Texture& texture() const 

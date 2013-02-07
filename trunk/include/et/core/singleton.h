@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <et/core/debug.h>
+
 namespace et
 { 
 
@@ -31,10 +33,6 @@ namespace et
 	t(const t&) { }								\
 	t& operator = (const t&) { return *this; }	\
 	friend class et::Singleton<t>;
-
-#define ET_DENY_COPY(t) private:				\
-	t(const t&) { }								\
-	t& operator = (const t&) { return *this; }
 
 #define ET_SINGLETON_COPY_DENY(t) private:		\
 	ET_DENY_COPY(t)								\
