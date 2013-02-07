@@ -65,7 +65,12 @@
 																expression;\
 															ET_END_ITERATION
 
-#define ET_LOG_MEMORY_OPERATIONS	0
+#define ET_LOG_MEMORY_OPERATIONS							0
+
+#define ET_DENY_COPY(t)										private:\
+																t(const t&) { }\
+																t& operator = (const t&) { return *this; }
+
 
 namespace et
 {

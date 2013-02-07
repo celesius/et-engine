@@ -12,7 +12,7 @@ using namespace et;
 using namespace et::gui;
 
 
-Gui::Gui(RenderContext* rc, TextureCache& texCache) : _rc(rc), _textureCache(texCache), _renderer(rc, true), 
+Gui::Gui(RenderContext* rc) : _rc(rc),  _renderer(rc, true), 
 	_renderingElementBackground(new RenderingElement(rc)),
 	_background(Texture(), 0), _backgroundValid(true)
 {

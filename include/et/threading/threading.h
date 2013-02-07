@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <sys/types.h>
 #include <et/core/singleton.h>
 #include <et/threading/thread.h>
 
