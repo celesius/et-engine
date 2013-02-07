@@ -6,7 +6,7 @@
  */
 
 #include <algorithm>
-#include <et/core/debug.h>
+#include <et/core/et.h>
 #include <et/gui/guirenderer.h>
 #include <et/gui/carousel.h>
 

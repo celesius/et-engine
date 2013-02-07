@@ -5,7 +5,6 @@
  *
  */
 
-#include <et/core/debug.h>
 #include <et/scene3d/element.h>
 
 using namespace et;

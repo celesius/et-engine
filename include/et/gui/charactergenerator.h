@@ -7,11 +7,8 @@
 
 #pragma once
 
-#include <string>
-#include <et/core/intrusiveptr.h>
 #include <et/gui/fontbase.h>
-#include <et/rendering/rendercontext.h>
-#include <et/apiobjects/texture.h>
+#include <et/apiobjects/texturecache.h>
 
 namespace et
 {

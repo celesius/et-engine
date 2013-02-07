@@ -5,8 +5,6 @@
  *
  */
 
-#include <et/platform/platform.h>
-
 #include <iostream>
 #include <assert.h>
 #include <fbxsdk.h>

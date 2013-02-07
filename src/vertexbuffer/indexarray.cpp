@@ -5,7 +5,7 @@
  *
  */
 
-#include <et/core/debug.h>
+#include <et/core/et.h>
 #include <et/core/serialization.h>
 #include <et/vertexbuffer/indexarray.h>
 #include <et/primitives/primitives.h>

@@ -10,9 +10,9 @@ namespace demo
 	private:
 		et::ApplicationIdentifier applicationIdentifier() const;
 
-		void setRenderContextParameters(et::RenderContextParameters&);
+		ET_DEPRECATED( void setRenderContextParameters(et::RenderContextParameters&) );
 
-		void applicationDidLoad(et::RenderContext*);
+		void applicationDidLoad(et::RenderContext*) __attribute__((deprecated));
 		void applicationWillTerminate();
 
 		void applicationWillResizeContext(const et::vec2i&);

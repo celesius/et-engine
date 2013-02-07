@@ -408,10 +408,10 @@
 		A56E167D16C44A2F006C86BF /* source */ = {
 			isa = PBXGroup;
 			children = (
+				A56E168116C44A2F006C86BF /* ui */,
 				A56E167E16C44A2F006C86BF /* main.cpp */,
 				A56E167F16C44A2F006C86BF /* maincontroller.cpp */,
 				A56E168016C44A2F006C86BF /* maincontroller.h */,
-				A56E168116C44A2F006C86BF /* ui */,
 			);
 			name = source;
 			path = ../source;

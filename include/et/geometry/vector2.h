@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <et/platform/platform.h>
-
 namespace et 
 {
 	template <typename T> 
@@ -112,7 +110,7 @@ namespace et
 			T lenSquare = dotSelf();
 			if (lenSquare > 0)
 			{
-				lenSquare = sqrt(lenSquare);
+				lenSquare = std::sqrt(lenSquare);
 				x /= lenSquare;
 				y /= lenSquare;
 			}

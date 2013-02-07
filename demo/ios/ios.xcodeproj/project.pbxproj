@@ -109,6 +109,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A540DDE916C45AFA00DE9F08 /* et.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = et.h; sourceTree = "<group>"; };
 		A56E149B16C43F53006C86BF /* ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A56E149E16C43F53006C86BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		A56E14A016C43F53006C86BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -802,6 +803,7 @@
 		A56E15C316C441A0006C86BF /* core */ = {
 			isa = PBXGroup;
 			children = (
+				A540DDE916C45AFA00DE9F08 /* et.h */,
 				A56E15C416C441A0006C86BF /* autoptr.h */,
 				A56E15C516C441A0006C86BF /* autovalue.h */,
 				A56E15C616C441A0006C86BF /* constants.h */,

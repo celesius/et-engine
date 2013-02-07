@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <et/platform/platform.h>
-
 #if (ET_DEBUG)
 #	define setDebugVariable(var, val) et::et_internal_setDebugVariable(var, val, #var, #val, ET_CALL_FUNCTION);
 #else
@@ -28,6 +26,8 @@
 #		define ET_SUPPORT_RANGE_BASED_FOR	0
 #	endif
 #
+#	define ET_DEPRECATED(FUNC)				__declspec(deprecated) FUNC
+#
 #elif (ET_PLATFORM_APPLE)
 #
 #	define ET_CALL_FUNCTION					__PRETTY_FUNCTION__
@@ -36,9 +36,12 @@
 #	if (ET_PLATFORM_MAC)
 #		define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #	endif
+#
+#	define ET_DEPRECATED(FUNC)				FUNC __attribute__((deprecated))
+#
 #else
 #
-#	error ET_CALL_FUNCTION is undefined
+#	error ET_PLATFORM is not defined
 #
 #endif
 

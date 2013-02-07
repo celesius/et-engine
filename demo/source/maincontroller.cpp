@@ -1,10 +1,18 @@
 #include "maincontroller.h"
 
+void a() __attribute__((deprecated));
+
+void a()
+{
+}
+
 using namespace et;
 using namespace demo;
 
 void MainController::setRenderContextParameters(et::RenderContextParameters& p)
 {
+	a();
+	
 	p.supportedInterfaceOrientations =
 		InterfaceOrientation_Any & (~InterfaceOrientation_PortraitUpsideDown);
 

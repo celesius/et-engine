@@ -1,6 +1,7 @@
 #include <Foundation/Foundation.h>
 #include <AppKit/AppKit.h>
 
+#include <et/rendering/rendercontext.h>
 #include <et/geometry/rectplacer.h>
 #include <et/gui/charactergenerator.h>
 #include <et/imaging/imagewriter.h>
