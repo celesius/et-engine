@@ -10,10 +10,19 @@
 
 using namespace et;
 
+OpenGLCapabilites::OpenGLCapabilites() : _version(OpenGLVersion_unknown),
+	_mipmap_generation(false), _shaders(false), _vertex_arrays(false),
+	_vertex_attrib_arrays(false), _vertex_buffers(false), _drawelements_basevertex(false)
+{
+}
+
+
 void OpenGLCapabilites::checkCaps()
 {
 	const char* glv = reinterpret_cast<const char*>(glGetString(GL_VERSION));
 	const char* glslv = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
+	
+	checkOpenGLError("OpenGLCapabilites::checkCaps");
 	
 	_glslVersion = std::string();
 	_openGlVersion = std::string(glv ? glv : "<Unknown OpenGL version>");
@@ -43,6 +52,19 @@ void OpenGLCapabilites::checkCaps()
 #endif
 	
 	_mipmap_generation = glGenerateMipmap != nullptr;
+	
+	_vertex_arrays = (glGenVertexArrays != nullptr) && (glDeleteVertexArrays != nullptr)
+		&& (glBindVertexArray != nullptr) && (glIsVertexArray != nullptr);
+	
+	if (_vertex_arrays)
+	{
+		GLuint testArray = 0;
+		glGenVertexArrays(1, &testArray);
+		if ((glGetError() == GL_NO_ERROR) && (testArray != 0))
+			glDeleteVertexArrays(1, &testArray);
+		else
+			_vertex_arrays = false;
+	}
 	
 	_vertex_attrib_arrays = glVertexAttribPointer != nullptr;
 

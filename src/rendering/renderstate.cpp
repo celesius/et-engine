@@ -6,6 +6,7 @@
  */
 
 #include <et/vertexbuffer/vertexdeclaration.h>
+#include <et/opengl/openglcaps.h>
 #include <et/apiobjects/program.h>
 #include <et/apiobjects/texture.h>
 #include <et/apiobjects/framebuffer.h>
@@ -164,7 +165,7 @@ void RenderState::bindBuffers(const VertexBuffer& vb, const IndexBuffer& ib, boo
 
 void RenderState::bindVertexArray(GLuint buffer)
 {
-	if (_currentState.boundVertexArrayObject != buffer)
+	if ((_currentState.boundVertexArrayObject != buffer) && openGLCapabilites().supportVertexArrays())
 	{ 
 		_currentState.boundVertexArrayObject = buffer;
 		etBindVertexArray(buffer);

@@ -24,9 +24,7 @@ namespace et
 	class OpenGLCapabilites : public Singleton<OpenGLCapabilites>
 	{ 
 	public:
-		OpenGLCapabilites() : _version(OpenGLVersion_unknown),
-			_mipmap_generation(false), _shaders(false), _vertex_attrib_arrays(false), _vertex_buffers(false),
-			_drawelements_basevertex(false) { }
+		OpenGLCapabilites();
 		
 		bool supportMipMapGeneration() const
 			{ return _mipmap_generation; }
@@ -42,6 +40,9 @@ namespace et
 		
 		bool supportDrawElemensBaseVertex() const 
 			{ return _drawelements_basevertex; }
+		
+		bool supportVertexArrays() const
+			{ return _vertex_arrays; }
 		
 		OpenGLVersion version() const
 			{ return _version; }
@@ -62,6 +63,7 @@ namespace et
 		OpenGLVersion _version;
 		bool _mipmap_generation;
 		bool _shaders;
+		bool _vertex_arrays;
 		bool _vertex_attrib_arrays;
 		bool _vertex_buffers;
 		bool _drawelements_basevertex;

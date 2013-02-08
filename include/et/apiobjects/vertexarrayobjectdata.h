@@ -17,8 +17,11 @@ namespace et
 	class VertexArrayObjectData : public APIObjectData
 	{
 	public:
-		VertexArrayObjectData(RenderState& rs, VertexBuffer vb, IndexBuffer ib, const std::string& name = std::string());
+		VertexArrayObjectData(RenderState& rs, VertexBuffer vb, IndexBuffer ib,
+			const std::string& name = std::string());
+		
 		VertexArrayObjectData(RenderState& rs, const std::string& name = std::string());
+		
 		~VertexArrayObjectData();
 
 		GLuint glID() const
