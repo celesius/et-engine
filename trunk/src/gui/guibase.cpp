@@ -116,9 +116,9 @@ void Element::sendToBack(Element* c)
 
 void Element::broardcastMessage(const GuiMessage& msg)
 {
-	for (auto c : children())
+	ET_ITERATE(children(), auto, c,
 	{
 		c->processMessage(msg);
 		c->broardcastMessage(msg);
-	}
+	})
 }

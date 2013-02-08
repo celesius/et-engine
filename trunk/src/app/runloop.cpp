@@ -76,9 +76,7 @@ void RunLoopObject::detachTimerPool(TimerPool pool)
 
 void RunLoopObject::detachAllTimerPools()
 {
-	for (auto& i : _timerPools)
-		i->setOwner(0);
-	
+	ET_ITERATE(_timerPools, auto&, i, i->setOwner(0))
 	_timerPools.clear();
 }
 
