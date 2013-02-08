@@ -162,7 +162,7 @@ void GesturesRecognizer::cancelWaitingForClicks()
 void GesturesRecognizer::onGesturePerformed(GestureInputInfo i)
 {
 	if ((i.mask & GestureTypeMask_Zoom) == GestureTypeMask_Zoom)
-		zoom.invoke(1.0 - i.values.z);
+		zoom.invoke(1.0f - i.values.z);
 
 	if ((i.mask & GestureTypeMask_Swipe) == GestureTypeMask_Swipe)
 		drag.invoke(i.values.xy(), PointerType_None);

@@ -118,6 +118,13 @@ void Input::pushGestureInputAction(const et::GestureInputInfo& g)
 	gesturePerformed.invokeInMainRunLoop(g);
 }
 
+void Input::activateSoftwareKeyboard()
+{
+}
+
+void Input::deactivateSoftwareKeyboard()
+{
+}
 
 /*
  * Input Handler
