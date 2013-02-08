@@ -51,6 +51,7 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
             break;
         }
             
+#if defined(GL_RG) && defined(GL_RG16)
 	case 34:
 		{
 			desc.channels = 2;
@@ -60,7 +61,9 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 			desc.type = GL_UNSIGNED_SHORT;
 			break;   
 		}
-
+#endif
+			
+#if defined(GL_RGBA16)
 	case 36:
 		{
 			desc.bitsPerPixel = 16 * desc.channels;
@@ -70,7 +73,8 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 			desc.type = GL_UNSIGNED_SHORT;
 			break;   
 		}
-            
+#endif
+			
 #if defined(GL_R16F)
 	case 111: 
 		{
@@ -107,7 +111,7 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 		}
 #endif
             
-#if defined (GL_RG32F)
+#if defined(GL_RG32F)
 	case 115:
 		{
 			desc.channels = 2;
@@ -118,6 +122,8 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 			break;   
 		}		 
 #endif
+			
+#if defined(GL_RGBA16F)
 	case 113:
 		{
 			desc.channels = 4;
@@ -127,7 +133,9 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 			desc.type = GL_HALF_FLOAT;
 			break;   
 		}
-
+#endif
+			
+#if defined(GL_RGBA32F)
 	case 116:
 		{
 			desc.channels = 4;
@@ -137,7 +145,7 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 			desc.type = GL_FLOAT;
 			break;   
 		}
-
+#endif
 #if defined(GL_COMPRESSED_RGB_S3TC_DXT1_EXT) 
 	case FOURCC_DXT1:
 		{

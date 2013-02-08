@@ -36,10 +36,10 @@ void OpenGLCapabilites::checkCaps()
 	std::cout << "OpenGL version: " << _openGlVersion << std::endl <<
 				 "GLSL version: " << _glslVersionString << " (" << _glslVersion << ")" << std::endl;
 	
-#if (ET_OPENGLES)
-	_drawelements_basevertex = false;
-#else
+#if (ET_OPENGL3_AVAILABLE)
 	_drawelements_basevertex = glDrawElementsBaseVertex != nullptr;
+#else
+	_drawelements_basevertex = false;
 #endif
 	
 	_mipmap_generation = glGenerateMipmap != nullptr;

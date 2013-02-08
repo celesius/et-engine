@@ -165,8 +165,9 @@ RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContex
 	
 	NSOpenGLPixelFormatAttribute pixelFormatAttributes[] =
 		{
+#if defined(NSOpenGLPFAOpenGLProfile) && defined (NSOpenGLProfileVersion3_2Core)
 			NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
-			
+#endif			
 			NSOpenGLPFAColorSize, 24,
 			NSOpenGLPFAAlphaSize, 8,
 			NSOpenGLPFADepthSize, 32,

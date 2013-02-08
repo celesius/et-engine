@@ -197,33 +197,36 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 			break;
 		};
 #endif
+			
+#if defined(GL_RG) && defined(GL_RG16)
 		case 2: 
 		{
 			desc.internalformat = (bpp == 16) ? GL_RG16 : GL_RG;
 			desc.format = GL_RG;
 			break;
 		}
+#endif
 			
+#if defined(GL_RGB16)
 		case 3: 
 		{
 			desc.internalformat = (bpp == 16) ? GL_RGB16 : GL_RGB8;
 			desc.format = GL_RGB;
 			break;
 		}
+#endif
 			
+#if defined(GL_RGBA16)
 		case 4: 
 		{ 
 			desc.internalformat = (bpp == 16) ? GL_RGBA16 : GL_RGBA8;
 			desc.format = GL_RGBA;
 			break;
 		}
+#endif
 			
 		default: 
-		{
-			desc.internalformat = 0;
-			desc.format = 0;
-		}
-			
+			assert("Unknown texture format" && 0);
 	}
 }
 

@@ -225,7 +225,7 @@ namespace et
 			return "Unknown texture target " + intToStr(target);
 		}
 	}
-
+	
 	std::string glInternalFormatToString(int format)
 	{
 		switch (format)
@@ -244,7 +244,7 @@ namespace et
 
 		case GL_RGB5_A1:
 			return "GL_RGB5_A1";
-
+				
 #if defined (GL_LUMINANCE)
 		case GL_LUMINANCE:
 			return "GL_LUMINANCE";
@@ -278,34 +278,40 @@ namespace et
 			return "GL_LUMINANCE16";
 #endif
 
-#if (!ET_OPENGLES)
-		case GL_RGB8:
-			return "GL_RGB8";
-
 		case GL_RGBA4:
 			return "GL_RGBA4";
-
-		case GL_RGBA8:
-			return "GL_RGBA8";
-
+				
+#if defined(GL_RGB16F)
 		case GL_RGB16F:
 			return "GL_RGB16F";
-
+#endif
+				
+#if defined(GL_RGBA16F)
 		case GL_RGBA16F:
 			return "GL_RGBA16F";
-
+#endif
+				
+#if defined(GL_RGBA16F)
 		case GL_RGBA32F:
 			return "GL_RGBA32F";
-
+#endif
+				
+#if defined(GL_RGB32F)
 		case GL_RGB32F:
 			return "GL_RGB32F";
+#endif
 
+#if defined(GL_RGB4)
 		case GL_RGB4:
 			return "GL_RGB4";
+#endif
 
+#if defined(GL_R11F_G11F_B10F)
 		case GL_R11F_G11F_B10F:
 			return "GL_R11F_G11F_B10F_EXT";
-
+#endif
+			
+#if defined(GL_COMPRESSED_RGB_S3TC_DXT1_EXT)
 		case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
 			return "GL_COMPRESSED_RGB_S3TC_DXT1_EXT";
 
@@ -317,12 +323,14 @@ namespace et
 
 		case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 			return "GL_COMPRESSED_RGBA_S3TC_DXT5_EXT";
-
+#endif
+				
+#if defined(GL_COMPRESSED_RG_RGTC2)
 		case GL_COMPRESSED_RG_RGTC2:
 			return "GL_COMPRESSED_RG_RGTC2";
 #endif
-
-#if defined(GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG) && (GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG)
+				
+#if defined(GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG)
 		case GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
 			return "GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG";
 
@@ -379,10 +387,10 @@ namespace et
 	{
 		checkOpenGLError(keyBegin);
 
-#if (ET_OPENGLES)
-		std::cout << "Call to glDrawElementsBaseVertex(" << mode << ", " << count << ", " << type << ", " << indices << ", " << base << ") in OpenGL ES" << std::endl;
-#else
+#if (ET_OPENGL3_AVAILABLE)
 		glDrawElementsBaseVertex(mode, count, type, indices, base);
+#else
+		std::cout << "Call to unavailable function: glDrawElementsBaseVertex" << std::endl;
 #endif
 
 		checkOpenGLError(keyEnd);

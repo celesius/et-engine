@@ -97,6 +97,7 @@ void PVRLoader::loadInfoFromV2Header(const PVRHeader2& header, TextureDescriptio
 	}
     
 	size_t format = header.dwpfFlags & PVRFormatMask;
+#if defined(GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG)	
 	if (format == PVRVersion2Format_PVRTC2)
 	{
 		desc.compressed = true;
@@ -110,6 +111,7 @@ void PVRLoader::loadInfoFromV2Header(const PVRHeader2& header, TextureDescriptio
 		desc.internalformat = header.dwAlphaBitMask ? GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG : GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
 	}
 	else
+#endif	
 	{
 		std::cout << "Unresolved PVR format: " << format << std::endl;
 	}    
@@ -131,6 +133,7 @@ void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescriptio
         std::cout << "Unsupported PVR channel type: " << header.channelType << std::endl;
     
 	size_t pixelFormat = header.pixelFormat & PVRVersion3Format_mask;
+#if defined(GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG)	
     if (pixelFormat == PVRVersion3Format_PVRTC_2bpp_RGB)
 	{
 		desc.compressed = true;
@@ -163,7 +166,9 @@ void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescriptio
         desc.format = GL_RGBA;
 		desc.internalformat = GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
 	}
-	else if (pixelFormat == PVRVersion3Format_RGBA)
+	else 
+#endif		
+	if (pixelFormat == PVRVersion3Format_RGBA)
 	{
 		desc.compressed = false;
         desc.bitsPerPixel = 32;
