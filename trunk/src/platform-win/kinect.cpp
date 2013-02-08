@@ -5,7 +5,7 @@
  *
  */
 
-#include <et/platform/platform.h>
+#include <et/core/et.h>
 
 #if defined(ET_PLATFORM_WIN)
 

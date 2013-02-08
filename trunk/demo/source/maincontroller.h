@@ -12,7 +12,7 @@ namespace demo
 
 		void setRenderContextParameters(et::RenderContextParameters&);
 
-		void applicationDidLoad(et::RenderContext*) __attribute__((deprecated));
+		void applicationDidLoad(et::RenderContext*);
 		void applicationWillTerminate();
 
 		void applicationWillResizeContext(const et::vec2i&);
