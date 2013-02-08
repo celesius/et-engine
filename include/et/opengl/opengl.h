@@ -14,23 +14,36 @@
 #	include <et/platform-win/opengl.win.h>
 #
 #	define ET_OPENGLES								0
-#
-#	define GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG		0
-#	define GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG		0
-#	define GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG		0
-#	define GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG		0
+#	define ET_OPENGL3_AVAILABLE						1
 #
 #elif ET_PLATFORM_MAC
 #
-#	include <OpenGL/gl3.h>
-#	include <OpenGL/gl3ext.h>
+#	include <OpenGL/OpenGL.h>
+#	if defined(CGL_VERSION_1_3)
+#
+#		include <OpenGL/gl3.h>
+#		include <OpenGL/gl3ext.h>
+#
+#		define ET_OPENGL3_AVAILABLE					1
+#
+#	elif defined(CGL_VERSION_1_2)
+#
+#		define glBindFragDataLocation				glBindFragDataLocationEXT
+#		define glGenVertexArrays					glGenVertexArraysAPPLE
+#		define glBindVertexArray					glBindVertexArrayAPPLE
+#		define glIsVertexArray						glIsVertexArrayAPPLE
+#		define glDeleteVertexArrays					glDeleteVertexArraysAPPLE
+#		define GL_VERTEX_ARRAY_BINDING				GL_VERTEX_ARRAY_BINDING_APPLE
+#
+#		define ET_OPENGL3_AVAILABLE					0
+#
+#	else
+#
+#		error Unsupported OpenGL version
+#
+#	endif
 #
 #	define ET_OPENGLES								0
-#
-#	define GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG		0
-#	define GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG		0
-#	define GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG		0
-#	define GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG		0
 #
 #elif ET_PLATFORM_IOS
 #
@@ -43,32 +56,12 @@
 #	define GL_HALF_FLOAT							GL_HALF_FLOAT_OES
 #	define GL_RGB8									GL_RGB
 #	define GL_RGBA8									GL_RGBA
-#	define GL_RGB16F								0
-#	define GL_RGBA16F								0
-#	define GL_RGB32F								0
-#	define GL_RGBA32F								0
-#	define GL_R										0
-#	define GL_RG									0
-#	define GL_R16									0
-#	define GL_RG16									0
-#	define GL_RGB16									0
-#	define GL_RGBA16								0
 #
 #	define glGenVertexArrays						glGenVertexArraysOES
 #	define glBindVertexArray						glBindVertexArrayOES
 #	define glIsVertexArray							glIsVertexArrayOES
 #	define glClearDepth								glClearDepthf
-#
-#	if !defined(glDeleteVertexArrays)
-#		define glDeleteVertexArrays					glDeleteVertexArraysOES
-#	endif
-#
-#	if !defined(glFramebufferTexture)
-#
-#		define glFramebufferTexture(target, attachment, texture, level) \
-			glFramebufferTexture2D(target, attachment, GL_TEXTURE_2D, texture, level)
-#
-#	endif
+#	define glDeleteVertexArrays						glDeleteVertexArraysOES
 #
 #	define GL_TEXTURE_MAX_LEVEL						GL_TEXTURE_MAX_LEVEL_APPLE
 #	define GL_TEXTURE_1D							0
@@ -76,10 +69,24 @@
 #
 #endif
 
-#if !defined(GL_COLOR_ATTACHMENT0)
-#	define GL_COLOR_ATTACHMENT0						0
+#if !defined(glFramebufferTexture)
+#
+#	define glFramebufferTexture(target, attachment, texture, level) \
+			glFramebufferTexture2D(target, attachment, GL_TEXTURE_2D, texture, level)
+#
 #endif
 
+#if !defined(GL_COLOR_ATTACHMENT0)
+#
+#	define GL_COLOR_ATTACHMENT0						0
+#
+#endif
+
+#if !defined(GL_COMPARE_REF_TO_TEXTURE) && defined(GL_COMPARE_R_TO_TEXTURE)
+#
+#	define GL_COMPARE_REF_TO_TEXTURE				GL_COMPARE_R_TO_TEXTURE
+#
+#endif
 
 #if (ET_DEBUG)
 #
