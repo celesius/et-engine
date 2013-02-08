@@ -165,9 +165,6 @@ RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContex
 	
 	NSOpenGLPixelFormatAttribute pixelFormatAttributes[] =
 		{
-#if defined(NSOpenGLPFAOpenGLProfile) && defined (NSOpenGLProfileVersion3_2Core)
-			NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
-#endif			
 			NSOpenGLPFAColorSize, 24,
 			NSOpenGLPFAAlphaSize, 8,
 			NSOpenGLPFADepthSize, 32,
@@ -178,9 +175,19 @@ RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContex
 			NSOpenGLPFAMultisample,
 			NSOpenGLPFASampleBuffers, 4,
 			NSOpenGLPFASamples, 16,
-
+			0,
+			0,
 			0
 		};
+	
+#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7)
+	if (params.openGLForwardContext)
+	{
+		size_t lastEntry = sizeof(pixelFormatAttributes) / sizeof(NSOpenGLPixelFormatAttribute) - 1;
+		pixelFormatAttributes[lastEntry - 2] = NSOpenGLPFAOpenGLProfile;
+		pixelFormatAttributes[lastEntry - 1] = NSOpenGLProfileVersion3_2Core;
+	}
+#endif
 
 	_pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes] autorelease];
 	assert(_pixelFormat != nil);
