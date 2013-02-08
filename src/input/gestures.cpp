@@ -25,12 +25,12 @@ void GesturesRecognizer::handlePointersMovement()
         vec2 previousPositions[2];
 		
         size_t index = 0;
-        for (auto i : _pointers)
+		ET_ITERATE(_pointers, auto, i,
         {
             currentPositions[index] = i.second.current.normalizedPos;
             previousPositions[index] = i.second.previous.normalizedPos;
 			++index;
-        }
+        })
         
         float currentDistance = (currentPositions[0] - currentPositions[1]).length();
         float previousDistance = (previousPositions[0] - previousPositions[1]).length();

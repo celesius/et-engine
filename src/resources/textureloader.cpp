@@ -59,7 +59,7 @@ std::string TextureLoader::resolveScalableFileName(const std::string& fileName,
 	if ((lastDotPos == std::string::npos) || (lastDotPos < fileName.size() - 5))
 	{
 		const StringList& ext = TextureLoader::preferredExtensions();
-		for (const auto& i : ext)
+		ET_ITERATE(ext, const auto&, i,
 		{
 			std::string name = fileName + i;
 			name = application().environment().resolveScalableFileName(name, screenScale);
@@ -69,11 +69,11 @@ std::string TextureLoader::resolveScalableFileName(const std::string& fileName,
 				found = true;
 				break;
 			}
-		}
+		})
         
         if (!found && (extractedFileName != fileName))
         {
-			for (const auto& i : ext)
+			ET_ITERATE(ext, const auto&, i,
 			{
 				std::string name = extractedFileName + i;
 				name = application().environment().resolveScalableFileName(name, screenScale);
@@ -83,7 +83,7 @@ std::string TextureLoader::resolveScalableFileName(const std::string& fileName,
 					found = true;
 					break;
 				}
-			}
+			})
 		}
 	}
 	else

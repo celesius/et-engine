@@ -13,6 +13,7 @@ using namespace et;
 
 #if defined(_MSC_VER)
 #	pragma comment(lib, "winmm.lib")
+#	pragma comment(lib, "psapi.lib")
 #endif
 
 void Application::platformInit()
