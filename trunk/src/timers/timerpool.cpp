@@ -12,7 +12,7 @@
 
 using namespace et;
 
-TimerPoolObject::TimerPoolObject(RunLoopObject* owner) : _owner(owner)
+TimerPoolObject::TimerPoolObject(RunLoop* owner) : _owner(owner)
 {
 }
 

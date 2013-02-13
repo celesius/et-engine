@@ -12,11 +12,13 @@
 
 namespace et
 {
-	class RunLoopObject : public Shared
+	class RunLoop : public Shared
 	{
 	public:
-		RunLoopObject();
-		~RunLoopObject();
+		typedef IntrusivePtr<RunLoop> Pointer;
+
+	public:
+		RunLoop();
 		
 		void update(uint64_t t);
 		void pause();
@@ -48,6 +50,4 @@ namespace et
 		bool _started;
 		bool _active;
 	};
-
-	typedef IntrusivePtr<RunLoopObject> RunLoop;
 }

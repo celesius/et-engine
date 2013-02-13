@@ -126,5 +126,5 @@ namespace et
 		{ return Application::instance().runLoop(); }
 
 	inline TimerPool& mainTimerPool()
-		{ return Application::instance().runLoop()->mainTimerPool(); }
+		{ return Application::instance().runLoop().mainTimerPool(); }
 }
