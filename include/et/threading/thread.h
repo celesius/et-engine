@@ -12,8 +12,12 @@
 namespace et
 {
 	typedef unsigned long ThreadResult;
+#if (ET_PLATFORM_ANDROID)
+	typedef long ThreadId;
+#else
 	typedef size_t ThreadId;
-
+#endif
+	
 	class ThreadPrivate;
 	class Thread
 	{

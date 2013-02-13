@@ -12,11 +12,21 @@
 namespace et
 {
 #if (ET_PLATFORM_IOS || ET_PLATFORM_MAC)
+#
 	typedef int ReferenceCounterType;
+#
+#elif (ET_PLATFORM_ANDROID)
+#
+	typedef int ReferenceCounterType;
+#
 #elif (ET_PLATFORM_WIN)
+#
 	typedef long ReferenceCounterType;
+#
 #else
-	#error ReferenceCounterType is not defined
+#
+#	error ReferenceCounterType is not defined
+#
 #endif
 	
 	class ReferenceCounter

@@ -110,7 +110,7 @@ namespace et
 	}
 	
 	inline int strToInt(const std::string& value)
-		{ return atoi(value.c_str()); }
+		{ return std::atoi(value.c_str()); }
 	
 	inline std::string intToStr(int value)
 	{
