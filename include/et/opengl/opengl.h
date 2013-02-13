@@ -15,6 +15,7 @@
 #
 #	define ET_OPENGLES								0
 #	define ET_OPENGL3_AVAILABLE						1
+#	define ET_OPENGL4_AVAILABLE						1
 #
 #elif ET_PLATFORM_MAC
 #
@@ -44,6 +45,7 @@
 #	endif
 #
 #	define ET_OPENGLES								0
+#	define ET_OPENGL4_AVAILABLE						0
 #
 #elif ET_PLATFORM_IOS
 #
@@ -60,12 +62,33 @@
 #	define glGenVertexArrays						glGenVertexArraysOES
 #	define glBindVertexArray						glBindVertexArrayOES
 #	define glIsVertexArray							glIsVertexArrayOES
-#	define glClearDepth								glClearDepthf
 #	define glDeleteVertexArrays						glDeleteVertexArraysOES
+#	define glClearDepth								glClearDepthf
 #
+#	define ET_OPENGL3_AVAILABLE						1
+#	define ET_OPENGL4_AVAILABLE						0
 #	define GL_TEXTURE_MAX_LEVEL						GL_TEXTURE_MAX_LEVEL_APPLE
-#	define GL_TEXTURE_1D							0
 #	define GL_VERTEX_ARRAY_BINDING					GL_VERTEX_ARRAY_BINDING_OES
+#
+#elif (ET_PLATFORM_ANDROID)
+#
+#	include <GLES2/gl2.h>
+#	include <GLES2/gl2ext.h>
+#
+#	define ET_OPENGLES								1
+#	define ET_OPENGL3_AVAILABLE						0
+#	define ET_OPENGL4_AVAILABLE						0
+#
+#	define GL_DEPTH_COMPONENT24						GL_DEPTH_COMPONENT24_OES
+#	define GL_HALF_FLOAT							GL_HALF_FLOAT_OES
+#	define GL_RGB8									GL_RGB
+#	define GL_RGBA8									GL_RGBA
+#
+#	define glClearDepth								glClearDepthf
+#
+#else
+#
+#	error Platform is not defined
 #
 #endif
 

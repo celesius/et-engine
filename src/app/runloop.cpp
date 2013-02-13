@@ -19,9 +19,6 @@ RunLoopObject::RunLoopObject() :
 
 RunLoopObject::~RunLoopObject()
 {
-	TimerPoolObject* tp = mainTimerPool().ptr();
-	_timerPools.clear();
-	tp->referenceCount();
 }
 
 void RunLoopObject::update(uint64_t t)

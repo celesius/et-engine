@@ -64,7 +64,7 @@ void TextureCache::flush()
 	TextureMap::iterator i = _textures.begin();
 	while (i != _textures.end())
 	{
-		if (i->second->referenceCount() == 1)
+		if (i->second->atomicCounterValue() == 1)
 		{
 			TextureMap::iterator toErase = i;
 			++i;

@@ -184,8 +184,10 @@ namespace et
 		case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
 			return "GL_TEXTURE_CUBE_MAP_NEGATIVE_Z";
 
+#if defined(GL_TEXTURE_1D)
 		case GL_TEXTURE_1D:
 			return "GL_TEXTURE_1D";
+#endif
 
 #if defined(GL_TEXTURE_3D)
 		case GL_TEXTURE_3D:
@@ -236,11 +238,15 @@ namespace et
 		case GL_DEPTH_COMPONENT16:
 			return "GL_DEPTH_COMPONENT16";
 
+#if defined(GL_DEPTH_COMPONENT24)
 		case GL_DEPTH_COMPONENT24:
 			return "GL_DEPTH_COMPONENT24";
+#endif
 
+#if defined(GL_BGRA)
 		case GL_BGRA:
 			return "GL_BGRA";
+#endif
 
 		case GL_RGB5_A1:
 			return "GL_RGB5_A1";
@@ -314,13 +320,19 @@ namespace et
 #if defined(GL_COMPRESSED_RGB_S3TC_DXT1_EXT)
 		case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
 			return "GL_COMPRESSED_RGB_S3TC_DXT1_EXT";
+#endif
 
+#if defined(GL_COMPRESSED_RGBA_S3TC_DXT1_EXT)
 		case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
 			return "GL_COMPRESSED_RGBA_S3TC_DXT1_EXT";
+#endif
 
+#if defined(GL_COMPRESSED_RGBA_S3TC_DXT3_EXT)
 		case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
 			return "GL_COMPRESSED_RGBA_S3TC_DXT3_EXT";
-
+#endif
+				
+#if defined(GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
 		case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 			return "GL_COMPRESSED_RGBA_S3TC_DXT5_EXT";
 #endif
@@ -374,8 +386,10 @@ namespace et
 		case GL_FLOAT:
 			return "GL_FLOAT";
 
+#if defined(GL_HALF_FLOAT)
 		case GL_HALF_FLOAT:
 			return "GL_HALF_FLOAT";
+#endif
 
 		default:
 			return "Unknown type " + intToStr(type);
@@ -387,7 +401,7 @@ namespace et
 	{
 		checkOpenGLError(keyBegin);
 
-#if (ET_OPENGL3_AVAILABLE)
+#if (ET_OPENGL4_AVAILABLE)
 		glDrawElementsBaseVertex(mode, count, type, indices, base);
 #else
 		std::cout << "Call to unavailable function: glDrawElementsBaseVertex" << std::endl;
@@ -466,12 +480,13 @@ namespace et
 
 	void etBindVertexArray(GLuint arr)
 	{
+#if (ET_OPENGL3_AVAILABLE)
 		checkOpenGLError(keyBegin);
 		glBindVertexArray(arr);
 		checkOpenGLError(keyEnd);
-
-#if !ET_DISABLE_OPENGL_COUNTERS
+#	if !ET_DISABLE_OPENGL_COUNTERS
 		++OpenGLCounters::bindVertexArrayObjectCounter;
+#	endif
 #endif
 	}
 

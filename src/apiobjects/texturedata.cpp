@@ -15,8 +15,8 @@ using namespace et;
 
 static const int defaultBindingUnit = 7;
 
-TextureData::TextureData(RenderContext* rc, TextureDescription::Pointer desc, const std::string& id, bool deferred) : 
-	APIObjectData(id), _glID(0), _desc(desc), _own(true)
+TextureData::TextureData(RenderContext* rc, TextureDescription::Pointer desc,
+	const std::string& id, bool deferred) : APIObjectData(id), _glID(0), _desc(desc), _own(true)
 {
 	if (deferred) return;
 	
@@ -95,10 +95,10 @@ void TextureData::compareRefToTexture(RenderContext* rc, bool enable, GLenum com
 	if (enable)
 	{
 		glTexParameteri(_desc->target, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-		checkOpenGLError("glTexParameteri(_target, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE) " + name()); 
-
+		checkOpenGLError("glTexParameteri(_desc->target, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE)");
+		
 		glTexParameteri(_desc->target, GL_TEXTURE_COMPARE_FUNC, compareFunc);
-		checkOpenGLError("glTexParameteri(_target, GL_TEXTURE_COMPARE_FUNC, compareFunc) " + name()); 
+		checkOpenGLError("glTexParameteri(_desc->target, GL_TEXTURE_COMPARE_FUNC, compareFunc)");
 	}
 	else
 	{
@@ -118,14 +118,23 @@ void TextureData::generateTexture(RenderContext*)
 
 void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
 {
+#if defined(GL_TEXTURE_1D)
 	if (_desc->target == GL_TEXTURE_1D)
 	{
 		if (_desc->compressed && aDataSize)
-			etCompressedTexImage1D(_desc->target, 0, _desc->internalformat, _desc->size.x, 0, aDataSize, aDataPtr); 
+		{
+			etCompressedTexImage1D(_desc->target, 0, _desc->internalformat,
+				_desc->size.x, 0, aDataSize, aDataPtr);
+		}
 		else
-			etTexImage1D(_desc->target, 0, _desc->internalformat, _desc->size.x, 0, _desc->format, _desc->type, aDataPtr); 
+		{
+			etTexImage1D(_desc->target, 0, _desc->internalformat, _desc->size.x, 0,
+				_desc->format, _desc->type, aDataPtr);
+		}
 	}
-	else if (_desc->target == GL_TEXTURE_2D)
+	else
+#endif
+	if (_desc->target == GL_TEXTURE_2D)
 	{
 		for (size_t level = 0; level < _desc->mipMapCount; ++level)
 		{
@@ -135,9 +144,15 @@ void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
 			
 			const char* ptr = (aDataPtr && (t_offset < aDataSize)) ? &aDataPtr[t_offset] : 0;
 			if (_desc->compressed && ptr)
-				etCompressedTexImage2D(_desc->target, level, _desc->internalformat, t_mipSize.x, t_mipSize.y, 0, t_dataSize, ptr); 
+			{
+				etCompressedTexImage2D(_desc->target, level, _desc->internalformat,
+					t_mipSize.x, t_mipSize.y, 0, t_dataSize, ptr);
+			}
 			else
-				etTexImage2D(_desc->target, level, _desc->internalformat, t_mipSize.x, t_mipSize.y, 0, _desc->format, _desc->type, ptr);
+			{
+				etTexImage2D(_desc->target, level, _desc->internalformat,
+					t_mipSize.x, t_mipSize.y, 0, _desc->format, _desc->type, ptr);
+			}
 		}
 	}
 	else if (_desc->target == GL_TEXTURE_CUBE_MAP)
@@ -153,9 +168,15 @@ void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
 				
 				const char* ptr = (aDataPtr && (t_offset < aDataSize)) ? &aDataPtr[t_offset] : 0;
 				if (_desc->compressed && ptr)
-					etCompressedTexImage2D(target, level, _desc->internalformat, t_mipSize.x, t_mipSize.y, 0, t_dataSize, ptr); 
+				{
+					etCompressedTexImage2D(target, level, _desc->internalformat,
+						t_mipSize.x, t_mipSize.y, 0, t_dataSize, ptr);
+				}
 				else
-					etTexImage2D(target, level, _desc->internalformat, t_mipSize.x, t_mipSize.y, 0, _desc->format, _desc->type, ptr);
+				{
+					etTexImage2D(target, level, _desc->internalformat, t_mipSize.x, t_mipSize.y,
+						0, _desc->format, _desc->type, ptr);
+				}
 			}
 		}
 	}
@@ -167,18 +188,19 @@ void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
 
 void TextureData::build(RenderContext* rc)
 {
-	checkOpenGLError("TextureData::buildTexture2D " + name());
 	if ((_desc->size.square() == 0) || (_desc->internalformat == 0) || (_desc->type == 0)) return;
 
 	_texel = vec2( 1.0f / static_cast<float>(_desc->size.x), 1.0f / static_cast<float>(_desc->size.y) );
-	_filtration.x = (_desc->mipMapCount > 1) ? TextureFiltration_LinearMipMapLinear : TextureFiltration_Linear;
+	
+	_filtration.x = (_desc->mipMapCount > 1) ?
+		TextureFiltration_LinearMipMapLinear : TextureFiltration_Linear;
+
 	_filtration.y = TextureFiltration_Linear;
 
 	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
-	checkOpenGLError("TextureData::buildTexture2D -> etBindTexture" + name());
 
 	glTexParameteri(_desc->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	checkOpenGLError("TextureData::buildTexture2D -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) for " + name());
+	checkOpenGLError("glTexParameteri(_desc->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR)");
 
 	setFiltration(rc, _filtration.x, _filtration.y);
 	setWrap(rc, _wrap.x, _wrap.y, _wrap.z);
@@ -216,7 +238,8 @@ void TextureData::updateDataDirectly(RenderContext* rc, const vec2i& size, char*
 	buildData(data, dataSize);
 }
 
-void TextureData::updatePartialDataDirectly(RenderContext* rc, const vec2i& offset, const vec2i& size, char* data, size_t)
+void TextureData::updatePartialDataDirectly(RenderContext* rc, const vec2i& offset,
+	const vec2i& size, char* data, size_t)
 {
 	assert((_desc->target == GL_TEXTURE_2D) && !_desc->compressed);
 	
@@ -237,7 +260,9 @@ void TextureData::generateMipMaps(RenderContext* rc)
 
 void TextureData::setMaxLod(RenderContext* rc, size_t value)
 {
+#if defined(GL_TEXTURE_MAX_LEVEL)
     rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
 	glTexParameteri(_desc->target, GL_TEXTURE_MAX_LEVEL, value);
 	checkOpenGLError("TextureData::setMaxLod " + name());
+#endif
 }

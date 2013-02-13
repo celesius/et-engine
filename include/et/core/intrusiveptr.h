@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include <et/threading/referencecounter.h>
+#include <et/threading/atomiccounter.h>
 
 namespace et
 {
-	class Shared : public ReferenceCounter
+	class Shared : public AtomicCounter
 	{
 	public:   
 		Shared() 
@@ -84,8 +84,8 @@ namespace et
 		bool operator != (const IntrusivePtr& r) const
 			{ return _data != r._data; }
 
-		ReferenceCounter referenceCount() const
-			{ return _data ? _data->referenceCount() : 0; }
+		AtomicCounterType referenceCount() const
+			{ return _data ? _data->atomicCounterValue() : 0; }
 
 		IntrusivePtr<T>& operator = (const IntrusivePtr<T>& r)
 		{ 

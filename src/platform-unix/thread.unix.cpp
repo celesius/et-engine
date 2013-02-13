@@ -7,7 +7,7 @@
 
 #include <pthread.h>
 #include <unistd.h>
-#include <libkern/OSAtomic.h>
+#include <et/threading/atomiccounter.h>
 #include <et/threading/thread.h>
 
 namespace et
@@ -16,7 +16,7 @@ namespace et
 	{
 	public:
 		ThreadPrivate() :
-			threadId(0), running(0), suspended(0) { }
+			threadId(0) { }
 		
 		~ThreadPrivate();
 		
@@ -27,8 +27,8 @@ namespace et
 		pthread_mutex_t suspendMutex;
 		pthread_cond_t suspend;
 		ThreadId threadId;
-		volatile int running;
-		volatile int suspended;
+		AtomicCounter running;
+		AtomicCounter suspended;
 	};
 }
 
@@ -62,7 +62,7 @@ Thread::~Thread()
 
 void Thread::run()
 {
-	if (_private->running) return;
+	if (_private->running.atomicCounterValue() > 0) return;
 	
 	pthread_mutex_init(&_private->suspendMutex, 0);
 	pthread_cond_init(&_private->suspend, 0);
@@ -71,7 +71,7 @@ void Thread::run()
 	pthread_attr_init(&attrib);
 	pthread_attr_setdetachstate(&attrib, PTHREAD_CREATE_DETACHED);
 	
-	OSAtomicIncrement32(&_private->running);
+	_private->running.retain();
 	pthread_create(&_private->thread, &attrib, ThreadPrivate::threadProc, this);
 	
 	pthread_attr_destroy(&attrib);
@@ -79,9 +79,9 @@ void Thread::run()
 
 void Thread::suspend()
 {
-	if (_private->suspended) return;
+	if (_private->suspended.atomicCounterValue() > 0) return;
 	
-	OSAtomicIncrement32(&_private->suspended);
+	_private->suspended.retain();
 	
 	pthread_mutex_lock(&_private->suspendMutex);
 	pthread_cond_wait(&_private->suspend, &_private->suspendMutex);
@@ -90,9 +90,9 @@ void Thread::suspend()
 
 void Thread::resume()
 {
-	if (!_private->suspended) return;
+	if (_private->suspended.atomicCounterValue() == 0) return;
 	
-	OSAtomicDecrement32(&_private->suspended);
+	_private->suspended.release();
 	
 	pthread_mutex_lock(&_private->suspendMutex);
 	pthread_cond_signal(&_private->suspend);
@@ -101,9 +101,9 @@ void Thread::resume()
 
 void Thread::terminate(int result)
 {
-	if (!_private->running) return;
+	if (_private->running.atomicCounterValue() == 0) return;
 	
-	OSAtomicDecrement32(&_private->running);
+	_private->running.release();
 	
 	pthread_detach(_private->thread);
 	pthread_exit(reinterpret_cast<void*>(result));
@@ -116,12 +116,12 @@ ThreadResult Thread::main()
 
 bool Thread::running() const
 {
-	return _private->running;
+	return _private->running.atomicCounterValue() > 0;
 }
 
 bool Thread::suspended() const
 {
-	return _private->suspended;
+	return _private->suspended.atomicCounterValue() > 0;
 }
 
 ThreadId Thread::id() const

@@ -1,4 +1,4 @@
-#if defined(__MACH__)
+#if defined(__MACH__) || defined(__ANDROID__)
 #
 #	include "jconfig.darwin.h"
 #
