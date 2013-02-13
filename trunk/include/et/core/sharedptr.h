@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et/threading/ReferenceCounter.h>
+#include <et/threading/atomiccounter.h>
 
 namespace et
 {
@@ -16,44 +16,44 @@ namespace et
 
 	struct SharedReferenceCounter
 	{
-		ReferenceCounter strong;
-		ReferenceCounter weak;
+		AtomicCounter strong;
+		AtomicCounter weak;
 	};
 
 	template <typename T>
 	class SharedPtr
 	{
 	public:
-		SharedPtr() : _data(0), _refCount(0)
+		SharedPtr() : _data(nullptr), _referenceCounter(nullptr)
 			{ };
 
 		virtual ~SharedPtr()
-			{ reset(0, 0); }
+			{ reset(nullptr, nullptr); }
 
-		explicit SharedPtr(T* p) : _data(0), _refCount(0) 
-			{ reset(p, 0); };
+		explicit SharedPtr(T* p) : _data(nullptr), referenceCount(nullptr)
+			{ reset(p, nullptr); };
 
-		SharedPtr(const SharedPtr<T>& p) : _data(0), _refCount(0) 
-			{ reset(p._data, p._refCount); };
+		SharedPtr(const SharedPtr<T>& p) : _data(nullptr), referenceCount(nullptr)
+			{ reset(p._data, p._referenceCounter); };
 
 		template <typename R>
-		SharedPtr(SharedPtr<R> p) : _data(0), _refCount(0) 
+		SharedPtr(const SharedPtr<R>& p) : _data(nullptr), _referenceCounter(nullptr)
 			{ reset(p.ptr(), p.refCount()); };
 
 		SharedPtr& operator = (const SharedPtr& r)
 		{ 
-			reset(r._data, r._refCount);
+			reset(r._data, r._referenceCounter);
 			return *this;
 		}
 
 		SharedPtr& operator = (T* d)
 		{ 
-			reset(d, 0);
+			reset(d, nullptr);
 			return *this;
 		}
 
 		bool valid() const
-			{ return _data != 0; }
+			{ return _data != nullptr; }
 
 		T* ptr()
 			{ return _data; }
@@ -85,11 +85,11 @@ namespace et
 		bool operator != (const SharedPtr& r) const
 			{ return _data != r._data; }
 
-		ReferenceCounterType referenceCount() const
-			{ return _refCount ? _refCount->strong.referenceCount() : 0; }
+		AtomicCounterType referenceCount() const
+			{ return _referenceCounter ? _referenceCounter->strong.atomicCounterValue() : 0; }
 
-		SharedReferenceCounter* refCount() 
-			{ return _refCount; }
+		SharedReferenceCounter* referenceCounter()
+			{ return _referenceCounter; }
 
 	private:
 
@@ -97,26 +97,26 @@ namespace et
 		{
 			if (data == _data) return;
 
-			if (_refCount && _refCount->strong.release() == 0)
+			if (_referenceCounter && (_referenceCounter->strong.release() == 0))
 			{
 				delete _data;
-				if (_refCount->weak.referenceCount() == 0)
-					delete _refCount;
+				if (_referenceCounter->weak.atomicCounterValue() == 0)
+					delete _referenceCounter;
 			}
 
 			_data = data;
-			_refCount = r;
+			_referenceCounter = r;
 
-			if (_data && !_refCount)
-				_refCount = new SharedReferenceCounter;
+			if (_data && !_referenceCounter)
+				_referenceCounter = new SharedReferenceCounter;
 
-			if (_refCount)
-				_refCount->strong.retain();
+			if (_referenceCounter)
+				_referenceCounter->strong.retain();
 		}
 
 	private:
 		T* _data;
-		SharedReferenceCounter* _refCount;
+		SharedReferenceCounter* _referenceCounter;
 
 		friend class WeakPtr<T>;
 	};
@@ -125,47 +125,47 @@ namespace et
 	class WeakPtr
 	{
 	public:
-		WeakPtr() : _data(0), _refCount(0)
+		WeakPtr() : _data(nullptr), _referenceCounter(nullptr)
 			{ };
 
 		virtual ~WeakPtr()
-			{ reset(0, 0); }
+			{ reset(nullptr, nullptr); }
 
-		explicit WeakPtr(T* p) : _data(0), _refCount(0) 
-			{ reset(p, 0); };
+		explicit WeakPtr(T* p) : _data(nullptr), _referenceCounter(nullptr)
+			{ reset(p, nullptr); };
 
-		WeakPtr(const WeakPtr<T>& p) : _data(0), _refCount(0) 
-			{ reset(p._data, p._refCount); };
+		WeakPtr(const WeakPtr<T>& p) : _data(nullptr), _referenceCounter(nullptr)
+			{ reset(p._data, p._referenceCounter); };
 
-		WeakPtr(const SharedPtr<T>& p) : _data(0), _refCount(0) 
-			{ reset(p._data, p._refCount); };
+		WeakPtr(const SharedPtr<T>& p) : _data(nullptr), _referenceCounter(nullptr)
+			{ reset(p._data, p._referenceCounter); };
 
 		WeakPtr& operator = (const WeakPtr& r)
 		{ 
-			reset(r._data, r._refCount);
+			reset(r._data, r._referenceCounter);
 			return *this;
 		}
 
 		WeakPtr& operator = (const SharedPtr<T>& r)
 		{ 
-			reset(r._data, r._refCount);
+			reset(r._data, r._referenceCounter);
 			return *this;
 		}
 
 		WeakPtr& operator = (T* d)
 		{ 
-			reset(d, 0);
+			reset(d, nullptr);
 			return *this;
 		}
 
 		bool valid() const
-			{ return _refCount && (_refCount->strong.referenceCount() > 0); }
+			{ return _referenceCounter && (_referenceCounter->strong.atomicCounterValue() > 0); }
 
 		T* ptr()
-			{ return valid() ? _data : 0; }
+			{ return valid() ? _data : nullptr; }
 
 		const T* ptr() const
-			{ return valid() ? _data : 0; }
+			{ return valid() ? _data : nullptr; }
 
 		bool invalid() const
 			{ return !valid(); }
@@ -188,8 +188,8 @@ namespace et
 		bool operator != (const WeakPtr& r) const
 			{ return _data != r._data; }
 
-		ReferenceCounterType referenceCount() const
-			{ return _refCount ? _refCount->strong.referenceCount() : 0; }
+		AtomicCounterType referenceCount() const
+			{ return _referenceCounter ? _referenceCounter->strong.atomicCounterValue() : 0; }
 
 	private:
 
@@ -197,21 +197,21 @@ namespace et
 		{
 			if (data == _data) return;
 
-			if (_refCount && (_refCount->weak.release() == 0))
-				delete _refCount;
+			if (_referenceCounter && (_referenceCounter->weak.release() == 0))
+				delete _referenceCounter;
 
 			_data = data;
-			_refCount = r;
+			_referenceCounter = r;
 
-			if (_data && !_refCount)
-				_refCount = new SharedReferenceCounter;
+			if (_data && !_referenceCounter)
+				_referenceCounter = new SharedReferenceCounter;
 
-			if (_refCount)
-				_refCount->weak.retain();
+			if (_referenceCounter)
+				_referenceCounter->weak.retain();
 		}
 
 	private:
 		T* _data;
-		SharedReferenceCounter* _refCount;
+		SharedReferenceCounter* referenceCount;
 	};
 }

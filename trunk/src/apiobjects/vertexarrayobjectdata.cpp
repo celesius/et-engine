@@ -25,24 +25,26 @@ VertexArrayObjectData::VertexArrayObjectData(RenderState& rs, const std::string&
 
 VertexArrayObjectData::~VertexArrayObjectData()
 {
+#if (ET_OPENGL3_AVAILABLE)
 	if (openGLCapabilites().supportVertexArrays())
 	{
 		if (_vao && glIsVertexArray(_vao))
 			glDeleteVertexArrays(1, &_vao);
 	}
-
+#endif
 	_rs.vertexArrayDeleted(_vao);
 }
 
 void VertexArrayObjectData::init()
 {
+#if (ET_OPENGL3_AVAILABLE)
 	if (openGLCapabilites().supportVertexArrays())
 	{
 		glGenVertexArrays(1, &_vao);
 		checkOpenGLError("glGenVertexArrays in " + name());
 		_rs.bindVertexArray(_vao);
 	}
-	
+#endif
 	_rs.bindBuffers(_vb, _ib, true);
 }
 

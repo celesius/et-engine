@@ -45,7 +45,7 @@ void OpenGLCapabilites::checkCaps()
 	std::cout << "OpenGL version: " << _openGlVersion << std::endl <<
 				 "GLSL version: " << _glslVersionString << " (" << _glslVersion << ")" << std::endl;
 	
-#if (ET_OPENGL3_AVAILABLE)
+#if (ET_OPENGL4_AVAILABLE)
 	_drawelements_basevertex = glDrawElementsBaseVertex != nullptr;
 #else
 	_drawelements_basevertex = false;
@@ -53,6 +53,7 @@ void OpenGLCapabilites::checkCaps()
 	
 	_mipmap_generation = glGenerateMipmap != nullptr;
 	
+#if (ET_OPENGL3_AVAILABLE)
 	_vertex_arrays = (glGenVertexArrays != nullptr) && (glDeleteVertexArrays != nullptr)
 		&& (glBindVertexArray != nullptr) && (glIsVertexArray != nullptr);
 	
@@ -65,7 +66,10 @@ void OpenGLCapabilites::checkCaps()
 		else
 			_vertex_arrays = false;
 	}
-	
+#else
+	_vertex_arrays = false;
+#endif
+
 	_vertex_attrib_arrays = glVertexAttribPointer != nullptr;
 
 	_vertex_buffers = (glGenBuffers != nullptr) && (glBindBuffer != nullptr) &&

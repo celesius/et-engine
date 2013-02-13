@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A53398CD16CC1AC700A9682D /* atomiccounter.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53398CC16CC1AC700A9682D /* atomiccounter.unix.cpp */; };
+		A53398F216CC3C3700A9682D /* cameraelement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53398EA16CC3C3700A9682D /* cameraelement.cpp */; };
+		A53398F316CC3C3700A9682D /* element.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53398EB16CC3C3700A9682D /* element.cpp */; };
+		A53398F416CC3C3700A9682D /* material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53398EC16CC3C3700A9682D /* material.cpp */; };
+		A53398F516CC3C3700A9682D /* mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53398ED16CC3C3700A9682D /* mesh.cpp */; };
+		A53398F616CC3C3700A9682D /* scene3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53398EE16CC3C3700A9682D /* scene3d.cpp */; };
+		A53398F716CC3C3700A9682D /* serialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53398EF16CC3C3700A9682D /* serialization.cpp */; };
+		A53398F816CC3C3700A9682D /* storage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53398F016CC3C3700A9682D /* storage.cpp */; };
+		A53398F916CC3C3700A9682D /* supportmesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53398F116CC3C3700A9682D /* supportmesh.cpp */; };
 		A56E149F16C43F53006C86BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56E149E16C43F53006C86BF /* UIKit.framework */; };
 		A56E14A116C43F53006C86BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56E14A016C43F53006C86BF /* Foundation.framework */; };
 		A56E14A316C43F53006C86BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56E14A216C43F53006C86BF /* CoreGraphics.framework */; };
@@ -81,7 +90,6 @@
 		A56E158516C44133006C86BF /* rendercontext.ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = A56E152116C44133006C86BF /* rendercontext.ios.mm */; };
 		A56E158816C44133006C86BF /* criticalsection.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E152516C44133006C86BF /* criticalsection.unix.cpp */; };
 		A56E158916C44133006C86BF /* mutex.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E152616C44133006C86BF /* mutex.unix.cpp */; };
-		A56E158A16C44133006C86BF /* referencecounter.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E152716C44133006C86BF /* referencecounter.unix.cpp */; };
 		A56E158B16C44133006C86BF /* thread.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E152816C44133006C86BF /* thread.unix.cpp */; };
 		A56E158C16C44133006C86BF /* threading.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E152916C44133006C86BF /* threading.unix.cpp */; };
 		A56E158D16C44133006C86BF /* primitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E152B16C44133006C86BF /* primitives.cpp */; };
@@ -109,6 +117,25 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A53398CB16CC1A2100A9682D /* atomiccounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomiccounter.h; sourceTree = "<group>"; };
+		A53398CC16CC1AC700A9682D /* atomiccounter.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = atomiccounter.unix.cpp; sourceTree = "<group>"; };
+		A53398E016CC3C2D00A9682D /* cameraelement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cameraelement.h; sourceTree = "<group>"; };
+		A53398E116CC3C2D00A9682D /* element.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = element.h; sourceTree = "<group>"; };
+		A53398E216CC3C2D00A9682D /* material.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = material.h; sourceTree = "<group>"; };
+		A53398E316CC3C2D00A9682D /* material.parameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = material.parameters.h; sourceTree = "<group>"; };
+		A53398E416CC3C2D00A9682D /* mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mesh.h; sourceTree = "<group>"; };
+		A53398E516CC3C2D00A9682D /* scene3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene3d.h; sourceTree = "<group>"; };
+		A53398E616CC3C2D00A9682D /* serialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = serialization.h; sourceTree = "<group>"; };
+		A53398E716CC3C2D00A9682D /* storage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = storage.h; sourceTree = "<group>"; };
+		A53398E816CC3C2D00A9682D /* supportmesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = supportmesh.h; sourceTree = "<group>"; };
+		A53398EA16CC3C3700A9682D /* cameraelement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cameraelement.cpp; sourceTree = "<group>"; };
+		A53398EB16CC3C3700A9682D /* element.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = element.cpp; sourceTree = "<group>"; };
+		A53398EC16CC3C3700A9682D /* material.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = material.cpp; sourceTree = "<group>"; };
+		A53398ED16CC3C3700A9682D /* mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mesh.cpp; sourceTree = "<group>"; };
+		A53398EE16CC3C3700A9682D /* scene3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scene3d.cpp; sourceTree = "<group>"; };
+		A53398EF16CC3C3700A9682D /* serialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = serialization.cpp; sourceTree = "<group>"; };
+		A53398F016CC3C3700A9682D /* storage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = storage.cpp; sourceTree = "<group>"; };
+		A53398F116CC3C3700A9682D /* supportmesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = supportmesh.cpp; sourceTree = "<group>"; };
 		A540DDE916C45AFA00DE9F08 /* et.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = et.h; sourceTree = "<group>"; };
 		A56E149B16C43F53006C86BF /* ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A56E149E16C43F53006C86BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -188,7 +215,6 @@
 		A56E152116C44133006C86BF /* rendercontext.ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = rendercontext.ios.mm; sourceTree = "<group>"; };
 		A56E152516C44133006C86BF /* criticalsection.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = criticalsection.unix.cpp; sourceTree = "<group>"; };
 		A56E152616C44133006C86BF /* mutex.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mutex.unix.cpp; sourceTree = "<group>"; };
-		A56E152716C44133006C86BF /* referencecounter.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = referencecounter.unix.cpp; sourceTree = "<group>"; };
 		A56E152816C44133006C86BF /* thread.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = thread.unix.cpp; sourceTree = "<group>"; };
 		A56E152916C44133006C86BF /* threading.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = threading.unix.cpp; sourceTree = "<group>"; };
 		A56E152B16C44133006C86BF /* primitives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = primitives.cpp; sourceTree = "<group>"; };
@@ -378,6 +404,39 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A53398DF16CC3C2D00A9682D /* scene3d */ = {
+			isa = PBXGroup;
+			children = (
+				A53398E016CC3C2D00A9682D /* cameraelement.h */,
+				A53398E116CC3C2D00A9682D /* element.h */,
+				A53398E216CC3C2D00A9682D /* material.h */,
+				A53398E316CC3C2D00A9682D /* material.parameters.h */,
+				A53398E416CC3C2D00A9682D /* mesh.h */,
+				A53398E516CC3C2D00A9682D /* scene3d.h */,
+				A53398E616CC3C2D00A9682D /* serialization.h */,
+				A53398E716CC3C2D00A9682D /* storage.h */,
+				A53398E816CC3C2D00A9682D /* supportmesh.h */,
+			);
+			name = scene3d;
+			path = ../../include/et/scene3d;
+			sourceTree = "<group>";
+		};
+		A53398E916CC3C3700A9682D /* scene3d */ = {
+			isa = PBXGroup;
+			children = (
+				A53398EA16CC3C3700A9682D /* cameraelement.cpp */,
+				A53398EB16CC3C3700A9682D /* element.cpp */,
+				A53398EC16CC3C3700A9682D /* material.cpp */,
+				A53398ED16CC3C3700A9682D /* mesh.cpp */,
+				A53398EE16CC3C3700A9682D /* scene3d.cpp */,
+				A53398EF16CC3C3700A9682D /* serialization.cpp */,
+				A53398F016CC3C3700A9682D /* storage.cpp */,
+				A53398F116CC3C3700A9682D /* supportmesh.cpp */,
+			);
+			name = scene3d;
+			path = ../../src/scene3d;
+			sourceTree = "<group>";
+		};
 		A56E149216C43F53006C86BF = {
 			isa = PBXGroup;
 			children = (
@@ -448,6 +507,7 @@
 		A56E14CD16C44104006C86BF /* source */ = {
 			isa = PBXGroup;
 			children = (
+				A53398E916CC3C3700A9682D /* scene3d */,
 				A56E14CE16C44132006C86BF /* apiobjects */,
 				A56E14DC16C44133006C86BF /* app */,
 				A56E14E216C44133006C86BF /* camera */,
@@ -635,9 +695,9 @@
 		A56E152416C44133006C86BF /* platform-unix */ = {
 			isa = PBXGroup;
 			children = (
+				A53398CC16CC1AC700A9682D /* atomiccounter.unix.cpp */,
 				A56E152516C44133006C86BF /* criticalsection.unix.cpp */,
 				A56E152616C44133006C86BF /* mutex.unix.cpp */,
-				A56E152716C44133006C86BF /* referencecounter.unix.cpp */,
 				A56E152816C44133006C86BF /* thread.unix.cpp */,
 				A56E152916C44133006C86BF /* threading.unix.cpp */,
 			);
@@ -710,6 +770,7 @@
 		A56E159B16C4417F006C86BF /* headers */ = {
 			isa = PBXGroup;
 			children = (
+				A53398DF16CC3C2D00A9682D /* scene3d */,
 				A56E159C16C441A0006C86BF /* apiobjects */,
 				A56E15B216C441A0006C86BF /* app */,
 				A56E15BB16C441A0006C86BF /* camera */,
@@ -991,6 +1052,7 @@
 		A56E162E16C441A0006C86BF /* threading */ = {
 			isa = PBXGroup;
 			children = (
+				A53398CB16CC1A2100A9682D /* atomiccounter.h */,
 				A56E162F16C441A0006C86BF /* criticalsection.h */,
 				A56E163016C441A0006C86BF /* mutex.h */,
 				A56E163116C441A0006C86BF /* referencecounter.h */,
@@ -1171,7 +1233,6 @@
 				A56E158516C44133006C86BF /* rendercontext.ios.mm in Sources */,
 				A56E158816C44133006C86BF /* criticalsection.unix.cpp in Sources */,
 				A56E158916C44133006C86BF /* mutex.unix.cpp in Sources */,
-				A56E158A16C44133006C86BF /* referencecounter.unix.cpp in Sources */,
 				A56E158B16C44133006C86BF /* thread.unix.cpp in Sources */,
 				A56E158C16C44133006C86BF /* threading.unix.cpp in Sources */,
 				A56E158D16C44133006C86BF /* primitives.cpp in Sources */,
@@ -1191,6 +1252,15 @@
 				A56E164416C441EE006C86BF /* input.ios.mm in Sources */,
 				A56E165016C4426B006C86BF /* mainmenu.cpp in Sources */,
 				A56E165316C442BF006C86BF /* resourcemanager.cpp in Sources */,
+				A53398CD16CC1AC700A9682D /* atomiccounter.unix.cpp in Sources */,
+				A53398F216CC3C3700A9682D /* cameraelement.cpp in Sources */,
+				A53398F316CC3C3700A9682D /* element.cpp in Sources */,
+				A53398F416CC3C3700A9682D /* material.cpp in Sources */,
+				A53398F516CC3C3700A9682D /* mesh.cpp in Sources */,
+				A53398F616CC3C3700A9682D /* scene3d.cpp in Sources */,
+				A53398F716CC3C3700A9682D /* serialization.cpp in Sources */,
+				A53398F816CC3C3700A9682D /* storage.cpp in Sources */,
+				A53398F916CC3C3700A9682D /* supportmesh.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

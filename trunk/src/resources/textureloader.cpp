@@ -22,18 +22,13 @@ const StringList& TextureLoader::preferredExtensions()
 {
 	if (extensions.size() == 0)
 	{
-#if ET_PLATFORM_WIN
+#if (ET_PLATFORM_WIN || ET_PLATFORM_MAC)
 		extensions.push_back(".dds");
 		extensions.push_back(".png");
 		extensions.push_back(".jpg");
 		extensions.push_back(".jpeg");
-#elif ET_PLATFORM_IOS
+#elif (ET_PLATFORM_IOS || ET_PLATFORM_ANDROID)
 		extensions.push_back(".pvr");
-		extensions.push_back(".png");
-		extensions.push_back(".jpg");
-		extensions.push_back(".jpeg");
-#elif ET_PLATFORM_MAC
-		extensions.push_back(".dds");
 		extensions.push_back(".png");
 		extensions.push_back(".jpg");
 		extensions.push_back(".jpeg");

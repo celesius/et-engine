@@ -81,7 +81,7 @@ void Scene3dStorage::flush()
 	while (vi != _vertexArrays.end())
 	{
 		VertexArray* ptr = vi->ptr();
-		if (ptr->referenceCount() == 1)
+		if (ptr->atomicCounterValue() == 1)
 		{
 			vi = _vertexArrays.erase(vi);
 		}
@@ -95,7 +95,7 @@ void Scene3dStorage::flush()
 	while (mi != _materials.end())
 	{
 		MaterialData* ptr = mi->ptr();
-		if (ptr->referenceCount() == 1)
+		if (ptr->atomicCounterValue() == 1)
 		{
 			mi = _materials.erase(mi);
 		}
@@ -109,7 +109,7 @@ void Scene3dStorage::flush()
 	while (ti != _textures.end())
 	{
 		TextureData* ptr = ti->ptr();
-		if (ptr->referenceCount() == 1)
+		if (ptr->atomicCounterValue() == 1)
 		{
 			ti = _textures.erase(ti);
 		}

@@ -9,6 +9,7 @@
 
 #include <map>
 
+#include <et/core/et.h>
 #include <et/core/flags.h>
 #include <et/core/hierarchy.h>
 #include <et/app/events.h>
