@@ -39,9 +39,13 @@
 #
 #	define ET_DEPRECATED(FUNC)				FUNC __attribute__((deprecated))
 #
+#elif (ET_PLATFORM_ANDROID)
+#
+#	define ET_SUPPORT_RANGE_BASED_FOR		__has_feature(cxx_range_for)
+#
 #else
 #
-#	error ET_PLATFORM is not defined
+#	error Platform is not defined
 #
 #endif
 
