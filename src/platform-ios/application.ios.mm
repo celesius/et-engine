@@ -80,8 +80,7 @@ void Application::loaded()
 	_renderContext = new RenderContext(params, this);
 	_renderingContextHandle = _renderContext->renderingContextHandle();
 	
-	_runLoop = RunLoop(new RunLoopObject);
-	_runLoop->update(_lastQueuedTimeMSec);
+	_runLoop.update(_lastQueuedTimeMSec);
 	
 	_renderContext->init();
     
