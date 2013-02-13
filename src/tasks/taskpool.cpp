@@ -45,7 +45,6 @@ void TaskPool::update(float t)
 		_tasks.insert(_tasks.end(), _tasksToAdd.begin(), _tasksToAdd.end());
 		_tasksToAdd.clear();
 	}
-	_csModifying.leave();
 
 	TaskList::iterator i = _tasks.begin();
 	while (i != _tasks.end())
@@ -62,4 +61,6 @@ void TaskPool::update(float t)
 			++i;
 		}
 	}
+	
+	_csModifying.leave();
 }

@@ -44,9 +44,8 @@ void* ThreadPrivate::threadProc(void* context)
 {
 	Thread* thread = static_cast<Thread*>(context);
 	thread->_private->threadId = reinterpret_cast<ThreadId>(pthread_self());
-	int result = thread->main();
-	thread->terminate(result);
-	return reinterpret_cast<void*>(result);
+
+	return reinterpret_cast<void*>(thread->main());
 }
 
 Thread::Thread(bool runImmediately) : _private(new ThreadPrivate)
@@ -72,8 +71,10 @@ void Thread::run()
 	pthread_attr_setdetachstate(&attrib, PTHREAD_CREATE_DETACHED);
 	
 	_private->running.retain();
-	pthread_create(&_private->thread, &attrib, ThreadPrivate::threadProc, this);
 	
+	pthread_create(&_private->thread, &attrib, ThreadPrivate::threadProc, this);
+	pthread_join(_private->thread, nullptr);
+
 	pthread_attr_destroy(&attrib);
 }
 

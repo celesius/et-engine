@@ -44,7 +44,7 @@ void Invocation::invokeInMainRunLoop(float delay)
 
 void Invocation::invokeInRunLoop(RunLoop& rl, float delay)
 {
-	rl->addTask(new InvocationTask(_target->copy()), delay);
+	rl.addTask(new InvocationTask(_target->copy()), delay);
 }
 
 /*
@@ -63,7 +63,7 @@ void Invocation1::invokeInMainRunLoop(float delay)
 
 void Invocation1::invokeInRunLoop(RunLoop& rl, float delay)
 {
-	rl->addTask(new InvocationTask(_target->copy()), delay);
+	rl.addTask(new InvocationTask(_target->copy()), delay);
 }
 
 /*
@@ -82,5 +82,5 @@ void Invocation2::invokeInMainRunLoop(float delay)
 
 void Invocation2::invokeInRunLoop(RunLoop& rl, float delay)
 {
-	rl->addTask(new InvocationTask(_target->copy()), delay);
+	rl.addTask(new InvocationTask(_target->copy()), delay);
 }

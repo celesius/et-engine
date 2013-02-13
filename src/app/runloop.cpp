@@ -11,17 +11,13 @@
 
 using namespace et;
 
-RunLoopObject::RunLoopObject() :
+RunLoop::RunLoop() :
 	_actualTimeMSec(0), _time(0.0f), _activityTimeMSec(0), _started(false), _active(true)
 {
 	attachTimerPool(TimerPool(new TimerPoolObject(this)));
 }
 
-RunLoopObject::~RunLoopObject()
-{
-}
-
-void RunLoopObject::update(uint64_t t)
+void RunLoop::update(uint64_t t)
 {
 	updateTime(t);
 
@@ -37,12 +33,12 @@ void RunLoopObject::update(uint64_t t)
 	}
 }
 
-void RunLoopObject::addTask(Task* t, float delay)
+void RunLoop::addTask(Task* t, float delay)
 {
 	_taskPool.addTask(t, delay);
 }
 
-void RunLoopObject::attachTimerPool(TimerPool pool)
+void RunLoop::attachTimerPool(TimerPool pool)
 {
 	if (std::find(_timerPools.begin(), _timerPools.end(), pool) == _timerPools.end())
 	{
@@ -51,7 +47,7 @@ void RunLoopObject::attachTimerPool(TimerPool pool)
 	}
 }
 
-void RunLoopObject::detachTimerPool(TimerPool pool)
+void RunLoop::detachTimerPool(TimerPool pool)
 {
 	TimerPoolList::iterator i = _timerPools.begin();
 
@@ -71,18 +67,18 @@ void RunLoopObject::detachTimerPool(TimerPool pool)
 	}
 }
 
-void RunLoopObject::detachAllTimerPools()
+void RunLoop::detachAllTimerPools()
 {
 	ET_ITERATE(_timerPools, auto&, i, i->setOwner(0))
 	_timerPools.clear();
 }
 
-void RunLoopObject::pause()
+void RunLoop::pause()
 {
 	_active = false;
 }
 
-void RunLoopObject::resume()
+void RunLoop::resume()
 {
 	if (_active) return;
 
@@ -90,7 +86,7 @@ void RunLoopObject::resume()
 	_activityTimeMSec = _actualTimeMSec;
 }
 
-void RunLoopObject::updateTime(uint64_t t)
+void RunLoop::updateTime(uint64_t t)
 {
 	_actualTimeMSec = t;
 	

@@ -32,7 +32,7 @@ void TimedObject::startUpdates(TimerPoolObject* timerPool)
 
 	_running = true;
 
-	_owner = (timerPool == nullptr) ? mainRunLoop()->mainTimerPool().ptr() : timerPool;
+	_owner = (timerPool == nullptr) ? mainRunLoop().mainTimerPool().ptr() : timerPool;
 	_owner->attachTimedObject(this); 
 }
 

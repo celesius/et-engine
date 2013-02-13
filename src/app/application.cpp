@@ -65,8 +65,8 @@ void Application::idle()
 	{
 		if (_active)
 		{
-			_runLoop->update(currentTime);
-			_delegate->idle(_runLoop->mainTimerPool()->actualTime());
+			_runLoop.update(currentTime);
+			_delegate->idle(_runLoop.mainTimerPool()->actualTime());
 			performRendering();
 		}
 		_lastQueuedTimeMSec = queryTimeMSec();
@@ -96,13 +96,13 @@ void Application::setActive(bool active)
 	{
 		platformActivate();
 		_lastQueuedTimeMSec = queryTimeMSec();
-		_runLoop->update(_lastQueuedTimeMSec);
-		_runLoop->resume();
+		_runLoop.update(_lastQueuedTimeMSec);
+		_runLoop.resume();
 		_delegate->applicationWillActivate();
 	}
 	else
 	{
-		_runLoop->pause();
+		_runLoop.pause();
 		_delegate->applicationWillDeactivate();
 		platformDeactivate();
 	}

@@ -13,12 +13,12 @@
 
 namespace et
 {
-	class RunLoopObject;
+	class RunLoop;
 	class TimerPoolObjectPrivate;
 	class TimerPoolObject : public Shared
 	{
 	public:
-		TimerPoolObject(RunLoopObject* owner);
+		TimerPoolObject(RunLoop* owner);
 
 		void update(float t);
 		float actualTime() const;
@@ -29,7 +29,7 @@ namespace et
 		void detachTimedObject(TimedObject* obj);
 		void deleteTimedObjecct(TimedObject* obj);
 
-		void setOwner(RunLoopObject* owner)
+		void setOwner(RunLoop* owner)
 			{ _owner = owner; }
 
 	private:
@@ -56,7 +56,7 @@ namespace et
 		TimerPoolQueue _timedObjects;
 		TimerPoolQueue _queue;
 		CriticalSection _lock;
-		RunLoopObject* _owner;
+		RunLoop* _owner;
 
 		bool _initialized;
 		bool _updating;
