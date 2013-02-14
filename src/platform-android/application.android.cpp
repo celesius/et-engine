@@ -12,8 +12,7 @@ using namespace et;
 void Application::loaded()
 {
 	_lastQueuedTimeMSec = queryTimeMSec();
-	_runLoop = RunLoop(new RunLoopObject);
-	_runLoop->update(_lastQueuedTimeMSec);
+	_runLoop.update(_lastQueuedTimeMSec);
 	
 	RenderContextParameters parameters;
 	delegate()->setRenderContextParameters(parameters);
