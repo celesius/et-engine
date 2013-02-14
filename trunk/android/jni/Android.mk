@@ -120,8 +120,6 @@ LOCAL_SRC_FILES += $(SOURCE_PATH)/platform-unix/threading.unix.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/geometry/geometry.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/geometry/rectplacer.cpp
 
-LOCAL_LDLIBS := -lGLESv2 -lz
-
 include $(BUILD_STATIC_LIBRARY)
 
 $(call import-add-path, $(LOCAL_PATH))
