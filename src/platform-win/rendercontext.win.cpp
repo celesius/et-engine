@@ -668,7 +668,7 @@ LRESULT CALLBACK mainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			vec2 normPt(2.0f * pt.x / viewportSize.x - 1.0f, 1.0f - 2.0f * pt.y / viewportSize.y);
 
 			handler->pointerPressed(PointerInputInfo(PointerType_General, pt, normPt, vec2(0.0f), 
-				PointerType_General, mainRunLoop()->time()));
+				PointerType_General, mainRunLoop().time()));
 			return 0;
 		}
 
@@ -681,7 +681,7 @@ LRESULT CALLBACK mainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			vec2 normPt(2.0f * pt.x / viewportSize.x - 1.0f, 1.0f - 2.0f * pt.y / viewportSize.y);
 
 			handler->pointerReleased(PointerInputInfo(PointerType_General, pt, normPt, vec2(0.0f), 
-				PointerType_General, mainRunLoop()->time()));
+				PointerType_General, mainRunLoop().time()));
 			return 0;
 		}
 
@@ -694,7 +694,7 @@ LRESULT CALLBACK mainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			vec2 normPt(2.0f * pt.x / viewportSize.x - 1.0f, 1.0f - 2.0f * pt.y / viewportSize.y);
 
 			handler->pointerPressed(PointerInputInfo(PointerType_RightButton, pt, normPt, vec2(0.0f), 
-				PointerType_RightButton, mainRunLoop()->time()));
+				PointerType_RightButton, mainRunLoop().time()));
 
 			return 0;
 		}
@@ -706,7 +706,7 @@ LRESULT CALLBACK mainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			vec2 pt(static_cast<float>(p.x), static_cast<float>(p.y));
 			vec2 normPt(2.0f * pt.x / viewportSize.x - 1.0f, 1.0f - 2.0f * pt.y / viewportSize.y);
 			handler->pointerReleased(PointerInputInfo(PointerType_RightButton, pt, normPt, vec2(0.0f), 
-				PointerType_RightButton, mainRunLoop()->time()));
+				PointerType_RightButton, mainRunLoop().time()));
 			return 0;
 		}
 
@@ -717,7 +717,7 @@ LRESULT CALLBACK mainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			vec2 pt(static_cast<float>(p.x), static_cast<float>(p.y));
 			vec2 normPt(2.0f * pt.x / viewportSize.x - 1.0f, 1.0f - 2.0f * pt.y / viewportSize.y);
 			handler->pointerPressed(PointerInputInfo(PointerType_MiddleButton, pt, normPt, vec2(0.0f), 
-				PointerType_MiddleButton, mainRunLoop()->time()));
+				PointerType_MiddleButton, mainRunLoop().time()));
 			return 0;
 		}
 
@@ -728,7 +728,7 @@ LRESULT CALLBACK mainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			vec2 pt(static_cast<float>(p.x), static_cast<float>(p.y));
 			vec2 normPt(2.0f * pt.x / viewportSize.x - 1.0f, 1.0f - 2.0f * pt.y / viewportSize.y);
 			handler->pointerReleased(PointerInputInfo(PointerType_MiddleButton, pt, normPt, vec2(0.0f),
-				PointerType_MiddleButton, mainRunLoop()->time()));
+				PointerType_MiddleButton, mainRunLoop().time()));
 			return 0;
 		}
 
@@ -758,7 +758,7 @@ LRESULT CALLBACK mainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			internal_PointerInputInfo p(lParam);
 			if (handler->shouldPostMovementMessage(p.x, p.y))
 			{
-				float t = mainRunLoop()->time();
+				float t = mainRunLoop().time();
 				vec2 pt(static_cast<float>(p.x), static_cast<float>(p.y));
 				vec2 normPt(2.0f * pt.x / viewportSize.x - 1.0f, 1.0f - 2.0f * pt.y / viewportSize.y);
 
@@ -781,7 +781,7 @@ LRESULT CALLBACK mainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			vec2 normPt(2.0f * pt.x / viewportSize.x - 1.0f, 1.0f - 2.0f * pt.y / viewportSize.y);
 
 			handler->pointerScrolled(PointerInputInfo(PointerType_MiddleButton, pt, normPt, vec2(0.0f, s),
-				PointerType_MiddleButton, mainRunLoop()->time()));
+				PointerType_MiddleButton, mainRunLoop().time()));
 
 			return 0;
 		}
