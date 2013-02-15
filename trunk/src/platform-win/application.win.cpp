@@ -50,8 +50,7 @@ int Application::platformRun()
 		_active = true;
 
 		_lastQueuedTimeMSec = queryTimeMSec();
-		_runLoop = RunLoop(new RunLoopObject);
-		_runLoop->update(_lastQueuedTimeMSec);
+		_runLoop.update(_lastQueuedTimeMSec);
 
 		_renderingContextHandle = _renderContext->renderingContextHandle();
 		_renderContext->init();
