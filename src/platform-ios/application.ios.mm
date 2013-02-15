@@ -123,7 +123,6 @@ void Application::quit(int exitCode)
 	
 	_delegate = 0;
 	_renderContext = 0;
-	_runLoop.reset(0);
 	
 #else	
 	
