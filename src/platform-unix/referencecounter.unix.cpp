@@ -5,5 +5,4 @@
  *
  */
 
-
 #error Please include atomiccounter.cpp instead
