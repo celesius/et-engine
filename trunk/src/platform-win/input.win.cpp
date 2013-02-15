@@ -33,3 +33,11 @@ bool Input::canGetCurrentPointerInfo() const
 {
 	return true;
 }
+
+void Input::activateSoftwareKeyboard()
+{
+}
+
+void Input::deactivateSoftwareKeyboard()
+{
+}
