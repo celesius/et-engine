@@ -41,6 +41,17 @@ namespace et
 		DepthFunc_Always
 	};
 
+	enum ColorMask
+	{
+		ColorMask_None = 0x00,
+		ColorMask_Red = 0x01,
+		ColorMask_Green = 0x02,
+		ColorMask_Blue = 0x04,
+		ColorMask_Alpha = 0x08,
+		ColorMask_RGB = ColorMask_Red | ColorMask_Green | ColorMask_Blue,
+		ColorMask_RGBA = ColorMask_RGB | ColorMask_Alpha
+	};
+
 	class RenderContext;
 	class Texture;
 	class Program;
@@ -73,6 +84,7 @@ namespace et
 			vec2 viewportSizeFloat;
 
 			vec4 clearColor;
+			size_t colorMask;
 			float clearDepth;
 			
 			float polygonOffsetFactor;
@@ -80,7 +92,7 @@ namespace et
 			
 			bool blendEnabled;
 			bool depthTestEnabled;
-			bool depthMaskEnabled;
+			bool depthMask;
 			bool polygonOffsetFillEnabled;
 			bool wireframe;
 			bool clipEnabled;
@@ -168,8 +180,8 @@ namespace et
 		bool depthTestEnabled() const 
 			{ return _currentState.depthTestEnabled; }
 
-		bool depthMaskEnabled() const 
-			{ return _currentState.depthMaskEnabled; }
+		bool depthMask() const 
+			{ return _currentState.depthMask; }
 		
 		DepthFunc depthFunc() const
 			{ return _currentState.lastDepthFunc; }
@@ -183,6 +195,9 @@ namespace et
 		const recti& clipRect() const 
 			{ return _currentState.clipRect; }
 
+		size_t colorMask() const
+			{ return _currentState.colorMask; }
+
 		void setBlend(bool enable, BlendState blend = Blend_Current);
 		void setCulling(CullState cull);
 		void setDepthTest(bool enable);
@@ -191,6 +206,7 @@ namespace et
 		void setPolygonOffsetFill(bool enabled, float factor = 0.0f, float units = 0.0f);
 		void setWireframeRendering(bool wire);
 		void setClearColor(const vec4& color);
+		void setColorMask(size_t mask);
 		void setClearDepth(float depth);
 		void setClip(bool enable, const recti& clip);
 

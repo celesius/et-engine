@@ -23,10 +23,10 @@ static const char* keyDisableVertexAttribArray = "glDisableVertexAttribArray(...
 static const char* keyVertexAttribPointer = "glVertexAttribPointer(...)";
 
 RenderState::State::State() : activeTextureUnit(0), boundFramebuffer(0), boundArrayBuffer(0),
-	boundElementArrayBuffer(0), boundVertexArrayObject(0), boundProgram(0), clearDepth(1.0f),
-	polygonOffsetFactor(0.0f), polygonOffsetUnits(0.0f), blendEnabled(false), depthTestEnabled(false),
-	depthMaskEnabled(true), polygonOffsetFillEnabled(false), wireframe(false), lastBlend(Blend_Disabled),
-	lastCull(CullState_None), lastDepthFunc(DepthFunc_Less)
+	boundElementArrayBuffer(0), boundVertexArrayObject(0), boundProgram(0), clearColor(0.0f),
+	colorMask(ColorMask_RGBA), clearDepth(1.0f), polygonOffsetFactor(0.0f), polygonOffsetUnits(0.0f),
+	blendEnabled(false), depthTestEnabled(false), depthMask(true), polygonOffsetFillEnabled(false),
+	wireframe(false), lastBlend(Blend_Disabled), lastCull(CullState_None), lastDepthFunc(DepthFunc_Less)
 {
 	(void)keyCurrentStateBegin;
 	(void)keyCurrentStateEnd;
@@ -234,20 +234,18 @@ void RenderState::bindDefaultFramebuffer(GLenum)
 
 void RenderState::setDepthMask(bool enable)
 {
-	if (_currentState.depthMaskEnabled != enable)
-	{
-		_currentState.depthMaskEnabled = enable;
-		glDepthMask(enable);
-	}
+	if (_currentState.depthMask == enable) return;
+	
+	_currentState.depthMask = enable;
+	glDepthMask(enable);
 }
 
 void RenderState::setDepthTest(bool enable)
 {
-	if (enable != _currentState.depthTestEnabled)
-	{
-		_currentState.depthTestEnabled = enable;
-		(enable ? glEnable : glDisable)(GL_DEPTH_TEST);
-	}
+	if (enable == _currentState.depthTestEnabled) return;
+
+	_currentState.depthTestEnabled = enable;
+	(enable ? glEnable : glDisable)(GL_DEPTH_TEST);
 }
 
 void RenderState::setDepthFunc(DepthFunc func)
@@ -491,6 +489,15 @@ void RenderState::setClearColor(const vec4& color)
 	glClearColor(color.x, color.y, color.z, color.w);
 }
 
+void RenderState::setColorMask(size_t mask)
+{
+	if (_currentState.colorMask == mask) return;
+
+	_currentState.colorMask = mask;
+	glColorMask((mask & ColorMask_Red) == ColorMask_Red, (mask & ColorMask_Green) == ColorMask_Green,
+				(mask & ColorMask_Blue) == ColorMask_Blue, (mask & ColorMask_Alpha) == ColorMask_Alpha);
+}
+
 void RenderState::setClearDepth(float depth)
 {
 	if (_currentState.clearDepth == depth) return;
@@ -521,9 +528,11 @@ void RenderState::reset()
 
 void RenderState::applyState(const RenderState::State& s)
 {
+	setClearColor(s.clearColor);
+	setColorMask(s.colorMask);
 	setBlend(s.blendEnabled, s.lastBlend);
 	setDepthFunc(s.lastDepthFunc);
-	setDepthMask(s.depthMaskEnabled);
+	setDepthMask(s.depthMask);
 	setDepthTest(s.depthTestEnabled);
 	setPolygonOffsetFill(s.polygonOffsetFillEnabled, s.polygonOffsetFactor, s.polygonOffsetUnits);
 	setWireframeRendering(s.wireframe);
@@ -603,9 +612,14 @@ RenderState::State RenderState::currentState()
 	glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &s.polygonOffsetFactor);
 	glGetFloatv(GL_POLYGON_OFFSET_UNITS, &s.polygonOffsetUnits);
 	
-	unsigned char bValue = 0;
+	GLboolean bValue = 0;
 	glGetBooleanv(GL_DEPTH_WRITEMASK, &bValue);
-	s.depthMaskEnabled = bValue > 0;
+	s.depthMask = bValue != 0;
+
+	GLboolean cValue[4] = { };
+	glGetBooleanv(GL_COLOR_WRITEMASK, cValue);
+	s.colorMask = (cValue[0] * ColorMask_Red) | (cValue[1] * ColorMask_Green) |
+		(cValue[2] * ColorMask_Blue) | (cValue[3] * ColorMask_Alpha);
 
 	glGetBooleanv(GL_SCISSOR_TEST, &bValue);
 	s.clipEnabled = bValue > 0;
