@@ -175,8 +175,10 @@ void GuiRenderer::beginRender(RenderContext* rc)
 	_depthTestEnabled = rc->renderState().depthTestEnabled();
 	_blendEnabled = rc->renderState().blendEnabled();
 	_blendState = rc->renderState().blendState();
-	_depthMaskEnabled = rc->renderState().depthMaskEnabled();
-
+	_depthMask = rc->renderState().depthMask();
+	_clipEnabled =  rc->renderState().clipEnabled();
+	_clipRect = rc->renderState().clipRect();
+	
 	rc->renderState().setBlend(true, Blend_Default);
 	rc->renderState().bindProgram(_guiProgram);
 }
@@ -185,7 +187,8 @@ void GuiRenderer::endRender(RenderContext* rc)
 {
 	rc->renderState().setDepthTest(_depthTestEnabled);
 	rc->renderState().setBlend(_blendEnabled, _blendState);
-	rc->renderState().setDepthMask(_depthMaskEnabled);
+	rc->renderState().setDepthMask(_depthMask);
+	rc->renderState().setClip(_clipEnabled, _clipRect);
 }
 
 void GuiRenderer::render(RenderContext* rc)
@@ -198,13 +201,13 @@ void GuiRenderer::render(RenderContext* rc)
 	_guiProgram->setUniform(_guiCustomOffsetUniform, GL_FLOAT_VEC2, _customOffset);
 	_guiProgram->setUniform(_guiCustomAlphaUniform, GL_FLOAT, _customAlpha);
 	ElementClass elementClass = ElementClass_max;
-
+	
 	const VertexArrayObject& vao = _renderingElement->vertexArrayObject();
-	ET_ITERATE(_renderingElement->_chunks, const RenderChunk&, i,
-	{
-		rs.setClip(true, i.clip);
+	ET_START_ITERATION(_renderingElement->_chunks, const RenderChunk&, i)
+	
 		rs.bindTexture(0, i.layers[GuiRenderLayer_Layer0]);
 		rs.bindTexture(1, i.layers[GuiRenderLayer_Layer1]);
+		rs.setClip(true, i.clip + recti(_customWindowOffset.x, _customWindowOffset.y, 0, 0));
 
 		if (i.elementClass != elementClass)
 		{
@@ -217,7 +220,7 @@ void GuiRenderer::render(RenderContext* rc)
 		}
 
 		renderer->drawElements(vao->indexBuffer(), i.first, i.count);
-	})
+	ET_END_ITERATION
 }
 
 void GuiRenderer::buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, const GuiVertex& topRight, 
@@ -499,10 +502,18 @@ void GuiRenderer::createColorVertices(GuiVertexList& vertices, const rect& p, co
 			  GuiVertex(transform * topLeft, vec4(vec2(0.0f), mask), color ), 
 			  GuiVertex(transform * topRight, vec4(vec2(0.0f), mask), color ),
 			  GuiVertex(transform * bottomLeft, vec4(vec2(0.0f), mask), color ),
-			  GuiVertex(transform * bottomRight, vec4(vec2(0.0f), mask), color ) );	
+			  GuiVertex(transform * bottomRight, vec4(vec2(0.0f), mask), color ) );
 }
 
-std::string gui_default_vertex_src = 
+void GuiRenderer::setCustomOffset(const vec2& offset)
+{
+	_customOffset = 2.0f * offset;
+	_customWindowOffset.x = static_cast<int>(offset.x * _rc->size().x);
+	_customWindowOffset.y = static_cast<int>(offset.y * _rc->size().y);
+}
+
+
+std::string gui_default_vertex_src =
 	"uniform mat4 mDefaultTransform;"
 	"uniform vec2 vCustomOffset;"
 	"uniform float customAlpha;"

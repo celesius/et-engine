@@ -405,7 +405,7 @@ void Gui::LayoutEntryObject::animateTo(const vec3& oa, float duration, State s)
 	if (animator.valid())
 		animator.extract()->destroy();
 
-	animator = new Vector3Animator(this, &offsetAlpha, offsetAlpha, oa, duration, 0, mainTimerPool()); 
+	animator = new Vector3Animator(this, &offsetAlpha, offsetAlpha, oa, duration, 0, mainTimerPool());
 }
 
 void Gui::LayoutEntryObject::animatorUpdated(BaseAnimator*)

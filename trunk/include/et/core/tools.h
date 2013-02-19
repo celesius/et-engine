@@ -109,6 +109,13 @@ namespace et
 		return stream;
 	}
 	
+	template <typename T>
+	inline std::ostream& operator << (std::ostream& stream, const Rect<T>& value)
+	{
+		stream << value.left << ", " << value.top << ", " << value.width << "x" << value.height;
+		return stream;
+	}
+		
 	inline int strToInt(const std::string& value)
 		{ return std::atoi(value.c_str()); }
 	

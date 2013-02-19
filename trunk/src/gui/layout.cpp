@@ -35,8 +35,9 @@ void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, GuiRen
 		mat4 parentTransform = element->parent()->finalTransform();
 		vec2 eSize = multiplyWithoutTranslation(element->size(), parentTransform);
 		vec2 eOrigin = parentTransform * element->origin();
-
-		gr.pushClipRect(recti(vec2i(static_cast<int>(eOrigin.x), static_cast<int>(rc->size().y - eOrigin.y - eSize.y)), 
+		
+		gr.pushClipRect(recti(vec2i(static_cast<int>(eOrigin.x),
+			static_cast<int>(rc->size().y - eOrigin.y - eSize.y)),
 			vec2i(static_cast<int>(eSize.x), static_cast<int>(eSize.y))));
 	}
 	
