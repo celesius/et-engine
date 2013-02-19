@@ -120,8 +120,11 @@ LOCAL_SRC_FILES += $(SOURCE_PATH)/platform-unix/threading.unix.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/geometry/geometry.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/geometry/rectplacer.cpp
 
+LOCAL_STATIC_LIBRARIES := android_native_app_glue libpng libjpeg
+
 include $(BUILD_STATIC_LIBRARY)
 
 $(call import-add-path, $(LOCAL_PATH))
+$(call import-module, android/native_app_glue)
 $(call import-module, libpng)
 $(call import-module, libjpeg)

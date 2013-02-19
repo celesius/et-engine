@@ -8,11 +8,13 @@ int main(int argc, char* argv[])
 
 #if (ET_PLATFORM_ANDROID)
 
-#	include <android_native_app_glue.h>
+#include <et/platform-android/nativeactivity.h>
 
-void android_main(struct android_app* state)
+void android_main(android_app* state)
 {
-	app_dummy();
+	et::initSharedAndroidApplication(state);
 	main(0, 0);
 }
+
 #endif
+
