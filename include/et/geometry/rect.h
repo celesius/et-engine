@@ -46,6 +46,12 @@ namespace et
 		const vector2<T>& size() const 
 			{ return *(reinterpret_cast<const vector2<T>*>(c+2)); }
 
+		vector2<T>& origin()
+			{ return *(reinterpret_cast<vector2<T>*>(c)); }
+		
+		vector2<T>& size()
+			{ return *(reinterpret_cast<vector2<T>*>(c+2)); }
+		
 		T* data()
 			{ return c; }
 

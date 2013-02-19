@@ -504,6 +504,8 @@ void RenderState::setClearDepth(float depth)
 	
 	_currentState.clearDepth = depth;
 	glClearDepth(depth);
+	
+	checkOpenGLError("RenderState::setClearDepth");
 }
 
 void RenderState::setClip(bool enable, const recti& clip)
@@ -519,6 +521,8 @@ void RenderState::setClip(bool enable, const recti& clip)
 		_currentState.clipRect = clip;
 		glScissor(clip.left, clip.top, clip.width, clip.height);
 	}
+	
+	checkOpenGLError("RenderState::setClip");
 }
 
 void RenderState::reset()

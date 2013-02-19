@@ -50,8 +50,7 @@ namespace et
 			void buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, const GuiVertex& topRight,
 						   const GuiVertex& bottomLeft, const GuiVertex& bottomRight);
 			
-			void setCustomOffset(const vec2& offset)
-				{ _customOffset = 2.0f * offset; }
+			void setCustomOffset(const vec2& offset);
 			
 			void setCustomAlpha(float alpha)
 				{ _customAlpha = alpha; }
@@ -81,13 +80,16 @@ namespace et
 			Camera _guiCamera;
 
 			std::stack<recti> _clip;
+			recti _clipRect;
 			vec2 _customOffset;
+			vec2i _customWindowOffset;
 			float _customAlpha;
 	
 			bool _saveFillRate;
 			bool _depthTestEnabled;
-			bool _depthMaskEnabled;
+			bool _depthMask;
 			bool _blendEnabled;
+			bool _clipEnabled;
 			BlendState _blendState;
 		};
 		
