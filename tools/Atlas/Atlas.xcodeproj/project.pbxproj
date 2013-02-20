@@ -9,43 +9,15 @@
 /* Begin PBXBuildFile section */
 		5C1538F51557B21800B02941 /* atlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1538F41557B21800B02941 /* atlas.cpp */; };
 		5C1538FB1557B27B00B02941 /* pngloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1538F91557B27B00B02941 /* pngloader.cpp */; };
-		5C15390D1557B29700B02941 /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1538FE1557B29700B02941 /* png.c */; };
-		5C15390E1557B29700B02941 /* pngerror.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1538FF1557B29700B02941 /* pngerror.c */; };
-		5C15390F1557B29700B02941 /* pngget.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539001557B29700B02941 /* pngget.c */; };
-		5C1539101557B29700B02941 /* pngmem.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539011557B29700B02941 /* pngmem.c */; };
-		5C1539111557B29700B02941 /* pngpread.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539021557B29700B02941 /* pngpread.c */; };
-		5C1539121557B29700B02941 /* pngread.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539031557B29700B02941 /* pngread.c */; };
-		5C1539131557B29700B02941 /* pngrio.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539041557B29700B02941 /* pngrio.c */; };
-		5C1539141557B29700B02941 /* pngrtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539051557B29700B02941 /* pngrtran.c */; };
-		5C1539151557B29700B02941 /* pngrutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539061557B29700B02941 /* pngrutil.c */; };
-		5C1539161557B29700B02941 /* pngset.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539071557B29700B02941 /* pngset.c */; };
-		5C1539171557B29700B02941 /* pngtrans.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539081557B29700B02941 /* pngtrans.c */; };
-		5C1539181557B29700B02941 /* pngwio.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539091557B29700B02941 /* pngwio.c */; };
-		5C1539191557B29700B02941 /* pngwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C15390A1557B29700B02941 /* pngwrite.c */; };
-		5C15391A1557B29700B02941 /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C15390B1557B29700B02941 /* pngwtran.c */; };
-		5C15391B1557B29700B02941 /* pngwutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C15390C1557B29700B02941 /* pngwutil.c */; };
-		5C15392C1557B29F00B02941 /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C15391D1557B29F00B02941 /* adler32.c */; };
-		5C15392D1557B29F00B02941 /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C15391E1557B29F00B02941 /* compress.c */; };
-		5C15392E1557B29F00B02941 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C15391F1557B29F00B02941 /* crc32.c */; };
-		5C15392F1557B29F00B02941 /* deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539201557B29F00B02941 /* deflate.c */; };
-		5C1539301557B29F00B02941 /* gzclose.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539211557B29F00B02941 /* gzclose.c */; };
-		5C1539311557B29F00B02941 /* gzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539221557B29F00B02941 /* gzlib.c */; };
-		5C1539321557B29F00B02941 /* gzread.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539231557B29F00B02941 /* gzread.c */; };
-		5C1539331557B29F00B02941 /* gzwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539241557B29F00B02941 /* gzwrite.c */; };
-		5C1539341557B29F00B02941 /* infback.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539251557B29F00B02941 /* infback.c */; };
-		5C1539351557B29F00B02941 /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539261557B29F00B02941 /* inffast.c */; };
-		5C1539361557B29F00B02941 /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539271557B29F00B02941 /* inflate.c */; };
-		5C1539371557B29F00B02941 /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539281557B29F00B02941 /* inftrees.c */; };
-		5C1539381557B29F00B02941 /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1539291557B29F00B02941 /* trees.c */; };
-		5C1539391557B29F00B02941 /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C15392A1557B29F00B02941 /* uncompr.c */; };
-		5C15393A1557B29F00B02941 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C15392B1557B29F00B02941 /* zutil.c */; };
 		5C15393C1557B2C500B02941 /* tools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C15393B1557B2C500B02941 /* tools.cpp */; };
 		5C15393E1557B2D500B02941 /* imageoperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C15393D1557B2D500B02941 /* imageoperations.cpp */; };
 		5C1539401557B2F800B02941 /* imagewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C15393F1557B2F800B02941 /* imagewriter.cpp */; };
 		5C1539421557B3FB00B02941 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C1539411557B3FB00B02941 /* Foundation.framework */; };
+		5C54F52216D4DCE9008BF134 /* atomiccounter.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C54F52116D4DCE9008BF134 /* atomiccounter.unix.cpp */; };
+		5C54F52416D4DCF6008BF134 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C54F52316D4DCF6008BF134 /* libpng.a */; };
+		5C54F52616D4DD00008BF134 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C54F52516D4DD00008BF134 /* libz.dylib */; };
 		5C6DAE7A166F600E0000CE97 /* textureatlaswriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C6DAE79166F600E0000CE97 /* textureatlaswriter.cpp */; };
 		5C6DAE7C166F60150000CE97 /* tools.apple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C6DAE7B166F60150000CE97 /* tools.apple.mm */; };
-		5C6DAE7E166F606D0000CE97 /* referencecounter.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C6DAE7D166F606D0000CE97 /* referencecounter.unix.cpp */; };
 		5C6DAE80166F607A0000CE97 /* geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C6DAE7F166F607A0000CE97 /* geometry.cpp */; };
 		5C6DAE82166F60AA0000CE97 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6DAE81166F60AA0000CE97 /* AppKit.framework */; };
 /* End PBXBuildFile section */
@@ -66,43 +38,15 @@
 		5C1538E21557B1EC00B02941 /* Atlas */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Atlas; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C1538F41557B21800B02941 /* atlas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = atlas.cpp; sourceTree = "<group>"; };
 		5C1538F91557B27B00B02941 /* pngloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pngloader.cpp; path = ../../src/imaging/pngloader.cpp; sourceTree = "<group>"; };
-		5C1538FE1557B29700B02941 /* png.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = png.c; sourceTree = "<group>"; };
-		5C1538FF1557B29700B02941 /* pngerror.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngerror.c; sourceTree = "<group>"; };
-		5C1539001557B29700B02941 /* pngget.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngget.c; sourceTree = "<group>"; };
-		5C1539011557B29700B02941 /* pngmem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngmem.c; sourceTree = "<group>"; };
-		5C1539021557B29700B02941 /* pngpread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngpread.c; sourceTree = "<group>"; };
-		5C1539031557B29700B02941 /* pngread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngread.c; sourceTree = "<group>"; };
-		5C1539041557B29700B02941 /* pngrio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngrio.c; sourceTree = "<group>"; };
-		5C1539051557B29700B02941 /* pngrtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngrtran.c; sourceTree = "<group>"; };
-		5C1539061557B29700B02941 /* pngrutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngrutil.c; sourceTree = "<group>"; };
-		5C1539071557B29700B02941 /* pngset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngset.c; sourceTree = "<group>"; };
-		5C1539081557B29700B02941 /* pngtrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngtrans.c; sourceTree = "<group>"; };
-		5C1539091557B29700B02941 /* pngwio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngwio.c; sourceTree = "<group>"; };
-		5C15390A1557B29700B02941 /* pngwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngwrite.c; sourceTree = "<group>"; };
-		5C15390B1557B29700B02941 /* pngwtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngwtran.c; sourceTree = "<group>"; };
-		5C15390C1557B29700B02941 /* pngwutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngwutil.c; sourceTree = "<group>"; };
-		5C15391D1557B29F00B02941 /* adler32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = adler32.c; sourceTree = "<group>"; };
-		5C15391E1557B29F00B02941 /* compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = compress.c; sourceTree = "<group>"; };
-		5C15391F1557B29F00B02941 /* crc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = crc32.c; sourceTree = "<group>"; };
-		5C1539201557B29F00B02941 /* deflate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = deflate.c; sourceTree = "<group>"; };
-		5C1539211557B29F00B02941 /* gzclose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzclose.c; sourceTree = "<group>"; };
-		5C1539221557B29F00B02941 /* gzlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzlib.c; sourceTree = "<group>"; };
-		5C1539231557B29F00B02941 /* gzread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzread.c; sourceTree = "<group>"; };
-		5C1539241557B29F00B02941 /* gzwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzwrite.c; sourceTree = "<group>"; };
-		5C1539251557B29F00B02941 /* infback.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = infback.c; sourceTree = "<group>"; };
-		5C1539261557B29F00B02941 /* inffast.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = inffast.c; sourceTree = "<group>"; };
-		5C1539271557B29F00B02941 /* inflate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = inflate.c; sourceTree = "<group>"; };
-		5C1539281557B29F00B02941 /* inftrees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = inftrees.c; sourceTree = "<group>"; };
-		5C1539291557B29F00B02941 /* trees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trees.c; sourceTree = "<group>"; };
-		5C15392A1557B29F00B02941 /* uncompr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = uncompr.c; sourceTree = "<group>"; };
-		5C15392B1557B29F00B02941 /* zutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zutil.c; sourceTree = "<group>"; };
 		5C15393B1557B2C500B02941 /* tools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tools.cpp; path = ../../src/core/tools.cpp; sourceTree = "<group>"; };
 		5C15393D1557B2D500B02941 /* imageoperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imageoperations.cpp; path = ../../src/imaging/imageoperations.cpp; sourceTree = "<group>"; };
 		5C15393F1557B2F800B02941 /* imagewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imagewriter.cpp; path = ../../src/imaging/imagewriter.cpp; sourceTree = "<group>"; };
 		5C1539411557B3FB00B02941 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		5C54F52116D4DCE9008BF134 /* atomiccounter.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = atomiccounter.unix.cpp; path = "../../src/platform-unix/atomiccounter.unix.cpp"; sourceTree = "<group>"; };
+		5C54F52316D4DCF6008BF134 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = ../../lib/osx/libpng.a; sourceTree = "<group>"; };
+		5C54F52516D4DD00008BF134 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		5C6DAE79166F600E0000CE97 /* textureatlaswriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = textureatlaswriter.cpp; path = ../../src/gui/textureatlaswriter.cpp; sourceTree = "<group>"; };
 		5C6DAE7B166F60150000CE97 /* tools.apple.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = tools.apple.mm; path = "../../src/platform-apple/tools.apple.mm"; sourceTree = "<group>"; };
-		5C6DAE7D166F606D0000CE97 /* referencecounter.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = referencecounter.unix.cpp; path = "../../src/platform-unix/referencecounter.unix.cpp"; sourceTree = "<group>"; };
 		5C6DAE7F166F607A0000CE97 /* geometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = geometry.cpp; path = ../../src/geometry/geometry.cpp; sourceTree = "<group>"; };
 		5C6DAE81166F60AA0000CE97 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -112,8 +56,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C54F52616D4DD00008BF134 /* libz.dylib in Frameworks */,
 				5C6DAE82166F60AA0000CE97 /* AppKit.framework in Frameworks */,
 				5C1539421557B3FB00B02941 /* Foundation.framework in Frameworks */,
+				5C54F52416D4DCF6008BF134 /* libpng.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,13 +69,10 @@
 		5C1538D71557B1EB00B02941 = {
 			isa = PBXGroup;
 			children = (
-				5C15391C1557B29F00B02941 /* zlib */,
-				5C1538FD1557B29700B02941 /* libpng */,
+				5C1538F41557B21800B02941 /* atlas.cpp */,
 				5C1538F61557B25600B02941 /* Engine */,
 				5C1538E31557B1EC00B02941 /* Products */,
-				5C1538F41557B21800B02941 /* atlas.cpp */,
-				5C6DAE81166F60AA0000CE97 /* AppKit.framework */,
-				5C1539411557B3FB00B02941 /* Foundation.framework */,
+				5C54F52716D4DD0C008BF134 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -144,6 +87,7 @@
 		5C1538F61557B25600B02941 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				5C54F52116D4DCE9008BF134 /* atomiccounter.unix.cpp */,
 				5C6DAE7F166F607A0000CE97 /* geometry.cpp */,
 				5C15393F1557B2F800B02941 /* imagewriter.cpp */,
 				5C15393D1557B2D500B02941 /* imageoperations.cpp */,
@@ -151,55 +95,19 @@
 				5C1538F91557B27B00B02941 /* pngloader.cpp */,
 				5C6DAE79166F600E0000CE97 /* textureatlaswriter.cpp */,
 				5C6DAE7B166F60150000CE97 /* tools.apple.mm */,
-				5C6DAE7D166F606D0000CE97 /* referencecounter.unix.cpp */,
 			);
 			name = Engine;
 			sourceTree = "<group>";
 		};
-		5C1538FD1557B29700B02941 /* libpng */ = {
+		5C54F52716D4DD0C008BF134 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5C1538FE1557B29700B02941 /* png.c */,
-				5C1538FF1557B29700B02941 /* pngerror.c */,
-				5C1539001557B29700B02941 /* pngget.c */,
-				5C1539011557B29700B02941 /* pngmem.c */,
-				5C1539021557B29700B02941 /* pngpread.c */,
-				5C1539031557B29700B02941 /* pngread.c */,
-				5C1539041557B29700B02941 /* pngrio.c */,
-				5C1539051557B29700B02941 /* pngrtran.c */,
-				5C1539061557B29700B02941 /* pngrutil.c */,
-				5C1539071557B29700B02941 /* pngset.c */,
-				5C1539081557B29700B02941 /* pngtrans.c */,
-				5C1539091557B29700B02941 /* pngwio.c */,
-				5C15390A1557B29700B02941 /* pngwrite.c */,
-				5C15390B1557B29700B02941 /* pngwtran.c */,
-				5C15390C1557B29700B02941 /* pngwutil.c */,
+				5C54F52316D4DCF6008BF134 /* libpng.a */,
+				5C54F52516D4DD00008BF134 /* libz.dylib */,
+				5C6DAE81166F60AA0000CE97 /* AppKit.framework */,
+				5C1539411557B3FB00B02941 /* Foundation.framework */,
 			);
-			name = libpng;
-			path = ../../src/libpng;
-			sourceTree = "<group>";
-		};
-		5C15391C1557B29F00B02941 /* zlib */ = {
-			isa = PBXGroup;
-			children = (
-				5C15391D1557B29F00B02941 /* adler32.c */,
-				5C15391E1557B29F00B02941 /* compress.c */,
-				5C15391F1557B29F00B02941 /* crc32.c */,
-				5C1539201557B29F00B02941 /* deflate.c */,
-				5C1539211557B29F00B02941 /* gzclose.c */,
-				5C1539221557B29F00B02941 /* gzlib.c */,
-				5C1539231557B29F00B02941 /* gzread.c */,
-				5C1539241557B29F00B02941 /* gzwrite.c */,
-				5C1539251557B29F00B02941 /* infback.c */,
-				5C1539261557B29F00B02941 /* inffast.c */,
-				5C1539271557B29F00B02941 /* inflate.c */,
-				5C1539281557B29F00B02941 /* inftrees.c */,
-				5C1539291557B29F00B02941 /* trees.c */,
-				5C15392A1557B29F00B02941 /* uncompr.c */,
-				5C15392B1557B29F00B02941 /* zutil.c */,
-			);
-			name = zlib;
-			path = ../../src/zlib;
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -254,43 +162,13 @@
 			files = (
 				5C1538F51557B21800B02941 /* atlas.cpp in Sources */,
 				5C1538FB1557B27B00B02941 /* pngloader.cpp in Sources */,
-				5C15390D1557B29700B02941 /* png.c in Sources */,
-				5C15390E1557B29700B02941 /* pngerror.c in Sources */,
-				5C15390F1557B29700B02941 /* pngget.c in Sources */,
-				5C1539101557B29700B02941 /* pngmem.c in Sources */,
-				5C1539111557B29700B02941 /* pngpread.c in Sources */,
-				5C1539121557B29700B02941 /* pngread.c in Sources */,
-				5C1539131557B29700B02941 /* pngrio.c in Sources */,
-				5C1539141557B29700B02941 /* pngrtran.c in Sources */,
-				5C1539151557B29700B02941 /* pngrutil.c in Sources */,
-				5C1539161557B29700B02941 /* pngset.c in Sources */,
-				5C1539171557B29700B02941 /* pngtrans.c in Sources */,
-				5C1539181557B29700B02941 /* pngwio.c in Sources */,
-				5C1539191557B29700B02941 /* pngwrite.c in Sources */,
-				5C15391A1557B29700B02941 /* pngwtran.c in Sources */,
-				5C15391B1557B29700B02941 /* pngwutil.c in Sources */,
-				5C15392C1557B29F00B02941 /* adler32.c in Sources */,
-				5C15392D1557B29F00B02941 /* compress.c in Sources */,
-				5C15392E1557B29F00B02941 /* crc32.c in Sources */,
-				5C15392F1557B29F00B02941 /* deflate.c in Sources */,
-				5C1539301557B29F00B02941 /* gzclose.c in Sources */,
-				5C1539311557B29F00B02941 /* gzlib.c in Sources */,
-				5C1539321557B29F00B02941 /* gzread.c in Sources */,
-				5C1539331557B29F00B02941 /* gzwrite.c in Sources */,
-				5C1539341557B29F00B02941 /* infback.c in Sources */,
-				5C1539351557B29F00B02941 /* inffast.c in Sources */,
-				5C1539361557B29F00B02941 /* inflate.c in Sources */,
-				5C1539371557B29F00B02941 /* inftrees.c in Sources */,
-				5C1539381557B29F00B02941 /* trees.c in Sources */,
-				5C1539391557B29F00B02941 /* uncompr.c in Sources */,
-				5C15393A1557B29F00B02941 /* zutil.c in Sources */,
 				5C15393C1557B2C500B02941 /* tools.cpp in Sources */,
 				5C15393E1557B2D500B02941 /* imageoperations.cpp in Sources */,
 				5C1539401557B2F800B02941 /* imagewriter.cpp in Sources */,
 				5C6DAE7A166F600E0000CE97 /* textureatlaswriter.cpp in Sources */,
 				5C6DAE7C166F60150000CE97 /* tools.apple.mm in Sources */,
-				5C6DAE7E166F606D0000CE97 /* referencecounter.unix.cpp in Sources */,
 				5C6DAE80166F607A0000CE97 /* geometry.cpp in Sources */,
+				5C54F52216D4DCE9008BF134 /* atomiccounter.unix.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -349,6 +227,10 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_CXX0X_EXTENSIONS = NO;
 				HEADER_SEARCH_PATHS = $PROJECT_DIR/../../include/;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../lib/osx\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -360,6 +242,10 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_CXX0X_EXTENSIONS = NO;
 				HEADER_SEARCH_PATHS = $PROJECT_DIR/../../include/;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../lib/osx\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
