@@ -121,9 +121,17 @@ void PNGLoader::loadFromFile(const std::string& path, TextureDescription& desc)
 
 void PNGLoader::loadInfoFromFile(const std::string& path, TextureDescription& desc)
 {
-	desc.source = path;
 	std::ifstream file(path.c_str(), std::ios::binary);
-	loadInfoFromStream(file, desc);
+	
+	if (file.good())
+	{
+		desc.source = path;
+		loadInfoFromStream(file, desc);
+	}
+	else
+	{
+		std::cout << "Unable to open file " << path << std::endl;
+	}
 }
 
 /*

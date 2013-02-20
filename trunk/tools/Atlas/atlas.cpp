@@ -9,7 +9,8 @@ void printHelp()
 {
 	std::cout << "Using: " << std::endl <<
 		"atlas -root <ROOT FOLDER> -out <OUTPUT FILE>" << std::endl << 
-		"\tOPTIONAL: -pattern <PATTERN>, default: texture_%d.png" << std::endl << 
+		"\tOPTIONAL: -size <SIZE>, default: 1024 - size of the output atlas" << std::endl <<
+		"\tOPTIONAL: -pattern <PATTERN>, default: texture_%d.png" << std::endl <<
 		"\tOPTIONAL: -nospace, default off - don't add one pixel space between images in atlas." << std::endl;
 }
 
@@ -26,16 +27,22 @@ int main(int argc, char* argv[])
 	std::string rootFolder;
 	std::string outFile;
 	std::string pattern = "texture_%d.png";
+	int outputSize = 1024;
 
 	for (int i = 1; i < argc; ++i)
 	{
 		if ((strcmp(argv[i], "-root") == 0) && (i + 1 < argc))
 		{
-			rootFolder = std::string(argv[i+1]);
+			rootFolder = addTrailingSlash(std::string(argv[i+1]));
 			if (folderExists(rootFolder))
 			{
 				hasRoot = true;
 				++i;
+			}
+			else
+			{
+				std::cout << "ERROR: root folder not found" << std::endl;
+				return 0;
 			}
 		}
 		else if ((strcmp(argv[i], "-out") == 0) && (i + 1 < argc))
@@ -54,6 +61,11 @@ int main(int argc, char* argv[])
 		{
 			addSpace = false;
 		}
+		else if ((strcmp(argv[i], "-size") == 0) && (i + 1 < argc))
+		{
+			outputSize = strToInt(std::string(argv[i+1]));
+			++i;
+		}
 
 	}
 
@@ -62,15 +74,21 @@ int main(int argc, char* argv[])
 		printHelp();
 		return 0;
 	}
-
+	
 	StringList fileList;
 	TextureDescription::List textureDescriptors;
 	findFiles(rootFolder, "*.png", true, fileList);	
 
-	for (const std::string& i : fileList)
+	for (auto i : fileList)
 	{
 		TextureDescription::Pointer desc(new TextureDescription);
 		PNGLoader::loadInfoFromFile(i, desc.reference());
+		if ((desc->size.x > outputSize) || (desc->size.y > outputSize))
+		{
+			std::cout << "ERROR: image " << i << " is larger (" << desc->size << ") than output size (" <<
+				outputSize << ";" << outputSize << "), please use -size option" << std::endl;
+			return 0;
+		}
 		textureDescriptors.push_back(desc);
 	}
 	std::sort(textureDescriptors.begin(), textureDescriptors.end(), sortFunc);
@@ -78,7 +96,7 @@ int main(int argc, char* argv[])
 	TextureAtlasWriter placer(addSpace);
 	while (textureDescriptors.size())
 	{
-		TextureAtlasWriter::TextureAtlasItem& texture = placer.addItem(vec2i(1024, 1024));
+		TextureAtlasWriter::TextureAtlasItem& texture = placer.addItem(vec2i(outputSize));
 		TextureDescription::List::iterator i = textureDescriptors.begin();
 
 		int placedItems = 0;
