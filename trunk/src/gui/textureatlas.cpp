@@ -63,7 +63,8 @@ TextureAtlas::TextureAtlas(RenderContext* rc, const std::string& filename, Textu
 
 void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, TextureCache& cache)
 {
-	std::string resolvedFileName = application().environment().resolveScalableFileName(filename, rc->screenScaleFactor());
+	std::string resolvedFileName =
+		application().environment().resolveScalableFileName(filename, rc->screenScaleFactor());
 
 	std::ifstream descFile(resolvedFileName.c_str());
 	if (descFile.fail()) 

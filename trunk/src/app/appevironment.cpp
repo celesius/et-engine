@@ -119,13 +119,13 @@ std::string AppEnvironment::resolveScalableFileName(const std::string& name, siz
 	std::string ext = getFileExt(foundFile);
 	while (scale >= 1)
 	{
-		std::string newFile = baseName + "@" + intToStr(scale) + "x." + ext;
+		std::string newFile = findFile(baseName + "@" + intToStr(scale) + "x." + ext);
 		if (fileExists(newFile))
 			return newFile;
 
 		if (scale == 1)
 		{
-			newFile = baseName + "." + ext;
+			newFile = findFile(baseName + "." + ext);
 			if (fileExists(newFile))
 				return newFile;
 		}
