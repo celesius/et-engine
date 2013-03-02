@@ -64,9 +64,8 @@ void Renderer::clear(bool color, bool depth)
 
 void Renderer::fullscreenPass()
 {
-	const IndexBuffer& ib = _fullscreenQuadVao->indexBuffer();
 	_rc->renderState().bindVertexArray(_fullscreenQuadVao);
-	drawElements(ib, 0, ib->size());
+	drawAllElements(_fullscreenQuadVao->indexBuffer());
 }
 
 void Renderer::renderFullscreenTexture(const Texture& texture)
@@ -122,6 +121,12 @@ void Renderer::drawElements(PrimitiveType primitiveType, const IndexBuffer& ib, 
 {
 	if (ib.valid())
 		etDrawElements(primitiveTypeValue(primitiveType), static_cast<GLsizei>(count), ib->dataType(), ib->indexOffset(first));
+}
+
+void Renderer::drawAllElements(const IndexBuffer& ib)
+{
+	if (ib.valid())
+		etDrawElements(ib->primitiveType(), ib->size(), ib->dataType(), 0);
 }
 
 void Renderer::drawElementsBaseIndex(const VertexArrayObject& vao, int base, size_t first, size_t count)
