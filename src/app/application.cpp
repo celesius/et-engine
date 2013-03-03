@@ -88,7 +88,7 @@ void Application::setFrameRateLimit(size_t value)
 
 void Application::setActive(bool active)
 {
-	if (_active == active) return;
+	if (!_running || (_active == active)) return;
 
 	_active = active;
 

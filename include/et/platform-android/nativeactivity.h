@@ -5,5 +5,5 @@
 
 namespace et
 {
-	void initSharedAndroidApplication(android_app*);
+
 }
