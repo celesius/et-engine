@@ -38,6 +38,12 @@ namespace et
 	std::wstring utf8ToUnicode(const std::string& mbcs);
 	
 	std::string applicationIdentifierForCurrentProject();
+
+	/**
+	 * Returns device's screen size in native units.
+	 * For Retina screens returns size in points
+	 */
+	vec2i nativeScreenSize();
 	
 	/*
 	 * Common code
