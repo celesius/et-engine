@@ -169,14 +169,12 @@ const gui::Image& TextureAtlas::image(const std::string& key) const
 {
 	if (key.length() == 0) return _emptyImage;
 	
-	ImageMap::const_iterator i = _images.find(key);
+	auto i = _images.find(key);
+	
 	if (i == _images.end())
-	{
-		std::cout << "Image `" << key << "` not found in atlas." << std::endl;
 		return _emptyImage;
-	}
-	else 
-		return i->second;
+	
+	return i->second;
 }
 
 ImageList TextureAtlas::imagesForTexture(Texture t) const
