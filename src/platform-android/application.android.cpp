@@ -238,6 +238,8 @@ void Application::platformInit()
 
 int Application::platformRun()
 {
+	_renderingContextHandle = reinterpret_cast<size_t>(_sharedApplication);
+	
 	LOGI("Application::platformRun()");
 	enterRunLoop();
 	return 0;
