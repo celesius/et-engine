@@ -12,8 +12,6 @@
 
 static android_app* _sharedApplication = nullptr;
 
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
-
 /**
  *
  * Native Activity entry point, handlers and extern declaration of "main" function
@@ -45,8 +43,8 @@ using namespace et;
 static ApplicationNotifier sharedApplicationNotifier;
 static Input::PointerInputSource sharedPointerInput;
 
-#define THIS_CASE(A) case A: { LOGI("handleCommand:" #A); break; }
-#define THIS_MOTION_CASE(A) case A: { LOGI("motion:" #A); break; }
+#define THIS_CASE(A) case A: { androidLog("handleCommand:" #A); break; }
+#define THIS_MOTION_CASE(A) case A: { androidLog("motion:" #A); break; }
 
 void handleCommand(android_app* app, int32_t cmd)
 {
@@ -54,14 +52,14 @@ void handleCommand(android_app* app, int32_t cmd)
 	{
 		case APP_CMD_START:
 		{
-			LOGI("APP_CMD_START");
+			androidLog("APP_CMD_START");
 			break;
 		};
 
 		case APP_CMD_GAINED_FOCUS:
 		case APP_CMD_RESUME:
 		{
-			LOGI("APP_CMD_GAINED_FOCUS or APP_CMD_RESUME, userData: %X", app->userData);
+			androidLog("APP_CMD_GAINED_FOCUS or APP_CMD_RESUME, userData: %X", app->userData);
 //			sharedApplicationNotifier.notifyActivated();
 			break;
 		}
@@ -69,7 +67,7 @@ void handleCommand(android_app* app, int32_t cmd)
 		case APP_CMD_LOST_FOCUS:
 		case APP_CMD_PAUSE:
 		{
-			LOGI("APP_CMD_LOST_FOCUS or APP_CMD_PAUSE");
+			androidLog("APP_CMD_LOST_FOCUS or APP_CMD_PAUSE");
 			sharedApplicationNotifier.notifyDeactivated();
 			
 			break;
@@ -77,13 +75,13 @@ void handleCommand(android_app* app, int32_t cmd)
 
 		case APP_CMD_DESTROY:
 		{
-			LOGI("APP_CMD_DESTROY");
+			androidLog("APP_CMD_DESTROY");
 			break;
 		}
 
 		case APP_CMD_INIT_WINDOW:
 		{
-			LOGI("APP_CMD_INIT_WINDOW");
+			androidLog("APP_CMD_INIT_WINDOW");
 			sharedApplicationNotifier.notifyLoaded();
 			break;
 		}
@@ -99,7 +97,7 @@ void handleCommand(android_app* app, int32_t cmd)
 		THIS_CASE(APP_CMD_STOP)
 				  
 		default:
-			LOGI("WARNING!!! handleCommand: ANOTHER COMMAND (%d)", cmd);
+			androidLog("WARNING!!! handleCommand: ANOTHER COMMAND (%d)", cmd);
     }
 }
 
@@ -114,21 +112,21 @@ int32_t handleInput(android_app* app, AInputEvent* event)
 
 		if (action == AKEY_EVENT_ACTION_DOWN)
 		{
-			LOGI("AKEY_EVENT_ACTION_DOWN: %d", keyCode);
+			androidLog("AKEY_EVENT_ACTION_DOWN: %d", keyCode);
 		}
 		else if (action == AKEY_EVENT_ACTION_UP)
 		{
-			LOGI("AKEY_EVENT_ACTION_UP: %d", keyCode);
+			androidLog("AKEY_EVENT_ACTION_UP: %d", keyCode);
 			if (keyCode == 4)
 				application().quit(0);
 		}
 		else if (action == AKEY_EVENT_ACTION_MULTIPLE)
 		{
-			LOGI("AKEY_EVENT_ACTION_MULTIPLE");
+			androidLog("AKEY_EVENT_ACTION_MULTIPLE");
 		}
 		else
 		{
-			LOGI("WARNING!!! AINPUT_EVENT_TYPE_KEY, action: %d", action);
+			androidLog("WARNING!!! AINPUT_EVENT_TYPE_KEY, action: %d", action);
 		}
     }
 	else if (eventType == AINPUT_EVENT_TYPE_MOTION)
@@ -149,7 +147,7 @@ int32_t handleInput(android_app* app, AInputEvent* event)
 			THIS_MOTION_CASE(AMOTION_EVENT_ACTION_POINTER_UP)
 				
 			default:
-				LOGI("WARNING!!! AINPUT_EVENT_TYPE_MOTION, action: %d", action);
+				androidLog("WARNING!!! AINPUT_EVENT_TYPE_MOTION, action: %d", action);
 				break;
 		}
 
@@ -158,7 +156,7 @@ int32_t handleInput(android_app* app, AInputEvent* event)
 			int32_t pid = AMotionEvent_getPointerId(event, i);
 			float x = AMotionEvent_getX(event, i);
 			float y = AMotionEvent_getY(event, i);
-			LOGI("{ %d : %f, %f}", pid, x, y);
+			androidLog("{ %d : %f, %f}", pid, x, y);
 		}
     }
 	
@@ -183,7 +181,7 @@ void processEvents()
 
 void Application::loaded()
 {
-	LOGI("Application::loaded()");
+	androidLog("Application::loaded()");
 
 	_lastQueuedTimeMSec = queryTimeMSec();
 	_runLoop.update(_lastQueuedTimeMSec);
@@ -194,21 +192,22 @@ void Application::loaded()
 	_renderContext = new RenderContext(parameters, this);
 	_renderContext->init();
 
+	_active = true;
 	delegate()->applicationDidLoad(_renderContext);
 }
 
 void Application::enterRunLoop()
 {
-	LOGI("Application::enterRunLoop()");
+	androidLog("Application::enterRunLoop()");
 	assert(_sharedApplication != nullptr);
 
 	_active = false;
-	_running = false;
-
+	_running = true;
+	
 	while (_sharedApplication->destroyRequested == 0)
 	{
 		processEvents();
-
+		
 		if (_active)
 			idle();
     }
@@ -216,7 +215,7 @@ void Application::enterRunLoop()
 
 void Application::quit(int exitCode)
 {
-	LOGI("Application::quit()");
+	androidLog("Application::quit()");
 	
 	ANativeActivity_finish(_sharedApplication->activity);
 	_running = false;
@@ -232,7 +231,7 @@ void Application::alert(const std::string&, const std::string&, AlertType)
 
 void Application::platformInit()
 {
-	LOGI("Application::platformInit()");
+	androidLog("Application::platformInit()");
 	_env.updateDocumentsFolder(_identifier);
 }
 
@@ -240,21 +239,21 @@ int Application::platformRun()
 {
 	_renderingContextHandle = reinterpret_cast<size_t>(_sharedApplication);
 	
-	LOGI("Application::platformRun()");
+	androidLog("Application::platformRun()");
 	enterRunLoop();
 	return 0;
 }
 
 void Application::platformFinalize()
 {
-	LOGI("Application::platformFinalize()");
+	androidLog("Application::platformFinalize()");
 	delete _delegate, _delegate = nullptr;
 	delete _renderContext, _renderContext = nullptr;
 }
 
 void Application::platformActivate()
 {
-	LOGI("Application::platformActivate()");
+	androidLog("Application::platformActivate()");
 	
 	if (!_running)
 		processEvents();
@@ -262,5 +261,5 @@ void Application::platformActivate()
 
 void Application::platformDeactivate()
 {
-	LOGI("Application::platformDeactivate()");
+	androidLog("Application::platformDeactivate()");
 }
