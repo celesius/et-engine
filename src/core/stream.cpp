@@ -44,7 +44,7 @@ InputStream::InputStream(const std::string& file, StreamMode mode) : _private(ne
 	if (mode == StreamMode_Binary)
 		openMode |= std::ios::binary;
 	
-	_private->stream = new std::ifstream(file, openMode);
+	_private->stream = new std::ifstream(file.c_str(), openMode);
 
 	if (_private->stream->fail())
 	{
