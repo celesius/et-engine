@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -182,7 +182,7 @@ void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
 	}
 	else
 	{
-		std::cout << "Unsupported texture target specified: glTexTargetToString(_target)" << std::endl;
+		log::error("Unsupported texture target specified: glTexTargetToString(_target)");
 	}
 }
 

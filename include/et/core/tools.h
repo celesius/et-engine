@@ -1,13 +1,12 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
 #pragma once
 
-#include <fstream>
 #include <et/geometry/geometry.h>
 
 namespace et
@@ -19,6 +18,7 @@ namespace et
 	uint64_t queryTimeMSec();
 	
 	std::string applicationPath();
+	std::string applicationPackagePath();
 	std::string applicationDataFolder();
 	
 	std::string applicationLibraryBaseFolder();

@@ -1,14 +1,14 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
-#include <iostream>
-#include <et/threading/mutex.h>
 #include <errno.h>
 #include <pthread.h>
+#include <et/core/et.h>
+#include <et/threading/mutex.h>
 
 namespace et
 {
@@ -42,12 +42,12 @@ void Mutex::lock()
 {
 	int result = pthread_mutex_lock(&_private->mutex);
 	if (result == EBUSY)
-		std::cout << "Mutex already locked." << std::endl;
+		log::error("Mutex already locked.");
 }
 
 void Mutex::unlock()
 {
 	int result = pthread_mutex_unlock(&_private->mutex);
 	if (result == EPERM)
-		std::cout << "Mutex already unlocked or was locked from another thread." << std::endl;
+		log::error("Mutex already unlocked or was locked from another thread.");
 }

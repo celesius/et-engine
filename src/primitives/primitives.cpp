@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -370,7 +370,7 @@ void Primitives::calculateNormals(VertexArray::Pointer data, const IndexArray::P
 	VertexDataChunk nrmChunk = data->chunk(Usage_Normal);
 	if (!posChunk.valid() || (posChunk->type() != Type_Vec3) || !nrmChunk.valid() || (nrmChunk->type() != Type_Vec3)) 
 	{
-		std::cout << "Primitives::calculateNormals - data is invalid." << std::endl;
+		log::error("Primitives::calculateNormals - data is invalid.");
 		return;
 	}
 	
@@ -408,7 +408,7 @@ void Primitives::calculateTangents(VertexArray::Pointer data, const IndexArray::
 		!tanChunk.valid() || (tanChunk->type() != Type_Vec3) ||
 		!uvChunk.valid() || (uvChunk->type() != Type_Vec2)) 
 	{
-		std::cout << "Primitives::calculateTangents - data is invalid." << std::endl;
+		log::error("Primitives::calculateTangents - data is invalid.");
 		return;
 	}
 
@@ -473,7 +473,7 @@ void Primitives::smoothTangents(VertexArray::Pointer data, const IndexArray::Poi
 	VertexDataChunk tanChunk = data->chunk(Usage_Tangent);
 	if (!posChunk.valid() || (posChunk->type() != Type_Vec3) || !tanChunk.valid() || (tanChunk->type() != Type_Vec3))
 	{
-		std::cout << "Primitives::smoothTangents - data is invalid." << std::endl;
+		log::error("Primitives::smoothTangents - data is invalid.");
 		return;
 	}
 

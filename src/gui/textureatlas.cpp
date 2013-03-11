@@ -1,11 +1,12 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
 #include <sstream>
+#include <et/core/stream.h>
 #include <et/core/tools.h>
 #include <et/app/application.h>
 #include <et/resources/textureloader.h>
@@ -56,7 +57,8 @@ TextureAtlas::TextureAtlas() : _loaded(false)
 {
 }
 
-TextureAtlas::TextureAtlas(RenderContext* rc, const std::string& filename, TextureCache& cache) : _loaded(false)
+TextureAtlas::TextureAtlas(RenderContext* rc, const std::string& filename, TextureCache& cache) :
+	_loaded(false)
 {
 	loadFromFile(rc, filename, cache);
 }
@@ -66,23 +68,19 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 	std::string resolvedFileName =
 		application().environment().resolveScalableFileName(filename, rc->screenScaleFactor());
 
-	std::ifstream descFile(resolvedFileName.c_str());
-	if (descFile.fail()) 
-	{
-		std::cout << "Unable to open " << filename << " atlas." << std::endl;
-		return;
-	}
+	InputStream descFile(resolvedFileName, StreamMode_Text);
+	if (descFile.invalid()) return;
 
 	std::string filePath = getFilePath(resolvedFileName);
 	int lineNumber = 1;
 
-	while (!descFile.eof())
+	while (!descFile.stream().eof())
 	{
 		std::string token;
 		std::string line;
 
-		descFile >> token;
-		std::getline(descFile, line);
+		descFile.stream() >> token;
+		std::getline(descFile.stream(), line);
 
 		if (token == "texture:")
 		{
@@ -140,23 +138,26 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 					}
 					else
 					{
-						std::cout << "Unknown token at line " << lineNumber << ": " << aToken << std::endl;
+						log::warning("Unknown token at line %d : %s", lineNumber, aToken.c_str());
 					}
 				}
 
 				ImageDescriptor desc(sourceRect.origin(), sourceRect.size());
-				desc.contentOffset = ContentOffset(contentOffset[0], contentOffset[1], contentOffset[2], contentOffset[3]);
+
+				desc.contentOffset = ContentOffset(contentOffset[0], contentOffset[1],
+					contentOffset[2], contentOffset[3]);
+
 				_images[imageName] = Image(_textures[textureName], desc);
 			}
 			else 
 			{
-				std::cout << "Unable to parse image token at line" << lineNumber << ": " << line;
+				log::warning("Unable to parse image token at line %d : %s", lineNumber, line.c_str());
 			}
 		}
 		else 
 		{
 			if (token.length() && line.length())
-				std::cout << "Unknown token at line " << lineNumber << ": " << token << line << std::endl;
+				log::warning("Unknown token at line %d : %s", lineNumber, token.c_str());
 		}
 
 		++lineNumber;

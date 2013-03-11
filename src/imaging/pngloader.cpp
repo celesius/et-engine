@@ -1,13 +1,12 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
-#include <fstream>
 #include <libpng/png.h>
-
+#include <et/core/stream.h>
 #include <et/opengl/opengl.h>
 #include <et/imaging/pngloader.h>
 
@@ -25,21 +24,21 @@ void PNGLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 
 	if (png_sig_cmp(pngsig, 0, PNGSIGSIZE))
 	{
-		std::cout << "ERROR: Couldn't recognize PNG" << std::endl;    
+		log::error("Couldn't recognize PNG");
 		return;
 	}
 
 	png_structp pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!pngPtr)
 	{
-		std::cout << "ERROR: Couldn't initialize png read struct" << std::endl;    
+		log::error("Couldn't initialize png read struct");
 		return;
 	}
 
 	png_infop infoPtr = png_create_info_struct(pngPtr);
 	if (!infoPtr) 
 	{
-		std::cout << "ERROR: Couldn't initialize png info struct" << std::endl;   
+		log::error("Couldn't initialize png info struct");
 		png_destroy_read_struct(&pngPtr, (png_infopp)0, (png_infopp)0);    
 		return;
 	}
@@ -61,22 +60,22 @@ void PNGLoader::loadFromStream(std::istream& source, TextureDescription& desc)
 
 	if (png_sig_cmp(pngsig, 0, PNGSIGSIZE))
 	{
-		std::cout << "ERROR: Couldn't recognize PNG" << std::endl;    
+		log::error("Couldn't recognize PNG");
 		return;
 	}
 
 	png_structp pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!pngPtr)
 	{
-		std::cout << "ERROR: Couldn't initialize png read struct" << std::endl;    
+		log::error("Couldn't initialize png read struct");
 		return;
 	}
 
 	png_infop infoPtr = png_create_info_struct(pngPtr);
 	if (!infoPtr) 
 	{
-		std::cout << "ERROR: Couldn't initialize png info struct" << std::endl;   
-		png_destroy_read_struct(&pngPtr, (png_infopp)0, (png_infopp)0);    
+		log::error("Couldn't initialize png info struct");
+		png_destroy_read_struct(&pngPtr, (png_infopp)0, (png_infopp)0);
 		return;
 	}
 
@@ -114,23 +113,21 @@ void PNGLoader::loadFromStream(std::istream& source, TextureDescription& desc)
 
 void PNGLoader::loadFromFile(const std::string& path, TextureDescription& desc)
 {
-	desc.source = path;
-	std::ifstream file(path.c_str(), std::ios::binary);
-	loadFromStream(file, desc);
+	InputStream file(path, StreamMode_Binary);
+	if (file.valid())
+	{
+		desc.source = path;
+		loadFromStream(file.stream(), desc);
+	}
 }
 
 void PNGLoader::loadInfoFromFile(const std::string& path, TextureDescription& desc)
 {
-	std::ifstream file(path.c_str(), std::ios::binary);
-	
-	if (file.good())
+	InputStream file(path, StreamMode_Binary);
+	if (file.valid())
 	{
 		desc.source = path;
-		loadInfoFromStream(file, desc);
-	}
-	else
-	{
-		std::cout << "Unable to open file " << path << std::endl;
+		loadInfoFromStream(file.stream(), desc);
 	}
 }
 

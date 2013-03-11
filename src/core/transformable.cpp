@@ -1,7 +1,7 @@
 /*
 * This file is part of `et engine`
-* Copyright 2009-2012 by Sergey Reznik
-* Please, do not modify contents without approval.
+* Copyright 2009-2013 by Sergey Reznik
+* Please, do not modify content without approval.
 *
 */
 
@@ -110,14 +110,17 @@ void ComponentTransformable::setTransform(mat4 originalMatrix)
 	_translation = m[3].xyz();
 	_flags &= ~Flag_ShouldDecompose;
 	buildTransform();
+
 	float deviation = 0.0f;
+	
 	for (size_t v = 0; v < 4; ++v)
 	{
 		for (size_t u = 0; u < 4; ++u)
 			deviation += sqr(originalMatrix[v][u] - _cachedTransform[v][u]);
 	}
+	
 	if (deviation > 0.01f)
-		std::cout << "Failed to convert matrix to quternion, deviation = " << deviation << std::endl;
+		log::warning("Failed to convert matrix to quternion, deviation: %f", deviation);
 }
 
 #else

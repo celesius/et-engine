@@ -5,9 +5,15 @@
  *
  */
 
+#include <jni.h>
 #include <sys/time.h>
-#include <et/core/datastorage.h>
+#include <sys/stat.h>
+#include <libzip/zip.h>
+
 #include <et/core/tools.h>
+#include <et/core/datastorage.h>
+
+#include <et/platform-android/nativeactivity.h>
 
 using namespace std;
 
@@ -15,6 +21,12 @@ static uint64_t startTime = 0;
 static bool startTimeInitialized = false;
 
 char et::pathDelimiter = '/';
+
+namespace et
+{
+	extern android_app* sharedAndroidApplication();
+	extern zip* sharedAndroidZipArchive();
+}
 
 uint64_t queryActualTime()
 {
@@ -43,12 +55,32 @@ uint64_t et::queryTimeMSec()
 
 std::string et::applicationPath()
 {
-    return std::string();
+    return et::applicationPackagePath() + "/";
+}
+
+std::string et::applicationPackagePath()
+{
+    JNIEnv* env = et::sharedAndroidApplication()->activity->env;
+	ANativeActivity* activity = et::sharedAndroidApplication()->activity;
+
+	activity->vm->AttachCurrentThread(&env, nullptr);
+
+    jmethodID methodID =
+		env->GetMethodID(env->GetObjectClass(activity->clazz), "getPackageCodePath", "()Ljava/lang/String;");
+
+    jobject result = env->CallObjectMethod(activity->clazz, methodID);
+
+    jboolean isCopy = false;
+    const char* str = env->GetStringUTFChars(reinterpret_cast<jstring>(result), &isCopy);
+
+	et::log::info("Application package path: ", str);
+
+    return std::string(str);
 }
 
 std::string et::applicationDataFolder()
 {
-	return std::string();
+	return "assets/";
 }
 
 std::string et::normalizeFilePath(string s)
@@ -64,26 +96,45 @@ std::string et::normalizeFilePath(string s)
 
 bool et::fileExists(const std::string& name)
 {
-    return false;
+	zip* arch = et::sharedAndroidZipArchive();
+	return (arch != nullptr) && (zip_name_locate(arch, name.c_str(), 0) != -1);
 }
 
 bool et::folderExists(const std::string& name)
 {
-	return false;
+	zip* arch = et::sharedAndroidZipArchive();
+	if (arch == nullptr)
+	{
+		log::info("looking for folder without archive");
+		return false;
+	}
+
+	int index = zip_name_locate(arch, name.c_str(), 0);
+	if (index == -1) return false;
+
+	struct zip_stat stat = { };
+	zip_stat_init(&stat);
+	zip_stat_index(arch, index, 0, &stat);
+	et::log::info("folder stat: size %u", stat.size);
+	return stat.size == 0;
 }
 
 std::string et::applicationLibraryBaseFolder()
 {
-	return std::string();
+	return addTrailingSlash(std::string(et::sharedAndroidApplication()->activity->internalDataPath));
 }
 
 std::string et::applicationDocumentsBaseFolder()
 {
-	return std::string();
+	return addTrailingSlash(std::string(et::sharedAndroidApplication()->activity->internalDataPath));
 }
 
 void et::createDirectory(const std::string& name)
 {
+	int value = mkdir(name.c_str(), S_IRUSR | S_IWUSR | S_IXUSR);
+	
+	if (value)
+		log::error("attempting to create a directory: %s ended up with %d", name.c_str(), value);
 }
 
 void et::findFiles(const std::string& folder, const std::string& mask, bool /* recursive */, std::vector<std::string>& list)

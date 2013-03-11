@@ -1,11 +1,10 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
-#include <fstream>
 #include <et/app/application.h>
 #include <et/core/tools.h>
 #include <et/resources/textureloader.h>
@@ -104,7 +103,7 @@ std::string TextureLoader::resolveScalableFileName(const std::string& fileName,
 	if (!found)
 	{
 		if (!silent)
-			std::cout << "Unable to resolve file name for: " << fileName << std::endl;
+			log::warning("Unable to resolve file name for: %s", fileName.c_str());
 	}
 	else if (extPtr)
 	{
@@ -157,7 +156,7 @@ TextureDescription::Pointer TextureLoader::loadDescription(const std::string& na
 	}
 	else
 	{
-		std::cout << "Unable to load texture description from file: " << name << std::endl;
+		log::warning("Unable to load texture description from file: %s", name.c_str());
 	}
 	
 	if ((desc != nullptr) && initWithZero)
@@ -200,10 +199,6 @@ TextureDescription::Pointer TextureLoader::load(const std::string& name, size_t 
 		desc = new TextureDescription;
 		desc->target = GL_TEXTURE_2D;
 		JPGLoader::loadFromFile(fileName, *desc);
-	}
-	else
-	{
-//		std::cout << "Unable to load texture from file: " << name << std::endl;
 	}
 
 	return TextureDescription::Pointer(desc);
