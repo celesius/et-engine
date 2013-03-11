@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -202,9 +202,8 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 			(layers[l-1]->compressed != layers[l]->compressed) ||
 			(layers[l-1]->data.size() != layers[l]->data.size()))
 		{
-			std::cout << "Failed to load cubemap textures. Textures aren't identical:" << std::endl <<
-				"> " << layers[l-1]->source << std::endl <<
-				"> " << layers[l]->source << std::endl;
+			log::error("Failed to load cubemap textures. Textures `%s` and `%s` aren't identical",
+				layers[l-1]->source.c_str(), layers[l]->source.c_str());
 			return Texture();
 		}
 	}

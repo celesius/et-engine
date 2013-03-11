@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -101,7 +101,7 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 	}
 	else if (_contentMode == ContentMode_Fill)
 	{
-		std::cout << "ImageView::ContentMode_Fill is not supported yet." << std::endl;
+		log::warning("ImageView::ContentMode_Fill is not supported yet.");
 	}
 	else if (_contentMode == ContentMode_Tile)
 	{

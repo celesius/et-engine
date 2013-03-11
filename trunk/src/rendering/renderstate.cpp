@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -122,7 +122,7 @@ void RenderState::bindBuffer(GLenum target, GLuint buffer, bool force)
 	} 
 	else if ((target != GL_ARRAY_BUFFER) && (target != GL_ELEMENT_ARRAY_BUFFER))
 	{
-		std::cout << "Trying to bind buffer " << buffer << " to unknown target " << target << std::endl;
+		log::warning("Trying to bind buffer %u to unknown target %u", buffer, target);
 	}
 }
 
@@ -708,8 +708,8 @@ RenderState::State RenderState::currentState()
 	}
 	else
 	{
-		std::cout << "Unsupported blend combination: " << glBlendFuncToString(blendSource) <<
-						", " << glBlendFuncToString(blendDest) << std::endl;
+		log::warning("Unsupported blend combination: %s and %s",
+			glBlendFuncToString(blendSource).c_str(), glBlendFuncToString(blendDest).c_str());
 		
 		assert("Unsupported blend combination" && 0);
 	}

@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -41,9 +41,9 @@ void OpenGLCapabilites::checkCaps()
 	}
 	
 	_version = strToInt(_glslVersion) < 130 ? OpenGLVersion_Old : OpenGLVersion_New;
-	
-	std::cout << "OpenGL version: " << _openGlVersion << std::endl <<
-				 "GLSL version: " << _glslVersionString << " (" << _glslVersion << ")" << std::endl;
+
+	log::info("OpenGL version: %s\nGLSL version: %s, (%s)",
+		_openGlVersion.c_str(), _glslVersionString.c_str(), _glslVersion.c_str());
 	
 #if (ET_OPENGL4_AVAILABLE)
 	_drawelements_basevertex = glDrawElementsBaseVertex != nullptr;

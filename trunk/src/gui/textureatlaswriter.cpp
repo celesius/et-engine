@@ -1,10 +1,11 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
+#include <fstream>
 #include <et/core/tools.h>
 #include <et/imaging/imagewriter.h>
 #include <et/imaging/pngloader.h>
@@ -176,7 +177,7 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 					size_t dPos = params.find_first_of("-");
 					if (dPos == std::string::npos)
 					{
-						std::cout << "Unable to parse all image parameters: `" << params << "`" << std::endl;
+						log::error("Unable to parse all image parameters: `%s`", params.c_str());
 						break;
 					}
 
@@ -188,7 +189,7 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 					}
 					else 
 					{
-						std::cout << "Unrecognized token: " << token << std::endl;
+						log::warning("Unrecognized token: %s", token.c_str());
 						break;
 					}
 				}

@@ -1,11 +1,10 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
-#include <fstream>
 #include <et/app/application.h>
 #include <et/camera/camera.h>
 #include <et/rendering/rendering.h>
@@ -17,8 +16,8 @@ const std::string ProgramData::emptyShaderSource("none");
 
 ProgramData::ProgramData(RenderState& rs, std::string vertexShader, std::string geometryShader,
 	std::string fragmentShader, const std::string& id) : APIObjectData(id), _glID(0), _rs(rs), 
-	_mModelViewLocation(-1), _mModelViewProjectionLocation(-1), _vCameraLocation(-1), _vPrimaryLightLocation(-1), 
-	_mLightProjectionMatrixLocation(-1), _mTransformLocation(-1), _loaded(false)
+	_mModelViewLocation(-1), _mModelViewProjectionLocation(-1), _vCameraLocation(-1),
+	_vPrimaryLightLocation(-1), _mLightProjectionMatrixLocation(-1), _mTransformLocation(-1), _loaded(false)
 {
 	buildProgram(vertexShader, geometryShader, fragmentShader);
 }
@@ -118,12 +117,13 @@ void ProgramData::setCameraProperties(const Camera& cam)
 	setCameraPosition(cam.position());
 }
 
-void ProgramData::buildProgram(const std::string& vertex_source, const std::string& geom_source, const std::string& frag_source)
+void ProgramData::buildProgram(const std::string& vertex_source, const std::string& geom_source,
+	const std::string& frag_source)
 {
 #if (ET_OPENGLES)
 	if (geom_source.length() && (geom_source != ProgramData::emptyShaderSource))
-		std::cout << "ProgramData::buildProgram - geometry shader skipped in OpenGL ES" << std::endl;
-#endif	
+		log::info("ProgramData::buildProgram - geometry shader skipped in OpenGL ES");
+#endif
 	
 	checkOpenGLError("Ce2Render::buildProgram " + name());
 
@@ -155,7 +155,7 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 	{
 		DataStorage<GLchar> infoLog(nLogLen, 0);
 		glGetShaderInfoLog(VertexShader, nLogLen, &nLogLen, infoLog.data());
-		std::cout << "Vertex shader " + name() + " compile report:" << std::endl << infoLog.data() << std::endl;
+		log::error("Vertex shader %s compile report:\n%s", name().c_str(), infoLog.data());
 	}
 
 	if (cStatus)
@@ -187,7 +187,7 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 		{
 			DataStorage<GLchar> infoLog(nLogLen, 0);
 			glGetShaderInfoLog(GeometryShader, nLogLen, &nLogLen, infoLog.data());
-			std::cout << "Geometry shader " + name() + " compile report:" << std::endl << infoLog.data() << std::endl;
+			log::error("Geometry shader %s compile report:\n%s", name().c_str(), infoLog.data());
 		}
 		if (cStatus)
 		{
@@ -220,7 +220,7 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 	{
 		DataStorage<GLchar> infoLog(nLogLen, 0);
 		glGetShaderInfoLog(FragmentShader, nLogLen, &nLogLen, infoLog.data());
-		std::cout << "Fragment shader " << name() << " compile report:"  << std::endl << infoLog.data() << std::endl;
+		log::error("Fragment shader %s compile report:\n%s", name().c_str(), infoLog.data());
 	}
 
 	if (cStatus)
@@ -259,14 +259,14 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 			GLint attribSize = 0; 
 			GLenum attribType = 0;
 			StringDataStorage name(maxNameLength, 0);
-			glGetActiveAttrib(_glID, i, maxNameLength, &nameLength, &attribSize, &attribType, name.binary()); 
+			glGetActiveAttrib(_glID, i, maxNameLength, &nameLength, &attribSize, &attribType, name.data());
 
-			VertexAttributeUsage v = stringToVertexAttribute(name.binary());
+			VertexAttributeUsage v = stringToVertexAttribute(name.data());
 
 			if (v != Usage_Undefined)
-				_attributes.push_back(ProgramAttrib(name.binary(), v));
+				_attributes.push_back(ProgramAttrib(name.data(), v));
 			else
-				std::cout << "Undefined vertex attribute " << name.binary() << std::endl;
+				log::warning("Undefined vertex attribute: %s", name.data());
 		}
 
 		for (AttribVector::iterator i = _attributes.begin(), e = _attributes.end(); i != e; ++i)
@@ -283,11 +283,11 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 			glGetProgramiv(_glID, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxNameLength);
 			for (GLint i = 0; i < activeUniforms; i++)
 			{
-				GLsizei uniformLenght = 0;
-				GLint uniformSize = 0;
+				GLint uSize = 0;
+				GLsizei uLenght = 0;
 				StringDataStorage name(maxNameLength, 0);
 				ProgramUniform P;
-				glGetActiveUniform(_glID, i, maxNameLength, &uniformLenght, &uniformSize, &P.type, name.binary());
+				glGetActiveUniform(_glID, i, maxNameLength, &uLenght, &uSize, &P.type, name.binary());
 				P.location = glGetUniformLocation(_glID, name.binary());
 				_uniforms[name.binary()] = P;
 
@@ -343,7 +343,7 @@ int ProgramData::link()
 		StringDataStorage infoLog(nLogLen + 1, 0);
 		glGetProgramInfoLog(_glID, nLogLen, &nLogLen, infoLog.data());
 		checkOpenGLError("glGetProgramInfoLog<LINK> " + name());
-		std::cout << "Program " << name() << " link log: " << std::endl << infoLog.data() << std::endl;
+		log::error("Program %s link log:\n%s", name().c_str(), infoLog.data());
 	}
 
 	return cStatus;

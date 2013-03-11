@@ -1,11 +1,12 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
 #include <et/core/datastorage.h>
+#include <et/core/stream.h>
 #include <et/core/tools.h>
 
 namespace et
@@ -72,12 +73,11 @@ namespace et
 
 	std::string loadTextFile(const std::string& fileName)
 	{
-		std::ifstream file(fileName.c_str(), std::ios::in | std::ios::binary);
-		if (file.fail()) return std::string();
+		InputStream file(fileName, StreamMode_Binary);
+		if (file.invalid()) return std::string();
 
-		StringDataStorage data(streamSize(file) + 1, 0);
-		file.read(data.data(), data.size());
-		file.close();
+		StringDataStorage data(streamSize(file.stream()) + 1, 0);
+		file.stream().read(data.data(), data.size());
 		
 		return std::string(data.data());
 	}

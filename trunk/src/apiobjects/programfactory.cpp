@@ -1,10 +1,11 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
+#include <et/core/stream.h>
 #include <et/app/application.h>
 #include <et/opengl/openglcaps.h>
 #include <et/rendering/rendercontext.h>
@@ -63,21 +64,20 @@ Program ProgramFactory::loadProgram(const std::string& file, const ProgramDefine
 	std::string filename = application().environment().findFile(file);
 	if (!fileExists(filename)) 
 	{
-		std::cout << "Unable to load program from file: " << file << std::endl;
+		log::error("Unable to find file: %s", file.c_str());
 		return Program();
 	}
 
-	ProgramDefinesList resultDefines = defines; 
+	ProgramDefinesList resultDefines = defines;
 	std::string vertex_source;
 	std::string geometry_source;
 	std::string fragment_source;
 	std::string s;
 
-	std::ifstream progFile(filename.c_str(), std::ios::binary);
-
-	while (!progFile.eof())
+	InputStream progFile(filename, StreamMode_Binary);
+	while (!progFile.stream().eof())
 	{
-		getline(progFile, s);
+		getline(progFile.stream(), s);
 		trim(s);
 
 		std::string id = s.substr(0, s.find(':'));
@@ -97,7 +97,6 @@ Program ProgramFactory::loadProgram(const std::string& file, const ProgramDefine
 			parseDefinesString(s.substr(s.find_first_of(':') + 1), resultDefines);
 
 	} 
-	progFile.close();
 
 	normalizeFilePath(trim(vertex_source));
 	normalizeFilePath(trim(geometry_source));
@@ -232,9 +231,14 @@ void ProgramFactory::parseSourceCode(ShaderType type, std::string& source, const
 			{
 				ifname = application().environment().findFile(ifname);
 				if (fileExists(ifname))
+				{
 					include = loadTextFile(ifname);
+				}
 				else
-					std::cout << "ERROR: failed to include " << ifname << ", starting from folder `" << workFolder << "`" << std::endl;
+				{
+					log::error("failed to include %s, starting from folder %s",
+						ifname.c_str(), workFolder.c_str());
+				}
 			}
 			
 			source = before + include + after;

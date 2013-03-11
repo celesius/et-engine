@@ -1,12 +1,12 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
-#include <fstream>
 #include <et/core/tools.h>
+#include <et/core/stream.h>
 #include <et/opengl/opengl.h>
 #include <et/imaging/pvrloader.h>
 
@@ -113,8 +113,8 @@ void PVRLoader::loadInfoFromV2Header(const PVRHeader2& header, TextureDescriptio
 	else
 #endif	
 	{
-		std::cout << "Unresolved PVR format: " << format << std::endl;
-	}    
+		log::warning("Unresolved PVR format: %zu", format);
+	}
 }
 
 void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescription& desc)
@@ -130,8 +130,8 @@ void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescriptio
     else if ((header.channelType == PVRChannelType_UnsignedInt) || (header.channelType == PVRChannelType_UnsignedIntNorm))
         desc.type = GL_UNSIGNED_INT;
     else 
-        std::cout << "Unsupported PVR channel type: " << header.channelType << std::endl;
-    
+        log::error("Unsupported PVR channel type: %u", header.channelType);
+	
 	size_t pixelFormat = header.pixelFormat & PVRVersion3Format_mask;
 #if defined(GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG)	
     if (pixelFormat == PVRVersion3Format_PVRTC_2bpp_RGB)
@@ -178,8 +178,8 @@ void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescriptio
 	}
 	else
 	{
-		std::cout << "Unresolved PVR pixel format: " << header.pixelFormat << std::endl;
-	}   
+		log::error("Unresolved PVR pixel format: %lld", header.pixelFormat);
+	}
 }
 
 void PVRLoader::loadInfoFromStream(std::istream& stream, TextureDescription& desc)
@@ -203,16 +203,21 @@ void PVRLoader::loadInfoFromStream(std::istream& stream, TextureDescription& des
             PVRLoader::loadInfoFromV3Header(header3, desc);
             stream.seekg(header3.metaDataSize, std::ios_base::cur);
         }
-        else 
-            std::cout << "Unrecognized PVR input stream" << std::endl;
+        else
+		{
+			log::error("Unrecognized PVR input stream");
+		}
     }
 }
 
 void PVRLoader::loadInfoFromFile(const std::string& path, TextureDescription& desc)
 {
-	desc.source = path;
-	std::ifstream file(path.c_str(), std::ios_base::binary);
-	loadInfoFromStream(file, desc);
+	InputStream file(path, StreamMode_Binary);
+	if (file.valid())
+	{
+		desc.source = path;
+		loadInfoFromStream(file.stream(), desc);
+	}
 }
 
 void PVRLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
@@ -225,7 +230,10 @@ void PVRLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
 
 void PVRLoader::loadFromFile(const std::string& path, TextureDescription& desc)
 {
-	desc.source = path;
-	std::ifstream file(path.c_str(), std::ios_base::binary);
-	loadFromStream(file, desc);
+	InputStream file(path, StreamMode_Binary);
+	if (file.valid())
+	{
+		desc.source = path;
+		loadFromStream(file.stream(), desc);
+	}
 }

@@ -23,4 +23,4 @@ include $(BUILD_SHARED_LIBRARY)
 
 $(call import-add-path, $(LOCAL_PATH)../android)
 $(call import-module, android/native_app_glue)
-$(call import-module, jni)
+$(call import-module, et)

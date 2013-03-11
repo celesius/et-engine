@@ -23,6 +23,7 @@ public:
     EGLSurface surface;
     EGLContext context;
 
+	vec2i surfaceSize;
 };
 
 RenderContext::RenderContext(const RenderContextParameters& params, Application* app) : _params(params),
@@ -32,7 +33,7 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 	_private = new RenderContextPrivate();
 	openGLCapabilites().checkCaps();
 
-	_screenScaleFactor = 0;
+	updateScreenScale(_private->surfaceSize);
 	
 	_renderState.setRenderContext(this);
 	_programFactory = new ProgramFactory(this);
@@ -113,13 +114,15 @@ void RenderContext::resized(const vec2i& sz)
 
 void RenderContext::updateScreenScale(const vec2i& screenSize)
 {
-	size_t newScale = (screenSize.x - 1) / (3 * _params.baseContextSize.x / 2) + 1;
+	int maxDimension = etMax(screenSize.x, screenSize.y);
+	int maxBaseSize = etMax(_params.baseContextSize.x, _params.baseContextSize.y);
+
+	size_t newScale = (maxDimension - 1) / (3 * maxBaseSize / 2) + 1;
 	if (newScale == _screenScaleFactor) return;
 
 	_screenScaleFactor = newScale;
 	screenScaleFactorChanged.invoke(_screenScaleFactor);
 }
-
 
 /**
  *
@@ -145,8 +148,6 @@ RenderContextPrivate::RenderContextPrivate()
 		EGL_NONE
 	};
 
-    EGLint w = 0;
-	EGLint h = 0;
 	EGLint format = 0;
     EGLint numConfigs = 0;
     EGLConfig config = 0;
@@ -165,8 +166,8 @@ RenderContextPrivate::RenderContextPrivate()
 	
     if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) return;
 
-    eglQuerySurface(display, surface, EGL_WIDTH, &w);
-    eglQuerySurface(display, surface, EGL_HEIGHT, &h);
+    eglQuerySurface(display, surface, EGL_WIDTH, &surfaceSize.x);
+    eglQuerySurface(display, surface, EGL_HEIGHT, &surfaceSize.y);
 
-	androidLog("INITIALIZED: idth = %d, height = %d", w, h);
+	log::info("INITIALIZED: width = %d, height = %d", surfaceSize.x, surfaceSize.y);
 }

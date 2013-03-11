@@ -1,7 +1,7 @@
 /*
 * This file is part of `et engine`
-* Copyright 2009-2012 by Sergey Reznik
-* Please, do not modify contents without approval.
+* Copyright 2009-2013 by Sergey Reznik
+* Please, do not modify content without approval.
 *
 */
 
@@ -404,7 +404,7 @@ namespace et
 #if (ET_OPENGL4_AVAILABLE)
 		glDrawElementsBaseVertex(mode, count, type, indices, base);
 #else
-		std::cout << "Call to unavailable function: glDrawElementsBaseVertex" << std::endl;
+		log::warning("Call to unavailable function: glDrawElementsBaseVertex");
 #endif
 
 		checkOpenGLError(keyEnd);

@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -23,7 +23,10 @@ namespace et
 
 		const std::string& applicationInputDataFolder() const
 			{ return _dataFolder; }
-		
+
+		const std::string& applicationPackagePath() const
+			{ return _appPackagePath; }
+
 		void addSearchPath(const std::string& path);
 		void addRelativeSearchPath(const std::string& path);
 		
@@ -38,6 +41,7 @@ namespace et
 
 	private:
 		std::string _appPath;
+		std::string _appPackagePath;
 		std::string _dataFolder;
 		std::string _documentsFolder;
 		StringList _searchPath;

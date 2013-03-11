@@ -1,11 +1,11 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
-#include <fstream>
+#include <et/core/stream.h>
 #include <et/core/serialization.h>
 #include <et/core/tools.h>
 #include <et/app/application.h>
@@ -37,33 +37,28 @@ void FontData::loadFromFile(RenderContext* rc, const std::string& fileName, Text
 	_chars.clear();
 	_boldChars.clear();
 	_texture = Texture();
-	std::string resolvedFileName = application().environment().resolveScalableFileName(fileName, rc->screenScaleFactor());
 
-	if (!fileExists(resolvedFileName)) 
-	{
-		std::cout << "Unable to find font file: "  << fileName << std::endl;
-		return;
-	}
+	std::string resolvedFileName =
+		application().environment().resolveScalableFileName(fileName, rc->screenScaleFactor());
 
-	std::ifstream fontFile(resolvedFileName.c_str(), std::ios::binary);
-	if (fontFile.fail())
-	{
-		std::cout << "Unable to open font file: " << resolvedFileName << std::endl;
-		return;
-	}
+	InputStream fontFile(resolvedFileName, StreamMode_Binary);
+	if (fontFile.invalid()) return;
 
 	std::string fontFileDir = getFilePath(resolvedFileName);
 
-	int version = deserializeInt(fontFile);
-	_face = deserializeString(fontFile);
-	_size = deserializeInt(fontFile);
-	std::string textureFile = deserializeString(fontFile);
-	std::string layoutFile = deserializeString(fontFile);
+	int version = deserializeInt(fontFile.stream());
+	_face = deserializeString(fontFile.stream());
+	_size = deserializeInt(fontFile.stream());
+	
+	std::string textureFile = deserializeString(fontFile.stream());
+	std::string layoutFile = deserializeString(fontFile.stream());
 	std::string textureFileName = fontFileDir + textureFile;
-	_texture = rc->textureFactory().loadTexture(fileExists(textureFileName) ? textureFileName : textureFile, cache);
+	std::string actualName = fileExists(textureFileName) ? textureFileName : textureFile;
+
+	_texture =rc->textureFactory().loadTexture(actualName, cache);
 	_biggestChar = vec2(0.0f);
 	_biggestBoldChar = vec2(0.0f);
-	int charCount = deserializeInt(fontFile);
+	int charCount = deserializeInt(fontFile.stream());
 
 	if (version == FONT_VERSION_1)
 	{
@@ -75,9 +70,9 @@ void FontData::loadFromFile(RenderContext* rc, const std::string& fileName, Text
 			
 			unsigned short sValue = 0;
 			unsigned short sParams = 0;
-			fontFile.read(reinterpret_cast<char*>(&sValue), sizeof(sValue));
-			fontFile.read(reinterpret_cast<char*>(&sParams), sizeof(sParams));
-			fontFile.read(ptr, sizeof(desc) - 2 * sizeof(int));
+			fontFile.stream().read(reinterpret_cast<char*>(&sValue), sizeof(sValue));
+			fontFile.stream().read(reinterpret_cast<char*>(&sParams), sizeof(sParams));
+			fontFile.stream().read(ptr, sizeof(desc) - 2 * sizeof(int));
 
 			desc.value = sValue;
 			desc.params = sParams;
@@ -99,7 +94,7 @@ void FontData::loadFromFile(RenderContext* rc, const std::string& fileName, Text
 		for (int i = 0; i < charCount; ++i)
 		{
 			CharDescriptor desc;
-			fontFile.read(reinterpret_cast<char*>(&desc), sizeof(desc));
+			fontFile.stream().read(reinterpret_cast<char*>(&desc), sizeof(desc));
 			
 			if ((desc.params & CharParameter_Bold) == CharParameter_Bold)
 			{
@@ -251,10 +246,6 @@ CharDescriptorList FontData::parseString(const std::string& s)
 					{
 						if (nBoldTags)
 							--nBoldTags;
-/*
-						else
-							std::cout << "WARNING: closing <b> tag without opening in string: " << s << std::endl;
-*/
 					}
 					else if (tag.find_first_of(tagColor) == 0)
 					{
@@ -263,16 +254,10 @@ CharDescriptorList FontData::parseString(const std::string& s)
 							--nColorTags;
 							colors.pop_front();
 						}
-/*
-						else
-						{
-							std::cout << "WARNING: closing <color> tag without opening in string: " << s << std::endl;
-						}
-*/
 					}
 					else 
 					{
-						std::cout << "Unknown tag `" << tag << "` passed in string: " << s << std::endl;
+						log::warning("Unknown tag `%s` passed in string: %s", tag.c_str(), s.c_str());
 					}
 				}
 				else
@@ -289,7 +274,7 @@ CharDescriptorList FontData::parseString(const std::string& s)
 					}
 					else
 					{
-						std::cout << "Unknown tag `" << tag << "` passed in string: " << s << std::endl;
+						log::warning("Unknown tag `%s` passed in string: %s", tag.c_str(), s.c_str());
 					}
 				}
 				readingTag = false;
@@ -359,8 +344,6 @@ CharDescriptorList FontData::parseString(const std::wstring& s)
 					{
 						if (nBoldTags)
 							--nBoldTags;
-						else
-							std::wcout << L"WARNING: closing <b> tag without opening in string: " << s << std::endl;
 					}
 					else if (tag.find_first_of(tagColor) == 0)
 					{
@@ -369,14 +352,10 @@ CharDescriptorList FontData::parseString(const std::wstring& s)
 							--nColorTags;
 							colors.pop_front();
 						}
-						else
-						{
-							std::wcout << L"WARNING: closing <color> tag without opening in string: " << s << std::endl;
-						}
 					}
 					else 
 					{
-						std::wcout << L"Unknown tag `" << tag << "` passed in string: " << s << std::endl;
+						log::warning(L"Unknown tag `%s` passed in string: %s", tag.c_str(), s.c_str());
 					}
 				}
 				else
@@ -393,7 +372,7 @@ CharDescriptorList FontData::parseString(const std::wstring& s)
 					}
 					else
 					{
-						std::wcout << L"Unknown tag `" << tag << L"` passed in string: " << s << std::endl;
+						log::warning(L"Unknown tag `%s` passed in string: %s", tag.c_str(), s.c_str());
 					}
 				}
 				readingTag = false;

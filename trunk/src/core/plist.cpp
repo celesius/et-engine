@@ -1,13 +1,13 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
-#include <fstream>
 #include <et/core/plist.h>
 #include <et/core/tools.h>
+#include <et/core/stream.h>
 
 using namespace et;
 using namespace et::plist;
@@ -31,15 +31,13 @@ static const std::string keyIntegerClose = "</integer>";
 DictionaryValueRef Reader::load(const std::string& filename)
 {
 	DictionaryValueRef result(new DictionaryValue());
-
-	if (!fileExists(filename))
-		return result;
-
-	std::ifstream file(filename.c_str(), std::ios::binary);
-	if (file.fail()) return result;
 	
-	BinaryDataStorage buffer(streamSize(file) + 1, 0);
-	file.read(buffer.binary(), buffer.size() - 1);
+	InputStream file(filename, StreamMode_Binary);
+	if (file.invalid())
+		return result;
+	
+	BinaryDataStorage buffer(streamSize(file.stream()) + 1, 0);
+	file.stream().read(buffer.binary(), buffer.size() - 1);
 	parseBuffer(buffer, static_cast<DictionaryValue*>(result.ptr()));
 	
 	return result;
@@ -175,8 +173,8 @@ bool Reader::parseDictionary(DictionaryValue* owner, char*& ptr)
 		}
 		else
 		{
-			std::cout << "Unable to read value for key: " << key << std::endl;
-			assert(0 && "failed");
+			log::error("Unable to read value for key: %s", key.c_str());
+			assert(false);
 		}
 
 		if (pickTag(ptr) == keyDictionaryClose)
@@ -240,8 +238,8 @@ bool Reader::parseValue(char*& ptr, DictionaryEntryBase** value)
 	}
 	else
 	{
-		std::cout << "Unable to read value of type: " << valueType << std::endl;
-		assert(0 && "failed");
+		log::error("Unable to read value of type: %s", valueType.c_str());
+		assert(false);
 	}
 	return false;
 }

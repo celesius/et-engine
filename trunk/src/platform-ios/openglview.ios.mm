@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -121,7 +121,7 @@ using namespace et;
 	checkOpenGLError("[_context presentRenderbuffer:GL_RENDERBUFFER]");
 	
 	if (!done)
-		std::cout << "presentRenderbuffer failed" << std::endl;
+		log::error("presentRenderbuffer failed");
 }
 
 - (void)createFramebuffer

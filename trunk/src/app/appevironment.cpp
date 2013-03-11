@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -12,7 +12,9 @@
 using namespace et;
 
 AppEnvironment::AppEnvironment() :
-	_appPath(et::applicationPath()), _dataFolder(et::applicationDataFolder())
+	_appPath(et::applicationPath()),
+	_appPackagePath(et::applicationPackagePath()),
+	_dataFolder(et::applicationDataFolder())
 {
 	addSearchPath(_appPath);
 
@@ -44,15 +46,15 @@ const std::string& AppEnvironment::applicationDocumentsFolder() const
 void AppEnvironment::updateDocumentsFolder(const ApplicationIdentifier& i)
 {
 	_documentsFolder = applicationLibraryBaseFolder() + i.companyName;
-	
 	if (!folderExists(_documentsFolder))
 		createDirectory(_documentsFolder);
+
 	assert(folderExists(_documentsFolder));
-	
+
 	_documentsFolder += pathDelimiter + i.applicationName;
-	
 	if (!folderExists(_documentsFolder))
 		createDirectory(_documentsFolder);
+
 	assert(folderExists(_documentsFolder));
 }
 
@@ -111,12 +113,15 @@ bool AppEnvironment::expandFileName(std::string& name) const
 
 std::string AppEnvironment::resolveScalableFileName(const std::string& name, size_t scale) const
 {
+	assert(scale > 0);
 	std::string foundFile = findFile(name);
+
 	if ((foundFile.find_last_of("@") != std::string::npos) && fileExists(foundFile))
 		return foundFile;
 
 	std::string baseName = removeFileExt(foundFile);
 	std::string ext = getFileExt(foundFile);
+
 	while (scale >= 1)
 	{
 		std::string newFile = findFile(baseName + "@" + intToStr(scale) + "x." + ext);

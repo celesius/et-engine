@@ -1,15 +1,16 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
-#include <fstream>
-#include <libjpeg/jpeglib.h>
 #include <et/core/tools.h>
+#include <et/core/stream.h>
 #include <et/opengl/opengl.h>
 #include <et/imaging/jpgloader.h>
+
+#include <libjpeg/jpeglib.h>
 
 using namespace et;
 
@@ -95,7 +96,7 @@ void JPGLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
 	}
 	else
 	{
-		std::cout << "Unable to decompress JPEG" << std::endl;
+		log::warning("Unable to decompress JPEG");
 	}
 	
 	jpeg_finish_decompress(&cinfo);
@@ -104,14 +105,20 @@ void JPGLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
 
 void JPGLoader::loadInfoFromFile(const std::string& path, TextureDescription& desc)
 {
-	std::ifstream stream(path.c_str());
-	desc.source = path;
-	loadInfoFromStream(stream, desc);
+	InputStream stream(path, StreamMode_Binary);
+	if (stream.valid())
+	{
+		desc.source = path;
+		loadInfoFromStream(stream.stream(), desc);
+	}
 }
 
 void JPGLoader::loadFromFile(const std::string& path, TextureDescription& desc)
 {
-	std::ifstream stream(path.c_str());
-	desc.source = path;
-	loadFromStream(stream, desc);
+	InputStream stream(path, StreamMode_Binary);
+	if (stream.valid())
+	{
+		desc.source = path;
+		loadFromStream(stream.stream(), desc);
+	}
 }

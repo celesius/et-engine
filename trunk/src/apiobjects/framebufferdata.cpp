@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -132,11 +132,12 @@ bool FramebufferData::checkStatus()
 
 	_rc->renderState().bindFramebuffer(_id);
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	bool complete = status == GL_FRAMEBUFFER_COMPLETE;
 
-	if (status != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << FramebufferStatusToString(status) + " for " + name() << std::endl;
+	if (!complete)
+		log::error("%s for %s", FramebufferStatusToString(status).c_str(), name().c_str());
 
-	return (status == GL_FRAMEBUFFER_COMPLETE);
+	return complete;
 }
 
 bool FramebufferData::addRenderTarget(const Texture& rt)

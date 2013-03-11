@@ -1,13 +1,11 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
-#include <fstream>
-
-#include <et/opengl/opengl.h>
+#include <et/core/stream.h>
 #include <et/imaging/ddsloader.h>
 
 using namespace et;
@@ -202,7 +200,7 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 		{
 			char fourcc_str[5] = { };
 			etCopyMemory(fourcc_str, &header.ddspf.dwFourCC, 4);
-			std::cout << "Unsupported FOURCC: " << header.ddspf.dwFourCC << ", text: " << fourcc_str << std::endl;
+			log::error("Unsupported FOURCC: %u, text: %s", header.ddspf.dwFourCC, fourcc_str);
 			return;
 		}
 	};
@@ -212,7 +210,7 @@ void DDSLoader::loadFromStream(std::istream& source, TextureDescription& desc)
 {
 	if (source.fail()) 
 	{
-		std::cout << "Unable to load DDS image from stream: " << desc.source << std::endl;
+		log::error("Unable to load DDS image from stream: %s", desc.source.c_str());
 		return;
 	}
 
@@ -226,14 +224,20 @@ void DDSLoader::loadFromStream(std::istream& source, TextureDescription& desc)
 
 void DDSLoader::loadFromFile(const std::string& path, TextureDescription& desc)
 {
-	desc.source = path;
-	std::ifstream file(path.c_str(), std::ios_base::binary);
-	loadFromStream(file, desc);
+	InputStream file(path, StreamMode_Binary);
+	if (file.valid())
+	{
+		desc.source = path;
+		loadFromStream(file.stream(), desc);
+	}
 }
 
 void DDSLoader::loadInfoFromFile(const std::string& path, TextureDescription& desc)
 {
-	desc.source = path;
-	std::ifstream file(path.c_str(), std::ios_base::binary);
-	loadInfoFromStream(file, desc);
+	InputStream file(path, StreamMode_Binary);
+	if (file.valid())
+	{
+		desc.source = path;
+		loadInfoFromStream(file.stream(), desc);
+	}
 }
