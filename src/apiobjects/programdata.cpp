@@ -14,10 +14,16 @@ using namespace et;
 
 const std::string ProgramData::emptyShaderSource("none");
 
-ProgramData::ProgramData(RenderState& rs, std::string vertexShader, std::string geometryShader,
-	std::string fragmentShader, const std::string& id) : APIObjectData(id), _glID(0), _rs(rs), 
+ProgramData::ProgramData(RenderState& rs) : APIObjectData(std::string()), _glID(0), _rs(rs),
 	_mModelViewLocation(-1), _mModelViewProjectionLocation(-1), _vCameraLocation(-1),
-	_vPrimaryLightLocation(-1), _mLightProjectionMatrixLocation(-1), _mTransformLocation(-1), _loaded(false)
+	_vPrimaryLightLocation(-1), _mLightProjectionMatrixLocation(-1), _mTransformLocation(-1)
+{
+}
+
+ProgramData::ProgramData(RenderState& rs, const std::string& vertexShader, const std::string& geometryShader,
+	const std::string& fragmentShader, const std::string& id) : APIObjectData(id), _glID(0), _rs(rs),
+	_mModelViewLocation(-1), _mModelViewProjectionLocation(-1), _vCameraLocation(-1),
+	_vPrimaryLightLocation(-1), _mLightProjectionMatrixLocation(-1), _mTransformLocation(-1)
 {
 	buildProgram(vertexShader, geometryShader, fragmentShader);
 }
@@ -35,11 +41,15 @@ ProgramData::~ProgramData()
 
 UniformIterator ProgramData::findUniform(const std::string& name)
 {
+	assert(loaded());
+
 	return _uniforms.find(name);
 }
 
 void ProgramData::setModelViewMatrix(const mat4& m)
 {
+	assert(loaded());
+
 	if (_mModelViewLocation < 0) return;
 
 	glUniformMatrix4fv(_mModelViewLocation, 1, false, m.data());
@@ -48,6 +58,8 @@ void ProgramData::setModelViewMatrix(const mat4& m)
 
 void ProgramData::setMVPMatrix(const mat4& m)
 {
+	assert(loaded());
+
 	if (_mModelViewProjectionLocation < 0) return;
 
 	glUniformMatrix4fv(_mModelViewProjectionLocation, 1, false, m.data());
@@ -56,6 +68,8 @@ void ProgramData::setMVPMatrix(const mat4& m)
 
 void ProgramData::setCameraPosition(const vec3& p)
 {                 
+	assert(loaded());
+
 	if (_vCameraLocation < 0) return;
 
 	glUniform3fv(_vCameraLocation, 1, p.data());
@@ -64,6 +78,8 @@ void ProgramData::setCameraPosition(const vec3& p)
 
 void ProgramData::setPrimaryLightPosition(const vec3 &p)
 {
+	assert(loaded());
+
 	if (_vPrimaryLightLocation < 0) return;
 
 	glUniform3fv(_vPrimaryLightLocation, 1, p.data());
@@ -72,6 +88,8 @@ void ProgramData::setPrimaryLightPosition(const vec3 &p)
 
 GLint ProgramData::getUniformLocation(const std::string& uniform) 
 {
+	assert(loaded());
+
 	UniformIterator i = findUniform(uniform);
 	if (i == _uniforms.end()) return -1;
 
@@ -80,6 +98,8 @@ GLint ProgramData::getUniformLocation(const std::string& uniform)
 
 GLenum ProgramData::getUniformType(const std::string& uniform) 
 {
+	assert(loaded());
+
 	UniformIterator i = findUniform(uniform);
 	if (i == _uniforms.end()) return 0;
 
@@ -88,6 +108,8 @@ GLenum ProgramData::getUniformType(const std::string& uniform)
 
 ProgramUniform ProgramData::getUniform(const std::string& uniform)
 {
+	assert(loaded());
+
 	UniformIterator i = findUniform(uniform);
 	if (i == _uniforms.end()) return ProgramUniform();
 
@@ -96,6 +118,8 @@ ProgramUniform ProgramData::getUniform(const std::string& uniform)
 
 void ProgramData::setLightProjectionMatrix(const mat4& m)
 {
+	assert(loaded());
+
 	if (_mLightProjectionMatrixLocation < 0) return;
 
 	glUniformMatrix4fv(_mLightProjectionMatrixLocation, 1, false, m.data());
@@ -104,6 +128,8 @@ void ProgramData::setLightProjectionMatrix(const mat4& m)
 
 void ProgramData::setTransformMatrix(const mat4 &m)
 {
+	assert(loaded());
+
 	if (_mTransformLocation < 0) return;
 
 	glUniformMatrix4fv(_mTransformLocation, 1, false, m.data());
@@ -112,6 +138,8 @@ void ProgramData::setTransformMatrix(const mat4 &m)
 
 void ProgramData::setCameraProperties(const Camera& cam)
 {
+	assert(loaded());
+
 	setModelViewMatrix(cam.modelViewMatrix());
 	setMVPMatrix(cam.modelViewProjectionMatrix());
 	setCameraPosition(cam.position());

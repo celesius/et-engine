@@ -65,7 +65,7 @@ Program ProgramFactory::loadProgram(const std::string& file, const ProgramDefine
 	if (!fileExists(filename)) 
 	{
 		log::error("Unable to find file: %s", file.c_str());
-		return Program();
+		return Program(new ProgramData(renderContext()->renderState()));
 	}
 
 	ProgramDefinesList resultDefines = defines;
@@ -162,8 +162,9 @@ Program ProgramFactory::loadProgram(const std::string& file, const std::string& 
 	return loadProgram(file, defines_list);
 }
 
-Program ProgramFactory::genProgram(std::string& vertexshader, std::string& geometryshader, std::string& fragmentshader, 
-	const ProgramDefinesList& defines, const std::string& workFolder, const std::string& id)
+Program ProgramFactory::genProgram(std::string& vertexshader, std::string& geometryshader,
+	std::string& fragmentshader, const ProgramDefinesList& defines, const std::string& workFolder,
+	const std::string& id)
 {
 	parseSourceCode(ShaderType_Vertex, vertexshader, defines, workFolder);
 	parseSourceCode(ShaderType_Geometry, geometryshader, defines, workFolder);
