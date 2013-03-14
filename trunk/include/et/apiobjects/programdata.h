@@ -41,7 +41,11 @@ namespace et
 		static const std::string emptyShaderSource;
 
 	public:
-		ProgramData(RenderState& rs, std::string vertexShader, std::string geometryShader, std::string fragmentShader, const std::string& id = "");
+		ProgramData(RenderState& rs);
+		
+		ProgramData(RenderState& rs, const std::string& vertexShader, const std::string& geometryShader,
+			const std::string& fragmentShader, const std::string& id = "");
+
 		~ProgramData();
 
 		GLint getUniformLocation(const std::string& uniform);
@@ -51,6 +55,9 @@ namespace et
 		UniformIterator findUniform(const std::string& name);
 
 		void validate() const;
+
+		bool loaded() const
+			{ return _glID != 0; }
 
 		int modelViewMatrixUniformLocation() const 
 			{ return _mModelViewLocation; }
@@ -92,11 +99,14 @@ namespace et
 			{ return _glID; }
 
 	private:
-		void buildProgram(const std::string& vertex_source, const std::string& geom_source, const std::string& frag_source);
+		void buildProgram(const std::string& vertex_source, const std::string& geom_source,
+			const std::string& frag_source);
+
 		int link();
 
 	private:
 		RenderState& _rs;
+
 		GLuint _glID;
 		UniformMap _uniforms;
 		AttribVector _attributes;
@@ -107,7 +117,6 @@ namespace et
 		int _vPrimaryLightLocation;
 		int _mLightProjectionMatrixLocation;
 		int _mTransformLocation;
-		bool _loaded;
 	};
 
 	template <typename T>
@@ -127,6 +136,7 @@ namespace et
 	template <typename T>
 	void ProgramData::setUniform(int nLoc, int type, const T& value, int count)
 	{
+		assert(loaded());
 		if (nLoc == -1) return;
 
 		const GLint* intPtr = reinterpret_cast<const GLint*>(&value);

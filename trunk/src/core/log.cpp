@@ -7,6 +7,12 @@
 
 #include <et/core/et.h>
 
+#if (ET_PLATFORM_ANDROID)
+#
+#	error Please include platform-android implementation instead
+#
+#endif
+
 #define JUST_DO_IT()					va_list args; va_start(args, format);\
 										vprintf(format, args);\
 										va_end(args);\
