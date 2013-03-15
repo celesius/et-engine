@@ -327,9 +327,9 @@ void FramebufferData::createDepthRenderbuffer(GLenum internalFormat)
 	checkOpenGLError("glFramebufferRenderbuffer -> depth");
 }
 
-void FramebufferData::forceSize(int w, int h)
+void FramebufferData::forceSize(const vec2i& sz)
 {
-	_size = vec2i(w, h);
+	_size = sz;
 }
 
 /*

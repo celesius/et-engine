@@ -11,6 +11,9 @@
 
 using namespace et;
 
+extern NSString* etKeyboardRequiredNotification;
+extern NSString* etKeyboardNotRequiredNotification;
+
 @interface etOpenGLViewController()
 {
 	EAGLContext* _context;
@@ -18,6 +21,8 @@ using namespace et;
 	et::RenderContextParameters _params;
 	et::ApplicationNotifier _notifier;
 }
+
+- (void)onNotificationRecevied:(NSNotification*)notification;
 
 @end
 
@@ -29,6 +34,12 @@ using namespace et;
 	
 	if (self)
 	{
+		[[NSNotificationCenter defaultCenter] addObserver:self
+			selector:@selector(onNotificationRecevied:) name:etKeyboardRequiredNotification object:nil];
+
+		[[NSNotificationCenter defaultCenter] addObserver:self
+			selector:@selector(onNotificationRecevied:) name:etKeyboardNotRequiredNotification object:nil];
+
 		_params = params;
 		_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 		_glView = [[etOpenGLView alloc] initWithFrame:[[UIScreen mainScreen] bounds] parameters:_params];
@@ -65,9 +76,16 @@ using namespace et;
     [super dealloc];
 }
 
+- (void)viewDidLoad
+{
+	[super viewDidLoad];
+	[self becomeFirstResponder];
+}
+
 - (void)viewDidUnload
 {
 	[super viewDidUnload];
+	[self resignFirstResponder];
 	
     if ([EAGLContext currentContext] == _context)
         [EAGLContext setCurrentContext:nil];
@@ -138,6 +156,32 @@ using namespace et;
 {
 	[super dismissModalViewControllerAnimated:animated];
 	_notifier.notifyActivated();
+}
+
+- (BOOL)canBecomeFirstResponder
+{
+	return YES;
+}
+
+- (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event
+{
+	if (motion == UIEventSubtypeMotionShake)
+	{
+		Input::GestureInputSource gestureInput;
+		gestureInput.gesturePerformed(GestureInputInfo(GestureTypeMask_Shake));
+	}
+}
+
+- (void)onNotificationRecevied:(NSNotification*)notification
+{
+	if ([notification.name isEqualToString:etKeyboardRequiredNotification])
+	{
+		[self resignFirstResponder];
+	}
+	else if ([notification.name isEqualToString:etKeyboardNotRequiredNotification])
+	{
+		[self becomeFirstResponder];
+	}
 }
 
 @end
