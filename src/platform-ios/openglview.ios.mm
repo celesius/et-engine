@@ -58,20 +58,19 @@ using namespace et;
         CAEAGLLayer* eaglLayer = (CAEAGLLayer*)self.layer;
         eaglLayer.opaque = YES;
         eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
-                                        [NSNumber numberWithBool:NO], kEAGLDrawablePropertyRetainedBacking,
-                                        kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
+			[NSNumber numberWithBool:NO], kEAGLDrawablePropertyRetainedBacking,
+			kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
+		
 		_context = nil;
 		self.multipleTouchEnabled = params.multipleTouch;
 		
 		_keyboardAllowed = NO;
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self
-			selector:@selector(onNotificationRecevied:) name:etKeyboardRequiredNotification
-			object:nil];
+			selector:@selector(onNotificationRecevied:) name:etKeyboardRequiredNotification object:nil];
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self
-			selector:@selector(onNotificationRecevied:) name:etKeyboardNotRequiredNotification
-			object:nil];
+			selector:@selector(onNotificationRecevied:) name:etKeyboardNotRequiredNotification object:nil];
 	}
 	
 	return self;
@@ -115,11 +114,11 @@ using namespace et;
 	glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, &depthAttachment);
 	
 	glBindRenderbuffer(GL_RENDERBUFFER, _defaultFramebuffer->colorRenderbuffer());
-	checkOpenGLError("glBindRenderbuffer(GL_RENDERBUFFER, " + intToStr(_defaultFramebuffer->colorRenderbuffer())+ ")");
+	checkOpenGLError("glBindRenderbuffer(GL_RENDERBUFFER, ...)");
 
 	BOOL done = [_context presentRenderbuffer:GL_RENDERBUFFER];
 	checkOpenGLError("[_context presentRenderbuffer:GL_RENDERBUFFER]");
-	
+
 	if (!done)
 		log::error("presentRenderbuffer failed");
 }
@@ -133,7 +132,12 @@ using namespace et;
 	CGSize layerSize = glLayer.bounds.size;
 	
 	if (!_defaultFramebuffer.valid())
-		_defaultFramebuffer = _rc->framebufferFactory().createFramebuffer(vec2i(layerSize.width, layerSize.height), "DefaultFramebuffer",  0, 0, 0, 0, 0, 0, true);
+	{
+		vec2i size(layerSize.width, layerSize.height);
+		
+		_defaultFramebuffer =
+			_rc->framebufferFactory().createFramebuffer(size, "DefaultFramebuffer",  0, 0, 0, 0, 0, 0, true);
+	}
 	
 	_rc->renderState().setDefaultFramebuffer(_defaultFramebuffer);
 	_rc->renderState().bindDefaultFramebuffer();
@@ -151,14 +155,14 @@ using namespace et;
 	
 	if ([_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:glLayer])
 	{
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _defaultFramebuffer->colorRenderbuffer());
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+			_defaultFramebuffer->colorRenderbuffer());
 		checkOpenGLError("glFramebufferRenderbuffer(...");
 	}
-	
-	int w = 0;
-	int h = 0;
-	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &w);
-	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &h);
+
+	vec2i size;
+	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &size.x);
+	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &size.y);
 	checkOpenGLError("glGetRenderbufferParameteriv");
 	
 	if (_defaultFramebuffer->depthRenderbuffer() == 0)
@@ -171,14 +175,14 @@ using namespace et;
 	glBindRenderbuffer(GL_RENDERBUFFER, _defaultFramebuffer->depthRenderbuffer());
 	checkOpenGLError("glBindRenderbuffer -> depth");
 	
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, w, h);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, size.x, size.y);
 	checkOpenGLError("glRenderbufferStorage -> depth");
 	
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 
-							  GL_RENDERBUFFER, _defaultFramebuffer->depthRenderbuffer());
-	
-	_defaultFramebuffer->forceSize(w, h);
-	_rcNotifier->resized(vec2i(w, h), _rc);
+		GL_RENDERBUFFER, _defaultFramebuffer->depthRenderbuffer());
+
+	_defaultFramebuffer->forceSize(size);
+	_rcNotifier->resized(size, _rc);
 	
 	_defaultFramebuffer->checkStatus();
 }
@@ -342,13 +346,15 @@ using namespace et;
 	{
 		NSUInteger actualLength = 0;
 		
-		[text getBytes:0 maxLength:0 usedLength:&actualLength
-		   encoding:NSUTF32LittleEndianStringEncoding options:0 range:NSMakeRange(0, [text length]) remainingRange:0];
+		[text getBytes:nil maxLength:0 usedLength:&actualLength
+		   encoding:NSUTF32LittleEndianStringEncoding options:0
+				 range:NSMakeRange(0, [text length]) remainingRange:0];
 		
 		DataStorage<wchar_t> result(actualLength + 1);
 		
 		[text getBytes:result.data() maxLength:result.dataSize() usedLength:0
-		   encoding:NSUTF32LittleEndianStringEncoding options:0 range:NSMakeRange(0, [text length]) remainingRange:0];
+		   encoding:NSUTF32LittleEndianStringEncoding options:0
+				 range:NSMakeRange(0, [text length]) remainingRange:0];
 		
 		charValue = result[0];
 	}

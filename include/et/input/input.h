@@ -80,7 +80,8 @@ namespace et
 	{
 		GestureTypeMask_Zoom = 0x01,
 		GestureTypeMask_Rotate = 0x02,
-		GestureTypeMask_Swipe = 0x04
+		GestureTypeMask_Swipe = 0x04,
+		GestureTypeMask_Shake = 0x08
 	};
 
 	struct GestureInputInfo
@@ -95,6 +96,9 @@ namespace et
 
 		GestureInputInfo() :
 			values(0.0f), mask(0) { }
+
+		GestureInputInfo(size_t m) : mask(m)
+			{ }
 
 		GestureInputInfo(size_t m, float v) : mask(m)
 		{
@@ -113,6 +117,7 @@ namespace et
 	public:
 		class KeyboardInputSource;
 		class PointerInputSource;
+		class GestureInputSource;
 
 		bool isKeyPressed(size_t key) const
 			{ return _pressedKeys.count(key) > 0; }
@@ -144,6 +149,7 @@ namespace et
 
 		friend class KeyboardInputSource;
 		friend class PointerInputSource;
+		friend class GestureInputSource;
 
 		void pushKeyboardInputAction(size_t key, InputAction action);
 		void pushPointerInputAction(const PointerInputInfo& info, InputAction action);
@@ -191,7 +197,11 @@ namespace et
         
 		void pointerScrolled(const PointerInputInfo& info)
 			{ Input::instance().pushPointerInputAction(info, InputAction_PointerScrolled); }
+	};
 
+	class Input::GestureInputSource
+	{
+	public:
 		void gesturePerformed(const GestureInputInfo& info)
 			{ Input::instance().pushGestureInputAction(info); }
 	};

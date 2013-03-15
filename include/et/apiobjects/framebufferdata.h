@@ -89,7 +89,7 @@ namespace et
 		void setDepthRenderbuffer(GLuint r) 
 			{ _depthRenderbuffer = r; }
 		
-		void forceSize(int w, int h);
+		void forceSize(const vec2i&);
 
 	private:
 		friend class FramebufferFactory;
