@@ -1,7 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 
 INCLUDE_PATH := ../../include/
-SOURCE_PATH := ../../src
+SOURCE_PATH := ../../src/
 
 include $(CLEAR_VARS)
 
