@@ -86,7 +86,7 @@ float Element2d::alpha() const
 
 bool Element2d::visible() const
 {
-	return _color.w > 0.0f;
+	return (_color.w > 0.0f) && (_scale.square() != 0.0f);
 }
 
 void Element2d::setAngle(float angle, float duration)
@@ -240,8 +240,7 @@ void Element2d::animatorFinished(BaseAnimator* a)
 
 bool Element2d::containsPoint(const vec2& p, const vec2&) 
 {
-	vec2 tp = finalInverseTransform() * p;
-	return (tp.x >= 0.0f) && (tp.y >= 0.0f) && (tp.x < _frame.width) && (tp.y < _frame.height);
+	return containLocalPoint(finalInverseTransform() * p);
 }
 
 bool Element2d::containLocalPoint(const vec2& p)
