@@ -44,13 +44,16 @@ namespace et
 		AppEnvironment& environment()
 			{ return _env; }
 
-		const std::string& launchParameter(size_t i) const
-			{ return (i >= _parameters.size()) ? _emptyParamter : _parameters.at(i); }
+		const ApplicationParameters& parameters() const
+			{ return _parameters; }
 
 		size_t launchParamtersCount() const
-			{ return _parameters.size(); }
+			{ return _launchParameters.size(); }
 
-		const ApplicationIdentifier& identifier() const 
+		const std::string& launchParameter(size_t i) const
+			{ return (i >= _launchParameters.size()) ? _emptyParamter : _launchParameters.at(i); }
+
+		const ApplicationIdentifier& identifier() const
 			{ return _identifier; }
 
 		bool running() const 
@@ -58,6 +61,9 @@ namespace et
 
 		bool active() const 
 			{ return _active; }
+
+		bool suspended() const
+			{ return _suspended; }
 
 		size_t memoryUsage() const;
 		float cpuLoad() const;
@@ -74,14 +80,21 @@ namespace et
 			{ return _renderContext; }
 
 		void performRendering();
+
 		void setActive(bool active);
+
 		void contextResized(const vec2i& size);
+
+		void suspend();
+		void resume();
 		
 		void platformInit();
 		void platformFinalize();
 		void platformActivate();
 		void platformDeactivate();
-		
+		void platformSuspend();
+		void platformResume();
+
 		int platformRun();
 		
 	private:
@@ -100,13 +113,14 @@ namespace et
 
 	private:
 		static IApplicationDelegate* _delegate;
+		ApplicationParameters _parameters;
 		ApplicationIdentifier _identifier;
 		RenderContext* _renderContext;
 		AppEnvironment _env;
 		RunLoop _runLoop;
 
 		std::string _emptyParamter;
-		StringList _parameters;
+		StringList _launchParameters;
 
 		int _exitCode;
 		
@@ -117,6 +131,7 @@ namespace et
 
 		volatile bool _running;
 		volatile bool _active;
+		volatile bool _suspended;
 	};
 
 	inline Application& application()

@@ -61,19 +61,19 @@ namespace et
 			{ return _renderState; }
 
 		Renderer* renderer()
-			{ return _renderer; }
+			{ return _renderer.ptr(); }
 
 		ProgramFactory& programFactory()
-			{ return *_programFactory; }
+			{ return _programFactory.reference(); }
 
 		TextureFactory& textureFactory()
-			{ return *_textureFactory; }
+			{ return _textureFactory.reference(); }
 
 		FramebufferFactory& framebufferFactory()
-			{ return *_framebufferFactory; }
+			{ return _framebufferFactory.reference(); }
 
 		VertexBufferFactory& vertexBufferFactory()
-			{ return *_vertexBufferFactory; }
+			{ return _vertexBufferFactory.reference(); }
 
 		int lastFPSValue() const 
 			{ return _info.averageFramePerSecond; }
@@ -115,12 +115,13 @@ namespace et
 
 		RenderState _renderState;
 
-		ProgramFactory* _programFactory;
-		TextureFactory* _textureFactory;
-		FramebufferFactory* _framebufferFactory;
-		VertexBufferFactory* _vertexBufferFactory;
+		AutoPtr<ProgramFactory> _programFactory;
+		AutoPtr<TextureFactory> _textureFactory;
+		AutoPtr<FramebufferFactory> _framebufferFactory;
+		AutoPtr<VertexBufferFactory> _vertexBufferFactory;
 
-		Renderer* _renderer;
+		AutoPtr<Renderer> _renderer;
+		
 		size_t _screenScaleFactor;
 	};
 

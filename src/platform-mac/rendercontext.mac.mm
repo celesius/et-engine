@@ -31,6 +31,7 @@ using namespace et;
 {
 @public
 	Input::PointerInputSource pointerInputSource;
+	Input::GestureInputSource gestureInputSource;
 	ApplicationNotifier applicationNotifier;
 }
 
@@ -68,7 +69,7 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 	_renderState.setMainViewportSize(params.contextSize);
 	
 	_textureFactory = new TextureFactory(this);
-	_framebufferFactory = new FramebufferFactory(this, _textureFactory);
+	_framebufferFactory = new FramebufferFactory(this, _textureFactory.ptr());
 	_programFactory = new ProgramFactory(this);
 	_vertexBufferFactory = new VertexBufferFactory(_renderState);
 
@@ -79,6 +80,10 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 
 RenderContext::~RenderContext()
 {
+	_textureFactory.release();
+	_vertexBufferFactory.release();
+	_programFactory.release();
+	_framebufferFactory.release();
 	delete _private;
 }
 
@@ -95,8 +100,10 @@ size_t RenderContext::renderingContextHandle()
 
 void RenderContext::beginRender()
 {
-	OpenGLCounters::reset();
 	checkOpenGLError("RenderContext::beginRender");
+	
+	OpenGLCounters::reset();
+	_renderState.bindDefaultFramebuffer();
 }
 
 void RenderContext::endRender()
@@ -106,34 +113,6 @@ void RenderContext::endRender()
 	++_info.averageFramePerSecond;
 	_info.averageDIPPerSecond += OpenGLCounters::DIPCounter;
 	_info.averagePolygonsPerSecond += OpenGLCounters::primitiveCounter;
-}
-
-void RenderContext::onFPSTimerExpired(NotifyTimer*)
-{
-	if (_info.averageFramePerSecond > 0)
-	{
-		_info.averageDIPPerSecond /= _info.averageFramePerSecond;
-		_info.averagePolygonsPerSecond /= _info.averageFramePerSecond;
-	}
-	
-	renderingInfoUpdated.invoke(_info);
-	
-	_info.averageFramePerSecond = 0;
-	_info.averageDIPPerSecond = 0;
-}
-
-void RenderContext::resized(const vec2i& sz)
-{
-	_renderState.setMainViewportSize(sz);
-}
-
-void RenderContext::updateScreenScale(const vec2i& screenSize)
-{
-	size_t newScale = (screenSize.x - 1) / (3 * _params.baseContextSize.x / 2) + 1;
-	if (newScale == _screenScaleFactor) return;
-	
-	_screenScaleFactor = newScale;
-	screenScaleFactorChanged.invoke(_screenScaleFactor);
 }
 
 /*
@@ -320,19 +299,19 @@ void RenderContextPrivate::displayLinkSynchronized()
 
 - (void)magnifyWithEvent:(NSEvent *)event
 {
-	pointerInputSource.gesturePerformed(
+	gestureInputSource.gesturePerformed(
 		GestureInputInfo(GestureTypeMask_Zoom, event.magnification));
 }
 
 - (void)swipeWithEvent:(NSEvent *)event
 {
-	pointerInputSource.gesturePerformed(
+	gestureInputSource.gesturePerformed(
 		GestureInputInfo(GestureTypeMask_Swipe, event.deltaX, event.deltaY));
 }
 
 - (void)rotateWithEvent:(NSEvent *)event
 {
-	pointerInputSource.gesturePerformed(
+	gestureInputSource.gesturePerformed(
 		GestureInputInfo(GestureTypeMask_Rotate, event.rotation));
 }
 

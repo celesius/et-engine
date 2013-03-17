@@ -47,6 +47,12 @@ namespace et
 		const T* ptr() const 
 			{ return _data; }
 
+		T& reference()
+			{ return *_data; }
+
+		const T& reference() const
+			{ return *_data; }
+
 		T* extract()
 		{
 			T* value = _data;

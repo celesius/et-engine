@@ -29,7 +29,9 @@ namespace et
 		Thread(bool start = true);
 		virtual ~Thread();
 
-		void run();
+		bool run();
+		bool stop();
+
 		void terminate(int result = 0);
 
 		bool running() const;

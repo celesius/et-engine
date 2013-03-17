@@ -38,6 +38,14 @@ void Application::platformDeactivate()
 {
 }
 
+void Application::platformSuspend()
+{
+}
+
+void Application::platformResume()
+{
+}
+
 int Application::platformRun()
 {
 #if defined(ET_EMBEDDED_APPLICATION)
@@ -49,7 +57,7 @@ int Application::platformRun()
 
     @autoreleasepool
 	{
-		std::string appName = _parameters.front();
+		std::string appName = _launchParameters.front();
 		StringDataStorage appNameData(appName.size());
 		etCopyMemory(appNameData.data(), appName.c_str(), appName.size());
 		@try

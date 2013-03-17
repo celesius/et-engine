@@ -17,10 +17,11 @@ RenderingElement::RenderingElement(RenderContext* rc) : _rs(rc->renderState()),
 	decl.push_back(Usage_TexCoord0, Type_Vec4);
 	decl.push_back(Usage_Color, Type_Vec4);
 	
-	std::string nameId = intToStr(reinterpret_cast<size_t>(this));
+	std::string nameId = intToStr(reinterpret_cast<size_t>(this)) + "-vao";
 
-	_vao = rc->vertexBufferFactory().createVertexArrayObject(nameId + "-vao",
-		VertexArray::Pointer(new VertexArray(decl, true)), BufferDrawType_Stream, _indexArray, BufferDrawType_Static);
+	_vao = rc->vertexBufferFactory().createVertexArrayObject(nameId,
+		VertexArray::Pointer(new VertexArray(decl, true)), BufferDrawType_Stream,
+		_indexArray, BufferDrawType_Static);
 }
 
 void RenderingElement::clear()

@@ -17,8 +17,9 @@ TextureLoaderDelegate::~TextureLoaderDelegate()
 		(*i)->discardDelegate();
 }
 
-TextureLoadingRequest::TextureLoadingRequest(const std::string& name, size_t scrScale, const Texture& tex, TextureLoaderDelegate* d) : 
-	fileName(name), screenScale(scrScale), textureDescription(new TextureDescription), texture(tex), delegate(d)
+TextureLoadingRequest::TextureLoadingRequest(const std::string& name, size_t scrScale, const Texture& tex,
+	TextureLoaderDelegate* d) : fileName(name), screenScale(scrScale),
+	textureDescription(new TextureDescription), texture(tex), delegate(d)
 {
 	if (delegate)
 		delegate->addTextureLoadingRequest(this);
@@ -35,14 +36,16 @@ void TextureLoadingRequest::discardDelegate()
 	delegate = 0; 
 }
 
-TextureLoadingThread::TextureLoadingThread(TextureLoadingThreadDelegate* delegate) : Thread(false), _delegate(delegate)
+TextureLoadingThread::TextureLoadingThread(TextureLoadingThreadDelegate* delegate) :
+	Thread(false), _delegate(delegate), _running(false)
 {
 }
 
 TextureLoadingThread::~TextureLoadingThread()
 {
-	CriticalSectionScope lock(_requestsCriticalSection);
+	stop();
 
+	CriticalSectionScope lock(_requestsCriticalSection);
 	while (_requests.size())
 	{
 		delete _requests.front();
@@ -66,6 +69,8 @@ TextureLoadingRequest* TextureLoadingThread::dequeRequest()
 
 ThreadResult TextureLoadingThread::main()
 {
+	log::info("main started!");
+	
 	while (running())
 	{
 		TextureLoadingRequest* req = dequeRequest();
@@ -83,6 +88,8 @@ ThreadResult TextureLoadingThread::main()
 			suspend();
 		}
 	}
+	
+	log::info("main fininshed!");
 
 	return 0;
 }

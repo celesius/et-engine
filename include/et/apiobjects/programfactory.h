@@ -34,11 +34,12 @@ namespace et
 			const ProgramDefinesList& defines = ProgramDefinesList(0), const std::string& workFolder = ".", 
 			const std::string& id = "");
 
-		Program genProgram(const std::string& vertexshader, const std::string& geometryshader, const std::string& fragmentshader, 
-			const ProgramDefinesList& defines = ProgramDefinesList(0), const std::string& workFolder = ".", 
-			const std::string& id = "");
+		Program genProgram(const std::string& vertexshader, const std::string& geometryshader,
+			const std::string& fragmentshader, const ProgramDefinesList& defines = ProgramDefinesList(0),
+			const std::string& workFolder = ".", const std::string& id = "");
 
-		void parseSourceCode(ShaderType type, std::string& code, const ProgramDefinesList& defines, const std::string& workFolder = ".");
+		void parseSourceCode(ShaderType type, std::string& code, const ProgramDefinesList& defines,
+			const std::string& workFolder = ".");
 
 	private:
 		std::string _commonHeader;

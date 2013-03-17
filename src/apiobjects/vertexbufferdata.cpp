@@ -36,11 +36,9 @@ VertexBufferData::~VertexBufferData()
 void VertexBufferData::setData(const void* data, size_t dataSize)
 {
 	_dataSize = dataSize;
-	GLenum vertexDraw = drawTypeValue(_drawType);
-
 	_rs.bindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, _dataSize, data, vertexDraw);
-
+	
+	glBufferData(GL_ARRAY_BUFFER, _dataSize, data, drawTypeValue(_drawType));
 	checkOpenGLError("glBufferData(GL_ARRAY_BUFFER, ...)");
 }
 

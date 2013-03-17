@@ -28,7 +28,7 @@ public:
 
 RenderContext::RenderContext(const RenderContextParameters& params, Application* app) : _params(params),
 	_app(app), _programFactory(0), _textureFactory(0), _framebufferFactory(0), _vertexBufferFactory(0),
-	_renderer(0)
+	_renderer(0), _screenScaleFactor(0)
 {
 	_private = new RenderContextPrivate();
 	openGLCapabilites().checkCaps();
@@ -38,17 +38,12 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 	_renderState.setRenderContext(this);
 	_programFactory = new ProgramFactory(this);
 	_textureFactory = new TextureFactory(this);
-	_framebufferFactory = new FramebufferFactory(this, _textureFactory);
+	_framebufferFactory = new FramebufferFactory(this, _textureFactory.ptr());
 	_vertexBufferFactory = new VertexBufferFactory(_renderState);
 }
 
 RenderContext::~RenderContext()
 {
-	delete _vertexBufferFactory;
-	delete _framebufferFactory;
-	delete _programFactory;
-	delete _textureFactory;
-	delete _renderer; 
 	delete _private;
 }
 
@@ -81,47 +76,6 @@ void RenderContext::endRender()
 	++_info.averageFramePerSecond;
 	_info.averageDIPPerSecond += OpenGLCounters::DIPCounter;
 	_info.averagePolygonsPerSecond += OpenGLCounters::primitiveCounter;
-}
-
-void RenderContext::onFPSTimerExpired(NotifyTimer*)
-{
-	if (_info.averageFramePerSecond > 0)
-	{
-		_info.averageDIPPerSecond /= _info.averageFramePerSecond;
-		_info.averagePolygonsPerSecond /= _info.averageFramePerSecond;
-	}
-
-	renderingInfoUpdated.invoke(_info);
-
-	_info.averageFramePerSecond = 0;
-	_info.averageDIPPerSecond = 0;
-}
-
-void RenderContext::setActive(bool active)
-{
-	if (_app->running())
-		_app->setActive(active);
-}
-
-void RenderContext::resized(const vec2i& sz)
-{
-	updateScreenScale(sz);
-	_renderState.setMainViewportSize(sz);
-	
-	if (_app->running())
-		_app->contextResized(sz);
-}
-
-void RenderContext::updateScreenScale(const vec2i& screenSize)
-{
-	int maxDimension = etMax(screenSize.x, screenSize.y);
-	int maxBaseSize = etMax(_params.baseContextSize.x, _params.baseContextSize.y);
-
-	size_t newScale = (maxDimension - 1) / (3 * maxBaseSize / 2) + 1;
-	if (newScale == _screenScaleFactor) return;
-
-	_screenScaleFactor = newScale;
-	screenScaleFactorChanged.invoke(_screenScaleFactor);
 }
 
 /**
