@@ -20,7 +20,7 @@ extern const std::string copy_fragment_shader;
 Renderer::Renderer(RenderContext* rc) :
 	_rc(rc), _defaultTextureBindingUnit(6)
 {
-	checkOpenGLError("Renderer::Renderer");
+	checkOpenGLError("Renderer::Renderer", 0);
 
 	IndexArray::Pointer ib(new IndexArray(IndexArrayFormat_16bit, 4, PrimitiveType_TriangleStrips));
 	ib->linearize();
