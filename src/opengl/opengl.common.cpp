@@ -10,9 +10,6 @@
 
 namespace et
 {
-	static const char* keyBegin = "begin";
-	static const char* keyEnd = "end";
-
 	size_t OpenGLCounters::primitiveCounter = 0;
 	size_t OpenGLCounters::DIPCounter = 0;
 	size_t OpenGLCounters::bindTextureCounter = 0;
@@ -23,8 +20,6 @@ namespace et
 
 	void OpenGLCounters::reset()
 	{
-		(void)keyBegin;
-		(void)keyEnd;
 		primitiveCounter = 0;
 		DIPCounter = 0;
 		bindTextureCounter = 0;
@@ -388,27 +383,25 @@ namespace et
 
 	void etDrawElementsBaseVertex(GLenum mode, GLsizei count, GLenum type, const GLvoid* indices, GLint base)
 	{
-		checkOpenGLError(keyBegin);
-
 #if (ET_OPENGL4_AVAILABLE)
 		glDrawElementsBaseVertex(mode, count, type, indices, base);
-#else
-		log::warning("Call to unavailable function: glDrawElementsBaseVertex");
-#endif
+		checkOpenGLError("glDrawElementsBaseVertex(mode, count, type, indices, base)");
 
-		checkOpenGLError(keyEnd);
-
-#if !ET_DISABLE_OPENGL_COUNTERS
+#	if !ET_DISABLE_OPENGL_COUNTERS
 		OpenGLCounters::primitiveCounter += primitiveCount(mode, count);
 		++OpenGLCounters::DIPCounter;
+#	endif
+
+#else
+		log::warning("Call to unavailable function: glDrawElementsBaseVertex");
 #endif
 	}
 
 	void etDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid* indices)
 	{
-		checkOpenGLError(keyBegin);
 		glDrawElements(mode, count, type, indices);
-		checkOpenGLError(keyEnd);
+		checkOpenGLError("glDrawElements(%u, %u, %s, 0x%08X)", mode, count,
+			glTypeToString(type).c_str(), indices);
 
 #if !ET_DISABLE_OPENGL_COUNTERS
 		OpenGLCounters::primitiveCounter += primitiveCount(mode, count);
@@ -418,9 +411,8 @@ namespace et
 
 	void etBindTexture(GLenum target, GLint texture)
 	{
-		checkOpenGLError(keyBegin);
 		glBindTexture(target, texture);
-		checkOpenGLError(keyEnd);
+		checkOpenGLError("glBindTexture(%u, %d)", target, texture);
 
 #if !ET_DISABLE_OPENGL_COUNTERS
 		++OpenGLCounters::bindTextureCounter;
@@ -429,9 +421,8 @@ namespace et
 
 	void etBindBuffer(GLenum target, GLuint buffer)
 	{
-		checkOpenGLError(keyBegin);
 		glBindBuffer(target, buffer);
-		checkOpenGLError(keyEnd);
+		checkOpenGLError("glBindBuffer(%u, %u)", target, buffer);
 
 #if !ET_DISABLE_OPENGL_COUNTERS
 		++OpenGLCounters::bindBufferCounter;
@@ -440,9 +431,8 @@ namespace et
 
 	void etBindFramebuffer(GLenum target, GLuint framebuffer)
 	{
-		checkOpenGLError(keyBegin);
 		glBindFramebuffer(target, framebuffer);
-		checkOpenGLError(keyEnd);
+		checkOpenGLError("glBindFramebuffer(%u, %u)", target, framebuffer);
 
 #if !ET_DISABLE_OPENGL_COUNTERS
 		++OpenGLCounters::bindFramebufferCounter;
@@ -451,16 +441,14 @@ namespace et
 
 	void etViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 	{
-		checkOpenGLError(keyBegin);
 		glViewport(x, y, width, height);
-		checkOpenGLError(keyEnd);
+		checkOpenGLError("glViewport(%d, %d, %u, %u)", x, y, width, height);
 	}
 
 	void etUseProgram(GLuint program)
 	{
-		checkOpenGLError(keyBegin);
 		glUseProgram(program);
-		checkOpenGLError(keyEnd);
+		checkOpenGLError("glUseProgram(%u)", program);
 
 #if !ET_DISABLE_OPENGL_COUNTERS
 		++OpenGLCounters::useProgramCounter;
@@ -470,9 +458,8 @@ namespace et
 	void etBindVertexArray(GLuint arr)
 	{
 #if (ET_OPENGL3_AVAILABLE)
-		checkOpenGLError(keyBegin);
 		glBindVertexArray(arr);
-		checkOpenGLError(keyEnd);
+		checkOpenGLError("glBindVertexArray(%u)", arr);
 #	if !ET_DISABLE_OPENGL_COUNTERS
 		++OpenGLCounters::bindVertexArrayObjectCounter;
 #	endif
