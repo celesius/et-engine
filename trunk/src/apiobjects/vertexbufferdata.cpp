@@ -36,10 +36,13 @@ VertexBufferData::~VertexBufferData()
 void VertexBufferData::setData(const void* data, size_t dataSize)
 {
 	_dataSize = dataSize;
-	_rs.bindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
 	
-	glBufferData(GL_ARRAY_BUFFER, _dataSize, data, drawTypeValue(_drawType));
-	checkOpenGLError("glBufferData(GL_ARRAY_BUFFER, ...)");
+	if (_dataSize > 0)
+	{
+		_rs.bindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+		glBufferData(GL_ARRAY_BUFFER, _dataSize, data, drawTypeValue(_drawType));
+		checkOpenGLError("glBufferData(GL_ARRAY_BUFFER, %u, 0x%08X, ..,)", _dataSize, data);
+	}
 }
 
 void VertexBufferData::serialize(std::ostream&)
