@@ -20,12 +20,18 @@ namespace et
 		void notifyIdle()
 			{ application().idle(); }
 		
-		void notifyDeactivated()
-			{ application().setActive(false); }
-		
 		void notifyActivated()
 			{ application().setActive(true); }
-		
+
+		void notifyDeactivated()
+			{ application().setActive(false); }
+
+		void notifySuspended()
+			{ application().suspend(); }
+
+		void notifyResumed()
+			{ application().resume(); }
+
 		void notifyResize(const et::vec2i& sz)
 			{ application().renderContext()->resized(sz); }
 		

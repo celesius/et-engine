@@ -12,15 +12,6 @@
 namespace et
 {
 	
-	enum WindowStyle 
-	{
-		WindowStyle_FixedWithCaption,
-		WindowStyle_FixedWithoutCaption,
-		WindowStyle_Sizable,
-		WindowStyle_StretchedToWorkarea,
-		WindowStyle_Fullscreen
-	};
-	
 	enum MultisamplingQuality
 	{
 		MultisamplingQuality_None,
@@ -47,23 +38,25 @@ namespace et
 	
 	struct RenderContextParameters
 	{
-		WindowStyle windowStyle;
+		vec2i openGLTargetVersion;
+
 		MultisamplingQuality multisamplingQuality;
+
 		bool openGLForwardContext;
 		bool openGLCoreProfile;
 		bool openGLCompatibilityProfile;
+		
 		bool verticalSync;
 		bool multipleTouch;
         
         size_t supportedInterfaceOrientations;
+
 		vec2i contextPosition;
 		vec2i contextSize;
-		vec2i openGLMaxVersion;
-		vec2i baseContextSize;
-		
+		vec2i contextBaseSize;
+
 		RenderContextParameters(
 #if defined(ET_PLATFORM_IOS)
-								WindowStyle ws = WindowStyle_Fullscreen, 
 								MultisamplingQuality ms = MultisamplingQuality_None,
 								const vec2i& windowPos = vec2i(0, 0), 
 								const vec2i& windowSize = vec2i(480, 320),
@@ -76,7 +69,6 @@ namespace et
 								bool mTouch = true,
                                 size_t orientationFlags = InterfaceOrientation_AnyLandscape
 #else 
-								WindowStyle ws = WindowStyle_FixedWithCaption, 
 								MultisamplingQuality ms = MultisamplingQuality_Best,
 								const vec2i& windowPos = vec2i(-1), 
 								const vec2i& windowSize = vec2i(800, 600),
@@ -89,20 +81,12 @@ namespace et
 								bool mTouch = false,
                                 size_t orientationFlags = InterfaceOrientation_Any
 #endif								
-								) : 
-		windowStyle(ws), 
-		multisamplingQuality(ms), 
-		openGLForwardContext(forwardContext), 
-		openGLCoreProfile(coreProfile), 
-		openGLCompatibilityProfile(compatibilityProfile),
-		contextPosition(windowPos), 
-		contextSize(windowSize), 
-		openGLMaxVersion(openGLMaxVer), 
-		baseContextSize(baseScrSize),
-		verticalSync(vSync),
-		multipleTouch(mTouch),
-		supportedInterfaceOrientations(orientationFlags)
-		{ }
+								) :
+		multisamplingQuality(ms), openGLForwardContext(forwardContext),
+		openGLCoreProfile(coreProfile), openGLCompatibilityProfile(compatibilityProfile),
+		contextPosition(windowPos), contextSize(windowSize), openGLTargetVersion(openGLMaxVer),
+		contextBaseSize(baseScrSize), verticalSync(vSync), multipleTouch(mTouch),
+		supportedInterfaceOrientations(orientationFlags) { }
 	};
 	
 }

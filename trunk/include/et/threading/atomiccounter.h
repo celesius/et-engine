@@ -11,11 +11,7 @@
 
 namespace et
 {
-#if (ET_PLATFORM_IOS || ET_PLATFORM_MAC)
-#
-	typedef int AtomicCounterType;
-#
-#elif (ET_PLATFORM_ANDROID)
+#if (ET_PLATFORM_IOS || ET_PLATFORM_MAC || ET_PLATFORM_ANDROID)
 #
 	typedef int AtomicCounterType;
 #

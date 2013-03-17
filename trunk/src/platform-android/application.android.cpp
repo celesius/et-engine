@@ -53,51 +53,54 @@ void android_main(android_app* state)
 	exit(0);
 }
 
+static bool applicationLoaded = false;
+
 static ApplicationNotifier sharedApplicationNotifier;
 static Input::PointerInputSource sharedPointerInput;
 
 #define THIS_CASE(A) case A: { log::info("handleCommand:" #A); break; }
-#define THIS_MOTION_CASE(A) case A: { log::info("motion:" #A); break; }
 
 void handleCommand(android_app* app, int32_t cmd)
 {
     switch (cmd)
 	{
-		case APP_CMD_START:
+		case APP_CMD_LOST_FOCUS:
 		{
-			log::info("APP_CMD_START");
-			break;
-		};
-
-		case APP_CMD_GAINED_FOCUS:
-		case APP_CMD_RESUME:
-		{
-			log::info("APP_CMD_GAINED_FOCUS or APP_CMD_RESUME, userData: %X", app->userData);
+			if (applicationLoaded)
+				sharedApplicationNotifier.notifyDeactivated();
 			break;
 		}
 
-		case APP_CMD_LOST_FOCUS:
+		case APP_CMD_GAINED_FOCUS:
+		{
+//			if (applicationLoaded)
+//				sharedApplicationNotifier.notifyActivated();
+			break;
+		}
+			
 		case APP_CMD_PAUSE:
 		{
-			log::info("APP_CMD_LOST_FOCUS or APP_CMD_PAUSE");
-			sharedApplicationNotifier.notifyDeactivated();
+			if (applicationLoaded)
+				sharedApplicationNotifier.notifySuspended();
 			
 			break;
 		}
 
-		case APP_CMD_DESTROY:
+		case APP_CMD_RESUME:
 		{
-			log::info("APP_CMD_DESTROY");
+//			if (applicationLoaded)
+//				sharedApplicationNotifier.notifyResumed();
 			break;
 		}
 
 		case APP_CMD_INIT_WINDOW:
 		{
-			log::info("APP_CMD_INIT_WINDOW");
 			sharedApplicationNotifier.notifyLoaded();
 			break;
 		}
 
+		THIS_CASE(APP_CMD_START)
+		THIS_CASE(APP_CMD_DESTROY)
 		THIS_CASE(APP_CMD_INPUT_CHANGED)
 		THIS_CASE(APP_CMD_TERM_WINDOW)
 		THIS_CASE(APP_CMD_WINDOW_RESIZED)
@@ -113,66 +116,105 @@ void handleCommand(android_app* app, int32_t cmd)
     }
 }
 
+PointerInputInfo pointerInfoFromEvent(AInputEvent* event, int index, const vec2& contextSize)
+{
+	int32_t pid = AMotionEvent_getPointerId(event, index);
+	
+	vec2 pos = floorv(vec2(AMotionEvent_getX(event, index), AMotionEvent_getY(event, index)));
+	vec2 normalizedPos = vec2(2.0f, -2.0f) * pos / contextSize - vec2(1.0f, -1.0f);
+
+	return PointerInputInfo(PointerType_General, pos, normalizedPos, vec2(0.0f), pid, queryTime());
+}
+
+int32_t handleMotionInpit(android_app* app, AInputEvent* event)
+{
+	RenderContext* rc = sharedApplicationNotifier.accessRenderContext();
+	
+	int32_t action = AMotionEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK;
+	int32_t src = AInputEvent_getSource(event);
+
+	if ((rc == nullptr) || (src != AINPUT_SOURCE_TOUCHSCREEN) || (action > AMOTION_EVENT_ACTION_POINTER_UP)) return 1;
+
+	int32_t numPointers = AMotionEvent_getPointerCount(event);
+
+	Input::PointerInputSource inputSource;
+	for (int p = 0; p < numPointers; ++p)
+	{
+		int pointerId = p;
+		PointerInputInfo info = pointerInfoFromEvent(event, pointerId, rc->size());
+		switch (action)
+		{
+			case AMOTION_EVENT_ACTION_POINTER_DOWN:
+			case AMOTION_EVENT_ACTION_DOWN:
+			{
+				inputSource.pointerPressed(info);
+				return 1;
+			};
+
+			case AMOTION_EVENT_ACTION_MOVE:
+			{
+				inputSource.pointerMoved(info);
+				return 1;
+			};
+
+			case AMOTION_EVENT_ACTION_POINTER_UP:
+			case AMOTION_EVENT_ACTION_UP:
+			{
+				inputSource.pointerReleased(info);
+				return 1;
+			};
+
+			case AMOTION_EVENT_ACTION_CANCEL:
+			{
+				inputSource.pointerCancelled(info);
+				return 1;
+			};
+
+			case AMOTION_EVENT_ACTION_OUTSIDE:
+				return 1;
+
+			default:
+				assert("Should not get here" && 0);
+		}
+	}
+
+	return 1;
+}
+
+int32_t handleKeyInput(android_app* app, AInputEvent* event)
+{
+	int32_t action = AKeyEvent_getAction(event);
+	int32_t keyCode = AKeyEvent_getKeyCode(event);
+
+	if (action == AKEY_EVENT_ACTION_DOWN)
+	{
+	}
+	else if (action == AKEY_EVENT_ACTION_UP)
+	{
+		if (keyCode == AKEYCODE_BACK)
+			application().quit(0);
+	}
+	else if (action == AKEY_EVENT_ACTION_MULTIPLE)
+	{
+	}
+	else
+	{
+		log::info("WARNING!!! AINPUT_EVENT_TYPE_KEY, action: %d", action);
+	}
+
+	return 1;
+}
+
 int32_t handleInput(android_app* app, AInputEvent* event)
 {
 	int32_t eventType = AInputEvent_getType(event);
 
     if (eventType == AINPUT_EVENT_TYPE_KEY)
-	{
-		int32_t action = AKeyEvent_getAction(event);
-		int32_t keyCode = AKeyEvent_getKeyCode(event);
-
-		if (action == AKEY_EVENT_ACTION_DOWN)
-		{
-			log::info("AKEY_EVENT_ACTION_DOWN: %d", keyCode);
-		}
-		else if (action == AKEY_EVENT_ACTION_UP)
-		{
-			log::info("AKEY_EVENT_ACTION_UP: %d", keyCode);
-			if (keyCode == 4)
-				application().quit(0);
-		}
-		else if (action == AKEY_EVENT_ACTION_MULTIPLE)
-		{
-			log::info("AKEY_EVENT_ACTION_MULTIPLE");
-		}
-		else
-		{
-			log::info("WARNING!!! AINPUT_EVENT_TYPE_KEY, action: %d", action);
-		}
-    }
+		return handleKeyInput(app, event);
 	else if (eventType == AINPUT_EVENT_TYPE_MOTION)
-	{
-		int32_t action = AMotionEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK;
-		int32_t numPointers = AMotionEvent_getPointerCount(event);
+		return handleMotionInpit(app, event);
 
-		switch (action)
-		{
-			case AMOTION_EVENT_ACTION_MOVE:
-				return 1;
-
-			THIS_MOTION_CASE(AMOTION_EVENT_ACTION_DOWN)
-			THIS_MOTION_CASE(AMOTION_EVENT_ACTION_UP)
-			THIS_MOTION_CASE(AMOTION_EVENT_ACTION_CANCEL)
-			THIS_MOTION_CASE(AMOTION_EVENT_ACTION_OUTSIDE)
-			THIS_MOTION_CASE(AMOTION_EVENT_ACTION_POINTER_DOWN)
-			THIS_MOTION_CASE(AMOTION_EVENT_ACTION_POINTER_UP)
-				
-			default:
-				log::info("WARNING!!! AINPUT_EVENT_TYPE_MOTION, action: %d", action);
-				break;
-		}
-
-		for (int32_t i = 0; i < numPointers; ++i)
-		{
-			int32_t pid = AMotionEvent_getPointerId(event, i);
-			float x = AMotionEvent_getX(event, i);
-			float y = AMotionEvent_getY(event, i);
-			log::info("{ %d : %f, %f}", pid, x, y);
-		}
-    }
-	
-    return 1;
+    return 0;
 }
 
 void processEvents()
@@ -206,6 +248,8 @@ void Application::loaded()
 
 	_active = true;
 	delegate()->applicationDidLoad(_renderContext);
+
+	applicationLoaded = true;
 }
 
 void Application::enterRunLoop()
@@ -274,4 +318,15 @@ void Application::platformActivate()
 void Application::platformDeactivate()
 {
 	log::info("Application::platformDeactivate()");
+}
+
+
+void Application::platformSuspend()
+{
+	log::info("Application::platformSuspend()");
+}
+
+void Application::platformResume()
+{
+	log::info("Application::platformResume()");
 }

@@ -15,9 +15,7 @@ namespace et
 	class ThreadPrivate
 	{
 	public:
-		ThreadPrivate() :
-			threadId(0) { }
-		
+		ThreadPrivate();
 		~ThreadPrivate();
 		
 		static void* threadProc(void* context);
@@ -33,6 +31,12 @@ namespace et
 }
 
 using namespace et;
+
+ThreadPrivate::ThreadPrivate() : thread(0), threadId(0)
+{
+	suspendMutex = { };
+	suspend = { };
+}
 
 ThreadPrivate::~ThreadPrivate()
 {
@@ -59,9 +63,9 @@ Thread::~Thread()
 	delete _private;
 }
 
-void Thread::run()
+bool Thread::run()
 {
-	if (_private->running.atomicCounterValue() > 0) return;
+	if (_private->running.atomicCounterValue() > 0) return false;
 	
 	pthread_mutex_init(&_private->suspendMutex, 0);
 	pthread_cond_init(&_private->suspend, 0);
@@ -76,6 +80,7 @@ void Thread::run()
 	pthread_join(_private->thread, nullptr);
 
 	pthread_attr_destroy(&attrib);
+	return true;
 }
 
 void Thread::suspend()
@@ -100,14 +105,21 @@ void Thread::resume()
 	pthread_mutex_unlock(&_private->suspendMutex);
 }
 
+bool Thread::stop()
+{
+	if (_private->running.atomicCounterValue() == 0) return false;
+	_private->running.release();
+
+	return true;
+}
+
 void Thread::terminate(int result)
 {
-	if (_private->running.atomicCounterValue() == 0) return;
-	
-	_private->running.release();
-	
-	pthread_detach(_private->thread);
-	pthread_exit(reinterpret_cast<void*>(result));
+	if (stop())
+	{
+		pthread_detach(_private->thread);
+		pthread_exit(reinterpret_cast<void*>(result));
+	}
 }
 
 ThreadResult Thread::main()

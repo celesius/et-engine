@@ -103,41 +103,43 @@ bool Scroll::pointerPressed(const PointerInputInfo& p)
 
 bool Scroll::pointerMoved(const PointerInputInfo& p)
 {
-	if (p.type == PointerType_General)
+	if (p.type != PointerType_General) return true;
+
+	vec2 offset = p.pos - _currentPointer.pos;
+	if (offset.dotSelf() < SQRT_2) return true;
+
+	if (_manualScrolling)
 	{
-		if (_manualScrolling)
+		float offsetScale = 1.0f;
+		
+		if (-_offset.y < scrollUpperDefaultValue())
 		{
-			vec2 dOffset = p.pos - _currentPointer.pos;
-			float offsetScale = 1.0f;
-			
-			if (-_offset.y < scrollUpperDefaultValue())
-			{
-				float diff = fabsf(-_offset.y - scrollUpperDefaultValue());
-				offsetScale *= etMax(0.0f, 1.0f - diff / scrollOutOfContentSize());
-			}
-			else if (-_offset.y > scrollLowerDefaultValue())
-			{
-				float diff = fabsf(-_offset.y - scrollLowerDefaultValue());
-				offsetScale *= etMax(0.0f, 1.0f - diff / scrollOutOfContentSize());
-			}
-			
-			applyOffset(sqr(offsetScale) * dOffset);
+			float diff = fabsf(-_offset.y - scrollUpperDefaultValue());
+			offsetScale *= etMax(0.0f, 1.0f - diff / scrollOutOfContentSize());
 		}
-		else if (_selectedElement.valid() && _selectedElement->capturesPointer())
+		else if (-_offset.y > scrollLowerDefaultValue())
 		{
-			broadcastMoved(p);
+			float diff = fabsf(-_offset.y - scrollLowerDefaultValue());
+			offsetScale *= etMax(0.0f, 1.0f - diff / scrollOutOfContentSize());
 		}
-		else if (!_pointerCaptured)
-		{
-			_manualScrolling = true;
-			_pointerCaptured = true;
-			_scrollbarsAlphaTarget = 1.0f;
-			_bouncing = BounceDirection_None;
-			broadcastCancelled(p);
-		}
-		_previousPointer = _currentPointer;
-		_currentPointer = p;
+		
+		applyOffset(sqr(offsetScale) * offset);
 	}
+	else if (_selectedElement.valid() && _selectedElement->capturesPointer())
+	{
+		broadcastMoved(p);
+	}
+	else if (!_pointerCaptured)
+	{
+		_manualScrolling = true;
+		_pointerCaptured = true;
+		_scrollbarsAlphaTarget = 1.0f;
+		_bouncing = BounceDirection_None;
+		broadcastCancelled(p);
+	}
+	
+	_previousPointer = _currentPointer;
+	_currentPointer = p;
 
 	return true;
 }

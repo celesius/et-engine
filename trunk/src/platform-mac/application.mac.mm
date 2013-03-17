@@ -103,6 +103,14 @@ void Application::platformDeactivate()
 {
 }
 
+void Application::platformSuspend()
+{
+}
+
+void Application::platformResume()
+{
+}
+
 /*
  *
  * etApplicationDelegate implementation

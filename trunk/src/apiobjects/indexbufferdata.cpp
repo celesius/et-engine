@@ -55,20 +55,25 @@ void IndexBufferData::setProperties(const IndexArray::Pointer& i)
 
 void IndexBufferData::build(const IndexArray::Pointer& i)
 {
-	setProperties(i);
-
-	GLenum indexDraw = drawTypeValue(_drawType);
-	size_t indexDataSize = i->format() * _size;
-
 	if (_indexBuffer == 0)
 	{
 		glGenBuffers(1, &_indexBuffer);
 		checkOpenGLError("glGenBuffers(1, &_indexBuffer)");
 	}
 
+	setProperties(i);
+	internal_setData(i->data(), i->format() * _size);
+}
+
+void IndexBufferData::internal_setData(const unsigned char* data, size_t size)
+{
 	_rs.bindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexDataSize, i->data(), indexDraw);
-	checkOpenGLError("glBufferData(GL_ELEMENT_ARRAY_BUFFER, ....)");
+
+	if ((data != nullptr) && (size > 0))
+	{
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, drawTypeValue(_drawType));
+		checkOpenGLError("glBufferData(GL_ELEMENT_ARRAY_BUFFER, ....)");
+	}
 }
 
 void* IndexBufferData::indexOffset(size_t offset) const

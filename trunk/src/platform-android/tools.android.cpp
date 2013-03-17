@@ -68,14 +68,18 @@ std::string et::applicationPackagePath()
     jmethodID methodID =
 		env->GetMethodID(env->GetObjectClass(activity->clazz), "getPackageCodePath", "()Ljava/lang/String;");
 
-    jobject result = env->CallObjectMethod(activity->clazz, methodID);
+    jobject codePath = env->CallObjectMethod(activity->clazz, methodID);
 
     jboolean isCopy = false;
-    const char* str = env->GetStringUTFChars(reinterpret_cast<jstring>(result), &isCopy);
+    const char* cstr = env->GetStringUTFChars(reinterpret_cast<jstring>(codePath), &isCopy);
+	assert(cstr);
 
-	et::log::info("Application package path: ", str);
+	std::string result(cstr);
 
-    return std::string(str);
+	if (isCopy)
+		env->ReleaseStringUTFChars(reinterpret_cast<jstring>(codePath), cstr);
+
+    return result;
 }
 
 std::string et::applicationDataFolder()
@@ -96,27 +100,77 @@ std::string et::normalizeFilePath(string s)
 
 bool et::fileExists(const std::string& name)
 {
+	int index = -1;
+	bool shouldCheckExternalFolder = false;
 	zip* arch = et::sharedAndroidZipArchive();
-	return (arch != nullptr) && (zip_name_locate(arch, name.c_str(), 0) != -1);
+
+	if (arch == nullptr)
+	{
+		shouldCheckExternalFolder = true;
+	}
+	else
+	{
+		index = zip_name_locate(arch, name.c_str(), 0);
+		if (index == -1)
+			shouldCheckExternalFolder = true;
+	}
+
+	if (shouldCheckExternalFolder)
+	{
+		if (access(name.c_str(), 0) == 0)
+		{
+			struct stat status = { };
+			stat(name.c_str(), &status);
+			return (status.st_mode & S_IFREG) == S_IFREG;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return index != -1;
+	}
 }
 
 bool et::folderExists(const std::string& name)
 {
+	int index = -1;
+	bool shouldCheckExternalFolder = false;
 	zip* arch = et::sharedAndroidZipArchive();
+
 	if (arch == nullptr)
 	{
-		log::info("looking for folder without archive");
-		return false;
+		shouldCheckExternalFolder = true;
+	}
+	else
+	{
+		index = zip_name_locate(arch, name.c_str(), 0);
+		if (index == -1)
+			shouldCheckExternalFolder = true;
 	}
 
-	int index = zip_name_locate(arch, name.c_str(), 0);
-	if (index == -1) return false;
-
-	struct zip_stat stat = { };
-	zip_stat_init(&stat);
-	zip_stat_index(arch, index, 0, &stat);
-	et::log::info("folder stat: size %u", stat.size);
-	return stat.size == 0;
+	if (shouldCheckExternalFolder)
+	{
+		if (access(name.c_str(), 0) == 0)
+		{
+			struct stat status = { };
+			stat(name.c_str(), &status);
+			return (status.st_mode & S_IFDIR) == S_IFDIR;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		struct zip_stat stat = { };
+		zip_stat_init(&stat);
+		zip_stat_index(arch, index, 0, &stat);
+		return stat.size == 0;
+	}
 }
 
 std::string et::applicationLibraryBaseFolder()
@@ -162,4 +216,10 @@ std::wstring et::utf8ToUnicode(const std::string& mbcs)
 std::string et::applicationIdentifierForCurrentProject()
 {
 	return std::string();
+}
+
+et::vec2i et::nativeScreenSize()
+{
+	assert(0 && "Not supported yet");
+	return vec2i(0);
 }

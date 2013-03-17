@@ -17,11 +17,6 @@ TextureFactory::TextureFactory(RenderContext* rc) : APIObjectFactory(rc)
 	_loadingThread = new TextureLoadingThread(this);
 }
 
-TextureFactory::~TextureFactory()
-{
-	_loadingThread->terminate();
-}
-
 Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache,
 	bool async, TextureLoaderDelegate* delegate)
 {

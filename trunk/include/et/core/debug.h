@@ -41,6 +41,7 @@
 #
 #elif (ET_PLATFORM_ANDROID)
 #
+#	define ET_CALL_FUNCTION					__PRETTY_FUNCTION__
 #	define ET_SUPPORT_RANGE_BASED_FOR		__has_feature(cxx_range_for)
 #
 #else

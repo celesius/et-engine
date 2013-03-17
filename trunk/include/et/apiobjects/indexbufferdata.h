@@ -16,7 +16,9 @@ namespace et
 	class IndexBufferData : public APIObjectData
 	{
 	public:
-		IndexBufferData(RenderState& rs, IndexArray::Pointer i, BufferDrawType drawType, const std::string& name = std::string());
+		IndexBufferData(RenderState& rs, IndexArray::Pointer i, BufferDrawType drawType,
+			const std::string& name = std::string());
+		
 		~IndexBufferData();
 
 		GLenum primitiveType() const
@@ -44,6 +46,8 @@ namespace et
 	private:
 		void setProperties(const IndexArray::Pointer& i);
 		void build(const IndexArray::Pointer& i);
+		
+		void internal_setData(const unsigned char* data, size_t size);
 
 	private:
 		RenderState& _rs;

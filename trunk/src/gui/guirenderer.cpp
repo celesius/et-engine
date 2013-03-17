@@ -204,7 +204,7 @@ void GuiRenderer::render(RenderContext* rc)
 	
 	const VertexArrayObject& vao = _renderingElement->vertexArrayObject();
 	ET_START_ITERATION(_renderingElement->_chunks, const RenderChunk&, i)
-	
+	{
 		rs.bindTexture(0, i.layers[GuiRenderLayer_Layer0]);
 		rs.bindTexture(1, i.layers[GuiRenderLayer_Layer1]);
 		rs.setClip(true, i.clip + recti(_customWindowOffset.x, _customWindowOffset.y, 0, 0));
@@ -220,6 +220,7 @@ void GuiRenderer::render(RenderContext* rc)
 		}
 
 		renderer->drawElements(vao->indexBuffer(), i.first, i.count);
+	}
 	ET_END_ITERATION
 }
 

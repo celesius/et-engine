@@ -288,15 +288,18 @@ std::string et::applicationIdentifierForCurrentProject()
 et::vec2i et::nativeScreenSize()
 {
 #if (ET_PLATFORM_IOS)
+
 	CGSize size = [[UIScreen mainScreen] bounds].size;
 	
 	if (UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]))
 		return vec2i(static_cast<int>(size.height), static_cast<int>(size.width));
 	else
 		return vec2i(static_cast<int>(size.width), static_cast<int>(size.height));
+	
 #else
-#
-#	error Implement, please
-#
+
+	NSSize size = [[NSScreen mainScreen] frame].size;
+	return vec2i(static_cast<int>(size.width), static_cast<int>(size.height));
+	
 #endif
 }

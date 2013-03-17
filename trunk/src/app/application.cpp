@@ -13,10 +13,12 @@ using namespace et;
 IApplicationDelegate* et::Application::_delegate = 0;
 
 Application::Application() : _renderContext(0), _exitCode(0), _lastQueuedTimeMSec(queryTimeMSec()),
-	_fpsLimitMSec(0), _fpsLimitMSecFractPart(0), _running(false), _active(false)
+	_fpsLimitMSec(0), _fpsLimitMSecFractPart(0), _running(false), _active(false), _suspended(false)
 {
 	threading();
-	delegate();
+	
+	delegate()->setApplicationParameters(_parameters);
+
 	platformInit();
 	platformActivate();
 }
@@ -42,7 +44,7 @@ IApplicationDelegate* Application::delegate()
 int Application::run(int argc, char* argv[])
 {
 	for (int i = 0; i < argc; ++i)
-		_parameters.push_back(argv[i]);
+		_launchParameters.push_back(argv[i]);
 
 	return platformRun();
 }
@@ -94,17 +96,19 @@ void Application::setActive(bool active)
 
 	if (_active)
 	{
-		platformActivate();
-		_lastQueuedTimeMSec = queryTimeMSec();
-		_runLoop.update(_lastQueuedTimeMSec);
-		_runLoop.resume();
+		if (_suspended)
+			resume();
+
 		_delegate->applicationWillActivate();
+		platformActivate();
 	}
 	else
 	{
-		_runLoop.pause();
 		_delegate->applicationWillDeactivate();
 		platformDeactivate();
+		
+		if (_parameters.shouldSuspendOnDeactivate)
+			suspend();
 	}
 }
 
@@ -120,4 +124,31 @@ void Application::contextResized(const vec2i& size)
 float Application::cpuLoad() const
 {
 	return Threading::cpuUsage();
+}
+
+void Application::suspend()
+{
+	if (_suspended) return;
+
+	delegate()->applicationWillSuspend();
+	_runLoop.pause();
+
+	platformSuspend();
+	
+	_suspended = true;
+}
+
+void Application::resume()
+{
+	assert(_suspended && "Should be suspended.");
+
+	delegate()->applicationWillResume();
+	
+	_suspended = false;
+
+	platformResume();
+
+	_lastQueuedTimeMSec = queryTimeMSec();
+	_runLoop.update(_lastQueuedTimeMSec);
+	_runLoop.resume();
 }

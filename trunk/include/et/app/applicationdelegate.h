@@ -24,7 +24,30 @@ namespace et
 			const std::string& aApplicationName) : identifier(aIdentifier), companyName(aCompanyName),
 			applicationName(aApplicationName) { }
 	};
-	
+
+	enum WindowStyle
+	{
+		WindowStyle_FixedWithCaption,
+		WindowStyle_FixedWithoutCaption,
+		WindowStyle_Sizable,
+		WindowStyle_StretchedToWorkarea,
+		WindowStyle_Fullscreen
+	};
+
+	struct ApplicationParameters
+	{
+		WindowStyle windowStyle;
+		bool shouldSuspendOnDeactivate;
+
+		ApplicationParameters(
+#if (ET_PLATFORM_IOS || ET_PLATFORM_ANDROID)
+							  WindowStyle ws = WindowStyle_Fullscreen
+#else
+							  WindowStyle ws = WindowStyle_FixedWithCaption
+#endif
+							  ) : windowStyle(ws) { }
+	};
+
 	template <typename T> struct vector2;
 	typedef vector2<int> vec2i;
 	
@@ -35,14 +58,17 @@ namespace et
 
 		virtual et::ApplicationIdentifier applicationIdentifier() const = 0;
 		
+		virtual void setApplicationParameters(et::ApplicationParameters&) { }
 		virtual void setRenderContextParameters(et::RenderContextParameters&) { }
+		
 		virtual void applicationDidLoad(et::RenderContext*) { }
+		virtual void applicationWillActivate() { }
+		virtual void applicationWillDeactivate() { }
+		virtual void applicationWillSuspend() { }
+		virtual void applicationWillResume() { }
 		virtual void applicationWillTerminate() { }
 
 		virtual void applicationWillResizeContext(const et::vec2i&) { }
-
-		virtual void applicationWillActivate() { }
-		virtual void applicationWillDeactivate() { }
 
 		virtual void render(et::RenderContext*) { }
 		virtual void idle(float) { }

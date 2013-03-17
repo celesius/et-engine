@@ -60,12 +60,12 @@ using namespace et;
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-	_notifier.notifyDeactivated();
+	_notifier.notifySuspended();
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-	_notifier.notifyActivated();
+	_notifier.notifyResumed();
 }
 
 - (void)tick

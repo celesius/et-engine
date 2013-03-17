@@ -8,11 +8,9 @@ void MainController::setRenderContextParameters(et::RenderContextParameters& p)
 	p.supportedInterfaceOrientations =
 		InterfaceOrientation_Any & (~InterfaceOrientation_PortraitUpsideDown);
 
-#if (ET_PLATFORM_IOS)
-	p.baseContextSize = vec2i(320, 480);
-#else
-	p.baseContextSize = vec2i(800, 600);
-	p.contextSize = p.baseContextSize;
+#if (ET_PLATFORM_MAC || ET_PLATFORM_WIN)
+	p.contextBaseSize = vec2i(800, 600);
+	p.contextSize = p.contextBaseSize;
 #endif
 }
 

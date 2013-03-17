@@ -49,21 +49,21 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 	_renderState.setRenderContext(this);
 	_programFactory = new ProgramFactory(this);
 	_textureFactory = new TextureFactory(this);
-	_framebufferFactory = new FramebufferFactory(this, _textureFactory);
+	_framebufferFactory = new FramebufferFactory(this, _textureFactory.ptr());
 	_vertexBufferFactory = new VertexBufferFactory(_renderState);
 	
 	CGSize screenSize = [[[UIApplication sharedApplication] delegate] window].frame.size;
 	float screenScale = [[UIScreen mainScreen] scale];
 	
-	vec2i contextSize(static_cast<int>(screenScale * screenSize.width), static_cast<int>(screenScale * screenSize.height));
-	
+	vec2i contextSize(static_cast<int>(screenScale * screenSize.width),
+		static_cast<int>(screenScale * screenSize.height));
+
 	updateScreenScale(contextSize);
 	_renderState.setMainViewportSize(contextSize);
 }
 
 RenderContext::~RenderContext()
 {
-	delete _renderer; 
 	delete _private;
 }
 
@@ -110,44 +110,11 @@ void RenderContext::endRender()
 	_info.averageFramePerSecond++;
 }
 
-void RenderContext::onFPSTimerExpired(NotifyTimer*)
-{
-	if (_info.averageFramePerSecond > 0)
-	{
-		_info.averageDIPPerSecond /= _info.averageFramePerSecond;
-		_info.averagePolygonsPerSecond /= _info.averageFramePerSecond;
-	}
-	
-	renderingInfoUpdated.invoke(_info);
-	
-	_info.averageFramePerSecond = 0;
-	_info.averageDIPPerSecond = 0;
-	_info.averagePolygonsPerSecond = 0;
-}
-
-void RenderContext::resized(const vec2i& sz)
-{
-	updateScreenScale(sz);
-	_renderState.setMainViewportSize(sz);
-	_app->contextResized(sz);
-}
-
-void RenderContext::updateScreenScale(const vec2i& screenSize)
-{
-	int maxDimension = etMax(screenSize.x, screenSize.y);
-	int maxBaseSize = etMax(_params.baseContextSize.x, _params.baseContextSize.y);
-	
-	size_t newScale = (maxDimension - 1) / (3 * maxBaseSize / 2) + 1;
-	if (newScale == _screenScaleFactor) return;
-	
-	_screenScaleFactor = newScale;
-	screenScaleFactorChanged.invoke(_screenScaleFactor);
-}
-
 /*
  * RenderContextPrivate
  */
-RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params) : _rc(rc), failed(false)
+RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params) :
+	_rc(rc), failed(false)
 {
 	failed = !initOpenGL(params);
 }

@@ -8,7 +8,9 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := et
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(INCLUDE_PATH)
-LOCAL_CXXFLAGS := --std=c++11
+
+LOCAL_CFLAGS := -UNDEBUG -DDEBUG
+LOCAL_CXXFLAGS := --std=c++11 $(LOCAL_CFLAGS)
 
 LOCAL_SRC_FILES += $(SOURCE_PATH)/platform-android/stream.android.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/platform-android/application.android.cpp
@@ -100,6 +102,7 @@ LOCAL_SRC_FILES += $(SOURCE_PATH)/vertexbuffer/vertexdeclaration.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/rendering/renderer.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/rendering/rendering.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/rendering/renderstate.cpp
+LOCAL_SRC_FILES += $(SOURCE_PATH)/rendering/rendercontext.cpp
 
 LOCAL_SRC_FILES += $(SOURCE_PATH)/opengl/opengl.common.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/opengl/openglcaps.cpp
