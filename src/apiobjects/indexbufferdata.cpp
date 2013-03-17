@@ -67,9 +67,12 @@ void IndexBufferData::build(const IndexArray::Pointer& i)
 
 void IndexBufferData::internal_setData(const unsigned char* data, size_t size)
 {
-	_rs.bindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, drawTypeValue(_drawType));
-	checkOpenGLError("glBufferData(GL_ELEMENT_ARRAY_BUFFER, ....)");
+	if (size > 0)
+	{
+		_rs.bindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, drawTypeValue(_drawType));
+		checkOpenGLError("glBufferData(GL_ELEMENT_ARRAY_BUFFER, %u, 0x%08X, ..,)", size, data);
+	}
 }
 
 void* IndexBufferData::indexOffset(size_t offset) const
