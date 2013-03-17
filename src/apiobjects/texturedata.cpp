@@ -58,14 +58,14 @@ void TextureData::setWrap(RenderContext* rc, TextureWrap s, TextureWrap t, Textu
 	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
 
 	glTexParameteri(_desc->target, GL_TEXTURE_WRAP_S, textureWrapValue(_wrap.x)); 
-	checkOpenGLError("glTexParameteri<WRAP_S> " + name());
+	checkOpenGLError("glTexParameteri<WRAP_S> - %s", name().c_str());
 	
 	glTexParameteri(_desc->target, GL_TEXTURE_WRAP_T, textureWrapValue(_wrap.y));
-	checkOpenGLError("glTexParameteri<WRAP_T> " + name());
+	checkOpenGLError("glTexParameteri<WRAP_T> - %s", name().c_str());
 	
 #if defined(GL_TEXTURE_WRAP_R)
 	glTexParameteri(_desc->target, GL_TEXTURE_WRAP_R, textureWrapValue(_wrap.z));
-	checkOpenGLError("glTexParameteri<WRAP_R> " + name()); 
+	checkOpenGLError("glTexParameteri<WRAP_R> - %s", name().c_str()); 
 #endif	
 }
 
@@ -82,10 +82,10 @@ void TextureData::setFiltration(RenderContext* rc, TextureFiltration minFiltrati
 		_filtration.y = TextureFiltration_Linear;
 
 	glTexParameteri(_desc->target, GL_TEXTURE_MIN_FILTER, textureFiltrationValue(_filtration.x)); 
-	checkOpenGLError("glTexParameteri<GL_TEXTURE_MIN_FILTER> " + name());
+	checkOpenGLError("glTexParameteri<GL_TEXTURE_MIN_FILTER> - %s", name().c_str());
 	
 	glTexParameteri(_desc->target, GL_TEXTURE_MAG_FILTER, textureFiltrationValue(_filtration.y)); 
-	checkOpenGLError("glTexParameteri<GL_TEXTURE_MAG_FILTER> " + name()); 
+	checkOpenGLError("glTexParameteri<GL_TEXTURE_MAG_FILTER> - %s", name().c_str()); 
 }
 
 void TextureData::compareRefToTexture(RenderContext* rc, bool enable, GLenum compareFunc)
@@ -103,7 +103,7 @@ void TextureData::compareRefToTexture(RenderContext* rc, bool enable, GLenum com
 	else
 	{
 		glTexParameteri(_desc->target, GL_TEXTURE_COMPARE_MODE, GL_NONE);
-		checkOpenGLError("glTexParameteri(_target, GL_TEXTURE_COMPARE_MODE, GL_NONE) " + name()); 
+		checkOpenGLError("glTexParameteri(_target, GL_TEXTURE_COMPARE_MODE, GL_NONE) - %s", name().c_str()); 
 	}
 #else
 	assert(0 && "WARNING: GL_TEXTURE_COMPARE_MODE and GL_TEXTURE_COMPARE_FUNC are not defined.");
@@ -113,7 +113,7 @@ void TextureData::compareRefToTexture(RenderContext* rc, bool enable, GLenum com
 void TextureData::generateTexture(RenderContext*)
 {
 	glGenTextures(1, &_glID);
-	checkOpenGLError("TextureData::generateTexture " + name());
+	checkOpenGLError("TextureData::generateTexture - %s", name().c_str());
 }
 
 void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
@@ -263,6 +263,6 @@ void TextureData::setMaxLod(RenderContext* rc, size_t value)
 #if defined(GL_TEXTURE_MAX_LEVEL)
     rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
 	glTexParameteri(_desc->target, GL_TEXTURE_MAX_LEVEL, value);
-	checkOpenGLError("TextureData::setMaxLod " + name());
+	checkOpenGLError("TextureData::setMaxLod - %s", name().c_str());
 #endif
 }

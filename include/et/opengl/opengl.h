@@ -114,12 +114,12 @@
 
 #if (ET_DEBUG)
 #
-#	define checkOpenGLError(tag) \
-		checkOpenGLErrorEx(ET_CALL_FUNCTION, __FILE__, ET_TOCONSTCHAR(__LINE__), tag)
+#	define checkOpenGLError(...) \
+		checkOpenGLErrorEx(ET_CALL_FUNCTION, __FILE__, ET_TOCONSTCHAR(__LINE__), __VA_ARGS__);
 #
 #else
 #
-#	define checkOpenGLError(tag)
+#	define checkOpenGLError(...)
 #
 #endif
 
@@ -181,8 +181,7 @@ namespace et
 		static void reset();
 	};
 
-	void checkOpenGLErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const char* tag);
-	void checkOpenGLErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const std::string& tag);
+	void checkOpenGLErrorEx(const char* caller, const char* fileName, const char* line, const char* tag, ...);
 
 	std::string glErrorToString(GLenum error);
 	std::string glTexTargetToString(int target);

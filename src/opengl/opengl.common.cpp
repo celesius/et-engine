@@ -61,37 +61,26 @@ namespace et
 		}
 	}
 
-	void checkOpenGLErrorEx(const char* caller, const char* sourceFile,
-		const char* lineNumber, const char* tag)
+	void checkOpenGLErrorEx(const char* caller, const char* fileName, const char* line, const char* tag, ...)
 	{
 		GLenum error = glGetError();
 		if (error != GL_NO_ERROR)
 		{
-			static const char* formatStr = "[%s:%s] %s\n{\n\ttag = %s\n\terr = %s\n}\n";
-			static const size_t formatStrLength = strlen(formatStr);
-
-			std::string errorStr = glErrorToString(error);
-
-			size_t outputLength = formatStrLength + strlen(sourceFile) +
-				strlen(lineNumber) + strlen(caller) + strlen(tag);
-
-			char* buffer = new char[2 * outputLength];
-			etFillMemory(buffer, 0, outputLength);
-
-			sprintf(buffer, formatStr, sourceFile, lineNumber, caller, tag, errorStr.c_str());
-			puts(buffer);
-			fflush(stdout);
-
-			delete [] buffer;
+			char buffer[1024] = { };
+			
+			va_list args;
+			va_start(args, tag);
+			vsnprintf(buffer, sizeof(buffer), tag, args);
+			va_end(args);
+			
+			log::error("[%s:%s] %s\n{\n\ttag = %s\n\terr = %s\n}\n", fileName, line, caller,
+				buffer, glErrorToString(error).c_str());
 
 #			if defined(ET_STOP_ON_OPENGL_ERROR)
 			assert(0 && "Check stdout for details.");
 #			endif
 		}
 	}
-
-	void checkOpenGLErrorEx(const char* caller, const char* sourceFile, const char* lineNumber,
-		const std::string& tag) { checkOpenGLErrorEx(caller, sourceFile, lineNumber, tag.c_str()); }
 
 	size_t primitiveCount(GLenum mode, GLsizei count)
 	{
@@ -573,13 +562,10 @@ namespace et
 	{
 #if (!ET_OPENGLES)
 		glCompressedTexImage1D(target, level, internalformat, width, border, imageSize, data);
-#endif
-
-#if (ET_DEBUG)
-		std::string err = "glCompressedTexImage1D(" + glTexTargetToString(target) + ", " + intToStr(level) + ", " +
-			glInternalFormatToString(internalformat) + 	", " + intToStr(width) + ", " +
-			intToStr(border) + ", " +  intToStr(imageSize) + ", *" + intToStr(reinterpret_cast<int>(data)) + ") ";
-		checkOpenGLError(err);
+		
+		checkOpenGLError("glCompressedTexImage1D(%s, %d, %s, %d, %d, %d, 0x%8X)",
+			glTexTargetToString(target).c_str(), level, glInternalFormatToString(internalformat).c_str(),
+			width, border, imageSize, data);
 #endif
 	}
 
@@ -589,10 +575,9 @@ namespace et
 		glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
 
 #if (ET_DEBUG)
-		std::string err = "glCompressedTexImage2D(" + glTexTargetToString(target) + ", " + intToStr(level) + ", " +
-			glInternalFormatToString(internalformat) + 	", " + intToStr(width) + ", " + intToStr(height) + ", " +
-			intToStr(border) + ", " +  intToStr(imageSize) + ", *" + intToStr(reinterpret_cast<int>(data)) + ") ";
-		checkOpenGLError(err);
+		checkOpenGLError("glCompressedTexImage2D(%s, %d, %s, %d, %d, %d, %d, 0x%8X)",
+			glTexTargetToString(target).c_str(), level, glInternalFormatToString(internalformat).c_str(),
+			width, height, border, imageSize, data);
 #endif
 	}
 
@@ -601,9 +586,9 @@ namespace et
 	{
 #if (!ET_OPENGLES)
 		glTexImage1D(target, level, internalformat, width, border, format, type, pixels);
-#endif
 
-#if (ET_DEBUG)
+#	error PLEASE IMPLEMENT
+		
 		std::string err = "glTexImage1D(" + glTexTargetToString(target) + ", " + intToStr(level) + ", " +
 			glInternalFormatToString(internalformat) + 	", " + intToStr(width) + ", " + intToStr(border) + ", " +
 			glInternalFormatToString(format) + ", " + glTypeToString(type) + ", *" + intToStr(reinterpret_cast<int>(pixels)) + ") ";
@@ -617,10 +602,10 @@ namespace et
 		glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
 
 #if (ET_DEBUG)
-		std::string err = "glTexImage2D(" + glTexTargetToString(target) + ", " + intToStr(level) + ", " +
-			glInternalFormatToString(internalformat) + 	", " + intToStr(width) + ", " + intToStr(height) + ", " + intToStr(border) + ", " + 
-			glInternalFormatToString(format) + ", " + glTypeToString(type) + ", *" + intToStr(reinterpret_cast<int>(pixels)) + ") ";
-		checkOpenGLError(err);
+		checkOpenGLError("glTexImage2D(%s, %d, %s, %d, %d, %d, %s, %s, %, 0x%8X)",
+			glTexTargetToString(target).c_str(), level, glInternalFormatToString(internalformat).c_str(),
+			width, height, border, glInternalFormatToString(format).c_str(), glTypeToString(type).c_str(),
+			pixels);
 #endif
 	}
 

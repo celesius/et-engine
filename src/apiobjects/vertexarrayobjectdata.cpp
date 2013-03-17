@@ -41,7 +41,7 @@ void VertexArrayObjectData::init()
 	if (openGLCapabilites().supportVertexArrays())
 	{
 		glGenVertexArrays(1, &_vao);
-		checkOpenGLError("glGenVertexArrays in " + name());
+		checkOpenGLError("glGenVertexArrays in %s", name().c_str());
 		_rs.bindVertexArray(_vao);
 	}
 #endif

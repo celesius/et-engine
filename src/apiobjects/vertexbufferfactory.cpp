@@ -31,7 +31,10 @@ VertexArrayObject VertexBufferFactory::createVertexArrayObject(const std::string
 VertexArrayObject VertexBufferFactory::createVertexArrayObject(const std::string& name, 
 	VertexArray::Pointer vertexData, BufferDrawType vertexDrawType, IndexArray::Pointer indexData, BufferDrawType indexDrawType)
 {
-	return VertexArrayObject(new VertexArrayObjectData(_rs,
-		createVertexBuffer(name + "-vb", vertexData, vertexDrawType),
-		createIndexBuffer(name + "-ib", indexData, indexDrawType), name));
+	VertexArrayObject result(new VertexArrayObjectData(_rs, name));
+
+	result->setBuffers(createVertexBuffer(name + "-vb", vertexData, vertexDrawType),
+		createIndexBuffer(name + "-ib", indexData, indexDrawType));
+
+	return result;
 }

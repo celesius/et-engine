@@ -264,7 +264,7 @@ namespace et
 			log::warning("ProgramData::setUniform refers to unknown uniform type.");
 		}
 		
-		checkOpenGLError("ProgramData::setUniform");
+		checkOpenGLError("ProgramData::setUniform : %d", nLoc);
 	}
 
 }
