@@ -114,11 +114,13 @@
 
 #if (ET_DEBUG)
 #
+#	define ET_ENABLE_OPENGL_COUNTERS	1
 #	define checkOpenGLError(...) \
 		checkOpenGLErrorEx(ET_CALL_FUNCTION, __FILE__, ET_TOCONSTCHAR(__LINE__), __VA_ARGS__);
 #
 #else
 #
+#	define ET_ENABLE_OPENGL_COUNTERS	0
 #	define checkOpenGLError(...)
 #
 #endif
