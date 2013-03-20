@@ -14,7 +14,7 @@ using namespace et;
 
 @interface etApplication()
 {
-	ApplicationNotifier* _notifier;
+	ApplicationNotifier _notifier;
 	BOOL _loaded;
 }
 
@@ -45,7 +45,6 @@ static etApplication* _sharedInstance = nil;
 	self = [super init];
 	if (self)
 	{
-		_notifier = new ApplicationNotifier();
 		_loaded = NO;
 	}
 	return self;
@@ -64,24 +63,23 @@ static etApplication* _sharedInstance = nil;
 	int defaultFramebuffer = [[view valueForKey:@"renderer_"] defaultFrameBuffer];
 	
 	application().run(0, 0);
-	_notifier->accessRenderContext()->renderState().setDefaultFramebuffer(
+	_notifier.accessRenderContext()->renderState().setDefaultFramebuffer(
 		[self renderContext]->framebufferFactory().createFramebufferWrapper(defaultFramebuffer));
 	
-	_notifier->accessRenderContext()->renderState().applyState(state);
+	_notifier.accessRenderContext()->renderState().applyState(state);
 	_loaded = YES;
 }
 
 - (void)unloadedInViewController:(UIViewController*)viewController
 {
-	application().quit();
-	delete _notifier, _notifier = 0;
     _loaded = NO;
+	application().quit();
 }
 
 - (void)dealloc
 {
+    _loaded = NO;
 	application().quit();
-	delete _notifier;
 	[super dealloc];
 }
 
@@ -102,18 +100,18 @@ static etApplication* _sharedInstance = nil;
 		vec2i size(static_cast<int>(scaleFactor * frame.size.width),
 			static_cast<int>(scaleFactor * frame.size.height));
 		
-		RenderContext* rc = _notifier->accessRenderContext();
+		RenderContext* rc = _notifier.accessRenderContext();
 		if (rc->sizei() != size)
 		{
 			rc->renderState().defaultFramebuffer()->forceSize(size);
-			_notifier->notifyResize(size);
+			_notifier.notifyResize(size);
 		}
 	}
 }
 
 - (et::RenderContext*)renderContext
 {
-	return _notifier->accessRenderContext();
+	return _notifier.accessRenderContext();
 }
 
 - (et::IApplicationDelegate*)applicationDelegate
