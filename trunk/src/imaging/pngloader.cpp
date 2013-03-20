@@ -13,7 +13,7 @@
 using namespace et;
 
 void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr, png_size_t* rowBytes);
-void userReadData(png_structp pngPtr, png_bytep data, png_size_t length);
+void streamReadData(png_structp pngPtr, png_bytep data, png_size_t length);
 
 void PNGLoader::loadInfoFromStream(std::istream& source, TextureDescription& desc)
 {
@@ -43,7 +43,7 @@ void PNGLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 		return;
 	}
 
-	png_set_read_fn(pngPtr, (png_voidp)&source, userReadData); 
+	png_set_read_fn(pngPtr, (png_voidp)&source, streamReadData);
 	png_set_sig_bytes(pngPtr, PNGSIGSIZE);
 	png_read_info(pngPtr, infoPtr); 
 	parseFormat(desc, pngPtr, infoPtr, 0);
@@ -81,7 +81,7 @@ void PNGLoader::loadFromStream(std::istream& source, TextureDescription& desc)
 
 	png_size_t rowBytes = 0;
 
-	png_set_read_fn(pngPtr, (png_voidp)&source, userReadData); 
+	png_set_read_fn(pngPtr, (png_voidp)&source, streamReadData);
 	png_set_sig_bytes(pngPtr, PNGSIGSIZE);
 	png_read_info(pngPtr, infoPtr); 
 	parseFormat(desc, pngPtr, infoPtr, &rowBytes);
@@ -215,20 +215,20 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 		case 3:
 		{
 #if defined(GL_RGB16)
-			desc.internalformat = (bpp == 16) ? GL_RGB16 : GL_RGB8;
+			desc.internalformat = (bpp == 16) ? GL_RGB16 : GL_RGB;
 #else
 			desc.internalformat = GL_RGB;
 #endif
-			desc.format = GL_RGB8;
+			desc.format = GL_RGB;
 			break;
 		}
 
 		case 4:
 		{ 
 #if defined(GL_RGBA16)
-			desc.internalformat = (bpp == 16) ? GL_RGBA16 : GL_RGBA8;
+			desc.internalformat = (bpp == 16) ? GL_RGBA16 : GL_RGBA;
 #else
-			desc.internalformat = GL_RGBA8;
+			desc.internalformat = GL_RGBA;
 #endif
 			desc.format = GL_RGBA;
 			break;
@@ -239,8 +239,7 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 	}
 }
 
-void userReadData(png_structp pngPtr, png_bytep data, png_size_t length)
+void streamReadData(png_structp pngPtr, png_bytep data, png_size_t length)
 {
-	png_voidp a = png_get_io_ptr(pngPtr);
-	((std::istream*)a)->read((char*)data, length);
+	reinterpret_cast<std::istream*>(png_get_io_ptr(pngPtr))->read((char*)data, length);
 }
