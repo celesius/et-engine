@@ -56,8 +56,6 @@
 #
 #	define GL_DEPTH_COMPONENT24						GL_DEPTH_COMPONENT24_OES
 #	define GL_HALF_FLOAT							GL_HALF_FLOAT_OES
-#	define GL_RGB8									GL_RGB
-#	define GL_RGBA8									GL_RGBA
 #
 #	define glGenVertexArrays						glGenVertexArraysOES
 #	define glBindVertexArray						glBindVertexArrayOES
@@ -82,8 +80,6 @@
 #
 #	define GL_DEPTH_COMPONENT24						GL_DEPTH_COMPONENT24_OES
 #	define GL_HALF_FLOAT							GL_HALF_FLOAT_OES
-#	define GL_RGB8									GL_RGB
-#	define GL_RGBA8									GL_RGBA
 #
 #	define glClearDepth								glClearDepthf
 #

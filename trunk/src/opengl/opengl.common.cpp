@@ -185,6 +185,10 @@ std::string et::glInternalFormatToString(int format)
 		CASE_VALUE(GL_RGB8)
 #endif
 
+#if defined(GL_RGBA8) && (GL_RGBA8 != GL_RGBA)
+		CASE_VALUE(GL_RGBA8)
+#endif
+
 #if defined(GL_INTENSITY)
 	CASE_VALUE(GL_INTENSITY)
 	CASE_VALUE(GL_INTENSITY8)
