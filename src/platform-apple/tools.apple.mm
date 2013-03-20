@@ -11,6 +11,7 @@
 
 #if (ET_PLATFORM_MAC)
 #	include <AppKit/NSWorkspace.h>
+#	include <AppKit/NSScreen.h>
 #	include <Foundation/NSFileManager.h>
 #	include <Foundation/NSPredicate.h>
 #	include <Foundation/NSURL.h>

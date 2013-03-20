@@ -208,8 +208,10 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 		nLogLen = 0;
 		glCompileShader(GeometryShader);
 		checkOpenGLError("glCompileShader<GEOM> - %s", name().c_str());
+
 		glGetShaderiv(GeometryShader, GL_COMPILE_STATUS, &cStatus);
-		checkOpenGLError("glGetShaderiv<GEOM> " + name() + " compile staus ");
+		checkOpenGLError("glGetShaderiv<GEOM> %s compile staus", name().c_str());
+		
 		glGetShaderiv(GeometryShader, GL_INFO_LOG_LENGTH, &nLogLen);
 		if (nLogLen > 1)
 		{
