@@ -98,12 +98,14 @@ static etApplication* _sharedInstance = nil;
 		
 		if (UIInterfaceOrientationIsLandscape([CCDirector sharedDirector].interfaceOrientation))
 			frame.size = CGSizeMake(frame.size.height, frame.size.width);
+
+		vec2i size(static_cast<int>(scaleFactor * frame.size.width),
+			static_cast<int>(scaleFactor * frame.size.height));
 		
-		vec2i size = vec2i(static_cast<int>(scaleFactor * frame.size.width), static_cast<int>(scaleFactor * frame.size.height));
 		RenderContext* rc = _notifier->accessRenderContext();
 		if (rc->sizei() != size)
 		{
-			rc->renderState().defaultFramebuffer()->forceSize(size.x, size.y);
+			rc->renderState().defaultFramebuffer()->forceSize(size);
 			_notifier->notifyResize(size);
 		}
 	}
