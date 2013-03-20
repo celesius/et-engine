@@ -574,12 +574,9 @@ namespace et
 #if (!ET_OPENGLES)
 		glTexImage1D(target, level, internalformat, width, border, format, type, pixels);
 
-#	error PLEASE IMPLEMENT
-		
-		std::string err = "glTexImage1D(" + glTexTargetToString(target) + ", " + intToStr(level) + ", " +
-			glInternalFormatToString(internalformat) + 	", " + intToStr(width) + ", " + intToStr(border) + ", " +
-			glInternalFormatToString(format) + ", " + glTypeToString(type) + ", *" + intToStr(reinterpret_cast<int>(pixels)) + ") ";
-		checkOpenGLError(err);
+		checkOpenGLError("glTexImage2D(%s, %d, %s, %d, %d, %s, %s, %, 0x%8X)",
+			glTexTargetToString(target).c_str(), level, glInternalFormatToString(internalformat).c_str(),
+			width, border, glInternalFormatToString(format).c_str(), glTypeToString(type).c_str(), pixels);
 #endif
 	}
 
