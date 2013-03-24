@@ -6,9 +6,10 @@
  */
 
 #include <et/rendering/rendercontext.h>
+#include <et/opengl/openglcaps.h>
 #include <et/threading/threading.h>
-#include <et/apiobjects/texturefactory.h>
 #include <et/resources/textureloader.h>
+#include <et/apiobjects/texturefactory.h>
 
 using namespace et;
 
@@ -184,6 +185,10 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 		TextureLoader::load(posz, screenScale), 
 		TextureLoader::load(negz, screenScale) 
 	};
+
+	size_t maxCubemapSize = sqr(openGLCapabilites().maxCubemapTextureSize());
+	for (size_t l = 0; l < 6; ++l)
+		assert(layers[l]->size.square() <= maxCubemapSize);
 
 	std::string texId = layers[0]->source + ";";
 	for (size_t l = 1; l < 6; ++l)

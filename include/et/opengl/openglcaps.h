@@ -53,12 +53,17 @@ namespace et
 		const std::string& glslVersionString() const
 			{ return _glslVersionString; }
 
+		size_t maxCubemapTextureSize() const
+			{ return _maxCubemapTextureSize;}
+
 		void checkCaps();
-		
+
 	private:
 		std::string _openGlVersion;
 		std::string _glslVersionString;
 		std::string _glslVersion;
+
+		size_t _maxCubemapTextureSize;
 
 		OpenGLVersion _version;
 		bool _mipmap_generation;
