@@ -20,19 +20,20 @@ void EventReceiver::eventConnected(Event* e)
 
 EventReceiver::~EventReceiver() 
 {
-	for (EventList::iterator i = _events.begin(), e = _events.end(); i != e; ++i)
-		(*i)->receiverDisconnected(this);
+	ET_ITERATE(_events, auto&, i, i->receiverDisconnected(this))
 }
 
 void EventReceiver::eventDisconnected(Event* e)
 {
-	EventList::iterator i = std::find(_events.begin(), _events.end(), e);
+	auto i = std::find(_events.begin(), _events.end(), e);
 	if (i != _events.end())
 		_events.erase(i);
 }
 
-/*
- * Event(0)
+/**
+ *
+ * Event0
+ *
  */
 
 Event0::Event0() : _invoking(false)
@@ -41,10 +42,8 @@ Event0::Event0() : _invoking(false)
 
 Event0::~Event0()
 {
-	for (ConnectionList::iterator i = _connections.begin(), e = _connections.end(); i != e; ++i)
+	ET_START_ITERATION(_connections, auto&, connection)
 	{
-		Event0ConnectionBase* connection = (*i);
-
 		if (connection->receiver())
 		{
 			if (!connection->removed())
@@ -53,6 +52,7 @@ Event0::~Event0()
 			delete connection;
 		}
 	}
+	ET_END_ITERATION
 }
 
 void Event0::connect(Event0& e)
@@ -63,7 +63,7 @@ void Event0::connect(Event0& e)
 
 void Event0::cleanup()
 {
-	ConnectionList::iterator i = remove_if(_connections.begin(), _connections.end(), shouldRemoveConnection);
+	auto i = remove_if(_connections.begin(), _connections.end(), shouldRemoveConnection);
 	if (i != _connections.end())
 		_connections.erase(i, _connections.end());
 }
@@ -74,7 +74,7 @@ void Event0::invoke()
 
 	_invoking = true;
 
-	ConnectionList::iterator i = _connections.begin();
+	auto i = _connections.begin();
 	while (i != _connections.end())
 	{
 		(*i)->invoke();
@@ -87,14 +87,12 @@ void Event0::invoke()
 void Event0::invokeInMainRunLoop(float delay)
 {
 	cleanup();
-
-	for (ConnectionList::iterator i = _connections.begin(), e = _connections.end(); i != e; ++i)
-		(*i)->invokeInMainRunLoop(delay);
+	ET_ITERATE(_connections, auto&, i, i->invokeInMainRunLoop(delay))
 }
 
 void Event0::receiverDisconnected(EventReceiver* r)
-{ 
-	ConnectionList::iterator i = _connections.begin();
+{
+	auto i = _connections.begin();
 	while (i != _connections.end())
 	{
 		if (r == (*i)->receiver())

@@ -24,7 +24,7 @@ void RunLoop::update(uint64_t t)
 	if (_active) 
 	{
 		_taskPool.update(_time);
-		TimerPoolList::iterator i = _timerPools.begin();
+		auto i = _timerPools.begin();
 		while (i != _timerPools.end())
 		{
 			(*i)->update(_time);
@@ -49,8 +49,7 @@ void RunLoop::attachTimerPool(TimerPool pool)
 
 void RunLoop::detachTimerPool(TimerPool pool)
 {
-	TimerPoolList::iterator i = _timerPools.begin();
-
+	auto i = _timerPools.begin();
 	while (i != _timerPools.end())
 	{
 		const TimerPool& p = *i;

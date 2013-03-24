@@ -171,24 +171,22 @@ bool Scroll::pointerCancelled(const PointerInputInfo& p)
 
 void Scroll::invalidateChildren()
 {
-	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
-	{
-		(*i)->invalidateTransform();
-		(*i)->invalidateContent();
-	}
+	ET_ITERATE(children(), auto&, i, i->invalidateTransform(); i->invalidateContent())
 }
 
 void Scroll::broadcastPressed(const PointerInputInfo& p)
 {
-	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
-	
-	for (Element::List::reverse_iterator i = children().rbegin(), e = children().rend(); i != e; ++i)
+	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos,
+		p.scroll, p.id, p.timestamp);
+
+	for (auto i = children().rbegin(), e = children().rend(); i != e; ++i)
 	{
 		Element* el = i->ptr();
 		if (el->enabled() && el->visible() && el->containsPoint(globalPos.pos, globalPos.normalizedPos))
 		{
 			vec2 posInElement = el->positionInElement(globalPos.pos);
-			if (el->pointerPressed(PointerInputInfo(p.type, posInElement, globalPos.normalizedPos, p.scroll, p.id, p.timestamp)))
+			if (el->pointerPressed(PointerInputInfo(p.type, posInElement, globalPos.normalizedPos,
+				p.scroll, p.id, p.timestamp)))
 			{
 				_selectedElement = Element::Pointer(el);
 				break;
@@ -199,9 +197,10 @@ void Scroll::broadcastPressed(const PointerInputInfo& p)
 
 void Scroll::broadcastMoved(const PointerInputInfo& p)
 {
-	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
-	
-	for (Element::List::reverse_iterator i = children().rbegin(), e = children().rend(); i != e; ++i)
+	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
+		p.id, p.timestamp);
+
+	for (auto i = children().rbegin(), e = children().rend(); i != e; ++i)
 	{
 		Element* el = i->ptr();
 		if (el-visible() && el->enabled())
@@ -214,9 +213,10 @@ void Scroll::broadcastMoved(const PointerInputInfo& p)
 
 void Scroll::broadcastReleased(const PointerInputInfo& p)
 {
-	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
-	
-	for (Element::List::reverse_iterator i = children().rbegin(), e = children().rend(); i != e; ++i)
+	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
+		p.id, p.timestamp);
+
+	for (auto i = children().rbegin(), e = children().rend(); i != e; ++i)
 	{
 		Element* el = i->ptr();
 		if (el-visible() && el->enabled())
@@ -231,9 +231,10 @@ void Scroll::broadcastReleased(const PointerInputInfo& p)
 
 void Scroll::broadcastCancelled(const PointerInputInfo& p)
 {
-	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll, p.id, p.timestamp);
-	
-	for (Element::List::reverse_iterator i = children().rbegin(), e = children().rend(); i != e; ++i)
+	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
+		p.id, p.timestamp);
+
+	for (auto i = children().rbegin(), e = children().rend(); i != e; ++i)
 	{
 		Element* el = i->ptr();
 		if (el-visible() && el->enabled())
@@ -260,7 +261,9 @@ void Scroll::update(float t)
 	
 	_updateTime = t;
 	
-	_scrollbarsAlpha = mix(_scrollbarsAlpha, _scrollbarsAlphaTarget, etMin(1.0f, alphaAnimationScale * deltaTime));
+	_scrollbarsAlpha =
+		mix(_scrollbarsAlpha, _scrollbarsAlphaTarget, etMin(1.0f, alphaAnimationScale * deltaTime));
+	
 	if (_scrollbarsAlpha < minAlpha)
 		_scrollbarsAlpha = 0.0f;
 
@@ -340,13 +343,8 @@ void Scroll::adjustContentSize()
 {
 	vec2 size;
 	
-	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
-	{
-		Element* ptr = i->ptr();
-		if (ptr->visible())
-			size = maxv(size, ptr->origin() + ptr->size());
-	}
-	
+	ET_ITERATE(children(), auto&, ptr, if (ptr->visible()) size = maxv(size, ptr->origin() + ptr->size()))
+
 	setContentSize(size);
 }
 

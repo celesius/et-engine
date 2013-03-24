@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -454,6 +454,7 @@ void Terrain::releaseData()
 {
 	for (ChunkIterator i = _chunks.begin(), e = _chunks.end(); i != e; ++i)
 		delete *i;
+
 	_chunks.clear();
 
 	delete _lods;

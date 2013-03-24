@@ -86,12 +86,7 @@ std::string et::applicationDataFolder()
 
 std::string et::normalizeFilePath(string s)
 {
-	for (string::iterator i = s.begin(), e = s.end(); i != e; ++i)
-	{
-		if ((*i) == '\\')
-			(*i) = pathDelimiter;
-	}
-	
+	ET_ITERATE(s, auto, i, if (i == '\\') i = pathDelimiter);
 	return s;
 }
 

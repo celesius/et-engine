@@ -75,7 +75,7 @@ bool Locale::loadCurrentLanguageFile(const std::string& rootFolder, const std::s
 
 std::string Locale::localizedString(const std::string& key)
 {
-	LocaleMap::iterator i = _localeMap.find(key);
+	auto i = _localeMap.find(key);
 	return (i == _localeMap.end()) ? key : i->second;
 }
 
@@ -217,14 +217,13 @@ size_t Locale::parseComment(const StringDataStorage& data, size_t index)
 
 void Locale::printKeyValues()
 {
-	std::cout << std::endl << "Key value pairs." << std::endl;
-	for (LocaleMap::iterator i = _localeMap.begin(), e = _localeMap.end(); i != e; ++i)
+	ET_ITERATE(_localeMap, auto&, i,
 	{
-		const std::string& key = i->first;
-		std::string& value = i->second;
+		const std::string& key = i.first;
+		std::string& value = i.second;
 		std::cout << key.size() << " / " << value.size() << " -> " << key << " -> " << value << std::endl;
 		std::cout.flush();
-	}
+	})
 }
 
 std::string et::localized(const std::string& key)

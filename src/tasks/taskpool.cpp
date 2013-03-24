@@ -17,17 +17,16 @@ TaskPool::TaskPool()
 TaskPool::~TaskPool() 
 {
 	CriticalSectionScope lock(_csModifying);
-	for (TaskList::iterator i = _tasks.begin(), e = _tasks.end(); i != e; ++i)
+	for (auto i = _tasks.begin(), e = _tasks.end(); i != e; ++i)
 	{
-		Task* t = *i;
-		delete t;
+		delete (*i);
 	}
 }
 
 void TaskPool::addTask(Task* t, float delay)
 {
 	CriticalSectionScope lock(_csModifying);
-	TaskList::const_iterator alreadyAdded = std::find(_tasksToAdd.begin(), _tasksToAdd.end(), t);
+	auto alreadyAdded = std::find(_tasksToAdd.begin(), _tasksToAdd.end(), t);
 	if (alreadyAdded == _tasksToAdd.end())
 	{
 		t->setExecutionTime(_lastTime + delay);
@@ -46,7 +45,7 @@ void TaskPool::update(float t)
 		_tasksToAdd.clear();
 	}
 
-	TaskList::iterator i = _tasks.begin();
+	auto i = _tasks.begin();
 	while (i != _tasks.end())
 	{
 		Task* task = (*i);

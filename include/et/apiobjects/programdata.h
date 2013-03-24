@@ -31,7 +31,6 @@ namespace et
 
 	typedef std::map<std::string, ProgramUniform> UniformMap;
 	typedef std::vector<ProgramAttrib> AttribVector;
-	typedef UniformMap::iterator UniformIterator;
 	typedef StringList ProgramDefinesList;
 
 	class Camera;
@@ -51,8 +50,6 @@ namespace et
 		GLint getUniformLocation(const std::string& uniform);
 		GLenum getUniformType(const std::string& uniform);
 		ProgramUniform getUniform(const std::string& uniform);
-
-		UniformIterator findUniform(const std::string& name);
 
 		void validate() const;
 
@@ -99,6 +96,8 @@ namespace et
 			{ return _glID; }
 
 	private:
+		UniformMap::iterator findUniform(const std::string& name);
+		
 		void buildProgram(const std::string& vertex_source, const std::string& geom_source,
 			const std::string& frag_source);
 
@@ -122,7 +121,7 @@ namespace et
 	template <typename T>
 	void ProgramData::setUniform(const std::string& uniform_name, const T& value, int count)
 	{
-		UniformIterator i = findUniform(uniform_name);
+		auto i = findUniform(uniform_name);
 		if (i != _uniforms.end())
 			setUniform(i->second.location, i->second.type, value, count);
 	}

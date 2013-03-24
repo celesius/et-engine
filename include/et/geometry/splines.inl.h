@@ -367,7 +367,7 @@ void SplineSequence<T, GenType>::buildSequence()
 	_duration = GenType(0);
 
 	int k = 0;
-	for (typename FullyQualifiedSplineList::iterator i = _splines.begin(), e = _splines.end(); i != e; ++i)
+	for (auto i = _splines.begin(), e = _splines.end(); i != e; ++i)
 	{ 
 		int m = k + 1;
 
@@ -388,7 +388,7 @@ typename SplineSequence<T, GenType>::SplinePoint SplineSequence<T, GenType>::sam
 	result.acceleration = T(0);
 
 	GenType local_time = time;
-	for (typename FullyQualifiedSplineList::iterator i = _splines.begin(), e = _splines.end(); i != e; ++i)
+	for (auto i = _splines.begin(), e = _splines.end(); i != e; ++i)
 	{
 		if (local_time < i->duration())
 		{

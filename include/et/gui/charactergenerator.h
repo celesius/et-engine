@@ -37,13 +37,13 @@ namespace et
 
 			CharDescriptor charDescription(int c)
 			{
-				CharDescriptorMap::const_iterator i = _chars.find(c);
+				auto i = _chars.find(c);
 				return (i != _chars.end()) ? i->second : generateCharacter(c, true);
 			}
 
 			CharDescriptor boldCharDescription(int c)
 			{
-				CharDescriptorMap::const_iterator i = _boldChars.find(c);
+				auto i = _boldChars.find(c);
 				return (i != _boldChars.end()) ? i->second : generateBoldCharacter(c, true);
 			}
 

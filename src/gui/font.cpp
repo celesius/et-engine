@@ -115,7 +115,7 @@ CharDescriptor FontData::charDescription(int c)
 	if (_generator.valid())
 		return _generator->charDescription(c);
 
-	CharDescriptorMap::const_iterator i = _chars.find(c);
+	auto i = _chars.find(c);
 	return (i != _chars.end()) ? i->second : CharDescriptor(c, 0, _biggestChar * vec2(0.0f, 1.0f));
 }
 
@@ -124,8 +124,10 @@ CharDescriptor FontData::boldCharDescription(int c)
 	if (_generator.valid())
 		return _generator->boldCharDescription(c);
 
-	CharDescriptorMap::const_iterator i = _boldChars.find(c);
-	return (i != _boldChars.end()) ? i->second : CharDescriptor(c, CharParameter_Bold, _biggestBoldChar * vec2(0.0f, 1.0f));
+	auto i = _boldChars.find(c);
+
+	return (i != _boldChars.end()) ? i->second :
+		CharDescriptor(c, CharParameter_Bold, _biggestBoldChar * vec2(0.0f, 1.0f));
 }
 
 float FontData::lineHeight() const
@@ -140,10 +142,9 @@ vec2 FontData::measureStringSize(const CharDescriptorList& s)
 {
 	vec2 sz;
 	vec2 lineSize;
-	
-	for (CharDescriptorList::const_iterator i = s.begin(), e = s.end(); i != e; ++i)
+
+	ET_START_ITERATION(s, auto&, desc)
 	{
-		const CharDescriptor& desc = *i;
 		lineSize.y = etMax(lineSize.y, desc.size.y);
 		
 		if ((desc.value == ET_RETURN) || (desc.value == ET_NEWLINE))
@@ -157,6 +158,7 @@ vec2 FontData::measureStringSize(const CharDescriptorList& s)
 			lineSize.x += desc.size.x;
 		}
 	}
+	ET_END_ITERATION
 	
 	sz.x = etMax(lineSize.x, sz.x);
 	sz.y += lineSize.y;
@@ -189,8 +191,7 @@ CharDescriptorList FontData::buildString(const std::string& s, bool formatted)
 		return parseString(s);
 
 	CharDescriptorList result;
-	for (std::string::const_iterator i = s.begin(), e = s.end(); i != e; ++i)
-		result.push_back(charDescription(*i));
+	ET_ITERATE(s, auto, i, result.push_back(charDescription(i)));
 	return result;
 }
 
@@ -200,10 +201,7 @@ CharDescriptorList FontData::buildString(const std::wstring& s, bool formatted)
 		return parseString(s);
 
 	CharDescriptorList result;
-
-	for (std::wstring::const_iterator i = s.begin(), e = s.end(); i != e; ++i)
-		result.push_back(charDescription(*i));
-
+	ET_ITERATE(s, auto, i, result.push_back(charDescription(i)));
 	return result;
 }
 
@@ -227,9 +225,8 @@ CharDescriptorList FontData::parseString(const std::string& s)
 	bool closingTag = false;
 	std::string tag;
 
-	for (std::string::const_iterator i = s.begin(), e = s.end(); i != e; ++i)
+	ET_START_ITERATION(s, auto&, c)
 	{
-		const char c = *i;
 		if (c == tagOpening)
 		{
 			readingTag = true;
@@ -301,6 +298,7 @@ CharDescriptorList FontData::parseString(const std::string& s)
 			}
 		}
 	}
+	ET_END_ITERATION
 
 	return result;
 }
@@ -325,9 +323,8 @@ CharDescriptorList FontData::parseString(const std::wstring& s)
 	bool closingTag = false;
 	std::wstring tag;
 
-	for (std::wstring::const_iterator i = s.begin(), e = s.end(); i != e; ++i)
+	ET_START_ITERATION(s, auto&, c)
 	{
-		const wchar_t c = *i;
 		if (c == tagOpening)
 		{
 			readingTag = true;
@@ -399,16 +396,14 @@ CharDescriptorList FontData::parseString(const std::wstring& s)
 			}
 		}
 	}
+	ET_END_ITERATION
 
 	return result;
 }
 
 bool FontData::isUtf8String(const std::string& s) const
 {
-	for (std::string::const_iterator i = s.begin(), e = s.end(); i != e; ++i)
-	{
-		if ((*i & 0x80))
-			return true;
-	}
+	ET_ITERATE(s, auto&, i, if (i & 0x80) return true)
+
 	return false;
 }

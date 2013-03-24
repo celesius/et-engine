@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -31,25 +31,23 @@ void Scene3d::serialize(std::ostream& stream)
 	serializeInt(stream, StorageVersionLatest);
 
 	serializeInt(stream, storages.size());
-	for (Element::List::iterator i = storages.begin(), e = storages.end(); i != e; ++i)
+	ET_START_ITERATION(storages, Scene3dStorage::Pointer, s)
 	{
-		Scene3dStorage::Pointer s = *i;
-
 		serializeChunk(stream, HeaderMaterials);
 		serializeInt(stream, s->materials().size());
-		for (Material::List::const_iterator mi = s->materials().begin(), me = s->materials().end(); mi != me; ++mi)
+		ET_ITERATE(s->materials(), auto&, mi,
 		{
-			serializeInt(stream, reinterpret_cast<int>(mi->ptr()));
-			(*mi)->serialize(stream);
-		}
+			serializeInt(stream, reinterpret_cast<int>(mi.ptr()));
+			mi->serialize(stream);
+		})
 
 		serializeChunk(stream, HeaderVertexArrays);
 		serializeInt(stream, s->vertexArrays().size());
-		for (VertexArrayList::iterator vi = s->vertexArrays().begin(), ve = s->vertexArrays().end(); vi != ve; ++vi)
+		ET_ITERATE(s->vertexArrays(), auto&, vi,
 		{
-			serializeInt(stream, reinterpret_cast<int>(vi->ptr()));
-			(*vi)->serialize(stream);
-		}
+			serializeInt(stream, reinterpret_cast<int>(vi.ptr()));
+			vi->serialize(stream);
+		})
 
 		IndexArray::Pointer ia = s->indexArray();
 
@@ -58,12 +56,14 @@ void Scene3d::serialize(std::ostream& stream)
 		serializeInt(stream, reinterpret_cast<int>(ia.ptr()));
 		ia->serialize(stream);
 	}
+	ET_END_ITERATION
 
 	serializeChunk(stream, HeaderElements);
 	ElementContainer::serialize(stream, SceneVersionLatest);
 }
 
-bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory, const std::string& basePath)
+bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc,
+	CustomElementFactory* factory, const std::string& basePath)
 {
 	if (stream.fail()) 
     {
@@ -120,7 +120,8 @@ bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 }
 
 
-Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, RenderContext* rc, TextureCache& tc, const std::string& basePath)
+Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, RenderContext* rc,
+	TextureCache& tc, const std::string& basePath)
 {
 	Scene3dStorage::Pointer result(new Scene3dStorage("storage", 0));
 
@@ -178,13 +179,13 @@ void Scene3d::buildAPIObjects(Scene3dStorage::Pointer p, RenderContext* rc)
 {
 	IndexBuffer ib;
 	VertexArrayList& vertexArrays = p->vertexArrays();
-	for (VertexArrayList::const_iterator i = vertexArrays.begin(), e = vertexArrays.end(); i != e; ++i)
+	ET_START_ITERATION(vertexArrays, auto&, i)
 	{
-		std::string vbName = "vb-" + intToStr((*i)->tag);
-		std::string vaoName = "vao-" + intToStr(p->indexArray()->tag) + "-" + intToStr((*i)->tag);
+		std::string vbName = "vb-" + intToStr(i->tag);
+		std::string vaoName = "vao-" + intToStr(p->indexArray()->tag) + "-" + intToStr(i->tag);
 
 		VertexArrayObject vao = rc->vertexBufferFactory().createVertexArrayObject(vaoName);
-		VertexBuffer vb = rc->vertexBufferFactory().createVertexBuffer(vbName, *i, BufferDrawType_Static);
+		VertexBuffer vb = rc->vertexBufferFactory().createVertexBuffer(vbName, i, BufferDrawType_Static);
 		if (!ib.valid())
 		{
 			std::string ibName = "ib-" + intToStr(p->indexArray()->tag);
@@ -196,6 +197,7 @@ void Scene3d::buildAPIObjects(Scene3dStorage::Pointer p, RenderContext* rc)
 		_vaos.push_back(vao);
 		_vertexBuffers.push_back(vb);
 	}
+	ET_END_ITERATION
 
 	rc->renderState().resetBufferBindings();
 }
@@ -206,7 +208,8 @@ void Scene3d::serialize(const std::string& filename)
 	serialize(file);
 }
 
-bool Scene3d::deserialize(const std::string& filename, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory)
+bool Scene3d::deserialize(const std::string& filename, RenderContext* rc, TextureCache& tc,
+	CustomElementFactory* factory)
 {
 	std::ifstream file(filename.c_str(), std::ios::binary | std::ios::in);
 	bool result = deserialize(file, rc, tc, factory, getFilePath(filename));
@@ -249,14 +252,10 @@ Element::Pointer Scene3d::createElementOfType(size_t type, Element* parent)
 Material Scene3d::materialWithId(int id)
 {
 	Element::List storages = childrenOfType(ElementType_Storage);
-	for (Element::List::iterator si = storages.begin(), se = storages.end(); si != se; ++si)
+	for (auto si = storages.begin(), se = storages.end(); si != se; ++si)
 	{
 		Scene3dStorage* storage = static_cast<Scene3dStorage*>(si->ptr());
-		for (Material::List::const_iterator i = storage->materials().begin(), e = storage->materials().end(); i != e; ++i)
-		{
-			const Material& data = *i;
-			if (data->tag == id) return data;
-		}
+		ET_ITERATE(storage->materials(), auto&, data, if (data->tag == id) return data)
 	}
 	
 	return Material();

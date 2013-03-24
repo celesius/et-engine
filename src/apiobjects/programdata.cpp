@@ -39,7 +39,7 @@ ProgramData::~ProgramData()
 	_rs.programDeleted(_glID);
 }
 
-UniformIterator ProgramData::findUniform(const std::string& name)
+UniformMap::iterator ProgramData::findUniform(const std::string& name)
 {
 	assert(loaded());
 
@@ -90,7 +90,7 @@ GLint ProgramData::getUniformLocation(const std::string& uniform)
 {
 	assert(loaded());
 
-	UniformIterator i = findUniform(uniform);
+	auto i = findUniform(uniform);
 	if (i == _uniforms.end()) return -1;
 
 	return i->second.location;
@@ -100,7 +100,7 @@ GLenum ProgramData::getUniformType(const std::string& uniform)
 {
 	assert(loaded());
 
-	UniformIterator i = findUniform(uniform);
+	auto i = findUniform(uniform);
 	if (i == _uniforms.end()) return 0;
 
 	return i->second.type;
@@ -110,7 +110,7 @@ ProgramUniform ProgramData::getUniform(const std::string& uniform)
 {
 	assert(loaded());
 
-	UniformIterator i = findUniform(uniform);
+	auto i = findUniform(uniform);
 	if (i == _uniforms.end()) return ProgramUniform();
 
 	return i->second;
@@ -299,8 +299,7 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 				log::warning("Undefined vertex attribute: %s", name.data());
 		}
 
-		for (AttribVector::iterator i = _attributes.begin(), e = _attributes.end(); i != e; ++i)
-			glBindAttribLocation(_glID, i->usage, i->name.c_str());
+		ET_ITERATE(_attributes, auto&, i, glBindAttribLocation(_glID, i.usage, i.name.c_str()))
 
 		cStatus = link();
 		_rs.bindProgram(_glID, true);

@@ -61,7 +61,6 @@ namespace et
 	};
 
 	typedef std::vector<VertexElement> VertexElementList;
-	typedef VertexElementList::iterator VertexElementListIterator;
 
 	class VertexDeclaration
 	{

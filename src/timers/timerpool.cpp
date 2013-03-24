@@ -40,7 +40,7 @@ void TimerPoolObject::detachTimedObject(TimedObject* obj)
 	CriticalSectionScope lock(_lock);
 
 	QueueEntry existsAddingEntry(obj, QueueAction_Add);
-	TimerPoolQueue::iterator existsAddingValue = std::find(_queue.begin(), _queue.end(), existsAddingEntry);
+	auto existsAddingValue = std::find(_queue.begin(), _queue.end(), existsAddingEntry);
 	if (existsAddingValue != _queue.end())
 	{
 		if (_updating)
@@ -50,7 +50,7 @@ void TimerPoolObject::detachTimedObject(TimedObject* obj)
 	}
 
 	QueueEntry existsUpdatingEntry(obj, QueueAction_Update);
-	TimerPoolQueue::iterator existsUpdatingValue = std::find(_timedObjects.begin(), _timedObjects.end(), existsUpdatingEntry);
+	auto existsUpdatingValue = std::find(_timedObjects.begin(), _timedObjects.end(), existsUpdatingEntry);
 	if (existsUpdatingValue != _timedObjects.end()) 
 	{
 		if (_updating)
@@ -66,21 +66,20 @@ void TimerPoolObject::update(float t)
 
 	if (_queue.size())
 	{
-		for (TimerPoolQueue::iterator i = _queue.begin(), e = _queue.end(); i != e; ++i)
+		ET_ITERATE(_queue, auto&, i,
 		{
-			if (i->action == QueueAction_Add)
+			if (i.action == QueueAction_Add)
 			{
-				i->action = QueueAction_Update;
-				_timedObjects.push_back(*i);
+				i.action = QueueAction_Update;
+				_timedObjects.push_back(i);
 			}
-		}
-
+		})
 		_queue.clear();
 	}
 
 	_updating = true;
 
-	TimerPoolQueue::iterator i = _timedObjects.begin();
+	auto i = _timedObjects.begin();
 	while (i != _timedObjects.end())
 	{
 		const QueueEntry& obj = *i;

@@ -51,17 +51,19 @@ void ListboxPopup::buildVertices(GuiRenderer& gr)
 		drawColor.w *= _textAlpha;
 
 		vec2 textPos = _owner->_contentOffset + vec2(0.0f, y0);
+		
 		int index = 0;
-		for (StringList::const_iterator i = values.begin(), e = values.end(); i != e; ++i, ++index, row += 1.0f)
+		for (auto i = values.begin(), e = values.end(); i != e; ++i, ++index, row += 1.0f)
 		{
 			if (selectionValid && (_selectedIndex == index))
 			{
 				gr.createImageVertices(_selectionVertices, selection.texture, selection.descriptor, 
-					rect(vec2(0.0f, row * rowSize), vec2(size().x, rowSize)), drawColor, transform, GuiRenderLayer_Layer0);
+					rect(vec2(0.0f, row * rowSize), vec2(size().x, rowSize)), drawColor, transform,
+					GuiRenderLayer_Layer0);
 			}
 
-			gr.createStringVertices(_textVertices, _owner->_font->buildString(*i), ElementAlignment_Near, ElementAlignment_Near,
-									textPos, drawColor, transform, GuiRenderLayer_Layer1);
+			gr.createStringVertices(_textVertices, _owner->_font->buildString(*i), ElementAlignment_Near,
+				ElementAlignment_Near, textPos, drawColor, transform, GuiRenderLayer_Layer1);
 			textPos.y += dy;
 		}
 	}
