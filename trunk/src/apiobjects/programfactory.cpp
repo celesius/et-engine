@@ -186,13 +186,13 @@ void ProgramFactory::parseSourceCode(ShaderType type, std::string& source, const
 	if ((source.length() == 0) || (source == ProgramData::emptyShaderSource)) return;
 
 	std::string header = _commonHeader;
+	
 	if (type == ShaderType_Vertex)
 		header += _vertShaderHeader;
 	else if (type == ShaderType_Fragment)
 		header += _fragShaderHeader;
-	
-	for (ProgramDefinesList::const_iterator i = defines.begin(), e = defines.end(); i != e; ++i)
-		header += "\n#define " + *i;
+
+	ET_ITERATE(defines, auto&, i, header += "\n#define " + i);
 
 	source = header + "\n" + source;
 

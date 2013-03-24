@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -178,7 +178,8 @@ void Mesh::setNumIndexes(size_t num)
 const Mesh* Mesh::currentLod() const
 {
 	if (_selectedLod == 0) return this;
-	LodMap::const_iterator i = _lods.find(_selectedLod);
+	
+	auto i = _lods.find(_selectedLod);
 	return (i == _lods.end()) ? this : i->second.ptr();
 }
 

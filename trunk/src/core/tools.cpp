@@ -302,10 +302,7 @@ namespace et
 	std::ostream& operator << (std::ostream& stream, const StringList& list)
 	{
 		stream << "{" << std::endl;
-		
-		for (StringList::const_iterator i = list.begin(), e = list.end(); i != e; ++i)
-			stream << "\t" << *i << std::endl;
-
+		ET_ITERATE(list, auto, i, stream << "\t" << i << std::endl);
 		stream << "}" << std::endl;
 		
 		return stream;

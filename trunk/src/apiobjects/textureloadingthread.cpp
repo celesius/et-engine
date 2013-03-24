@@ -13,8 +13,7 @@ using namespace et;
 
 TextureLoaderDelegate::~TextureLoaderDelegate()
 {
-	for (TextureLoadingRequestList::iterator i = _requests.begin(), e = _requests.end(); i != e; ++i)
-		(*i)->discardDelegate();
+	ET_ITERATE(_requests, auto, i, i->discardDelegate())
 }
 
 TextureLoadingRequest::TextureLoadingRequest(const std::string& name, size_t scrScale, const Texture& tex,
@@ -33,7 +32,7 @@ TextureLoadingRequest::~TextureLoadingRequest()
 
 void TextureLoadingRequest::discardDelegate()
 {
-	delegate = 0; 
+	delegate = nullptr;
 }
 
 TextureLoadingThread::TextureLoadingThread(TextureLoadingThreadDelegate* delegate) :
@@ -69,8 +68,6 @@ TextureLoadingRequest* TextureLoadingThread::dequeRequest()
 
 ThreadResult TextureLoadingThread::main()
 {
-	log::info("main started!");
-	
 	while (running())
 	{
 		TextureLoadingRequest* req = dequeRequest();
@@ -80,7 +77,8 @@ ThreadResult TextureLoadingThread::main()
 			req->textureDescription = TextureLoader::load(req->fileName, req->screenScale);
 
 			Invocation1 invocation;
-			invocation.setTarget(_delegate, &TextureLoadingThreadDelegate::textureLoadingThreadDidLoadTextureData, req);
+			invocation.setTarget(_delegate,
+				&TextureLoadingThreadDelegate::textureLoadingThreadDidLoadTextureData, req);
 			invocation.invokeInMainRunLoop();
 		}
 		else
@@ -88,19 +86,18 @@ ThreadResult TextureLoadingThread::main()
 			suspend();
 		}
 	}
-	
-	log::info("main fininshed!");
 
 	return 0;
 }
 
-void TextureLoadingThread::addRequest(const std::string& fileName, size_t scrScale, Texture texture, TextureLoaderDelegate* delegate)
+void TextureLoadingThread::addRequest(const std::string& fileName, size_t scrScale, Texture texture,
+	TextureLoaderDelegate* delegate)
 {
 	CriticalSectionScope lock(_requestsCriticalSection);
 	_requests.push(new TextureLoadingRequest(fileName, scrScale, texture, delegate));
 
-	if (!running())
-		run();
-	else
+	if (running())
 		resume();
+	else
+		run();
 }

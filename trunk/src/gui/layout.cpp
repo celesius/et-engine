@@ -43,8 +43,7 @@ void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, GuiRen
 	
 	element->addToRenderQueue(rc, gr);
 
-	for (Element::List::iterator i = element->children().begin(), e = element->children().end(); i != e; ++i)
-		addElementToRenderQueue(i->ptr(), rc, gr);
+	ET_ITERATE(element->children(), auto&, i, addElementToRenderQueue(i.ptr(), rc, gr))
 
 	element->addToOverlayRenderQueue(rc, gr);
 
@@ -58,11 +57,8 @@ void Layout::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 {
 	gr.resetClipRect();
 
-	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
-		addElementToRenderQueue(i->ptr(), rc, gr);
-
-	for (Element::List::iterator i = _topmostElements.begin(), e = _topmostElements.end(); i != e; ++i)
-		(*i)->addToRenderQueue(rc, gr);
+	ET_ITERATE(children(), auto&, i, addElementToRenderQueue(i.ptr(), rc, gr))
+	ET_ITERATE(_topmostElements, auto&, i, i->addToRenderQueue(rc, gr))
 
 	_valid = true;
 }
@@ -229,12 +225,11 @@ Element* Layout::activeElement(const PointerInputInfo& p)
 	if (!_valid)
 	{
 		_topmostElements.clear();
-		for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
-			collectTopmostElements(i->ptr());
+		ET_ITERATE(children(), auto&, i, collectTopmostElements(i.ptr()))
 	}
 
 	Element* active = 0;
-	for (Element::List::reverse_iterator i = _topmostElements.rbegin(), e = _topmostElements.rend(); i != e; ++i)
+	for (auto i = _topmostElements.rbegin(), e = _topmostElements.rend(); i != e; ++i)
 	{
 		active = getActiveElement(p, i->ptr());
 		if (active)	break;
@@ -242,7 +237,7 @@ Element* Layout::activeElement(const PointerInputInfo& p)
 
 	if (!active)
 	{
-		for (Element::List::reverse_iterator i = children().rbegin(), e = children().rend(); i != e; ++i)
+		for (auto i = children().rbegin(), e = children().rend(); i != e; ++i)
 		{
 			active = getActiveElement(p, i->ptr());
 			if (active)	break;
@@ -340,8 +335,7 @@ void Layout::collectTopmostElements(Element* element)
 	if (element->hasFlag(ElementFlag_RenderTopmost))
 		_topmostElements.push_back(Element::Pointer(element));
 
-	for (Element::List::iterator i = element->children().begin(), e = element->children().end(); i != e; ++i)
-		collectTopmostElements(i->ptr());
+	ET_ITERATE(element->children(), auto&, i, collectTopmostElements(i.ptr()))
 }
 
 void Layout::initRenderingElement(et::RenderContext* rc)

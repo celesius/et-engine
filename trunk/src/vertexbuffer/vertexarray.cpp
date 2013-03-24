@@ -18,8 +18,8 @@ VertexArray::VertexArray() : tag(0), _decl(true), _size(0), _smoothing(Usage_Smo
 	
 }
 
-VertexArray::VertexArray(const VertexDeclaration& decl, size_t size) : tag(0), _decl(decl.interleaved()), _size(size), 
-	_smoothing(Usage_Smoothing, Type_Int, size)
+VertexArray::VertexArray(const VertexDeclaration& decl, size_t size) : tag(0), _decl(decl.interleaved()),
+	_size(size), _smoothing(Usage_Smoothing, Type_Int, size)
 {
 	for (size_t i = 0; i < decl.numElements(); ++i)
 	{
@@ -37,31 +37,26 @@ VertexArray::Description VertexArray::generateDescription() const
 	Description desc;
 	desc.declaration = VertexDeclaration(_decl.interleaved());
 
-	for (VertexDataChunkList::const_iterator i = _chunks.begin(), e = _chunks.end(); i != e; ++i)
+	ET_START_ITERATION(_chunks, auto&, chunk)
 	{
-		VertexDataChunk chunk = *i;
-
 		size_t t_stride = _decl.interleaved() ? static_cast<int>(_decl.dataSize()) : 0;
 		size_t t_offset = _decl.interleaved() ? offset : static_cast<int>(dataSize);
-
 		desc.declaration.push_back(VertexElement(chunk->usage(), chunk->type(), t_stride, t_offset));
-
 		dataSize += chunk->dataSize();
 		offset += chunk->typeSize();
 	}
+	ET_END_ITERATION
 
 	desc.data.resize(dataSize);
 	size_t numElements = dataSize / desc.declaration.dataSize();
 	char* ptr0 = desc.data.binary();
 
 	size_t entry_i = 0;
-	for (VertexDataChunkList::const_iterator i = _chunks.begin(), e = _chunks.end(); i != e; ++i, ++entry_i)
+	ET_START_ITERATION(_chunks, auto&, chunk)
 	{
-		const VertexDataChunk& chunk = *i;
 		const char* chunkData = chunk->data();
 		size_t chunkDataSize = chunk->dataSize();
-
-		size_t chunkOffset = desc.declaration[entry_i].offset();
+		size_t chunkOffset = desc.declaration[entry_i++].offset();
 		if (desc.declaration.interleaved())
 		{
 			for (size_t j = 0; j < numElements; ++j)
@@ -69,11 +64,9 @@ VertexArray::Description VertexArray::generateDescription() const
 				size_t dstPtrOffset = chunkOffset + j * offset;
 				assert(dstPtrOffset < desc.data.dataSize());
 				char* dstPtr = ptr0 + dstPtrOffset;
-
 				size_t srcPtrOffset = j * chunk->typeSize();
 				assert(srcPtrOffset < chunkDataSize);
 				const char* srcPtr = chunkData + srcPtrOffset;
-
 				etCopyMemory(dstPtr, srcPtr, chunk->typeSize());
 			}
 		}
@@ -81,27 +74,24 @@ VertexArray::Description VertexArray::generateDescription() const
 		{
 			etCopyMemory(ptr0 + chunkOffset, chunkData, chunkDataSize);
 		}
-	} 
+	}
+	ET_END_ITERATION
 
 	return desc;
 }
 
 VertexDataChunk VertexArray::chunk(VertexAttributeUsage usage)
 {
-	for (VertexDataChunkList::iterator i = _chunks.begin(), e = _chunks.end(); i != e; ++i)
-	{
-		if (i->ptr()->usage() == usage)
-			return *i;
-	}
-
+	ET_ITERATE(_chunks, auto&, i, if (i.ptr()->usage() == usage) return i);
+	
 	return VertexDataChunk();
 }
 
 void VertexArray::increase(size_t count)
 {
 	_size += count;
-	for (VertexDataChunkList::iterator i = _chunks.begin(), e = _chunks.end(); i != e; ++i)
-		(*i)->fitToSize(_size);
+	
+	ET_ITERATE(_chunks, auto&, i, i->fitToSize(_size));
 
 	_smoothing->fitToSize(_size);
 }
@@ -111,8 +101,8 @@ void VertexArray::fitToSize(size_t count)
 	if (_size >= count) return;
 
 	_size = count;
-	for (VertexDataChunkList::iterator i = _chunks.begin(), e = _chunks.end(); i != e; ++i)
-		(*i)->fitToSize(count);
+	
+	ET_ITERATE(_chunks, auto&, i, i->fitToSize(count));
 
 	_smoothing->fitToSize(_size);
 }
@@ -121,10 +111,11 @@ void VertexArray::serialize(std::ostream& stream)
 {
 	serializeInt(stream, VertexArrayCurrentId);
 	_decl.serialize(stream);
+
 	serializeInt(stream, static_cast<int>(_size));
 	serializeInt(stream, static_cast<int>(_chunks.size()));
-	for (VertexDataChunkList::iterator i = _chunks.begin(), e = _chunks.end(); i != e; ++i)
-		(*i)->serialize(stream);
+	ET_ITERATE(_chunks, auto&, i, i->serialize(stream));
+	
 	_smoothing->serialize(stream);
 }
 

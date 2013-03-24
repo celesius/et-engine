@@ -60,8 +60,7 @@ namespace et
 	template <typename T>
 	Hierarchy<T>::~Hierarchy()
 	{
-		for (typename Hierarchy<T>::List::iterator i = _children.begin(), e =  _children.end(); i != e; ++i)
-			(*i)->removeParent();
+		ET_ITERATE(_children, auto&, i, i->removeParent())
 	}
 
 	template <typename T>
@@ -92,7 +91,7 @@ namespace et
 		if (c == this) return false;
 
 		bool notFound = true;
-		for (typename Hierarchy<T>::List::const_iterator i = _children.begin(), e =  _children.end(); i != e; ++i)
+		for (auto i = _children.begin(), e = _children.end(); i != e; ++i)
 		{
 			if (*i == c)
 			{
@@ -111,8 +110,8 @@ namespace et
 	bool Hierarchy<T>::removeChild(T* c)
 	{
 		bool found = false;
-
-		for (typename Hierarchy<T>::List::iterator i = _children.begin(), e =  _children.end(); i != e; ++i)
+		
+		for (auto i = _children.begin(), e = _children.end(); i != e; ++i)
 		{
 			if (*i == c)
 			{
@@ -129,7 +128,7 @@ namespace et
 	template <typename T>
 	void Hierarchy<T>::bringToFront(T* c)
 	{
-		for (typename Hierarchy<T>::List::iterator i = _children.begin(), e =  _children.end(); i != e; ++i)
+		for (auto i = _children.begin(), e = _children.end(); i != e; ++i)
 		{
 			if (*i == c)
 			{
@@ -143,7 +142,7 @@ namespace et
 	template <typename T>
 	void Hierarchy<T>::sendToBack(T* c)
 	{
-		for (typename Hierarchy<T>::List::iterator i = _children.begin(), e =  _children.end(); i != e; ++i)
+		for (auto i = _children.begin(), e = _children.end(); i != e; ++i)
 		{
 			if (*i == c)
 			{

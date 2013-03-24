@@ -48,8 +48,8 @@ MaterialData::MaterialData() :
 	setVector(MaterialParameter_DiffuseColor, vec4(1.0f));
 }
 
-MaterialData::MaterialData(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath) :
-	APIObjectData("default"), _blend(Blend_Disabled), _depthMask(true)
+MaterialData::MaterialData(std::istream& stream, RenderContext* rc, TextureCache& cache,
+	const std::string& texturesBasePath) : APIObjectData("default"), _blend(Blend_Disabled), _depthMask(true)
 {
 	deserialize(stream, rc, cache, texturesBasePath);
 }
@@ -105,44 +105,30 @@ void MaterialData::serialize(std::ostream& stream) const
 	}
 
 	serializeInt(stream, static_cast<int>(_customIntParameters.size()));
-	for (CustomIntParameters::const_iterator i = _customIntParameters.begin(), e = _customIntParameters.end(); i != e; ++i)
-	{
-		serializeInt(stream, i->first);
-		serializeInt(stream, i->second);
-	}
+	ET_ITERATE(_customIntParameters, auto&, i, serializeInt(stream, i.first);
+		serializeInt(stream, i.second))
 
 	serializeInt(stream, static_cast<int>(_customFloatParameters.size()));
-	for (CustomFloatParameters::const_iterator i = _customFloatParameters.begin(), e = _customFloatParameters.end(); i != e; ++i)
-	{
-		serializeInt(stream, i->first);
-		serializeFloat(stream, i->second);
-	}
+	ET_ITERATE(_customFloatParameters, auto&, i, serializeInt(stream, i.first);
+		serializeFloat(stream, i.second))
 
 	serializeInt(stream, static_cast<int>(_customVectorParameters.size()));
-	for (CustomVectorParameters::const_iterator i = _customVectorParameters.begin(), e = _customVectorParameters.end(); i != e; ++i)
-	{
-		serializeInt(stream, i->first);
-		serializeVector(stream, i->second);
-	}
+	ET_ITERATE(_customVectorParameters, auto&, i, serializeInt(stream, i.first);
+		serializeVector(stream, i.second))
 
 	serializeInt(stream, static_cast<int>(_customTextureParameters.size()));
-	for (CustomTextureParameters::const_iterator i = _customTextureParameters.begin(), e = _customTextureParameters.end(); i != e; ++i)
-	{
-		std::string path = i->second.valid() ? i->second->name() : std::string();
-		serializeInt(stream, i->first);
-		serializeString(stream, path);
-	}
+	ET_ITERATE(_customTextureParameters, auto&, i, serializeInt(stream, i.first);
+		std::string path = i.second.valid() ? i.second->name() : std::string();
+		serializeInt(stream, i.first);
+		serializeString(stream, path));
 
 	serializeInt(stream, static_cast<int>(_customStringParameters.size()));
-	for (CustomStringParameters::const_iterator i = _customStringParameters.begin(), e = _customStringParameters.end(); i != e; ++i)
-	{
-		serializeInt(stream, i->first);
-		serializeString(stream, i->second);
-	}
-
+	ET_ITERATE(_customStringParameters, auto&, i, serializeInt(stream, i.first);
+		serializeString(stream, i.second))
 }
 
-void MaterialData::deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath)
+void MaterialData::deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache,
+	const std::string& texturesBasePath)
 {
 	int version = deserializeInt(stream);
 
@@ -158,7 +144,8 @@ void MaterialData::deserialize(std::istream& stream, RenderContext* rc, TextureC
 		deserialize3(stream, rc, cache, texturesBasePath);
 }
 
-void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath)
+void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, TextureCache& cache,
+	const std::string& texturesBasePath)
 {
 	size_t count = deserializeInt(stream);
 	for (size_t i = 0; i < count; ++i)
@@ -214,7 +201,8 @@ void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, Texture
 	}
 }
 
-void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath)
+void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, TextureCache& cache,
+	const std::string& texturesBasePath)
 {
 	size_t count = deserializeInt(stream);
 	for (size_t i = 0; i < count; ++i)
@@ -270,7 +258,8 @@ void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, Texture
 	}
 }
 
-void MaterialData::deserialize3(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath)
+void MaterialData::deserialize3(std::istream& stream, RenderContext* rc, TextureCache& cache,
+	const std::string& texturesBasePath)
 {
 	int numParameters = deserializeInt(stream);
 	for (int i = 0; i < numParameters; ++i)
@@ -333,7 +322,7 @@ const int MaterialData::getInt(size_t param) const
 	if (param < MaterialParameter_max)
 		return _defaultIntParameters[param].value;
 
-	CustomIntParameters::const_iterator i = _customIntParameters.find(param);
+	auto i = _customIntParameters.find(param);
 	return i == _customIntParameters.end() ? 0 : i->second; 
 }
 
@@ -342,7 +331,7 @@ const float MaterialData::getFloat(size_t param) const
 	if (param < MaterialParameter_max)
 		return _defaultFloatParameters[param].value;
 
-	CustomFloatParameters::const_iterator i = _customFloatParameters.find(param);
+	auto i = _customFloatParameters.find(param);
 	return i == _customFloatParameters.end() ? 0 : i->second; 
 }
 
@@ -351,7 +340,7 @@ const vec4& MaterialData::getVector(size_t param) const
 	if (param < MaterialParameter_max)
 		return _defaultVectorParameters[param].value;
 
-	CustomVectorParameters::const_iterator i = _customVectorParameters.find(param);
+	auto i = _customVectorParameters.find(param);
 	return i == _customVectorParameters.end() ? _emptyVector : i->second; 
 }
 
@@ -360,7 +349,7 @@ const std::string& MaterialData::getString(size_t param) const
 	if (param < MaterialParameter_max)
 		return _defaultStringParameters[param].value;
 
-	CustomStringParameters::const_iterator i = _customStringParameters.find(param);
+	auto i = _customStringParameters.find(param);
 	return i == _customStringParameters.end() ? _emptyString : i->second; 
 }
 
@@ -369,7 +358,7 @@ const Texture& MaterialData::getTexture(size_t param) const
 	if (param < MaterialParameter_max)
 		return _defaultTextureParameters[param].value;
 
-	CustomTextureParameters::const_iterator i = _customTextureParameters.find(param);
+	auto i = _customTextureParameters.find(param);
 	return i == _customTextureParameters.end() ? _emptyTexture : i->second; 
 }
 

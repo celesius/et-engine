@@ -43,14 +43,13 @@ bool VertexDeclaration::push_back(const VertexElement& element)
 	if (has(element.usage())) return false;
 
 	_usageMask = _usageMask | vertexAttributeUsageMask(element.usage());
-
+	
 	_totalSize += vertexAttributeTypeSize(element.type());
 	_list.push_back(element);
 
 	if (_interleaved)
 	{
-		for (VertexElementListIterator i = _list.begin(), e = _list.end(); i != e; ++i)
-			i->setStride(static_cast<int>(_totalSize));
+		ET_ITERATE(_list, auto&, i, i.setStride(static_cast<int>(_totalSize)));
 	}
 
 	return true;
@@ -58,7 +57,7 @@ bool VertexDeclaration::push_back(const VertexElement& element)
 
 bool VertexDeclaration::remove(VertexAttributeUsage usage)
 {
-	VertexElementList::iterator i = std::find(_list.begin(), _list.end(), usage);
+	auto i = std::find(_list.begin(), _list.end(), usage);
 	if (i == _list.end()) return false;
 
 	_list.erase(i);
@@ -92,8 +91,8 @@ bool VertexDeclaration::operator == (const VertexDeclaration& r) const
 {
 	if ((r._interleaved != _interleaved) || (_list.size() != r._list.size())) return false;
 
-	VertexElementList::const_iterator si = _list.begin();
-	VertexElementList::const_iterator ri = r._list.begin();
+	auto si = _list.begin();
+	auto ri = r._list.begin();
 	while ((si != _list.end()) && (ri != r._list.end()))
 	{
 		if ((*si) != (*ri))	return false;
@@ -109,13 +108,14 @@ void VertexDeclaration::serialize(std::ostream& stream)
 	serializeInt(stream, _interleaved);
 	serializeInt(stream, static_cast<int>(_totalSize));
 	serializeInt(stream, static_cast<int>(_list.size()));
-	for (VertexElementList::iterator i = _list.begin(), e = _list.end(); i != e; ++i)
+	ET_START_ITERATION(_list, auto&, i)
 	{
-		serializeInt(stream, i->usage());
-		serializeInt(stream, i->type());
-		serializeInt(stream, i->stride());
-		serializeInt(stream, static_cast<int>(i->offset()));
+		serializeInt(stream, i.usage());
+		serializeInt(stream, i.type());
+		serializeInt(stream, i.stride());
+		serializeInt(stream, static_cast<int>(i.offset()));
 	}
+	ET_END_ITERATION
 }
 
 void VertexDeclaration::deserialize(std::istream& stream)

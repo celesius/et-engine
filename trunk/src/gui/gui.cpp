@@ -25,7 +25,7 @@ bool Gui::pointerPressed(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
 
-	for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
+	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
 		if ((*i)->layout->pointerPressed(p))
 			return true;
@@ -37,7 +37,7 @@ bool Gui::pointerMoved(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
 
-	for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
+	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
 		if ((*i)->layout->pointerMoved(p))
 			return true;
@@ -50,7 +50,7 @@ bool Gui::pointerReleased(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
 
-	for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
+	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
 		if ((*i)->layout->pointerReleased(p))
 			return true;
@@ -63,7 +63,7 @@ bool Gui::pointerCancelled(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
 	
-	for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
+	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
 		if ((*i)->layout->pointerCancelled(p))
 			return true;
@@ -76,7 +76,7 @@ bool Gui::pointerScrolled(const et::PointerInputInfo& p)
 {
 	if (animatingTransition()) return true;
 
-	for (LayoutEntryStack::reverse_iterator i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
+	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
 		if ((*i)->layout->pointerScrolled(p))
 			return true;
@@ -120,9 +120,8 @@ void Gui::layout(const vec2& size)
 	_renderer.setProjectionMatrices(size);
 	_background.setFrame(0.5f * size, size);
 	_backgroundValid = false;
-	
-	for (LayoutEntryStack::iterator i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
-		(*i)->layout->layout(size);
+
+	ET_ITERATE(_layouts, auto&, i, i->layout->layout(size))
 }
 
 void Gui::render(RenderContext* rc)
@@ -138,14 +137,13 @@ void Gui::render(RenderContext* rc)
 		_renderer.render(rc);
 	}
 
-	for (LayoutEntryStack::iterator i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
+	ET_ITERATE(_layouts, auto&, obj,
 	{
-		LayoutEntry& obj = *i;
 		buildLayoutVertices(rc, obj->layout->renderingElement(), obj->layout);
 		_renderer.setCustomAlpha(obj->offsetAlpha.z);
 		_renderer.setCustomOffset(obj->offsetAlpha.xy());
 		_renderer.render(rc);
-	}
+	})
 
 	_renderer.endRender(rc);
 }
@@ -196,7 +194,7 @@ void Gui::internal_replaceTopmostLayout(Layout::Pointer newLayout, AnimationDesc
 
 void Gui::internal_replaceLayout(LayoutPair l, AnimationDescriptor desc)
 {
-	LayoutEntryStack::iterator i = _layouts.begin();
+	auto i = _layouts.begin();
 	while (i != _layouts.end())
 	{
 		if ((*i)->layout == l.oldLayout)
@@ -279,7 +277,7 @@ void Gui::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntryObject* n
 
 void Gui::removeLayoutFromList(Layout::Pointer ptr)
 {
-	for (LayoutEntryStack::iterator i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
+	for (auto i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
 	{
 		if ((*i)->layout == ptr)
 		{
@@ -291,7 +289,7 @@ void Gui::removeLayoutFromList(Layout::Pointer ptr)
 
 void Gui::removeLayoutEntryFromList(LayoutEntryObject* ptr)
 {
-	for (LayoutEntryStack::iterator i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
+	for (auto i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
 	{
 		if (i->ptr() == ptr)
 		{
@@ -323,11 +321,7 @@ bool Gui::hasLayout(Layout::Pointer aLayout)
 {
 	if (aLayout.invalid()) return false;
 
-	for (LayoutEntryStack::iterator i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
-	{
-		if ((*i)->layout == aLayout)
-			return true;
-	}
+	ET_ITERATE(_layouts, auto&, i, if (i->layout == aLayout) return true)
 
 	return false;
 }
@@ -336,22 +330,14 @@ Gui::LayoutEntryObject* Gui::entryForLayout(Layout::Pointer ptr)
 {
 	if (ptr.invalid()) return 0;
 
-	for (LayoutEntryStack::iterator i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
-	{
-		if ((*i)->layout == ptr)
-			return i->ptr();
-	}
+	ET_ITERATE(_layouts, auto&, i, if (i->layout == ptr) return i.ptr())
 
 	return 0;
 }
 
 bool Gui::animatingTransition()
 {
-	for (LayoutEntryStack::iterator i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
-	{
-		if (i->ptr()->state != Gui::LayoutEntryObject::State_Still)
-			return true;
-	}
+	ET_ITERATE(_layouts, auto&, i, if (i.ptr()->state != Gui::LayoutEntryObject::State_Still) return true)
 
 	return false;
 }
@@ -360,9 +346,8 @@ bool Gui::animatingTransition()
  * Layout Entry
  */
 
-Gui::LayoutEntryObject::LayoutEntryObject(Gui* own, RenderContext* rc, Layout::Pointer l) : 
-	owner(own),	layout(l), animator(0), 
-	offsetAlpha(0.0f, 0.0f, 1.0f), state(Gui::LayoutEntryObject::State_Still)
+Gui::LayoutEntryObject::LayoutEntryObject(Gui* own, RenderContext* rc, Layout::Pointer l) :  owner(own),
+	layout(l), animator(0),  offsetAlpha(0.0f, 0.0f, 1.0f), state(Gui::LayoutEntryObject::State_Still)
 {
 	l->initRenderingElement(rc);
 }
