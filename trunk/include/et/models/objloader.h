@@ -45,7 +45,7 @@ namespace et
 		};
 
 		typedef std::vector<vec3> vec3List;
-		typedef Vector2List vec2List;
+		typedef std::vector<vec2> vec2List;
 		typedef std::vector<OBJVertex> VertexList;
 
 		struct OBJMeshIndexBounds
