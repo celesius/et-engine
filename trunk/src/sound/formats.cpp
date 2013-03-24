@@ -1,7 +1,7 @@
-#include <stdint.h>
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
 #include <et/core/tools.h>
+#include <et/core/stream.h>
 #include <et/sound/formats.h>
 
 using namespace et;
@@ -183,29 +183,29 @@ double _af_convert_from_ieee_extended (const unsigned char *bytes)
 
 Description::Pointer et::audio::loadWAVFile(const std::string& fileName)
 {
-	std::ifstream file(fileName.c_str(), std::ios::in | std::ios::binary);
-	if (file.fail())
+	InputStream file(fileName, StreamMode_Binary);
+	if (file.invalid())
 	{
 		std::cout << "Unable to load WAV from file " << fileName << std::endl;
 		return Description::Pointer();
 	}
 
 	WAVFileChunk fileChunk = { };
-	file.read(reinterpret_cast<char*>(&fileChunk), sizeof(fileChunk));
+	file.stream().read(reinterpret_cast<char*>(&fileChunk), sizeof(fileChunk));
 	if (fileChunk.id.nID != WAVFileChunkID)
 		return Description::Pointer();
 
 	Description* result = 0;
 
-	while (!file.eof() && file.good())
+	while (!file.stream().eof() && file.stream().good())
 	{
 		AudioFileChunk chunk = { };
-		file.read(reinterpret_cast<char*>(&chunk), sizeof(chunk));
+		file.stream().read(reinterpret_cast<char*>(&chunk), sizeof(chunk));
 
 		if (chunk.id.nID == WAVFormatChunkID)
 		{
 			WAVFormatChunk fmt = { };
-			file.read(reinterpret_cast<char*>(&fmt), sizeof(fmt));
+			file.stream().read(reinterpret_cast<char*>(&fmt), sizeof(fmt));
 
 			result = new Description;
 			result->source = fileName;
@@ -219,12 +219,12 @@ Description::Pointer et::audio::loadWAVFile(const std::string& fileName)
 			result->data.resize(chunk.size);
 			result->duration = static_cast<float>(result->data.dataSize()) / (
 				static_cast<float>(result->sampleRate * result->channels * result->bitDepth / 8));
-			file.read(result->data.binary(), chunk.size);
+			file.stream().read(result->data.binary(), chunk.size);
 		}
 		else if (chunk.size > 0)
 		{
 			BinaryDataStorage data(chunk.size);
-			file.read(data.binary(), chunk.size);
+			file.stream().read(data.binary(), chunk.size);
 		}
 		else 
 		{
@@ -243,26 +243,26 @@ Description::Pointer et::audio::loadCAFFile(const std::string& fileName)
 
 Description::Pointer et::audio::loadAIFFile(const std::string& fileName)
 {
-	std::ifstream file(fileName.c_str(), std::ios::in | std::ios::binary);
-	if (file.fail())
+	InputStream file(fileName, StreamMode_Binary);
+	if (file.invalid())
 		return Description::Pointer();
 
 	AIFFFileChunk header = { };
-	file.read(reinterpret_cast<char*>(&header), sizeof(header));
+	file.stream().read(reinterpret_cast<char*>(&header), sizeof(header));
 	header.ckDataSize = swapEndiannes(header.ckDataSize);
 
 	Description* result = 0;
 
-	while (!file.eof() && !file.fail())
+	while (!file.stream().eof() && !file.stream().fail())
 	{
 		AudioFileChunk chunk = { };
-		file.read(reinterpret_cast<char*>(&chunk), sizeof(chunk));
+		file.stream().read(reinterpret_cast<char*>(&chunk), sizeof(chunk));
 		chunk.size = swapEndiannes(chunk.size);
 
 		if (chunk.id.nID == AIFFCommonChunkID)
 		{
 			AIFFCommonChunk comm = { };
-			file.read(reinterpret_cast<char*>(&comm), chunk.size);
+			file.stream().read(reinterpret_cast<char*>(&comm), chunk.size);
 
 			result = new Description;
 			result->source = fileName;
@@ -274,13 +274,13 @@ Description::Pointer et::audio::loadAIFFile(const std::string& fileName)
 		else if ((chunk.id.nID == AIFFUncompressedDataChunkID) && (result != nullptr))
 		{
 			AIFFSoundDataChunk ssnd = { };
-			file.read(reinterpret_cast<char*>(&ssnd), sizeof(ssnd));
-			file.seekg(ssnd.offset, std::ios::cur);
+			file.stream().read(reinterpret_cast<char*>(&ssnd), sizeof(ssnd));
+			file.stream().seekg(ssnd.offset, std::ios::cur);
 
 			result->data.resize(chunk.size - sizeof(ssnd));
 			result->duration = static_cast<float>(result->data.dataSize()) / 
 				static_cast<float>((result->sampleRate * result->channels * result->bitDepth / 8));
-			file.read(result->data.binary(), result->data.dataSize());
+			file.stream().read(result->data.binary(), result->data.dataSize());
 
 			swapEndiannes(result->data.data(), result->data.dataSize());
 		}
@@ -291,7 +291,7 @@ Description::Pointer et::audio::loadAIFFile(const std::string& fileName)
 		else if (chunk.size > 0)
 		{
 			BinaryDataStorage data(chunk.size);
-			file.read(data.binary(), chunk.size);
+			file.stream().read(data.binary(), chunk.size);
 		}
 		else 
 		{
