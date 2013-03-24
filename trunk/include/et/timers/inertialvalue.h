@@ -51,7 +51,7 @@ namespace et
 
 		void run()
 		{
-			TimedObject::startUpdates(0);
+			TimedObject::startUpdates(nullptr);
 			_time = actualTime();
 		}
 
@@ -81,6 +81,9 @@ namespace et
 		ET_DECLARE_EVENT1(valueUpdated, const T&)
 
 	private:
+
+		void startUpdates(TimerPoolObject* timerPool = 0) override
+			{ TimedObject::startUpdates(timerPool); }
 
 		void update(float t)
 		{

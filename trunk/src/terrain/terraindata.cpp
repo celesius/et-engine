@@ -109,13 +109,13 @@ void TerrainData::generateVertexData(const FloatDataStorage& hm)
 
 	_bounds = AABB(0.5f * (_minVertex + _maxVertex), _maxVertex - _minVertex);
 
-	size_t numTriangles = Primitives::indexCountForRegularMesh(_dimension, GL_TRIANGLES);
+	size_t numTriangles = primitives::indexCountForRegularMesh(_dimension, PrimitiveType_Triangles);
 	IndexArray::Pointer tempIB(new IndexArray(IndexArrayFormat_32bit, numTriangles, PrimitiveType_Triangles));
-	Primitives::buildTrianglesIndexes(tempIB, _dimension, 0, 0);
+	primitives::buildTrianglesIndexes(tempIB, _dimension, 0, 0);
 
 	std::cout << "Computing normals..." << std::endl;
 	IntervalTimer timer(true);
-	Primitives::calculateNormals(_vertexData, tempIB, 0, numTriangles);
+	primitives::calculateNormals(_vertexData, tempIB, 0, numTriangles);
 	std::cout << "Computing normals: done (" << timer.lap() << " msec) " << std::endl << "Computing tangents..." << std::endl;
 //	Primitives::calculateTangents(_terrainData, tempIB);
 	std::cout << "Computing tangents: done (" << timer.lap() << " msec) " << std::endl << "Gathering data..." << std::endl;

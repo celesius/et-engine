@@ -14,21 +14,27 @@ using namespace et;
 inline size_t getIndex(size_t u, size_t v, size_t u_sz, size_t v_sz)
 		{ return clamp<size_t>(u, 0, u_sz - 1) + clamp<size_t>(v, 0, v_sz - 1) * u_sz; }
 
-size_t Primitives::indexCountForRegularMesh(const vec2i& meshSize, size_t geometryType)
+size_t primitives::indexCountForRegularMesh(const vec2i& meshSize, PrimitiveType geometryType)
 {
-	if (geometryType == GL_TRIANGLES)
-		return ( (meshSize.x > 1) ? meshSize.x - 1 : 1 ) * ( (meshSize.y > 1) ? meshSize.y - 1 : 1) * 6;
+	switch (geometryType)
+	{
+		case PrimitiveType_Points:
+			return meshSize.square();
 
-	if (geometryType == GL_TRIANGLE_STRIP)
-		return ( (meshSize.y > 1) ? meshSize.y - 1 : 1) * (2 * meshSize.x + 1) - 1;
+		case PrimitiveType_Triangles:
+			return ( (meshSize.x > 1) ? meshSize.x - 1 : 1 ) * ( (meshSize.y > 1) ? meshSize.y - 1 : 1) * 6;
 
-	if (geometryType == GL_POINTS)
-		return meshSize.square();
+		case PrimitiveType_TriangleStrips:
+			return ( (meshSize.y > 1) ? meshSize.y - 1 : 1) * (2 * meshSize.x + 1) - 1;
+			
+		default:
+			assert("Unimplemented" && 0);
+	}
 
 	return 0;
 }
 
-void Primitives::createPhotonMap(DataStorage<vec2>& buffer, const vec2i& density)
+void primitives::createPhotonMap(DataStorage<vec2>& buffer, const vec2i& density)
 {
 	int numPhotons = density.square();
 
@@ -42,7 +48,7 @@ void Primitives::createPhotonMap(DataStorage<vec2>& buffer, const vec2i& density
 			buffer.push_back(vec2(j * texel.x, i * texel.y) + dxdy);
 }
 
-void Primitives::createSphere(VertexArray::Pointer data, float radius, const vec2i& density, const vec3& center, const vec2& hemiSphere)
+void primitives::createSphere(VertexArray::Pointer data, float radius, const vec2i& density, const vec3& center, const vec2& hemiSphere)
 { 
 	size_t lastIndex = data->size();
 	data->increase(density.square());
@@ -83,7 +89,7 @@ void Primitives::createSphere(VertexArray::Pointer data, float radius, const vec
 	} 
 }
 
-void Primitives::createTorus(VertexArray::Pointer data, float centralRadius, float sizeRadius, const vec2i& density)
+void primitives::createTorus(VertexArray::Pointer data, float centralRadius, float sizeRadius, const vec2i& density)
 {
 	size_t lastIndex = data->size();
 	data->increase(density.square());
@@ -140,7 +146,7 @@ void Primitives::createTorus(VertexArray::Pointer data, float centralRadius, flo
 	} 
 }
 
-void Primitives::createCylinder(VertexArray::Pointer data, float radius, float height, const vec2i& density, const vec3& center)
+void primitives::createCylinder(VertexArray::Pointer data, float radius, float height, const vec2i& density, const vec3& center)
 {
 	size_t lastIndex = data->size();
 	data->increase(density.square());
@@ -188,7 +194,7 @@ void Primitives::createCylinder(VertexArray::Pointer data, float radius, float h
 
 }
 
-void Primitives::createPlane(VertexArray::Pointer data, const vec3& normal, const vec2& size, const vec2i& density, 
+void primitives::createPlane(VertexArray::Pointer data, const vec3& normal, const vec2& size, const vec2i& density, 
 		const vec3& center, const vec2& texCoordScale, const vec2& texCoordOffset)
 {
 	size_t lastIndex = data->size();
@@ -301,7 +307,7 @@ void Primitives::createPlane(VertexArray::Pointer data, const vec3& normal, cons
 	}
 }
 
-IndexType Primitives::buildTriangleStripIndexes(IndexArray::Pointer buffer, const vec2i& dim, IndexType index0, size_t offset)
+IndexType primitives::buildTriangleStripIndexes(IndexArray::Pointer buffer, const vec2i& dim, IndexType index0, size_t offset)
 {
 	size_t k = offset;
 	IndexType rowSize = static_cast<IndexType>(dim.x);
@@ -339,7 +345,7 @@ IndexType Primitives::buildTriangleStripIndexes(IndexArray::Pointer buffer, cons
 	return k; 
 }
 
-IndexType Primitives::buildTrianglesIndexes(IndexArray::Pointer buffer, const vec2i& dim, IndexType vertexOffset, size_t indexOffset)
+IndexType primitives::buildTrianglesIndexes(IndexArray::Pointer buffer, const vec2i& dim, IndexType vertexOffset, size_t indexOffset)
 {
 	size_t k = indexOffset;
 	IndexType rowSize = static_cast<IndexType>(dim.x);
@@ -364,13 +370,13 @@ IndexType Primitives::buildTrianglesIndexes(IndexArray::Pointer buffer, const ve
 	return k;
 }
 
-void Primitives::calculateNormals(VertexArray::Pointer data, const IndexArray::Pointer& buffer, size_t first, size_t last)
+void primitives::calculateNormals(VertexArray::Pointer data, const IndexArray::Pointer& buffer, size_t first, size_t last)
 {
 	VertexDataChunk posChunk = data->chunk(Usage_Position);
 	VertexDataChunk nrmChunk = data->chunk(Usage_Normal);
 	if (!posChunk.valid() || (posChunk->type() != Type_Vec3) || !nrmChunk.valid() || (nrmChunk->type() != Type_Vec3)) 
 	{
-		log::error("Primitives::calculateNormals - data is invalid.");
+		log::error("primitives::calculateNormals - data is invalid.");
 		return;
 	}
 	
@@ -397,7 +403,7 @@ void Primitives::calculateNormals(VertexArray::Pointer data, const IndexArray::P
 	}
 }
 
-void Primitives::calculateTangents(VertexArray::Pointer data, const IndexArray::Pointer& buffer, size_t first, size_t last)
+void primitives::calculateTangents(VertexArray::Pointer data, const IndexArray::Pointer& buffer, size_t first, size_t last)
 {
 	VertexDataChunk posChunk = data->chunk(Usage_Position);
 	VertexDataChunk nrmChunk = data->chunk(Usage_Normal);
@@ -408,7 +414,7 @@ void Primitives::calculateTangents(VertexArray::Pointer data, const IndexArray::
 		!tanChunk.valid() || (tanChunk->type() != Type_Vec3) ||
 		!uvChunk.valid() || (uvChunk->type() != Type_Vec2)) 
 	{
-		log::error("Primitives::calculateTangents - data is invalid.");
+		log::error("primitives::calculateTangents - data is invalid.");
 		return;
 	}
 
@@ -467,13 +473,13 @@ void Primitives::calculateTangents(VertexArray::Pointer data, const IndexArray::
 	}
 }
 
-void Primitives::smoothTangents(VertexArray::Pointer data, const IndexArray::Pointer&, size_t first, size_t last)
+void primitives::smoothTangents(VertexArray::Pointer data, const IndexArray::Pointer&, size_t first, size_t last)
 {
 	VertexDataChunk posChunk = data->chunk(Usage_Position);
 	VertexDataChunk tanChunk = data->chunk(Usage_Tangent);
 	if (!posChunk.valid() || (posChunk->type() != Type_Vec3) || !tanChunk.valid() || (tanChunk->type() != Type_Vec3))
 	{
-		log::error("Primitives::smoothTangents - data is invalid.");
+		log::error("primitives::smoothTangents - data is invalid.");
 		return;
 	}
 

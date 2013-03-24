@@ -156,9 +156,7 @@ namespace et
 		PrimitiveType_Lines,
 		PrimitiveType_Triangles,
 		PrimitiveType_TriangleStrips,
-		
 		PrimitiveType_LineStrip,
-		
 		PrimitiveType_max
 	};
 	
