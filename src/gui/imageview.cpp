@@ -97,7 +97,8 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 		}
 		
 		vec2 origin = 0.5f * (size() - frameSize);
-		g.createImageVertices(_vertices, _texture, _descriptor, rect(origin, frameSize), color(), transform, GuiRenderLayer_Layer0);
+		g.createImageVertices(_vertices, _texture, _descriptor, rect(origin, frameSize),
+			color(), transform, GuiRenderLayer_Layer0);
 	}
 	else if (_contentMode == ContentMode_Fill)
 	{

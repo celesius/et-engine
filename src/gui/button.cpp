@@ -38,11 +38,11 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 {
 	mat4 transform = finalTransform();
 
-	vec2 imageSize = _image.descriptor.size;
+	vec2 imageSize = absv(_image.descriptor.size);
 	vec2 actualSize = size() + _contentOffset;
 	float maxImageDimension = etMax(imageSize.x, imageSize.y);
-	float maxDimension = etMax(actualSize.x, actualSize.y);
-	float aspect = maxImageDimension / maxDimension;
+	float minDimension = etMin(actualSize.x, actualSize.y);
+	float aspect = maxImageDimension / minDimension;
 	
 	if (aspect > 1.0f)
 		imageSize /= aspect;
@@ -71,7 +71,8 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 	
 	if (_backgroundColor.w > 0.0f)
 	{
-		gr.createColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor, transform, GuiRenderLayer_Layer0);
+		gr.createColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor,
+			transform, GuiRenderLayer_Layer0);
 	}
 
 	if (_background[_state].texture.valid())
@@ -85,8 +86,8 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 		vec4 aColor = _state == ElementState_Pressed ? _textPressedColor : _textColor;
 		if (aColor.w > 0.0f)
 		{
-			gr.createStringVertices(_textVertices, _font->buildString(_title, true), ElementAlignment_Near, ElementAlignment_Near,
-				textOrigin, aColor * alphaScaleColor, transform, GuiRenderLayer_Layer1);
+			gr.createStringVertices(_textVertices, _font->buildString(_title, true), ElementAlignment_Near,
+				ElementAlignment_Near, textOrigin, aColor * alphaScaleColor, transform, GuiRenderLayer_Layer1);
 		}
 	}
 
