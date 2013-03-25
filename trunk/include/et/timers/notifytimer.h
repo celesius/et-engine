@@ -15,7 +15,7 @@ namespace et
 	class NotifyTimer : public TimedObject
 	{
 	public:
-		enum RepeatCountFlag
+		enum
 		{
 			RepeatForever = -1,
 			DontRepear = 0

@@ -5,8 +5,8 @@
 *
 */
 
-#include <fstream>
 #include <et/core/tools.h>
+#include <et/core/stream.h>
 #include <et/locale/locale.h>
 
 using namespace et;
@@ -17,13 +17,17 @@ const char NewLineChar = '\n';
 
 std::string Locale::localeLanguage(size_t locale)
 {
-	char lang[3] = { static_cast<char>(locale & 0x000000ff), static_cast<char>((locale & 0x0000ff00) >> 8), 0 };
+	char lang[3] = { static_cast<char>(locale & 0x000000ff),
+		static_cast<char>((locale & 0x0000ff00) >> 8), 0 };
+	
 	return std::string(lang);
 }
 
 std::string Locale::localeSubLanguage(size_t locale)
 {
-	char lang[3] = { static_cast<char>((locale & 0x00ff0000) >> 16), static_cast<char>((locale & 0xff000000) >> 24), 0 };
+	char lang[3] = { static_cast<char>((locale & 0x00ff0000) >> 16),
+		static_cast<char>((locale & 0xff000000) >> 24), 0 };
+	
 	return std::string(lang);
 }
 
@@ -83,11 +87,11 @@ void Locale::parseLanguageFile(const std::string& fileName)
 {
 	_localeMap.clear();
 
-	std::ifstream file(fileName.c_str(), static_cast<std::ios_base::openmode>(std::ios_base::beg | std::ios_base::binary));
-	if (file.fail()) return;
+	InputStream file(fileName, StreamMode_Binary);
+	if (file.invalid()) return;
 
-	StringDataStorage raw(streamSize(file) + 1, 0);
-	file.read(raw.data(), raw.size());
+	StringDataStorage raw(streamSize(file.stream()) + 1, 0);
+	file.stream().read(raw.data(), raw.size());
 
 	StringDataStorage keyValues(raw.size(), 0);
 
@@ -127,7 +131,10 @@ void Locale::parseLanguageFile(const std::string& fileName)
 		bool isNewLine = (c == 0x0a) || (c == 0x0d);
 		bool hasNextQuoteMark = (i + 1 < sourceLength) && (keyValues[i+1] == KeyChar);
 		bool hasPrevQuoteMark = (i > 0) && (keyValues[i-1] == KeyChar);
-		bool shouldConcatMultiline = ((c == KeyChar) && hasNextQuoteMark) || ((c == KeyChar) && hasPrevQuoteMark);
+		
+		bool shouldConcatMultiline =
+			((c == KeyChar) && hasNextQuoteMark) || ((c == KeyChar) && hasPrevQuoteMark);
+
 		if (isWhiteSpace || isNewLine || shouldConcatMultiline) continue;
 
 		source.push_back(c);
@@ -135,9 +142,10 @@ void Locale::parseLanguageFile(const std::string& fileName)
 	
 	i = 0;
 	while (source[i] && (i < source.size()) && source[i+1])
+	{
 		i = (source[i] == KeyChar) ? parseKey(source, i+1) : ++i;
+	}
 }
-
 
 size_t Locale::parseKey(const StringDataStorage& data, size_t index)
 {
