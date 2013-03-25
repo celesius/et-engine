@@ -33,19 +33,14 @@ void IndexArray::linearize()
 
 IndexType IndexArray::getIndex(size_t pos) const
 {
-	const unsigned char* ptr = _data.element_ptr(pos * _format);
+	IndexType t = *reinterpret_cast<const IndexType*>(_data.element_ptr(pos * _format));
+	
+	if (_format == IndexArrayFormat_16bit)
+		t &= 0x0000ffff;
+	else if (_format == IndexArrayFormat_8bit)
+		t &= 0x000000ff;
 
-	switch (_format)
-	{
-	case IndexArrayFormat_16bit:
-		return *(reinterpret_cast<const ShortIndexType*>(ptr));
-
-	case IndexArrayFormat_8bit:
-		return *(reinterpret_cast<const SmallIndexType*>(ptr));
-
-	default:
-		return *(reinterpret_cast<const IndexType*>(ptr));
-	}
+	return t;
 }
 
 void IndexArray::setIndex(IndexType value, size_t pos)
@@ -183,32 +178,31 @@ IndexArray::PrimitiveIterator::PrimitiveIterator(const IndexArray* ib, size_t p)
 void IndexArray::PrimitiveIterator::configure(size_t p)
 {
 	IndexType i0 = p;
-	IndexType i1 = p;
-	IndexType i2 = p;
+	IndexType i1 = p + 1;
+	IndexType i2 = p + 2;
 
-	if (_ib->primitiveType() == PrimitiveType_Points)
+	switch (_ib->primitiveType())
 	{
-		i1 = InvalidIndex;
-		i2 = InvalidIndex;
-	}
-	else if (_ib->primitiveType() == PrimitiveType_Lines)
-	{
-		i1 = p + 1;
-		i2 = InvalidIndex;
-	}
-	else if (_ib->primitiveType() == PrimitiveType_Triangles)
-	{
-		i1 = p + 1;
-		i2 = p + 2;
-	}
-	else if (_ib->primitiveType() == PrimitiveType_TriangleStrips)
-	{
-		i1 = p + 1;
-		i2 = p + 2;
-	}
-	else
-	{
-		assert(0 && "Invalid PrimitiveType value");
+		case PrimitiveType_Points:
+		{
+			i1 = InvalidIndex;
+			i2 = InvalidIndex;
+			break;
+		}
+			
+		case PrimitiveType_Lines:
+		{
+			i2 = InvalidIndex;
+			break;
+		}
+
+		case PrimitiveType_Triangles:
+		case PrimitiveType_TriangleStrips:
+			break;
+
+		default:
+			assert("Unsupported PrimitiveType value" && 0);
+			return;
 	}
 
 	size_t ibSize = _ib->capacity();

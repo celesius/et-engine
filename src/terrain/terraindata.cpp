@@ -111,21 +111,16 @@ void TerrainData::generateVertexData(const FloatDataStorage& hm)
 
 	size_t numTriangles = primitives::indexCountForRegularMesh(_dimension, PrimitiveType_Triangles);
 	IndexArray::Pointer tempIB(new IndexArray(IndexArrayFormat_32bit, numTriangles, PrimitiveType_Triangles));
+	
 	primitives::buildTrianglesIndexes(tempIB, _dimension, 0, 0);
-
-	std::cout << "Computing normals..." << std::endl;
-	IntervalTimer timer(true);
 	primitives::calculateNormals(_vertexData, tempIB, 0, numTriangles);
-	std::cout << "Computing normals: done (" << timer.lap() << " msec) " << std::endl << "Computing tangents..." << std::endl;
-//	Primitives::calculateTangents(_terrainData, tempIB);
-	std::cout << "Computing tangents: done (" << timer.lap() << " msec) " << std::endl << "Gathering data..." << std::endl;
+	primitives::calculateTangents(_vertexData, tempIB, 0, numTriangles);
 
 	_normals.resize(hm.size());
 	_normals.setOffset(0);
+	
 	for (size_t i = 0; i < hm.size(); ++i)
 		_normals.push_back(nrm[i]);
-
-	std::cout << "Gathering data: done (" << timer.lap() << " msec) " << std::endl;
 }
 
 vec3 TerrainData::normalAtNormalizedPoint(const vec2& normalized) const

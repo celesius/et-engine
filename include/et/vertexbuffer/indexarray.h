@@ -102,11 +102,13 @@ namespace et
 
 			const Primitive& operator *() const
 				{ return _primitive; }
+
 			Primitive& operator *()
 				{ return _primitive; }
 
 			const Primitive& operator ->() const
 				{ return _primitive; }
+			
 			Primitive& operator ->()
 				{ return _primitive; }
 

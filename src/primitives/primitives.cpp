@@ -48,8 +48,9 @@ void primitives::createPhotonMap(DataStorage<vec2>& buffer, const vec2i& density
 			buffer.push_back(vec2(j * texel.x, i * texel.y) + dxdy);
 }
 
-void primitives::createSphere(VertexArray::Pointer data, float radius, const vec2i& density, const vec3& center, const vec2& hemiSphere)
-{ 
+void primitives::createSphere(VertexArray::Pointer data, float radius, const vec2i& density,
+	const vec3& center, const vec2& hemiSphere)
+{
 	size_t lastIndex = data->size();
 	data->increase(density.square());
 
@@ -75,12 +76,19 @@ void primitives::createSphere(VertexArray::Pointer data, float radius, const vec
 		for (int j = 0; j < density.x; ++j)
 		{
 			vec3 p = fromSpherical(theta, phi);
+			
 			if (hasPos)
 				pos[counter] = center + p * radius;
+
 			if (hasNorm)
 				norm[counter] = p;
+
 			if (hasTex)
-				tex[counter] = vec2(static_cast<float>(j) / (density.x - 1), 1.0f - static_cast<float>(i) / (density.y - 1));
+			{
+				tex[counter] = vec2(static_cast<float>(j) / (density.x - 1),
+					1.0f - static_cast<float>(i) / (density.y - 1));
+			}
+			
 			phi += dPhi;
 			++counter;
 		}
@@ -89,7 +97,8 @@ void primitives::createSphere(VertexArray::Pointer data, float radius, const vec
 	} 
 }
 
-void primitives::createTorus(VertexArray::Pointer data, float centralRadius, float sizeRadius, const vec2i& density)
+void primitives::createTorus(VertexArray::Pointer data, float centralRadius, float sizeRadius,
+	const vec2i& density)
 {
 	size_t lastIndex = data->size();
 	data->increase(density.square());
@@ -146,7 +155,8 @@ void primitives::createTorus(VertexArray::Pointer data, float centralRadius, flo
 	} 
 }
 
-void primitives::createCylinder(VertexArray::Pointer data, float radius, float height, const vec2i& density, const vec3& center)
+void primitives::createCylinder(VertexArray::Pointer data, float radius, float height, const vec2i& density,
+	const vec3& center)
 {
 	size_t lastIndex = data->size();
 	data->increase(density.square());
@@ -194,8 +204,8 @@ void primitives::createCylinder(VertexArray::Pointer data, float radius, float h
 
 }
 
-void primitives::createPlane(VertexArray::Pointer data, const vec3& normal, const vec2& size, const vec2i& density, 
-		const vec3& center, const vec2& texCoordScale, const vec2& texCoordOffset)
+void primitives::createPlane(VertexArray::Pointer data, const vec3& normal, const vec2& size,
+	const vec2i& density, const vec3& center, const vec2& texCoordScale, const vec2& texCoordOffset)
 {
 	size_t lastIndex = data->size();
 	data->increase(density.square());
@@ -307,7 +317,8 @@ void primitives::createPlane(VertexArray::Pointer data, const vec3& normal, cons
 	}
 }
 
-IndexType primitives::buildTriangleStripIndexes(IndexArray::Pointer buffer, const vec2i& dim, IndexType index0, size_t offset)
+IndexType primitives::buildTriangleStripIndexes(IndexArray::Pointer buffer, const vec2i& dim,
+	IndexType index0, size_t offset)
 {
 	size_t k = offset;
 	IndexType rowSize = static_cast<IndexType>(dim.x);
@@ -345,7 +356,8 @@ IndexType primitives::buildTriangleStripIndexes(IndexArray::Pointer buffer, cons
 	return k; 
 }
 
-IndexType primitives::buildTrianglesIndexes(IndexArray::Pointer buffer, const vec2i& dim, IndexType vertexOffset, size_t indexOffset)
+IndexType primitives::buildTrianglesIndexes(IndexArray::Pointer buffer, const vec2i& dim,
+	IndexType vertexOffset, size_t indexOffset)
 {
 	size_t k = indexOffset;
 	IndexType rowSize = static_cast<IndexType>(dim.x);
@@ -370,62 +382,77 @@ IndexType primitives::buildTrianglesIndexes(IndexArray::Pointer buffer, const ve
 	return k;
 }
 
-void primitives::calculateNormals(VertexArray::Pointer data, const IndexArray::Pointer& buffer, size_t first, size_t last)
+void primitives::calculateNormals(VertexArray::Pointer data, const IndexArray::Pointer& buffer,
+	size_t first, size_t last)
 {
+	assert(first < last);
+
 	VertexDataChunk posChunk = data->chunk(Usage_Position);
 	VertexDataChunk nrmChunk = data->chunk(Usage_Normal);
-	if (!posChunk.valid() || (posChunk->type() != Type_Vec3) || !nrmChunk.valid() || (nrmChunk->type() != Type_Vec3)) 
+
+	if (posChunk.invalid() || (posChunk->type() != Type_Vec3) || !nrmChunk.valid() ||
+		(nrmChunk->type() != Type_Vec3))
 	{
 		log::error("primitives::calculateNormals - data is invalid.");
 		return;
 	}
-	
-	RawDataAcessor<vec3> pos = posChunk.accessData<vec3>(0);
+
 	RawDataAcessor<vec3> nrm = nrmChunk.accessData<vec3>(0);
-	for (IndexArray::PrimitiveIterator i = buffer->primitive(first), e = buffer->primitive(last); i != e; ++i)
+	for (auto i = buffer->primitive(first), e = buffer->primitive(last); i != e; ++i)
 	{
-		const IndexArray::Primitive& p = (*i);
-		vec3& v0 = pos[p[0]];
-		vec3& v1 = pos[p[1]];
-		vec3& v2 = pos[p[2]];
-		triangle t(v0, v1, v2);
-		vec3 n = plane(t).normal() * t.square();
+		auto p = (*i);
+		nrm[p[0]] = vec3(0.0f);
+		nrm[p[1]] = vec3(0.0f);
+		nrm[p[2]] = vec3(0.0f);
+	}
+
+	RawDataAcessor<vec3> pos = posChunk.accessData<vec3>(0);
+	for (auto i = buffer->primitive(first), e = buffer->primitive(last); i != e; ++i)
+	{
+		auto p = (*i);
+		triangle t(pos[p[0]], pos[p[1]], pos[p[2]]);
+		vec3 n = t.normalizedNormal() * t.square();
 		nrm[p[0]] += n;
 		nrm[p[1]] += n;
 		nrm[p[2]] += n;
 	}
 
-	for (IndexArray::PrimitiveIterator i = buffer->primitive(first), e = buffer->primitive(last); i != e; ++i)
+	for (auto i = buffer->primitive(first), e = buffer->primitive(last); i != e; ++i)
 	{
-		const IndexArray::Primitive& p = (*i);
-		for (size_t k = 0; k < 3; ++k)
-			nrm[p[k]].normalize();
+		auto p = (*i);
+		nrm[p[0]].normalize();
+		nrm[p[1]].normalize();
+		nrm[p[2]].normalize();
 	}
 }
 
-void primitives::calculateTangents(VertexArray::Pointer data, const IndexArray::Pointer& buffer, size_t first, size_t last)
+void primitives::calculateTangents(VertexArray::Pointer data, const IndexArray::Pointer& buffer,
+	size_t first, size_t last)
 {
+	assert(first < last);
+	
 	VertexDataChunk posChunk = data->chunk(Usage_Position);
 	VertexDataChunk nrmChunk = data->chunk(Usage_Normal);
 	VertexDataChunk uvChunk = data->chunk(Usage_TexCoord0);
 	VertexDataChunk tanChunk = data->chunk(Usage_Tangent);
-	if (!posChunk.valid() || (posChunk->type() != Type_Vec3) || 
-		!nrmChunk.valid() || (nrmChunk->type() != Type_Vec3) ||
-		!tanChunk.valid() || (tanChunk->type() != Type_Vec3) ||
-		!uvChunk.valid() || (uvChunk->type() != Type_Vec2)) 
+	
+	if (posChunk.invalid() || (posChunk->type() != Type_Vec3) ||
+		nrmChunk.invalid() || (nrmChunk->type() != Type_Vec3) ||
+		tanChunk.invalid() || (tanChunk->type() != Type_Vec3) ||
+		uvChunk.invalid() || (uvChunk->type() != Type_Vec2))
 	{
 		log::error("primitives::calculateTangents - data is invalid.");
 		return;
 	}
 
-	DataStorage<vec3> tan1(data->size());
-	DataStorage<vec3> tan2(data->size());
+	DataStorage<vec3> tan1(data->size(), 0);
+	DataStorage<vec3> tan2(data->size(), 0);
 
 	RawDataAcessor<vec3> pos = posChunk.accessData<vec3>(0);
 	RawDataAcessor<vec3> nrm = nrmChunk.accessData<vec3>(0);
 	RawDataAcessor<vec3> tan = tanChunk.accessData<vec3>(0);
 	RawDataAcessor<vec2> uv = uvChunk.accessData<vec2>(0);
-	
+
 	for (IndexArray::PrimitiveIterator i = buffer->primitive(first), e = buffer->primitive(last); i != e; ++i)
 	{
 		IndexArray::Primitive& p = (*i);
@@ -473,11 +500,16 @@ void primitives::calculateTangents(VertexArray::Pointer data, const IndexArray::
 	}
 }
 
-void primitives::smoothTangents(VertexArray::Pointer data, const IndexArray::Pointer&, size_t first, size_t last)
+void primitives::smoothTangents(VertexArray::Pointer data, const IndexArray::Pointer&,
+	size_t first, size_t last)
 {
+	assert(first < last);
+	
 	VertexDataChunk posChunk = data->chunk(Usage_Position);
 	VertexDataChunk tanChunk = data->chunk(Usage_Tangent);
-	if (!posChunk.valid() || (posChunk->type() != Type_Vec3) || !tanChunk.valid() || (tanChunk->type() != Type_Vec3))
+	
+	if (posChunk.invalid() || (posChunk->type() != Type_Vec3) || !tanChunk.valid() ||
+		(tanChunk->type() != Type_Vec3))
 	{
 		log::error("primitives::smoothTangents - data is invalid.");
 		return;
@@ -492,7 +524,7 @@ void primitives::smoothTangents(VertexArray::Pointer data, const IndexArray::Poi
 		tanSmooth[p] = tan[p];
 		for (size_t i = p + 1; i < len; ++i)
 		{
-			if ((pos[p] - pos[i]).dotSelf() <= 1.0e-3)
+			if ((pos[p] - pos[i]).dotSelf() <= 1.0e-3f)
 				tanSmooth[p] += tan[i];
 		}
 	}

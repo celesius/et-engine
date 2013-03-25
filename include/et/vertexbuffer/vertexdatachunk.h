@@ -67,9 +67,8 @@ namespace et
 		template <typename T>
 		RawDataAcessor<T> accessData(size_t elementOffset) 
 		{
-			return valid() ? 
-				RawDataAcessor<T>(ptr()->data(), ptr()->dataSize(), ptr()->typeSize(), elementOffset * ptr()->typeSize()) : 
-				RawDataAcessor<T>(); 
+			return valid() ? RawDataAcessor<T>(ptr()->data(), ptr()->dataSize(), ptr()->typeSize(),
+				elementOffset * ptr()->typeSize()) : RawDataAcessor<T>();
 		}
 	};
 
