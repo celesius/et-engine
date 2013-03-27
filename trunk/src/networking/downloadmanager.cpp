@@ -12,10 +12,7 @@
 
 using namespace et;
 
-size_t write_data(void* ptr, size_t size, size_t nmemb, FILE* stream)
-	{ return fwrite(ptr, size, nmemb, stream); }
-
-class DownloadThread : public Thread
+class et::DownloadThread : public Thread
 {
 public:
 	DownloadThread(DownloadManager* owner) :
@@ -77,6 +74,13 @@ DownloadRequest::Pointer DownloadManager::downloadFile(const std::string& url, c
 	return request;
 }
 
+DownloadRequest::Pointer DownloadManager::downloadFile(const std::string& url)
+{
+	DownloadRequest::Pointer request(new DownloadRequest(url));
+	_private->thread->pushRequest(request);
+	return request;
+}
+
 /**
  *
  * DownloadThread
@@ -132,18 +136,26 @@ DownloadRequest::Pointer DownloadThread::dequeRequest()
 	return result;
 }
 
+size_t et::writeCallback(void* ptr, size_t size, size_t nmemb, DownloadRequest* request)
+	{ return request->appendData(ptr, size, nmemb); }
+
 void DownloadThread::processRequest(DownloadRequest::Pointer request)
 {
     CURL* curl = curl_easy_init();
-    FILE* fp = fopen(request->destination().c_str(), "wb");
-	curl_easy_setopt(curl, CURLOPT_URL, request->url().c_str());
-	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-	curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-	curl_easy_perform(curl);
-	curl_easy_cleanup(curl);
-	fclose(fp);
 	
-	_owner->downloadCompleted.invokeInMainRunLoop(request);
+	curl_easy_setopt(curl, CURLOPT_URL, request->url().c_str());
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, request.ptr());
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+	
+	CURLcode result = curl_easy_perform(curl);
+	curl_easy_cleanup(curl);
+
+	request->cleanup();
+	
+	if (result == CURLE_OK)
+		_owner->downloadCompleted.invokeInMainRunLoop(request);
+	else
+		_owner->downloadFailed.invokeInMainRunLoop(request);
 }
 
 /**
@@ -152,4 +164,38 @@ void DownloadThread::processRequest(DownloadRequest::Pointer request)
  *
  */
 DownloadRequest::DownloadRequest(const std::string& u, const std::string& d) :
-	_url(u), _destination(d) { }
+	_url(u), _destination(d), _destFile(0)
+{
+	_destFile = fopen(_destination.c_str(), "wb");
+	assert(_destFile);
+}
+
+DownloadRequest::DownloadRequest(const std::string& u) :
+	_url(u), _destFile(0) { }
+
+DownloadRequest::~DownloadRequest()
+	{ cleanup(); }
+
+void DownloadRequest::cleanup()
+{
+	if (_destFile)
+	{
+		fclose(_destFile);
+		_destFile = nullptr;
+	}
+}
+
+size_t DownloadRequest::appendData(void* ptr, size_t n, size_t size)
+{
+	size_t actualDataSize = n * size;
+
+	if (_destFile == nullptr)
+	{
+		_data.appendData(ptr, actualDataSize);
+		return actualDataSize;
+	}
+	else
+	{
+		return fwrite(ptr, n, size, _destFile);
+	}
+}

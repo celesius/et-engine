@@ -186,6 +186,25 @@ namespace et
 			_mutableData[_offset++] = value;
 		}
 		
+		void append(const T* values, size_t count)
+		{
+			assert(mutableData());
+			
+			size_t currentSize = _size;
+			resize(_size + count);
+			etCopyMemory(&_mutableData[currentSize], values, count * sizeof(T));
+		}
+		
+		void appendData(void* ptr, size_t dataSize)
+		{
+			assert(mutableData());
+			
+			size_t currentSize = _size;
+			size_t numElements = dataSize / sizeof(T) + ((dataSize % sizeof(T) > 0) ? 1 : 0);
+			resize(_size + numElements);
+			etCopyMemory(&_mutableData[currentSize], ptr, dataSize);
+		}
+		
 		T* extract()
 		{
 			T* value = _mutableData;
