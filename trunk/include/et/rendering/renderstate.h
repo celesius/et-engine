@@ -33,6 +33,7 @@ namespace et
 
 	enum DepthFunc
 	{
+		DepthFunc_Never,
 		DepthFunc_Less,
 		DepthFunc_LessOrEqual,
 		DepthFunc_Equal,

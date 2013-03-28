@@ -22,6 +22,7 @@ extern NSString* etKeyboardNotRequiredNotification;
 	et::ApplicationNotifier _notifier;
 }
 
+- (BOOL)performInitialization;
 - (void)onNotificationRecevied:(NSNotification*)notification;
 
 @end
@@ -34,31 +35,39 @@ extern NSString* etKeyboardNotRequiredNotification;
 	
 	if (self)
 	{
-		[[NSNotificationCenter defaultCenter] addObserver:self
-			selector:@selector(onNotificationRecevied:) name:etKeyboardRequiredNotification object:nil];
-
-		[[NSNotificationCenter defaultCenter] addObserver:self
-			selector:@selector(onNotificationRecevied:) name:etKeyboardNotRequiredNotification object:nil];
-
 		_params = params;
-		_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-		_glView = [[etOpenGLView alloc] initWithFrame:[[UIScreen mainScreen] bounds] parameters:_params];
+		BOOL initialized = [self performInitialization];
+		assert(initialized);
 		self.view = _glView;
-		
-		if (!_context)
-		{
-			NSLog(@"Failed to create ES context");
-			return 0;
-		}
-		
-		if (![EAGLContext setCurrentContext:_context])
-		{
-			[_context release];
-			NSLog(@"Failed to set ES context current");
-			return 0;
-		}
 	}
 	return self;
+}
+
+- (BOOL)performInitialization
+{
+	_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+	_glView = [[etOpenGLView alloc] initWithFrame:[[UIScreen mainScreen] bounds] parameters:_params];
+	
+	if (!_context)
+	{
+		NSLog(@"Failed to create ES context");
+		return NO;
+	}
+	
+	if (![EAGLContext setCurrentContext:_context])
+	{
+		[_context release];
+		NSLog(@"Failed to set ES context current");
+		return NO;
+	}
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self
+		selector:@selector(onNotificationRecevied:) name:etKeyboardRequiredNotification object:nil];
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self
+		selector:@selector(onNotificationRecevied:) name:etKeyboardNotRequiredNotification object:nil];
+	
+	return YES;
 }
 
 - (void)setRenderContext:(et::RenderContext*)rc

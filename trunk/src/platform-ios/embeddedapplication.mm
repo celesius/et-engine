@@ -51,19 +51,22 @@ static etApplication* _sharedInstance = nil;
 
 - (void)loadedInViewController:(UIViewController*)viewController
 {
+	[self loadedInViewController:viewController withView:viewController.view];
+}
+
+- (void)loadedInViewController:(UIViewController*)viewController withView:(UIView*)view
+{
 	NSAssert(_loaded == NO, @"Method [etApplication loadedInViewController:] should be called once.");
 	
 	RenderState::State state = RenderState::currentState();
-	
-	GLint defaultFrameBufferId = 0;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFrameBufferId);
+	GLint defaultFrameBufferId = state.boundFramebuffer;
 
 	application().run(0, 0);
-	
+
 	Framebuffer defaultFrameBuffer =
 		[self renderContext]->framebufferFactory().createFramebufferWrapper(defaultFrameBufferId);
 
-	vec2i contextSize(viewController.view.bounds.size.width, viewController.view.bounds.size.height);
+	vec2i contextSize(view.bounds.size.width, view.bounds.size.height);
 	defaultFrameBuffer->forceSize(contextSize);
 
 	_notifier.accessRenderContext()->renderState().setDefaultFramebuffer(defaultFrameBuffer);
