@@ -292,7 +292,7 @@ void RenderState::setDepthFunc(DepthFunc func)
 		}
 
 		default:
-			assert(0 && "Invalid DepthFunc value");
+			assert("Invalid DepthFunc value" && false);
 	}
 }
 
@@ -453,7 +453,7 @@ void RenderState::setCulling(CullState cull)
 		}
 
 	default: 
-		assert(0 && "Unsupported CullState value.");
+		assert("Unsupported CullState value." && false);
 	};
 
 	_currentState.lastCull = cull;
@@ -651,6 +651,8 @@ RenderState::State RenderState::currentState()
 	value = 0;
 	glGetIntegerv(GL_DEPTH_FUNC, &value);
 	
+	if (value == GL_NEVER)
+		s.lastDepthFunc = DepthFunc_Never;
 	if (value == GL_LESS)
 		s.lastDepthFunc = DepthFunc_Less;
 	else if (value == GL_LEQUAL)
@@ -664,7 +666,7 @@ RenderState::State RenderState::currentState()
 	else if (value == GL_ALWAYS)
 		s.lastDepthFunc = DepthFunc_Always;
 	else
-		assert(0 && "Unknown GL_DEPTH_FUNC value");
+		assert("Unknown GL_DEPTH_FUNC value" && false);
 
 	glGetFloatv(GL_COLOR_CLEAR_VALUE, s.clearColor.data());
 	glGetFloatv(GL_DEPTH_CLEAR_VALUE, &s.clearDepth);
@@ -711,7 +713,7 @@ RenderState::State RenderState::currentState()
 		log::warning("Unsupported blend combination: %s and %s",
 			glBlendFuncToString(blendSource).c_str(), glBlendFuncToString(blendDest).c_str());
 		
-		assert("Unsupported blend combination" && 0);
+		assert("Unsupported blend combination" && false);
 	}
 
 	checkOpenGLError(keyCurrentStateEnd);

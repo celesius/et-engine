@@ -32,6 +32,8 @@ using namespace et;
 	BOOL _keyboardAllowed;
 }
 
+- (void)performInitializationWithParameters:(const RenderContextParameters&)params;
+
 - (void)createFramebuffer;
 - (void)deleteFramebuffer;
 - (void)onNotificationRecevied:(NSNotification*)notification;
@@ -53,24 +55,7 @@ using namespace et;
 	
 	if (self)
 	{
-		_rcNotifier = new RenderContextNotifier;
-		
-        CAEAGLLayer* eaglLayer = (CAEAGLLayer*)self.layer;
-        eaglLayer.opaque = YES;
-        eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
-			[NSNumber numberWithBool:NO], kEAGLDrawablePropertyRetainedBacking,
-			kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
-		
-		_context = nil;
-		self.multipleTouchEnabled = params.multipleTouch;
-		
-		_keyboardAllowed = NO;
-		
-		[[NSNotificationCenter defaultCenter] addObserver:self
-			selector:@selector(onNotificationRecevied:) name:etKeyboardRequiredNotification object:nil];
-		
-		[[NSNotificationCenter defaultCenter] addObserver:self
-			selector:@selector(onNotificationRecevied:) name:etKeyboardNotRequiredNotification object:nil];
+		[self performInitializationWithParameters:params];
 	}
 	
 	return self;
@@ -84,6 +69,29 @@ using namespace et;
     [super dealloc];
 }
 
+- (void)performInitializationWithParameters:(const RenderContextParameters&)params
+{
+	_rcNotifier = new RenderContextNotifier;
+	
+	CAEAGLLayer* eaglLayer = (CAEAGLLayer*)self.layer;
+	
+	eaglLayer.opaque = YES;
+	eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
+		[NSNumber numberWithBool:NO], kEAGLDrawablePropertyRetainedBacking,
+		kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
+	
+	_context = nil;
+	_keyboardAllowed = NO;
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self
+		selector:@selector(onNotificationRecevied:) name:etKeyboardRequiredNotification object:nil];
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self
+		selector:@selector(onNotificationRecevied:) name:etKeyboardNotRequiredNotification object:nil];
+	
+	self.multipleTouchEnabled = params.multipleTouch;
+}
+
 - (void)setRenderContext:(RenderContext*)rc
 {
 	_rc = rc;
@@ -95,6 +103,7 @@ using namespace et;
 	
 	[_context release];
 	_context = [newContext retain];
+	
 	[EAGLContext setCurrentContext:_context];
 	[self createFramebuffer];
 }
@@ -131,7 +140,7 @@ using namespace et;
 	glLayer.contentsScale = self.contentScaleFactor;
 	CGSize layerSize = glLayer.bounds.size;
 	
-	if (!_defaultFramebuffer.valid())
+	if (_defaultFramebuffer.invalid())
 	{
 		vec2i size(layerSize.width, layerSize.height);
 		

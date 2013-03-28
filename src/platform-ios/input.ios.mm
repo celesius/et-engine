@@ -10,8 +10,8 @@
 
 using namespace et;
 
-NSString* etKeyboardRequiredNotification = @"etKeyboardRequiredNotification";
-NSString* etKeyboardNotRequiredNotification = @"etKeyboardNotRequiredNotification";
+extern NSString* etKeyboardRequiredNotification;
+extern NSString* etKeyboardNotRequiredNotification;
 
 PointerInputInfo Input::currentPointer() const
 {

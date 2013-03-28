@@ -17,6 +17,9 @@
 #	include <et/platform-ios/openglviewcontroller.h>
 #endif
 
+NSString* etKeyboardRequiredNotification = @"etKeyboardRequiredNotification";
+NSString* etKeyboardNotRequiredNotification = @"etKeyboardNotRequiredNotification";
+
 using namespace et;
 
 void Application::platformInit()
@@ -143,7 +146,9 @@ void Application::alert(const std::string& title, const std::string& message, Al
 {
 	NSString* nsTitle = [NSString stringWithCString:title.c_str() encoding:NSASCIIStringEncoding];
 	NSString* nsMessage = [NSString stringWithCString:message.c_str() encoding:NSASCIIStringEncoding];
-	[[[[UIAlertView alloc] initWithTitle:nsTitle message:nsMessage delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil] autorelease] show];
+	
+	[[[[UIAlertView alloc] initWithTitle:nsTitle message:nsMessage delegate:nil
+		cancelButtonTitle:@"Close" otherButtonTitles:nil] autorelease] show];
 }
 
 size_t Application::memoryUsage() const
