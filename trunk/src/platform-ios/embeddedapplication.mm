@@ -70,6 +70,7 @@ static etApplication* _sharedInstance = nil;
 	defaultFrameBuffer->forceSize(contextSize);
 
 	_notifier.accessRenderContext()->renderState().setDefaultFramebuffer(defaultFrameBuffer);
+	_notifier.notifyResize(contextSize);
 	_notifier.accessRenderContext()->renderState().applyState(state);
 
 	_loaded = YES;
