@@ -10,9 +10,9 @@
 
 using namespace et;
 
-IndexBufferData::IndexBufferData(RenderState& rs, IndexArray::Pointer i, BufferDrawType drawType, const std::string& name) : 
-	APIObjectData(name), _rs(rs), _size(i->actualSize()), _sourceTag(0), _indexBuffer(0), _dataType(0),
-	_primitiveType(0), _drawType(drawType)
+IndexBufferData::IndexBufferData(RenderState& rs, IndexArray::Pointer i, BufferDrawType drawType,
+	const std::string& name) : APIObjectData(name), _rs(rs), _size(i->actualSize()), _sourceTag(0),
+	_indexBuffer(0), _dataType(0), _primitiveType(0), _drawType(drawType)
 {
 	build(i);
 }
