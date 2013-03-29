@@ -99,11 +99,13 @@ size_t IndexArray::primitivesCount() const
 
 void IndexArray::resize(size_t count)
 {
+	_actualSize = etMin(_actualSize, count);
 	_data.resize(count * _format);
 }
 
 void IndexArray::resizeToFit(size_t count)
 {
+	_actualSize = etMin(_actualSize, count);
 	_data.fitToSize(count * _format);
 }
 
@@ -150,9 +152,11 @@ IndexArray::PrimitiveIterator IndexArray::primitive(size_t index) const
 	return IndexArray::PrimitiveIterator(this, primitiveIndex > capacity() ? capacity() : primitiveIndex);
 }
 
-/*
-* Supporting types
-*/
+/**
+ *
+ * Supporting types
+ *
+ */
 
 IndexArray::Primitive::Primitive()
 {

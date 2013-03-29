@@ -51,13 +51,6 @@ namespace et
 			T c = _edge3to2.length();
 			T p = (a + b + c) / static_cast<T>(2);
 			return std::sqrt(p * (p - a) * (p - b) * (p - c));
-/*
-			T _aOne = static_cast<T>(1);
-			matrix3<T> sx(vector3<T>(_aOne, _v1.y, _v1.z), vector3<T>(_aOne, _v2.y, _v2.z), vector3<T>(_aOne, _v3.y, _v3.z));
-			matrix3<T> sy(vector3<T>(_v1.x, _aOne, _v1.z), vector3<T>(_v2.x, _aOne, _v2.z), vector3<T>(_v3.x, _aOne, _v3.z));
-			matrix3<T> sz(vector3<T>(_v1.x, _v1.y, _aOne), vector3<T>(_v2.x, _v2.y, _aOne), vector3<T>(_v3.x, _v3.y, _aOne));
-			return vector3<T>(sx.determinant(), sy.determinant(), sz.determinant()).length();
-*/ 
 		}
 
 	private:

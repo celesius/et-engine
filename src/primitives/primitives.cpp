@@ -396,8 +396,10 @@ void primitives::calculateNormals(VertexArray::Pointer data, const IndexArray::P
 		log::error("primitives::calculateNormals - data is invalid.");
 		return;
 	}
-
+	
 	RawDataAcessor<vec3> nrm = nrmChunk.accessData<vec3>(0);
+	RawDataAcessor<vec3> pos = posChunk.accessData<vec3>(0);
+	
 	for (auto i = buffer->primitive(first), e = buffer->primitive(last); i != e; ++i)
 	{
 		auto p = (*i);
@@ -406,7 +408,6 @@ void primitives::calculateNormals(VertexArray::Pointer data, const IndexArray::P
 		nrm[p[2]] = vec3(0.0f);
 	}
 
-	RawDataAcessor<vec3> pos = posChunk.accessData<vec3>(0);
 	for (auto i = buffer->primitive(first), e = buffer->primitive(last); i != e; ++i)
 	{
 		auto p = (*i);

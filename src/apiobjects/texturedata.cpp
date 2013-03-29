@@ -188,6 +188,7 @@ void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
 
 void TextureData::build(RenderContext* rc)
 {
+	assert(_desc.valid());
 	if ((_desc->size.square() == 0) || (_desc->internalformat == 0) || (_desc->type == 0)) return;
 
 	_texel = vec2( 1.0f / static_cast<float>(_desc->size.x), 1.0f / static_cast<float>(_desc->size.y) );
