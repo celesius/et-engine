@@ -96,7 +96,6 @@ namespace et
 			{ return this; }
 
 		void onFPSTimerExpired(NotifyTimer* t);
-		void setActive(bool active);
 		void resized(const vec2i&);
 		void updateScreenScale(const vec2i& screenSize);
 

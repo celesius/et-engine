@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -58,10 +58,12 @@ Thread::~Thread()
 	delete _private;
 }
 
-void Thread::run()
+bool Thread::run()
 {
-	if (_private->running) return;
+	if (_private->running) return false;
+
 	_private->thread = CreateThread(0, 0, ThreadPrivate::threadProc, this, 0, &_private->threadId);
+	return true;
 }
 
 void Thread::sleep(float sec)
@@ -93,6 +95,14 @@ void Thread::resume()
 
 	InterlockedDecrement(&_private->suspended);
 	SetEvent(_private->activityEvent);
+}
+
+bool Thread::stop()
+{
+	if (_private->running == 0) return false;
+
+	InterlockedDecrement(&_private->running);
+	return true;
 }
 
 void Thread::terminate(int exitCode)

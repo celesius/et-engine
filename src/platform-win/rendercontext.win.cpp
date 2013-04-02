@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -12,6 +12,7 @@
 #include <et/opengl/opengl.h>
 #include <et/opengl/openglcaps.h>
 #include <et/app/application.h>
+#include <et/app/applicationnotifier.h>
 #include <et/rendering/rendercontext.h>
 #include <et/rendering/renderer.h>
 #include <et/input/input.h>
@@ -27,14 +28,16 @@ struct RenderContextData
 	HDC hDC;
 	HGLRC hGLRC;
 
-	RenderContextData() : initialized(false), hWnd(0), hDC(0), hGLRC(0) { }
+	RenderContextData() : 
+		initialized(false), hWnd(0), hDC(0), hGLRC(0) { }
+
 	RenderContextData& release();
 };
 
 class et::RenderContextPrivate : public Input::KeyboardInputSource, public Input::PointerInputSource
 {
 public:
-	RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params);
+	RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params, const ApplicationParameters& appParams);
 	~RenderContextPrivate();
 
 public:
@@ -49,16 +52,13 @@ public:
 	inline RenderContext* renderContext() 
 		{ return _renderContext; }
 
-	void setActive(bool active);
-	void resized(const vec2i& sz);
-
 	bool shouldPostMovementMessage(int x, int y);
 
 private:
 	HWND createWindow(WindowStyle, const vec2i&, const vec2i&);
 	RenderContextData createDummyContext(HWND hWnd);
 
-	bool initWindow(const RenderContextParameters& params);
+	bool initWindow(const RenderContextParameters& params, const ApplicationParameters& appParams);
 	bool initOpenGL(const RenderContextParameters& params);
 
 	int chooseMSAAPixelFormat(HDC, PIXELFORMATDESCRIPTOR*);
@@ -74,7 +74,7 @@ private:
 RenderContext::RenderContext(const RenderContextParameters& params, Application* app) : _params(params), _app(app),
 	_programFactory(0), _textureFactory(0), _framebufferFactory(0), _vertexBufferFactory(0), _renderer(0)
 {
-	_private = new RenderContextPrivate(this, params);
+	_private = new RenderContextPrivate(this, params, app->parameters());
 
 	if (_private->failed)
 	{
@@ -84,22 +84,19 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 	else 
 	{
 		openGLCapabilites().checkCaps();
-		_screenScaleFactor = (_private->windowSize.x - 1) / (3 * _params.baseContextSize.x / 2) + 1;
+
 		_renderState.setRenderContext(this);
 		_programFactory = new ProgramFactory(this);
 		_textureFactory = new TextureFactory(this);
-		_framebufferFactory = new FramebufferFactory(this, _textureFactory);
+		_framebufferFactory = new FramebufferFactory(this, _textureFactory.ptr());
 		_vertexBufferFactory = new VertexBufferFactory(_renderState);
+		
+		updateScreenScale(_params.contextSize);
 	}
 }
 
 RenderContext::~RenderContext()
 {
-	delete _vertexBufferFactory;
-	delete _framebufferFactory;
-	delete _programFactory;
-	delete _textureFactory;
-	delete _renderer; 
 	delete _private;
 }
 
@@ -142,54 +139,16 @@ void RenderContext::endRender()
 	_info.averagePolygonsPerSecond += OpenGLCounters::primitiveCounter;
 }
 
-void RenderContext::onFPSTimerExpired(NotifyTimer*)
-{
-	if (_info.averageFramePerSecond > 0)
-	{
-		_info.averageDIPPerSecond /= _info.averageFramePerSecond;
-		_info.averagePolygonsPerSecond /= _info.averageFramePerSecond;
-	}
-
-	renderingInfoUpdated.invoke(_info);
-
-	_info.averageFramePerSecond = 0;
-	_info.averageDIPPerSecond = 0;
-}
-
-void RenderContext::setActive(bool active)
-{
-	if (_app->running())
-		_app->setActive(active);
-}
-
-void RenderContext::resized(const vec2i& sz)
-{
-	updateScreenScale(sz);
-	_renderState.setMainViewportSize(sz);
-	
-	if (_app->running())
-		_app->contextResized(sz);
-}
-
-void RenderContext::updateScreenScale(const vec2i& screenSize)
-{
-	size_t newScale = (screenSize.x - 1) / (3 * _params.baseContextSize.x / 2) + 1;
-	if (newScale == _screenScaleFactor) return;
-
-	_screenScaleFactor = newScale;
-	screenScaleFactorChanged.invoke(_screenScaleFactor);
-}
-
 /*
  *
  * RenderContextPrivate
  * 
  */
 
-RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params) : failed(false),
-	hInstance(0), _renderContext(rc), _mouseX(-1), _mouseY(-1)
+RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params, 
+	const ApplicationParameters& appParams) : failed(false), hInstance(0), _renderContext(rc), _mouseX(-1), _mouseY(-1)
 {
-	failed = !initWindow(params);
+	failed = !initWindow(params, appParams);
 
 	if (!failed)
 		failed = !initOpenGL(params);
@@ -255,7 +214,7 @@ HWND RenderContextPrivate::createWindow(WindowStyle style, const vec2i& pos, con
 		winSize.x, winSize.y, 0, 0, hInstance, 0);
 }
 
-bool RenderContextPrivate::initWindow(const RenderContextParameters& params)
+bool RenderContextPrivate::initWindow(const RenderContextParameters& params, const ApplicationParameters& appParams)
 {
 	hInstance = GetModuleHandle(0);
 
@@ -269,7 +228,7 @@ bool RenderContextPrivate::initWindow(const RenderContextParameters& params)
 
 	if (!RegisterClassEx(&wndClass)) return false;
 
-	primaryContext.hWnd = createWindow(params.windowStyle, params.contextPosition, params.contextSize);
+	primaryContext.hWnd = createWindow(appParams.windowStyle, params.contextPosition, params.contextSize);
 
 	if (primaryContext.hWnd == 0) return false;
 
@@ -283,8 +242,8 @@ bool RenderContextPrivate::initWindow(const RenderContextParameters& params)
 	SetForegroundWindow(primaryContext.hWnd);
 	SetFocus(primaryContext.hWnd);
 
-	bool hasCaption = (params.windowStyle == WindowStyle_FixedWithCaption) || (params.windowStyle == WindowStyle_Sizable);
-	bool isFullscreen = params.windowStyle == WindowStyle_Fullscreen;
+	bool hasCaption = (appParams.windowStyle == WindowStyle_FixedWithCaption) || (appParams.windowStyle == WindowStyle_Sizable);
+	bool isFullscreen = appParams.windowStyle == WindowStyle_Fullscreen;
 
 	if (!hasCaption)
 		SetCapture(primaryContext.hWnd);
@@ -411,18 +370,18 @@ bool RenderContextPrivate::initOpenGL(const RenderContextParameters& params)
 		int attrib_list[] = 
 		{
 			WGL_CONTEXT_MAJOR_VERSION_ARB, 
-				params.openGLMaxVersion.x,
+			params.openGLTargetVersion.x,
 
 			WGL_CONTEXT_MINOR_VERSION_ARB, 
-				params.openGLMaxVersion.y,
+			params.openGLTargetVersion.y,
 
 			WGL_CONTEXT_FLAGS_ARB, 
-				params.openGLForwardContext * WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+			params.openGLForwardContext * WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
 
 			0, 0, 0, 0
 		};
 
-		if (params.openGLMaxVersion.x >= 3)
+		if (params.openGLTargetVersion.x >= 3)
 		{
 			attrib_list[6] = WGL_CONTEXT_PROFILE_MASK_ARB;
 
@@ -435,7 +394,7 @@ bool RenderContextPrivate::initOpenGL(const RenderContextParameters& params)
 		{
 			DWORD lastError = GetLastError();
 			if (lastError == ERROR_INVALID_VERSION_ARB)
-				std::cout << "Error creating context: ERROR_INVALID_VERSION_ARB. Requested: " << params.openGLMaxVersion << std::endl;
+				std::cout << "Error creating context: ERROR_INVALID_VERSION_ARB. Requested: " << params.openGLTargetVersion << std::endl;
 			else if (lastError == ERROR_INVALID_PROFILE_ARB)
 				std::cout << "Error creating context: ERROR_INVALID_PROFILE_ARB" << std::endl;
 			else if (lastError == ERROR_INVALID_PROFILE_ARB)
@@ -541,16 +500,6 @@ RenderContextPrivate::~RenderContextPrivate()
 	UnregisterClassA(wndClass.lpszClassName, hInstance);
 }
 
-void RenderContextPrivate::setActive(bool active)
-{
-	_renderContext->setActive(active);
-}
-
-void RenderContextPrivate::resized(const vec2i& size)
-{
-	_renderContext->resized(size);
-}
-
 bool RenderContextPrivate::shouldPostMovementMessage(int x, int y)
 {
 	if ((x == _mouseX) && (y == _mouseY)) return false;
@@ -561,8 +510,8 @@ bool RenderContextPrivate::shouldPostMovementMessage(int x, int y)
 }
 
 /*
-* Render Context Data
-*/ 
+ * Render Context Data
+ */ 
 
 RenderContextData& RenderContextData::release()
 {
@@ -591,9 +540,9 @@ RenderContextData& RenderContextData::release()
 	return *this;
 }
 
-/*
-* Primary window proc
-*/
+/**
+ * Primary window proc
+ */
 
 union internal_PointerInputInfo
 {
@@ -788,14 +737,21 @@ LRESULT CALLBACK mainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_ACTIVATE:
 		{
-			handler->setActive(wParam != WA_INACTIVE);
+			ApplicationNotifier notifier;
+
+			if (wParam == WA_INACTIVE)
+				notifier.notifyDeactivated();
+			else
+				notifier.notifyActivated();
+
 			return 0;
 		}
 
 	case WM_SIZE:
 		{
 			internal_SizeInfo size(lParam);
-			handler->resized(vec2i(size.width, size.height));
+			ApplicationNotifier notifier;
+			notifier.notifyResize(vec2i(size.width, size.height));
 			return 0;
 		}
 

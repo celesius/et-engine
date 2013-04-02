@@ -84,7 +84,7 @@ namespace et
 {
 	template <typename T>
 	inline void et_internal_setDebugVariable(T& variable, const T& newValue,
-											 const char* variableName, const char* valueName, const char* function)
+		const char* variableName, const char* valueName, const char* function)
 	{
 		variable = newValue;
 		std::cout << variableName << " = " << valueName << ", call from " << function << std::endl;
@@ -94,8 +94,10 @@ namespace et
 	{
 #if (ET_DEBUG && ET_LOG_MEMORY_OPERATIONS)
 		static size_t totalMemoryCopied = 0;
+
 		if (totalMemoryCopied > 0xffffffff - size)
 			totalMemoryCopied = 0;
+
 		totalMemoryCopied += size;
 		std::cout << "[etCopyMemory] copying " << size << " bytes (" << size / 1024 << "Kb, "
 			<< size / 1024 / 1024 << "Mb). Copied so far:" << totalMemoryCopied << " bytes, "

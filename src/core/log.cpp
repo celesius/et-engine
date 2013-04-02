@@ -7,7 +7,11 @@
 
 #include <et/core/et.h>
 
-#if (ET_PLATFORM_ANDROID)
+#if (ET_PLATFORM_WIN)
+#
+#	include <stdarg.h>
+#
+#elif (ET_PLATFORM_ANDROID)
 #
 #	error Please include platform-android implementation instead
 #

@@ -1,3 +1,10 @@
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
+ *
+ */
+
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
 #include <et/core/tools.h>
@@ -235,7 +242,7 @@ Description::Pointer et::audio::loadWAVFile(const std::string& fileName)
 	return Description::Pointer(result);
 }
 
-Description::Pointer et::audio::loadCAFFile(const std::string& fileName)
+Description::Pointer et::audio::loadCAFFile(const std::string&)
 {
 	assert("CAF is not currently supported");
 	return Description::Pointer();

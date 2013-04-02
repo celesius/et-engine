@@ -67,7 +67,7 @@ bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 {
 	if (stream.fail()) 
     {
-        std::cout << "Unable to deserialize scene from stream." << std::endl;
+		log::error("Unable to deserialize scene from stream.");
         return false;
     }
     
@@ -75,7 +75,7 @@ bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 	deserializeChunk(stream, readChunk);
 	if (!chunkEqualTo(readChunk, HeaderScene)) 
 	{
-		std::cout << "Data not looks like proper ETM file." << std::endl;
+		log::error("Data not looks like proper ETM file.");
 		return false;
 	}
 
@@ -84,7 +84,7 @@ bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 	size_t version = deserializeInt(stream);
 	if (version > static_cast<size_t>(SceneVersionLatest))
 	{
-		std::cout << "Unsupported version of the ETM file." << std::endl;
+		log::error("Unsupported version of the ETM file.");
 		return false;
 	}
 
@@ -97,7 +97,7 @@ bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 			size_t storageVersion = deserializeInt(stream);
 			if (storageVersion != StorageVersion_1_0_0) 
 			{
-				std::cout << "Unsupported version of binary storage the ETM file." << std::endl;
+				log::error("Unsupported version of binary storage the ETM file.");
 				return false;
 			}
 

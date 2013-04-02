@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -63,7 +63,7 @@ void checkOpenALErrorEx(const char* caller, const char* sourceFile, const char* 
 	if (error != ALC_NO_ERROR)
 	{
 		const char* message = alcGetString(sharedDevice, error);
-        printf("OpenAL ALC error: %s\n%s[%s]: %s\n", message, sourceFile, lineNumber, tag);
+        printf("OpenAL ALC error: %s\n%s [%s, %s]: %s\n", message, sourceFile, lineNumber, caller, tag);
         fflush(stdout);
 	}
     

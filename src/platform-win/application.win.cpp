@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -26,6 +26,16 @@ void Application::platformInit()
 }
 
 void Application::platformFinalize()
+{
+	delete _renderContext;
+	_renderContext = nullptr;
+}
+
+void Application::platformSuspend()
+{
+}
+
+void Application::platformResume()
 {
 }
 
@@ -64,8 +74,8 @@ int Application::platformRun()
 
 		_delegate->applicationWillTerminate();
 
-		delete _delegate, _delegate = 0;
-		delete _renderContext, _renderContext = 0;
+		delete _delegate, _delegate = nullptr;
+		delete _renderContext, _renderContext = nullptr;
 	}
 
 	return _exitCode;
