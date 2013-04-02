@@ -50,24 +50,29 @@ static etApplication* _sharedInstance = nil;
 	return self;
 }
 
-- (void)loadedInViewController:(UIViewController*)vc
+- (void)loadedInViewController:(UIViewController*)viewController withView:(UIView*)view
 {
 	NSAssert(_loaded == NO, @"Method [etApplication loaded] should be called once.");
 	
-	CCGLView* view = (CCGLView*)[[CCDirector sharedDirector] view];
-	NSAssert(view, @"Cocos OpenGL view should be initialized before running embedded application.");
-	
 	[view addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
-	
+
 	RenderState::State state = RenderState::currentState();
 	int defaultFramebuffer = [[view valueForKey:@"renderer_"] defaultFrameBuffer];
-	
+
 	application().run(0, 0);
 	_notifier.accessRenderContext()->renderState().setDefaultFramebuffer(
 		[self renderContext]->framebufferFactory().createFramebufferWrapper(defaultFramebuffer));
-	
+
 	_notifier.accessRenderContext()->renderState().applyState(state);
 	_loaded = YES;
+}
+
+- (void)loadedInViewController:(UIViewController*)vc
+{
+	CCGLView* view = (CCGLView*)[[CCDirector sharedDirector] view];
+	NSAssert(view, @"Cocos OpenGL view should be initialized before running embedded application.");
+
+	[self loadedInViewController:vc withView:view];
 }
 
 - (void)unloadedInViewController:(UIViewController*)viewController
