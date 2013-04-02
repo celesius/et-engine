@@ -186,7 +186,7 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 		TextureLoader::load(negz, screenScale) 
 	};
 
-	size_t maxCubemapSize = sqr(openGLCapabilites().maxCubemapTextureSize());
+	int maxCubemapSize = sqr(openGLCapabilites().maxCubemapTextureSize());
 	for (size_t l = 0; l < 6; ++l)
 		assert(layers[l]->size.square() <= maxCubemapSize);
 

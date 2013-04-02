@@ -54,7 +54,7 @@ Element::Pointer Element::childWithName(const std::string& name, ElementType ofT
 
 	if (assertFail)
 	{
-		std::cout << "Unable to find child with name: " + name << std::endl;
+		log::error("Unable to find child with name: %s", name.c_str());
 		assert("Unable to find child" && 0);
 	}
 
@@ -177,7 +177,7 @@ void Element::duplicateChildrenToObject(Element* object)
 
 void Element::serialize(std::ostream&, SceneVersion)
 {
-	std::cout << "Serialization method isn't defined for " << typeid(*this).name() << std::endl;
+	log::error("Serialization method isn't defined for %s", typeid(*this).name());
 #if (ET_DEBUG)
 	abort();
 #endif
@@ -185,7 +185,7 @@ void Element::serialize(std::ostream&, SceneVersion)
 
 void Element::deserialize(std::istream&, ElementFactory*, SceneVersion)
 {
-	std::cout << "Deserialization method isn't defined for " << typeid(*this).name() << std::endl;
+	log::error("Deserialization method isn't defined for %s", typeid(*this).name());
 #if (ET_DEBUG)
 	abort();
 #endif

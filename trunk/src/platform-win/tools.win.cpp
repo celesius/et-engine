@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2012 by Sergey Reznik
- * Please, do not modify contents without approval.
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
  *
  */
 
@@ -116,6 +116,11 @@ void et::findFiles(const std::string& folder, const std::string& mask, bool recu
 	{
 		ET_ITERATE(folderList, const std::string&, i, findFiles(i, mask, recursive, list))
 	}
+}
+
+std::string et::applicationPackagePath()
+{
+	return applicationPath();
 }
 
 std::string et::applicationDataFolder()
