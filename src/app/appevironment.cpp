@@ -47,13 +47,13 @@ void AppEnvironment::updateDocumentsFolder(const ApplicationIdentifier& i)
 {
 	_documentsFolder = applicationLibraryBaseFolder() + i.companyName;
 	if (!folderExists(_documentsFolder))
-		createDirectory(_documentsFolder);
+		createDirectory(_documentsFolder, true);
 
 	assert(folderExists(_documentsFolder));
 
 	_documentsFolder += pathDelimiter + i.applicationName;
 	if (!folderExists(_documentsFolder))
-		createDirectory(_documentsFolder);
+		createDirectory(_documentsFolder, true);
 
 	assert(folderExists(_documentsFolder));
 }

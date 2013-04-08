@@ -122,6 +122,14 @@ std::string et::applicationLibraryBaseFolder()
     }
 }
 
+std::string et::applicationTemporaryBaseFolder()
+{
+    @autoreleasepool
+    {
+        return std::string([NSTemporaryDirectory() cStringUsingEncoding:NSUTF8StringEncoding]);
+    }
+}
+
 std::string et::applicationDocumentsBaseFolder()
 {
     @autoreleasepool 
@@ -132,15 +140,35 @@ std::string et::applicationDocumentsBaseFolder()
     }
 }
 
-void et::createDirectory(const std::string& name)
+bool et::createDirectory(const std::string& name, bool intermediates)
 {
-	NSError* err = nil;
-	NSString* path = [NSString stringWithCString:name.c_str() encoding:NSUTF8StringEncoding];
-	[[NSFileManager defaultManager]	createDirectoryAtPath:path withIntermediateDirectories:NO
-											   attributes:nil error:&err];
+	NSError* error = nil;
 	
-	if (err)
-		NSLog(@"Unable to create directory at %@, error: %@", path, err);
+	NSString* path = [NSString stringWithCString:name.c_str() encoding:NSUTF8StringEncoding];
+	[[NSFileManager defaultManager]	createDirectoryAtPath:path
+		withIntermediateDirectories:(intermediates ? YES : NO) attributes:nil error:&error];
+	
+	if (error)
+	{
+		NSLog(@"Unable to create directory at %@, error: %@", path, error);
+	}
+	
+	return (error == nil);
+}
+
+bool et::removeDirectory(const std::string& name)
+{
+	NSError* error = nil;
+	
+	NSString* path = [NSString stringWithCString:name.c_str() encoding:NSUTF8StringEncoding];
+	[[NSFileManager defaultManager]	removeItemAtPath:path error:&error];
+	
+	if (error)
+	{
+		NSLog(@"Unable to create directory at %@, error: %@", path, error);
+	}
+	
+	return (error == nil);
 }
 
 void et::findFiles(const std::string& folder, const std::string& mask, bool /* recursive */, std::vector<std::string>& list)

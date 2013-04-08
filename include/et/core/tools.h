@@ -22,6 +22,7 @@ namespace et
 	std::string applicationDataFolder();
 	
 	std::string applicationLibraryBaseFolder();
+	std::string applicationTemporaryBaseFolder();
 	std::string applicationDocumentsBaseFolder();
 	
 	std::string normalizeFilePath(std::string s);
@@ -29,7 +30,9 @@ namespace et
 	bool fileExists(const std::string& name);
 	bool folderExists(const std::string& name);
 	
-	void createDirectory(const std::string& name);
+	bool createDirectory(const std::string& name, bool intermediates);
+	bool removeDirectory(const std::string& name);
+	
 	void findFiles(const std::string& folder, const std::string& mask, bool recursive, StringList& list);
 	void findSubfolders(const std::string& folder, bool recursive, StringList& list);
 	void openUrl(const std::string& url);
