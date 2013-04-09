@@ -76,8 +76,8 @@ namespace et
 			virtual bool containsPoint(const vec2& p, const vec2&);
 			virtual bool containLocalPoint(const vec2& p);
 
-			mat4 finalTransform();
-			mat4 finalInverseTransform();
+			const mat4& finalTransform();
+			const mat4& finalInverseTransform();
 			vec2 positionInElement(const vec2& p);
 
 			ET_DECLARE_EVENT2(elementAnimationFinished, Element2d*, ElementAnimatedPropery)

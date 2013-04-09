@@ -74,16 +74,17 @@ void Scroll::buildVertices(RenderContext* rc, GuiRenderer& r)
 	setContentValid();
 }
 
-mat4 Scroll::finalTransform()
+const mat4& Scroll::finalTransform()
 {
-	mat4 e = Element2d::finalTransform();
-	e[3] += vec4(_offset, 0.0f, 0.0f);
-	return e;
+	_localFinalTransform = Element2d::finalTransform();
+	_localFinalTransform[3] += vec4(_offset, 0.0f, 0.0f);
+	return _localFinalTransform;
 }
 
-mat4 Scroll::finalInverseTransform()
+const mat4& Scroll::finalInverseTransform()
 {
-	return Element2d::finalTransform().inverse();
+	_localInverseTransform = Element2d::finalTransform().inverse();
+	return _localInverseTransform;
 }
 
 bool Scroll::pointerPressed(const PointerInputInfo& p)

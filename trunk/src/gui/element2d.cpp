@@ -199,7 +199,7 @@ void Element2d::setVisible(bool vis, float duration)
 		setAlpha(vis ? 1.0f : 0.0f, duration);
 }
 
-mat4 Element2d::finalTransform() 
+const mat4& Element2d::finalTransform()
 {
 	if (!transformValid())
 		buildFinalTransform();
@@ -266,7 +266,7 @@ vec2 Element2d::origin() const
 	return _frame.origin() + offset();
 }
 
-mat4 Element2d::finalInverseTransform()
+const mat4& Element2d::finalInverseTransform()
 {
 	if (!inverseTransformValid())
 	{

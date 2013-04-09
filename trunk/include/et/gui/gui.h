@@ -20,6 +20,7 @@
 #include <et/gui/textfield.h>
 #include <et/gui/scroll.h>
 #include <et/gui/messageview.h>
+#include <et/gui/slider.h>
 
 namespace et
 {

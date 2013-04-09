@@ -18,7 +18,7 @@ Element3D::Element3D(const Camera& camera, Element* parent) : Element(parent),
 
 }
 
-mat4 Element3D::finalTransform()
+const mat4& Element3D::finalTransform()
 {
 	if (!_finalTransformValid)
 		buildFinalTransform();

@@ -89,10 +89,10 @@ namespace et
 			virtual float finalAlpha() const 
 				{ return 1.0f; }
 
-			virtual mat4 finalTransform() 
+			virtual const mat4& finalTransform()
 				{ return identityMatrix; }
 
-			virtual mat4 finalInverseTransform() 
+			virtual const mat4& finalInverseTransform() 
 				{ return identityMatrix; }
 
 			virtual void layout(const vec2&) 

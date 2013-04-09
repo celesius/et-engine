@@ -5,8 +5,8 @@
  *
  */
 
-#include <et/gui/button.h>
 #include <et/gui/guirenderer.h>
+#include <et/gui/button.h>
 
 using namespace et;
 using namespace et::gui;

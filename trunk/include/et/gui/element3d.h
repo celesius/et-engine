@@ -37,7 +37,7 @@ namespace et
 				{ }
 
 		protected:
-			mat4 finalTransform();
+			const mat4& finalTransform();
 			void buildFinalTransform();
 
 			const Camera& camera() const 
