@@ -29,21 +29,24 @@ namespace et
 	class IntrusivePtr
 	{
 	public:
-		IntrusivePtr() : _data(0)
+		IntrusivePtr() : _data(nullptr)
 			{ }
 
-		IntrusivePtr(const IntrusivePtr& r) : _data(0)
+		IntrusivePtr(const IntrusivePtr& r) : _data(nullptr)
 			{ reset(r._data);  }
 
+		IntrusivePtr(IntrusivePtr&& r) : _data(nullptr)
+			{ reset(r._data); r.reset(nullptr); }
+		
 		template <typename R>
-		IntrusivePtr(IntrusivePtr<R> r) : _data(0)
+		IntrusivePtr(IntrusivePtr<R> r) : _data(nullptr)
 			{ reset(static_cast<T*>(r.ptr()));  }
 
-		explicit IntrusivePtr(T* data) : _data(0)
+		explicit IntrusivePtr(T* data) : _data(nullptr)
 			{ reset(data); }
 
 		virtual ~IntrusivePtr() 
-			{ reset(0); }
+			{ reset(nullptr); }
 
 		T* operator *() 
 			{ return _data; }

@@ -107,6 +107,7 @@ void MailComposer::composeEmail(const std::string& recepient, const std::string&
 	[_private->viewController setMailComposeDelegate:
 		[MailComposerProxy sharedInstanceWithPrivatePtr:_private]];
 }
+
 void MailComposer::attachFile(const std::string& attachmentFileName)
 {
 	assert(_private->viewController);
