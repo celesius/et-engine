@@ -43,13 +43,10 @@ namespace et
 			void setScale(const vec2& s);
 			void setColor(const vec4& color);
 
-			mat4 finalTransform() 
-				{ return Element3D::finalTransform(); }
-
-			inline void setAngle(float a) 
+			void setAngle(float a)
 				{ _angle = a; }
 
-			inline void setActualIndex(float i)
+			void setActualIndex(float i)
 				{ _actualIndex = i; }
 
 			bool containsPoint(const vec2&, const vec2&);

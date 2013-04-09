@@ -23,8 +23,8 @@ namespace et
 			void addToRenderQueue(RenderContext*, GuiRenderer&);
 			void addToOverlayRenderQueue(RenderContext*, GuiRenderer&);
 			
-			mat4 finalTransform();
-			mat4 finalInverseTransform();
+			const mat4& finalTransform();
+			const mat4& finalInverseTransform();
 			
 			bool pointerPressed(const PointerInputInfo&);			
 			bool pointerMoved(const PointerInputInfo&);			
@@ -87,6 +87,8 @@ namespace et
 			Vector2Animator _offsetAnimator;
 			PointerInputInfo _currentPointer;
 			PointerInputInfo _previousPointer;
+			mat4 _localFinalTransform;
+			mat4 _localInverseTransform;
 			vec4 _backgroundColor;
 			vec4 _scrollbarsColor;
 			vec2 _contentSize;
