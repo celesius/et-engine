@@ -84,9 +84,12 @@ namespace et
 		bool operator == (T* tr) const
 			{ return _data == tr; }
 
-		bool operator != (const IntrusivePtr& r) const
-			{ return _data != r._data; }
+		bool operator != (const IntrusivePtr& tr) const
+			{ return _data != tr._data; }
 
+		bool operator < (const IntrusivePtr& tr) const
+			{ return _data < tr._data; }
+		
 		AtomicCounterType referenceCount() const
 			{ return _data ? _data->atomicCounterValue() : 0; }
 
