@@ -67,6 +67,7 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 	
 	openGLCapabilites().checkCaps();
 	_renderState.setMainViewportSize(params.contextSize);
+	updateScreenScale(params.contextSize);
 	
 	_textureFactory = new TextureFactory(this);
 	_framebufferFactory = new FramebufferFactory(this, _textureFactory.ptr());
