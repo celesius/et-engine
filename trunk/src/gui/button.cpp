@@ -37,16 +37,22 @@ void Button::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 {
 	mat4 transform = finalTransform();
-
+	vec2 frameSize = size() + _contentOffset;
+	
 	vec2 imageSize = absv(_image.descriptor.size);
-	vec2 actualSize = size() + _contentOffset;
-	float maxImageDimension = etMax(imageSize.x, imageSize.y);
-	float minDimension = etMin(actualSize.x, actualSize.y);
-	float aspect = maxImageDimension / minDimension;
-	
-	if (aspect > 1.0f)
-		imageSize /= aspect;
-	
+
+	float imageAspect = imageSize.aspect();
+	if (imageSize.x > frameSize.x)
+	{
+		imageSize.x = frameSize.x;
+		imageSize.y = frameSize.x / imageAspect;
+	}
+	if (imageSize.y > frameSize.y)
+	{
+		imageSize.x = frameSize.y * imageAspect;
+		imageSize.y = frameSize.y;
+	}
+
 	float contentGap = (imageSize.x > 0.0f) && (_textSize.x > 0.0f) ? 5.0f : 0.0f;
 	float contentWidth = imageSize.x + _textSize.x + contentGap;
 
@@ -55,13 +61,13 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 	
 	if (_imageLayout == ImageLayout_Right)
 	{
-		textOrigin = 0.5f * (actualSize - vec2(contentWidth, _textSize.y));
-		imageOrigin = vec2(textOrigin.x + contentGap + _textSize.x, 0.5f * (actualSize.y - imageSize.y));
+		textOrigin = 0.5f * (frameSize - vec2(contentWidth, _textSize.y));
+		imageOrigin = vec2(textOrigin.x + contentGap + _textSize.x, 0.5f * (frameSize.y - imageSize.y));
 	}
 	else
 	{
-		imageOrigin = 0.5f * (actualSize - vec2(contentWidth, imageSize.y));
-		textOrigin = vec2(imageOrigin.x + contentGap + imageSize.x, 0.5f * (actualSize.y - _textSize.y));
+		imageOrigin = 0.5f * (frameSize - vec2(contentWidth, imageSize.y));
+		textOrigin = vec2(imageOrigin.x + contentGap + imageSize.x, 0.5f * (frameSize.y - _textSize.y));
 	}
 	vec4 alphaScaleColor = vec4(1.0f, 1.0f, 1.0f, alpha());
 	
