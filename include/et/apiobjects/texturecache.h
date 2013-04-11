@@ -21,20 +21,14 @@ namespace et
 
 		Texture manageTexture(const Texture& tex);
 		Texture findTexture(const std::string& key);
+		
 		void discardTexture(const Texture& tex);
 
 		void clear();
 		void flush();
 
 	private:
-		TextureCache(TextureCache&&)
-			{ }
-
-		TextureCache(const TextureCache&)
-			{ }
-
-		TextureCache& operator = (const TextureCache&)
-			{ return *this; }
+		ET_DENY_COPY(TextureCache)
 
 	private:
 		typedef std::map<const std::string, Texture> TextureMap;
