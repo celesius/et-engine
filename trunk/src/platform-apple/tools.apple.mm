@@ -171,6 +171,16 @@ bool et::removeDirectory(const std::string& name)
 	return (error == nil);
 }
 
+void et::getFolderContent(const std::string& folder, StringList& list)
+{
+	NSError* err = nil;
+	NSString* path = [NSString stringWithCString:folder.c_str() encoding:NSUTF8StringEncoding];
+	NSArray* files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:&err];
+	
+	for (NSString* file in files)
+		list.push_back(folder + std::string([file cStringUsingEncoding:NSUTF8StringEncoding]));
+}
+
 void et::findFiles(const std::string& folder, const std::string& mask, bool /* recursive */, std::vector<std::string>& list)
 {
 	size_t maskLength = mask.length();
@@ -200,7 +210,7 @@ void et::findFiles(const std::string& folder, const std::string& mask, bool /* r
 	}
 	
 	for (NSString* file in filtered)
-		list.push_back(folder + std::string([file cStringUsingEncoding:NSASCIIStringEncoding]));
+		list.push_back(folder + std::string([file cStringUsingEncoding:NSUTF8StringEncoding]));
 }
 
 void et::findSubfolders(const std::string& folder, bool recursive, std::vector<std::string>& list)
