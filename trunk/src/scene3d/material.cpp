@@ -289,6 +289,7 @@ void MaterialData::deserialize3(std::istream& stream, RenderContext* rc, Texture
 		std::string tval = deserializeString(stream);
 		if (has && tval.size()) 
 		{
+			tval = normalizeFilePath(tval);
 			Texture t = rc->textureFactory().loadTexture(tval, cache);
 			if (t.invalid())
 			{

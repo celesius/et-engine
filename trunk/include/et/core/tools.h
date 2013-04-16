@@ -13,6 +13,7 @@ namespace et
 {
 	// platform-specific code
 	extern char pathDelimiter;
+	extern char invalidPathDelimiter;
 	
 	float queryTime();
 	uint64_t queryTimeMSec();

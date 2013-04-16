@@ -60,12 +60,12 @@ void AppEnvironment::updateDocumentsFolder(const ApplicationIdentifier& i)
 
 void AppEnvironment::addSearchPath(const std::string& path)
 {
-	_searchPath.push_back(addTrailingSlash(path));
+	_searchPath.push_back(addTrailingSlash(normalizeFilePath(path)));
 }
 
 void AppEnvironment::addRelativeSearchPath(const std::string& path)
 {
-	_searchPath.push_back(addTrailingSlash(_appPath + path));
+	_searchPath.push_back(addTrailingSlash(normalizeFilePath(_appPath + path)));
 }
 
 std::string AppEnvironment::findFile(const std::string& name) const
@@ -74,7 +74,7 @@ std::string AppEnvironment::findFile(const std::string& name) const
 
 	ET_ITERATE(_searchPath, const std::string&, i,
 	{
-		std::string currentName = normalizeFilePath(i + name);
+		std::string currentName = i + name;
 		if (fileExists(currentName))
 			return currentName;
 	})
@@ -88,7 +88,7 @@ std::string AppEnvironment::findFolder(const std::string& name) const
 	
 	ET_ITERATE(_searchPath, const std::string&, i,
 	{
-		std::string currentName = normalizeFilePath(i + name);
+		std::string currentName = i + name;
 		if (folderExists(currentName))
 			return currentName;
 	})
