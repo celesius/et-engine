@@ -84,11 +84,10 @@ namespace et
 
 	std::string addTrailingSlash(const std::string& path)
 	{
-		if (path.length() == 0) 
-			return path;
+		if (path.empty()) return path;
 
 		std::string::value_type t = *path.rbegin();
-		return ((t == '\\') || (t == '/')) ? path : path + pathDelimiter;
+		return ((t == invalidPathDelimiter) || (t == pathDelimiter)) ? path : path + pathDelimiter;
 	}
 
 	std::string replaceFileExt(const std::string& fileName, const std::string& newExt)
@@ -159,6 +158,12 @@ namespace et
 		if (dotsPos != std::string::npos)
 			name = getFilePath( name.substr(0, dotsPos - 1) ) + name.substr(dotsPos + 3);
 		return name;
+	}
+
+	std::string normalizeFilePath(std::string s)
+	{
+		ET_ITERATE(s, char&, i, if (i == invalidPathDelimiter) i = pathDelimiter);
+		return s;
 	}
 
 	std::string getFileExt(std::string name)

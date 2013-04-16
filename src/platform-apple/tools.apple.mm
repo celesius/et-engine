@@ -17,12 +17,11 @@
 #	include <Foundation/NSURL.h>
 #endif
 
-using namespace std;
-
 static uint64_t startTime = 0;
 static bool startTimeInitialized = false;
 
 char et::pathDelimiter = '/';
+char et::invalidPathDelimiter = '\\';
 
 uint64_t queryActualTime()
 {
@@ -82,12 +81,6 @@ std::string et::applicationDataFolder()
     result[i] = '/';
     
 	return std::string(result);
-}
-
-std::string et::normalizeFilePath(string s)
-{
-	ET_ITERATE(s, auto, i, if (i == '\\') i = pathDelimiter);
-	return s;
 }
 
 bool et::fileExists(const std::string& name)
