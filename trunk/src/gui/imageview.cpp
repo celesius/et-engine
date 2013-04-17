@@ -34,7 +34,7 @@ void ImageView::addToRenderQueue(RenderContext* rc, GuiRenderer& g)
 		buildVertices(rc, g);
 
 	if (_vertices.offset())
-		g.addVertices(_vertices, _texture, ElementClass_2d, GuiRenderLayer_Layer0);
+		g.addVertices(_vertices, _texture, ElementClass_2d, RenderLayer_Layer0);
 }
 
 void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
@@ -43,7 +43,7 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 	_vertices.setOffset(0);
 	
 	if (_backgroundColor.w > 0.0f)
-		g.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor, transform, GuiRenderLayer_Layer1);
+		g.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor, transform, RenderLayer_Layer1);
 	
 	if (!_texture.valid()) return;
 
@@ -54,7 +54,7 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 	{
 		vec2 dp = 0.5f * (size() - _descriptor.size);
 		g.createImageVertices(_vertices, _texture, _descriptor, rect(dp, _descriptor.size), 
-			color(), transform, GuiRenderLayer_Layer0);
+			color(), transform, RenderLayer_Layer0);
 	}
 	else if (_contentMode == ContentMode_Fit)
 	{
@@ -98,7 +98,7 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 		
 		vec2 origin = 0.5f * (size() - frameSize);
 		g.createImageVertices(_vertices, _texture, _descriptor, rect(origin, frameSize),
-			color(), transform, GuiRenderLayer_Layer0);
+			color(), transform, RenderLayer_Layer0);
 	}
 	else if (_contentMode == ContentMode_Fill)
 	{
@@ -119,7 +119,7 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 				float fx = static_cast<float>(u * imageWidth);
 				float fy = static_cast<float>(v * imageHeight);
 				g.createImageVertices(_vertices, _texture, _descriptor, rect(vec2(fx, fy), _descriptor.size), 
-					color(), transform, GuiRenderLayer_Layer0);
+					color(), transform, RenderLayer_Layer0);
 			}
 		}
 	}
@@ -131,11 +131,11 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 		desc.size.y = size().y < desc.size.y ? size().y : dSize.y;
 		vec2 cropped = dSize - desc.size;
 		desc.origin += cropped * pivotPoint();
-		g.createImageVertices(_vertices, _texture, desc, rect(vec2(0.0f), size()), color(), transform, GuiRenderLayer_Layer0);
+		g.createImageVertices(_vertices, _texture, desc, rect(vec2(0.0f), size()), color(), transform, RenderLayer_Layer0);
 	}
 	else
 	{
-		g.createImageVertices(_vertices, _texture, _descriptor, rect(vec2(0.0f), size()), color(), transform, GuiRenderLayer_Layer0);
+		g.createImageVertices(_vertices, _texture, _descriptor, rect(vec2(0.0f), size()), color(), transform, RenderLayer_Layer0);
 	}
 
 	setContentValid();

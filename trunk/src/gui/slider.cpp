@@ -12,136 +12,166 @@
 using namespace et;
 using namespace et::gui;
 
-Slider::Slider(Element2d* parent) : Element2d(parent)
-{   
-    _min = 0.0f;
-    _max = 1.0f;
-    _value = 0.5f;
-    _fillingLineWidth = 16;
-    _selected = false;
+Slider::Slider(Element2d* parent) :
+	Element2d(parent), _min(0.0f), _max(1.0f), _value(0.5f), _drag(false)
+{
+	
 }
 
-void Slider::setValue(float value)
+void Slider::setRange(float aMin, float aMax)
 {
-	_value = (et::clamp(value, _min, _max) - _min) / (_max - _min);
+	float oldValue = value();
+	
+	_min = aMin;
+	_max = aMax;
+	
+	if (oldValue < _min)
+		setValue(_min);
+	
+	if (oldValue > _max)
+		setValue(_max);
+	
+	invalidateContent();
+}
+
+void Slider::setValue(float v)
+{
+	_value = (v - _min) / (_max - _min);
+	invalidateContent();
 }
 
 float Slider::value() const
 {
-	return _min + ((_max - _min) * _value);
+	return mix(_min, _max, _value);
 }
 
-void Slider::addToRenderQueue(RenderContext* renderContext, GuiRenderer& guiRenderer)
-{    
+void Slider::addToRenderQueue(RenderContext* rc, GuiRenderer& guiRenderer)
+{
 	if (!contentValid() || !transformValid())
-		buildVertices(renderContext, guiRenderer);
-    
-    guiRenderer.addVertices(_backgroundVertices, _backgroundImage.texture,
-		ElementClass_2d, GuiRenderLayer_Layer0);
+		buildVertices(rc, guiRenderer);
+
+	if (_backgroundVertices.offset() > 0)
+		guiRenderer.addVertices(_backgroundVertices, _background.texture, ElementClass_2d, RenderLayer_Layer0);
+
+	if (_sliderLeftVertices.offset() > 0)
+		guiRenderer.addVertices(_sliderLeftVertices, _sliderLeft.texture, ElementClass_2d, RenderLayer_Layer0);
+
+	if (_sliderRightVertices.offset() > 0)
+		guiRenderer.addVertices(_sliderRightVertices, _sliderRight.texture, ElementClass_2d, RenderLayer_Layer0);
 	
-    guiRenderer.addVertices(_fillingLineVertices, _fillingLineImage.texture,
-		ElementClass_2d, GuiRenderLayer_Layer0);
-	
-    guiRenderer.addVertices(_handleVertices, _handleImage.texture,
-		ElementClass_2d, GuiRenderLayer_Layer0);
+	if (_handleVertices.offset() > 0)
+		guiRenderer.addVertices(_handleVertices, _handle.texture, ElementClass_2d, RenderLayer_Layer0);
 }
 
-void Slider::setImages(Image background, Image fillingLine, Image handle)
+void Slider::buildVertices(RenderContext*, GuiRenderer& renderer)
 {
-    _backgroundImage = background;
-    _fillingLineImage = fillingLine;
-    _handleImage = handle;
-}
+	mat4 transform = finalTransform();
+	rect mainRect(vec2(0.0f), size());
+	
+	_backgroundVertices.setOffset(0);
+	_sliderLeftVertices.setOffset(0);
+	_sliderRightVertices.setOffset(0);
+	_handleVertices.setOffset(0);
+	
+	float handleWidth = _handle.descriptor.size.x;
+	float halfHandleWidth = 0.5f * handleWidth;
+	float valuePoint = _value * mainRect.width;
 
-void Slider::buildVertices(RenderContext* renderContext, GuiRenderer& guiRenderer)
-{
-	vec4 white = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    vec4 gray = vec4(0.5f, 0.5f, 0.5f, 1.0f);
-	vec4 backgroundColor = vec4(0.5f, 1.0f, 0.5f, 1.0f);
-	vec4 fillingLineColor = vec4(0.5f, 0.75f, 1.0f, 1.0f);
-	vec4 handleColor = _selected ? gray : white;
-    
-    rect backgroundRect = rect(0.0f, (size().y - _fillingLineWidth) * 0.5f,
-		size().x, _fillingLineWidth);
-	
-    rect fillingLineRect = rect(0.0f, (size().y - _fillingLineWidth) * 0.5f,
-		(size().x - size().y) * _value + size().y * 0.5f, _fillingLineWidth);
-	
-    rect handleRect = rect((size().x - 0.5f * size().y) * _value, 0, size().y, size().y);
-    
-    _backgroundVertices.setOffset(0);
-    _fillingLineVertices.setOffset(0);
-    _handleVertices.setOffset(0);
-    
-    mat4 transform = finalTransform();
-    
-    if (_backgroundImage.texture.valid())
+	if (_background.texture.valid())
 	{
-        guiRenderer.createImageVertices(_backgroundVertices, _backgroundImage.texture,
-			_backgroundImage.descriptor, backgroundRect, white, transform, GuiRenderLayer_Layer0);
+		renderer.createImageVertices(_backgroundVertices, _background.texture, _background.descriptor,
+			mainRect, vec4(1.0f), transform, RenderLayer_Layer0);
 	}
-    else
+/*
+	else
 	{
-        guiRenderer.createColorVertices(_backgroundVertices, backgroundRect, backgroundColor,
-			transform, GuiRenderLayer_Layer0);
+		renderer.createColorVertices(_backgroundVertices, mainRect, vec4(1.0f), transform, RenderLayer_Layer0);
 	}
-	
-    if (_fillingLineImage.texture.valid())
+*/	
+	if (_sliderLeft.texture.valid() && (_value > 0.0f))
 	{
-        guiRenderer.createImageVertices(_fillingLineVertices, _fillingLineImage.texture,
-			_fillingLineImage.descriptor, fillingLineRect, white, transform, GuiRenderLayer_Layer0);
+		rect r(vec2(halfHandleWidth, 0.0f), _sliderLeft.descriptor.size);
+		r.top = 0.5f * (mainRect.height - r.height);
+		r.width = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
+		renderer.createImageVertices(_sliderLeftVertices, _sliderLeft.texture, _sliderLeft.descriptor, r,
+			vec4(1.0f), transform, RenderLayer_Layer0);
 	}
-    else
+
+	if (_sliderRight.texture.valid() && (_value < 1.0f))
 	{
-        guiRenderer.createColorVertices(_fillingLineVertices, fillingLineRect, fillingLineColor,
-			transform, GuiRenderLayer_Layer0);
+		rect r(vec2(0.0f), _sliderRight.descriptor.size);
+		r.top = 0.5f * (mainRect.height - r.height);
+		r.left = clamp(valuePoint, halfHandleWidth, mainRect.width - halfHandleWidth);
+		r.width = etMax(0.0f, mainRect.width - halfHandleWidth - r.left);
+		renderer.createImageVertices(_sliderRightVertices, _sliderRight.texture, _sliderRight.descriptor, r,
+			vec4(1.0f), transform, RenderLayer_Layer0);
 	}
-	
-    if (_fillingLineImage.texture.valid())
+
+	if (_handle.texture.valid())
 	{
-        guiRenderer.createImageVertices(_handleVertices, _handleImage.texture,
-			_handleImage.descriptor, handleRect, handleColor, transform, GuiRenderLayer_Layer0);
+		rect r(vec2(0.0f), _handle.descriptor.size);
+		r.top = 0.5f * (mainRect.height - r.height);
+		r.left = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
+		renderer.createImageVertices(_handleVertices, _handle.texture, _handle.descriptor, r,
+			vec4(1.0f), transform, RenderLayer_Layer0);
 	}
-    else
-	{
-        guiRenderer.createColorVertices(_handleVertices, handleRect, handleColor,
-			transform, GuiRenderLayer_Layer0);
-	}
-    
+
 	setContentValid();
 }
 
-bool Slider::pointerPressed(const PointerInputInfo& info)
+void Slider::setBackgroundImage(const Image& i)
 {
-    _selected = true;
-    _value = et::clamp((info.pos.x - 0.5f * size().y) / size().x, 0.0f, 1.0f);
-    invalidateContent();
-    valueChanged.invoke(this);
-    return true;
+	_background = i;
+	invalidateContent();
 }
 
-bool Slider::pointerMoved(const PointerInputInfo& info)
+void Slider::setHandleImage(const Image& i)
 {
-    if (_selected)
-    {
-        _value = et::clamp((info.pos.x - 0.5f * size().y) / size().x, 0.0f, 1.0f);
-        invalidateContent();
-        valueChanged.invoke(this);
-    }
+	_handle = i;
+	invalidateContent();
+}
+
+void Slider::setSliderImages(const Image& left, const Image& right)
+{
+	_sliderLeft = left;
+	_sliderRight = right;
+	invalidateContent();
+}
+
+bool Slider::pointerPressed(const PointerInputInfo& p)
+{
+	_drag = true;
+	updateValue(clamp(p.pos.x / size().x, 0.0f, 1.0f));
+	return true;
+}
+
+bool Slider::pointerMoved(const PointerInputInfo& p)
+{
+	if (_drag)
+	{
+		updateValue(clamp(p.pos.x / size().x, 0.0f, 1.0f));
+	}
 	
-    return true;
+	return true;
 }
 
-bool Slider::pointerReleased(const PointerInputInfo&)
+bool Slider::pointerReleased(const PointerInputInfo& p)
 {
-    _selected = false;
-    invalidateContent();
-    return true;
+	_drag = false;
+	return true;
 }
 
-bool Slider::pointerCancelled(const PointerInputInfo&)
+bool Slider::pointerCancelled(const PointerInputInfo& p)
 {
-    _selected = false;
-    invalidateContent();
-    return true;   
+	_drag = false;
+	return true;
+}
+
+void Slider::updateValue(float v)
+{
+	_value = v;
+	invalidateContent();
+	
+	changed.invoke(this);
+	valueChanged.invoke(value());
 }

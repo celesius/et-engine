@@ -35,7 +35,7 @@ void Scroll::addToRenderQueue(RenderContext* rc, GuiRenderer& r)
 	if (!contentValid())
 		buildVertices(rc, r);
 	
-	r.addVertices(_backgroundVertices, Texture(), ElementClass_2d, GuiRenderLayer_Layer0);
+	r.addVertices(_backgroundVertices, Texture(), ElementClass_2d, RenderLayer_Layer0);
 }
 
 void Scroll::addToOverlayRenderQueue(RenderContext* rc, GuiRenderer& r)
@@ -43,7 +43,7 @@ void Scroll::addToOverlayRenderQueue(RenderContext* rc, GuiRenderer& r)
 	if (!contentValid())
 		buildVertices(rc, r);
 
-	r.addVertices(_scrollbarsVertices, Texture(), ElementClass_2d, GuiRenderLayer_Layer0);
+	r.addVertices(_scrollbarsVertices, Texture(), ElementClass_2d, RenderLayer_Layer0);
 }
 
 void Scroll::buildVertices(RenderContext* rc, GuiRenderer& r)
@@ -54,7 +54,7 @@ void Scroll::buildVertices(RenderContext* rc, GuiRenderer& r)
 	if (_backgroundColor.w > 0.0f)
 	{
 		r.createColorVertices(_backgroundVertices, rect(vec2(0.0f), size()), _backgroundColor,
-			Element2d::finalTransform(), GuiRenderLayer_Layer0);
+			Element2d::finalTransform(), RenderLayer_Layer0);
 	}
 	
 	if (_scrollbarsColor.w > 0.0f)
@@ -68,7 +68,7 @@ void Scroll::buildVertices(RenderContext* rc, GuiRenderer& r)
 		adjutsedColor.w *= _scrollbarsAlpha;
 		
 		r.createColorVertices(_scrollbarsVertices, rect(origin, vec2(scaledScollbarSize, barHeight)), adjutsedColor,
-		  Element2d::finalTransform(), GuiRenderLayer_Layer0);
+		  Element2d::finalTransform(), RenderLayer_Layer0);
 	}
 	
 	setContentValid();

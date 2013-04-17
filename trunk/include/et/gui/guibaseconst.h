@@ -42,11 +42,11 @@ namespace et
 			ElementFlag_ClipToBounds = 0x0020,
 		};
 		
-		enum GuiRenderLayer 
+		enum RenderLayer 
 		{
-			GuiRenderLayer_Layer0,
-			GuiRenderLayer_Layer1,
-			GuiRenderLayer_max
+			RenderLayer_Layer0,
+			RenderLayer_Layer1,
+			RenderLayer_max
 		};
 
 		enum ElementAlignment

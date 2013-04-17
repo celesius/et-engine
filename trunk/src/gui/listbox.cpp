@@ -34,7 +34,7 @@ void ListboxPopup::buildVertices(GuiRenderer& gr)
 	if (background.texture.valid())
 	{
 		gr.createImageVertices(_backgroundVertices, background.texture, background.descriptor, 
-			rect(vec2(0.0), size()), color(), transform, GuiRenderLayer_Layer0);
+			rect(vec2(0.0), size()), color(), transform, RenderLayer_Layer0);
 	}
 
 	const StringList& values = _owner->_values;
@@ -59,11 +59,11 @@ void ListboxPopup::buildVertices(GuiRenderer& gr)
 			{
 				gr.createImageVertices(_selectionVertices, selection.texture, selection.descriptor, 
 					rect(vec2(0.0f, row * rowSize), vec2(size().x, rowSize)), drawColor, transform,
-					GuiRenderLayer_Layer0);
+					RenderLayer_Layer0);
 			}
 
 			gr.createStringVertices(_textVertices, _owner->_font->buildString(*i), ElementAlignment_Near,
-				ElementAlignment_Near, textPos, drawColor, transform, GuiRenderLayer_Layer1);
+				ElementAlignment_Near, textPos, drawColor, transform, RenderLayer_Layer1);
 			textPos.y += dy;
 		}
 	}
@@ -113,13 +113,13 @@ void ListboxPopup::addToRenderQueue(RenderContext*, GuiRenderer& gr)
 		buildVertices(gr);
 
 	if (_backgroundVertices.offset() > 0)
-		gr.addVertices(_backgroundVertices, _owner->_background.texture, ElementClass_2d, GuiRenderLayer_Layer0);
+		gr.addVertices(_backgroundVertices, _owner->_background.texture, ElementClass_2d, RenderLayer_Layer0);
 
 	if (_selectionVertices.offset() > 0)
-		gr.addVertices(_selectionVertices, _owner->_selection.texture, ElementClass_2d, GuiRenderLayer_Layer0);
+		gr.addVertices(_selectionVertices, _owner->_selection.texture, ElementClass_2d, RenderLayer_Layer0);
 
 	if (_textVertices.offset() > 0)
-		gr.addVertices(_textVertices, _owner->_font->texture(), ElementClass_2d, GuiRenderLayer_Layer1);
+		gr.addVertices(_textVertices, _owner->_font->texture(), ElementClass_2d, RenderLayer_Layer1);
 }
 
 bool ListboxPopup::pointerPressed(const PointerInputInfo&)
@@ -205,7 +205,7 @@ void Listbox::buildVertices(GuiRenderer& gr)
 	if (_images[_state].texture.valid())
 	{
 		gr.createImageVertices(_backgroundVertices, _images[_state].texture, _images[_state].descriptor, 
-			rect(vec2(0.0), size()), color(), transform, GuiRenderLayer_Layer0);
+			rect(vec2(0.0), size()), color(), transform, RenderLayer_Layer0);
 	}
 
 	if (shouldDrawText())
@@ -213,7 +213,7 @@ void Listbox::buildVertices(GuiRenderer& gr)
 		std::string textToDraw = _prefix + _values[_selectedIndex];
 		vec2 textPos = _contentOffset + vec2(0.0f, 0.5f * (size().y - _font->lineHeight()));
 		gr.createStringVertices(_textVertices, _font->buildString(textToDraw), ElementAlignment_Near, ElementAlignment_Near,
-								textPos, color(), transform, GuiRenderLayer_Layer1);
+								textPos, color(), transform, RenderLayer_Layer1);
 	}
 
 	setContentValid();
@@ -225,10 +225,10 @@ void Listbox::addToRenderQueue(RenderContext*, GuiRenderer& gr)
 		buildVertices(gr);
 
 	if (_images[_state].texture.valid())
-		gr.addVertices(_backgroundVertices, _images[_state].texture, ElementClass_2d, GuiRenderLayer_Layer0);
+		gr.addVertices(_backgroundVertices, _images[_state].texture, ElementClass_2d, RenderLayer_Layer0);
 
 	if (shouldDrawText())
-		gr.addVertices(_textVertices, _font->texture(),  ElementClass_2d, GuiRenderLayer_Layer1);
+		gr.addVertices(_textVertices, _font->texture(),  ElementClass_2d, RenderLayer_Layer1);
 }
 
 bool Listbox::shouldDrawText()

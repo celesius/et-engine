@@ -114,14 +114,14 @@ namespace et
 			size_t first;
 			size_t count;
 			recti clip;
-			Texture layers[GuiRenderLayer_max];
+			Texture layers[RenderLayer_max];
 			ElementClass elementClass;
 
 			RenderChunk(size_t f, size_t cnt, const Texture& l0, const Texture& l1, const recti& aClip, ElementClass c) : 
 				first(f), count(cnt), clip(aClip), elementClass(c)
 			{ 
-				layers[GuiRenderLayer_Layer0] = l0;
-				layers[GuiRenderLayer_Layer1] = l1;
+				layers[RenderLayer_Layer0] = l0;
+				layers[RenderLayer_Layer1] = l1;
 			}
 		};
 

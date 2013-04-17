@@ -107,12 +107,12 @@ void GuiRenderer::alloc(size_t count)
 	}
 }
 
-GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& texture, ElementClass cls, GuiRenderLayer layer)
+GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& texture, ElementClass cls, RenderLayer layer)
 {
 	if (!_renderingElement.valid()) return 0;
 
-	bool shouldAdd = _saveFillRate && (layer == GuiRenderLayer_Layer1);
-	layer = shouldAdd ? GuiRenderLayer_Layer0 : layer;
+	bool shouldAdd = _saveFillRate && (layer == RenderLayer_Layer1);
+	layer = shouldAdd ? RenderLayer_Layer0 : layer;
 	
 	_renderingElement->_changed = true;
 	size_t i0 = _renderingElement->_vertexList.offset();
@@ -135,7 +135,7 @@ GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& text
 	{
 		_lastTextures[layer] = texture;
 		_renderingElement->_chunks.push_back(RenderChunk(i0, count, 
-			_lastTextures[GuiRenderLayer_Layer0], _lastTextures[GuiRenderLayer_Layer1], _clip.top(), cls));
+			_lastTextures[RenderLayer_Layer0], _lastTextures[RenderLayer_Layer1], _clip.top(), cls));
 	}
 	alloc(count);
 	_renderingElement->_vertexList.applyOffset(count);
@@ -146,7 +146,7 @@ GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& text
 	return _renderingElement->_vertexList.element_ptr(i0);
 }
 
-size_t GuiRenderer::addVertices(const GuiVertexList& vertices, const Texture& texture, ElementClass cls, GuiRenderLayer layer)
+size_t GuiRenderer::addVertices(const GuiVertexList& vertices, const Texture& texture, ElementClass cls, RenderLayer layer)
 {
 	size_t current = 0;
 	size_t count = vertices.offset();
@@ -164,8 +164,8 @@ size_t GuiRenderer::addVertices(const GuiVertexList& vertices, const Texture& te
 void GuiRenderer::setRendernigElement(const RenderingElement::Pointer& r)
 {
 	_renderingElement = r;
-	_lastTextures[GuiRenderLayer_Layer0] = Texture();
-	_lastTextures[GuiRenderLayer_Layer1] = Texture();
+	_lastTextures[RenderLayer_Layer0] = Texture();
+	_lastTextures[RenderLayer_Layer1] = Texture();
 }
 
 void GuiRenderer::beginRender(RenderContext* rc)
@@ -205,8 +205,8 @@ void GuiRenderer::render(RenderContext* rc)
 	const VertexArrayObject& vao = _renderingElement->vertexArrayObject();
 	ET_START_ITERATION(_renderingElement->_chunks, const RenderChunk&, i)
 	{
-		rs.bindTexture(0, i.layers[GuiRenderLayer_Layer0]);
-		rs.bindTexture(1, i.layers[GuiRenderLayer_Layer1]);
+		rs.bindTexture(0, i.layers[RenderLayer_Layer0]);
+		rs.bindTexture(1, i.layers[RenderLayer_Layer1]);
 		rs.setClip(true, i.clip + recti(_customWindowOffset.x, _customWindowOffset.y, 0, 0));
 
 		if (i.elementClass != elementClass)
@@ -236,7 +236,7 @@ void GuiRenderer::buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, c
 }
 
 void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescriptorList& chars, ElementAlignment hAlign, ElementAlignment vAlign, 
-									   const vec2& pos, const vec4& color, const mat4& transform, GuiRenderLayer layer)
+									   const vec2& pos, const vec4& color, const mat4& transform, RenderLayer layer)
 {
 	vec4 line;
 	std::vector<vec4> lines;
@@ -267,7 +267,7 @@ void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescri
 	size_t lineIndex = 0;
 	line = lines.front();
 	
-	vec2 mask(layer == GuiRenderLayer_Layer0 ? 0.0f : 1.0f, 0.0f);
+	vec2 mask(layer == RenderLayer_Layer0 ? 0.0f : 1.0f, 0.0f);
 	vertices.fitToSize(6 * chars.size());
 	ET_ITERATE(chars, const CharDescriptor&, desc,
 	{
@@ -317,7 +317,7 @@ int GuiRenderer::measusevertexCountForImageDescriptor(const ImageDescriptor& des
 }
 
 void GuiRenderer::createImageVertices(GuiVertexList& vertices, const Texture& tex, const ImageDescriptor& desc, 
-	const rect& p, const vec4& color, const mat4& transform, GuiRenderLayer layer)
+	const rect& p, const vec4& color, const mat4& transform, RenderLayer layer)
 {
 	if (!tex.valid()) return;
 
@@ -335,7 +335,7 @@ void GuiRenderer::createImageVertices(GuiVertexList& vertices, const Texture& te
 
 	vertices.fitToSize(6 * (1 + numCorners + numBorders));
 
-	vec2 mask(layer == GuiRenderLayer_Layer0 ? 0.0f : 1.0f, 0.0f);
+	vec2 mask(layer == RenderLayer_Layer0 ? 0.0f : 1.0f, 0.0f);
 
 	float width = fabsf(p.width);
 	float height = fabsf(p.height);
@@ -490,14 +490,14 @@ void GuiRenderer::createImageVertices(GuiVertexList& vertices, const Texture& te
 }
 
 void GuiRenderer::createColorVertices(GuiVertexList& vertices, const rect& p, const vec4& color, 
-									  const mat4& transform, GuiRenderLayer layer)
+									  const mat4& transform, RenderLayer layer)
 {
 	vec2 topLeft = p.origin();
 	vec2 topRight = topLeft + vec2(p.width, 0.0f);
 	vec2 bottomLeft = topLeft + vec2(0.0f, p.height);
 	vec2 bottomRight = bottomLeft + vec2(p.width, 0.0f);
 	
-	vec2 mask(layer == GuiRenderLayer_Layer0 ? 0.0f : 1.0f, 1.0f);
+	vec2 mask(layer == RenderLayer_Layer0 ? 0.0f : 1.0f, 1.0f);
 	
 	buildQuad(vertices, 
 			  GuiVertex(transform * topLeft, vec4(vec2(0.0f), mask), color ), 
