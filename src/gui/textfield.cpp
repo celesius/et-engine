@@ -29,13 +29,13 @@ void TextField::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 		buildVertices(rc, gr);
 	
 	if (_backgroundVertices.offset() > 0)
-		gr.addVertices(_backgroundVertices, _background.texture, ElementClass_2d, GuiRenderLayer_Layer0);
+		gr.addVertices(_backgroundVertices, _background.texture, ElementClass_2d, RenderLayer_Layer0);
 
 	if (_imageVertices.offset() > 0)
-		gr.addVertices(_imageVertices, _background.texture, ElementClass_2d, GuiRenderLayer_Layer0);
+		gr.addVertices(_imageVertices, _background.texture, ElementClass_2d, RenderLayer_Layer0);
 	
 	if (_textVertices.offset() > 0)
-		gr.addVertices(_textVertices, _font->texture(), ElementClass_2d, GuiRenderLayer_Layer1);
+		gr.addVertices(_textVertices, _font->texture(), ElementClass_2d, RenderLayer_Layer1);
 }
 
 void TextField::buildVertices(RenderContext*, GuiRenderer& gr)
@@ -51,13 +51,13 @@ void TextField::buildVertices(RenderContext*, GuiRenderer& gr)
 	if (_backgroundColor.w > 0.0f)
 	{
 		gr.createColorVertices(_backgroundVertices, wholeRect, _backgroundColor,
-			transform, GuiRenderLayer_Layer0);
+			transform, RenderLayer_Layer0);
 	}
 	
 	if (_background.texture.valid())
 	{
 		gr.createImageVertices(_imageVertices, _background.texture, _background.descriptor,
-			wholeRect, alphaVector, transform, GuiRenderLayer_Layer0);
+			wholeRect, alphaVector, transform, RenderLayer_Layer0);
 	}
 
 	_charList = _secured ?
@@ -75,7 +75,7 @@ void TextField::buildVertices(RenderContext*, GuiRenderer& gr)
 	if (_charList.size())
 	{
 		gr.createStringVertices(_textVertices, _charList, ElementAlignment_Near, ElementAlignment_Near,
-								0.5f * (size() - textSize), color() * alphaVector, transform, GuiRenderLayer_Layer1);
+								0.5f * (size() - textSize), color() * alphaVector, transform, RenderLayer_Layer1);
 	}
 	
 	setContentValid();

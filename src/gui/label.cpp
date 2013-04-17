@@ -30,7 +30,7 @@ void Label::addToRenderQueue(RenderContext* rc, GuiRenderer& guiRenderer)
 		buildVertices(rc, guiRenderer);
 
 	if (_vertices.offset() > 0)
-		guiRenderer.addVertices(_vertices, _font->texture(), ElementClass_2d, GuiRenderLayer_Layer1);
+		guiRenderer.addVertices(_vertices, _font->texture(), ElementClass_2d, RenderLayer_Layer1);
 }
 
 void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
@@ -47,7 +47,7 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 	bool hasShadow = _shadowColor.w > 0.0f;
 	
 	if (_backgroundColor.w > 0.0f)
-		renderer.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor, transform, GuiRenderLayer_Layer0);
+		renderer.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor, transform, RenderLayer_Layer0);
 
 	if (_animatingText)
 	{
@@ -61,18 +61,18 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 
 			shadowColor.w *= color().w * fadeOut;
 			renderer.createStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment,
-				shadowOffset, shadowColor, transform, GuiRenderLayer_Layer1);
+				shadowOffset, shadowColor, transform, RenderLayer_Layer1);
 			
 			shadowColor.w = _shadowColor.w * color().w * fadeIn;
 			renderer.createStringVertices(_vertices, _charListNextText, _horizontalAlignment, _verticalAlignment,
-				shadowOffset, shadowColor, transform, GuiRenderLayer_Layer1);
+				shadowOffset, shadowColor, transform, RenderLayer_Layer1);
 		}
 
 		renderer.createStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment, textOffset, 
-			color() * vec4(1.0, 1.0, 1.0, fadeOut), transform, GuiRenderLayer_Layer1);
+			color() * vec4(1.0, 1.0, 1.0, fadeOut), transform, RenderLayer_Layer1);
 		
 		renderer.createStringVertices(_vertices, _charListNextText, _horizontalAlignment, _verticalAlignment, textOffset,
-			color() * vec4(1.0, 1.0, 1.0, fadeIn), transform, GuiRenderLayer_Layer1);
+			color() * vec4(1.0, 1.0, 1.0, fadeIn), transform, RenderLayer_Layer1);
 	}
 	else 
 	{
@@ -81,11 +81,11 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 		if (hasShadow)
 		{
 			renderer.createStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment, 
-				textOffset + _shadowOffset, _shadowColor * vec4(1.0f, 1.0f, 1.0, color().w), transform, GuiRenderLayer_Layer1);
+				textOffset + _shadowOffset, _shadowColor * vec4(1.0f, 1.0f, 1.0, color().w), transform, RenderLayer_Layer1);
 		}
 
 		renderer.createStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment, 
-			textOffset, color(), transform, GuiRenderLayer_Layer1);
+			textOffset, color(), transform, RenderLayer_Layer1);
 	}
 
 	setContentValid();

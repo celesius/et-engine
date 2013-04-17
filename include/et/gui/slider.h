@@ -19,58 +19,53 @@ namespace et
             typedef IntrusivePtr<Slider> Pointer;
 			
 		public:
-            Slider(Element2d* parent);
+			Slider(Element2d* parent);
 			
-            void setMinValue(float min)
-                { _min = min; }
+			void setBackgroundImage(const Image&);
+			void setHandleImage(const Image&);
+			void setSliderImages(const Image& left, const Image& right);
 			
-            float minValue()
-                { return _min; }
+			float minValue() const
+				{ return _min; }
 			
-            void setMaxValue(float max)
-                { _max = max; }
-			
-            float maxValue()
-                { return _max; }
-			
-            float value() const;
-            void setValue(float value);
-			
-            void setFillingLineWidth(float fillingLineWidth)
-                { _fillingLineWidth = fillingLineWidth; }
-			
-            void setImages(Image background, Image fillingLine, Image handle);
+			float maxValue() const
+				{ return _max; }
 
-            bool capturesPointer() const
-                { return true; }
-
-            ET_DECLARE_EVENT1(valueChanged, Slider*);
-
+			void setRange(float aMin, float aMax);
+			
+			void setValue(float v);
+			float value() const;
+			
+			ET_DECLARE_EVENT1(changed, Slider*)
+			ET_DECLARE_EVENT1(valueChanged, float)
+			
         private:
-            void addToRenderQueue(RenderContext*, GuiRenderer&);
-            void buildVertices(RenderContext*, GuiRenderer&);
-
-            bool pointerPressed(const PointerInputInfo&);
-            bool pointerMoved(const PointerInputInfo&);
-            bool pointerReleased(const PointerInputInfo&);
-            bool pointerCancelled(const PointerInputInfo&);
-
-        private:
-            GuiVertexList _backgroundVertices;
-            GuiVertexList _fillingLineVertices;
-            GuiVertexList _handleVertices;
-
-        private:
-            Image _backgroundImage;
-            Image _fillingLineImage;
-            Image _handleImage;
+			void addToRenderQueue(RenderContext*, GuiRenderer&);
+			void buildVertices(RenderContext*, GuiRenderer& renderer);
 			
-            float _min;
-            float _max;
-            float _value;
-            float _fillingLineWidth;
+			bool pointerPressed(const PointerInputInfo&);
+			bool pointerMoved(const PointerInputInfo&);
+			bool pointerReleased(const PointerInputInfo&);
+			bool pointerCancelled(const PointerInputInfo&);
 			
-            bool _selected;
+			void updateValue(float);
+			
+        private:
+			Image _background;
+			Image _sliderLeft;
+			Image _sliderRight;
+			Image _handle;
+			
+			GuiVertexList _backgroundVertices;
+			GuiVertexList _sliderLeftVertices;
+			GuiVertexList _sliderRightVertices;
+			GuiVertexList _handleVertices;
+			
+			float _min;
+			float _max;
+			float _value;
+			
+			bool _drag;
         };
     }
 }

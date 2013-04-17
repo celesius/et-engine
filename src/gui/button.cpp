@@ -25,13 +25,13 @@ void Button::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 		buildVertices(rc, gr);
 
 	if (_bgVertices.offset() > 0)
-		gr.addVertices(_bgVertices, _background[_state].texture, ElementClass_2d, GuiRenderLayer_Layer0);
+		gr.addVertices(_bgVertices, _background[_state].texture, ElementClass_2d, RenderLayer_Layer0);
 
 	if (_textVertices.offset() > 0)
-		gr.addVertices(_textVertices, _font->texture(), ElementClass_2d, GuiRenderLayer_Layer1);
+		gr.addVertices(_textVertices, _font->texture(), ElementClass_2d, RenderLayer_Layer1);
 
 	if (_imageVertices.offset() > 0)
-		gr.addVertices(_imageVertices, _image.texture, ElementClass_2d, GuiRenderLayer_Layer0);
+		gr.addVertices(_imageVertices, _image.texture, ElementClass_2d, RenderLayer_Layer0);
 }
 
 void Button::buildVertices(RenderContext*, GuiRenderer& gr)
@@ -78,13 +78,13 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 	if (_backgroundColor.w > 0.0f)
 	{
 		gr.createColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor,
-			transform, GuiRenderLayer_Layer0);
+			transform, RenderLayer_Layer0);
 	}
 
 	if (_background[_state].texture.valid())
 	{
 		gr.createImageVertices(_bgVertices, _background[_state].texture, _background[_state].descriptor,
-			rect(vec2(0.0f), size()), color(), transform, GuiRenderLayer_Layer0);
+			rect(vec2(0.0f), size()), color(), transform, RenderLayer_Layer0);
 	}
 
 	if (_title.size() > 0)
@@ -93,7 +93,7 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 		if (aColor.w > 0.0f)
 		{
 			gr.createStringVertices(_textVertices, _font->buildString(_title, true), ElementAlignment_Near,
-				ElementAlignment_Near, textOrigin, aColor * alphaScaleColor, transform, GuiRenderLayer_Layer1);
+				ElementAlignment_Near, textOrigin, aColor * alphaScaleColor, transform, RenderLayer_Layer1);
 		}
 	}
 
@@ -105,7 +105,7 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 		if (aColor.w > 0.0f)
 		{
 			gr.createImageVertices(_imageVertices, _image.texture, _image.descriptor, 
-				rect(imageOrigin, imageSize), aColor * alphaScaleColor, transform, GuiRenderLayer_Layer0);
+				rect(imageOrigin, imageSize), aColor * alphaScaleColor, transform, RenderLayer_Layer0);
 		}
 	}
 }
