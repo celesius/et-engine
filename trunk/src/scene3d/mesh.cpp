@@ -51,6 +51,7 @@ void Mesh::setIndexBuffer(IndexBuffer ib)
 
 void Mesh::setVertexArrayObject(VertexArrayObject vao)
 {
+	assert(vao.valid());
 	_vao = vao;
 }
 
