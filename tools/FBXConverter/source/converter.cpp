@@ -25,7 +25,7 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	_gestures.zoom.connect(this, &Converter::onZoom);
 	_gestures.drag.connect(this, &Converter::onDrag);
 
-	_gui = new gui::Gui(rc, _texCache);
+	_gui = new gui::Gui(rc);
 	_mainLayout = gui::Layout::Pointer(new gui::Layout());
 	_gui->pushLayout(_mainLayout, 0, 0.0f);
 	_mainFont = gui::Font(rc, "ui/fonts/main.font", _texCache);

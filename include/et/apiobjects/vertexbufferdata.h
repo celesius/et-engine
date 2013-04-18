@@ -21,7 +21,7 @@ namespace et
 
 		~VertexBufferData();
 	
-		GLuint glID() const
+		uint32_t glID() const
 			{ return _vertexBuffer; }
 		
 		size_t vertexCount() const
@@ -47,7 +47,7 @@ namespace et
 
 	private:
 		RenderState& _rs;
-		GLuint _vertexBuffer;
+		uint32_t _vertexBuffer;
 		VertexDeclaration _decl;
 		size_t _dataSize;
 		size_t _sourceTag;

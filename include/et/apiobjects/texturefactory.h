@@ -27,14 +27,14 @@ namespace et
 			const std::string& negz, TextureCache& cache);
 
 		Texture genNoiseTexture(const vec2i& size, bool normalize, const std::string& id = "");
-		Texture genCubeTexture(GLint internalformat, GLsizei size, GLenum format, GLenum type,
+		Texture genCubeTexture(int internalformat, GLsizei size, uint32_t format, uint32_t type,
 			const std::string& id = "");
 		
 		Texture genTexture(TextureDescription::Pointer desc);
-		Texture genTexture(GLenum target, GLint internalformat, const vec2i& size, GLenum format,
-			GLenum type, const BinaryDataStorage& data, const std::string& id = "");
+		Texture genTexture(uint32_t target, int internalformat, const vec2i& size, uint32_t format,
+			uint32_t type, const BinaryDataStorage& data, const std::string& id = "");
 		
-		Texture createTextureWrapper(GLuint texture, const vec2i& size, const std::string& name = "");
+		Texture createTextureWrapper(uint32_t texture, const vec2i& size, const std::string& name = "");
 
 		void textureLoadingThreadDidLoadTextureData(TextureLoadingRequest* request);
 		

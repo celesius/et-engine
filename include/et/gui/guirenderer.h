@@ -73,9 +73,9 @@ namespace et
 			
 			Program _guiProgram;
 			mat4 _defaultTransform;
-			GLint _guiDefaultTransformUniform;
-			GLint _guiCustomOffsetUniform;
-			GLint _guiCustomAlphaUniform;
+			int _guiDefaultTransformUniform;
+			int _guiCustomOffsetUniform;
+			int _guiCustomAlphaUniform;
 			
 			Camera _guiCamera;
 

@@ -9,8 +9,9 @@
 
 using namespace et;
 
-Framebuffer FramebufferFactory::createFramebuffer(const vec2i& size, const std::string& id, GLint colorInternalformat, GLenum colorFormat, 
-	GLenum colorType, GLint depthInternalformat, GLenum depthFormat, GLenum depthType, bool useRenderbuffers)
+Framebuffer FramebufferFactory::createFramebuffer(const vec2i& size, const std::string& id,
+	int colorInternalformat, uint32_t colorFormat, uint32_t colorType, int depthInternalformat,
+	uint32_t depthFormat, uint32_t depthType, bool useRenderbuffers)
 {
 	FramebufferDescription desc;
 	desc.colorFormat = colorFormat;
@@ -27,8 +28,9 @@ Framebuffer FramebufferFactory::createFramebuffer(const vec2i& size, const std::
 	return Framebuffer(new FramebufferData(renderContext(), _tf, desc, id));
 }
 
-Framebuffer FramebufferFactory::createCubemapFramebuffer(size_t size, const std::string& id, GLint colorInternalformat, 
-	GLenum colorFormat, GLenum colorType, GLint depthInternalformat, GLenum depthFormat, GLenum depthType)
+Framebuffer FramebufferFactory::createCubemapFramebuffer(size_t size, const std::string& id,
+	int colorInternalformat, uint32_t colorFormat, uint32_t colorType, int depthInternalformat,
+	uint32_t depthFormat, uint32_t depthType)
 {
 	FramebufferDescription desc;
 	desc.colorFormat = colorFormat;
@@ -44,7 +46,7 @@ Framebuffer FramebufferFactory::createCubemapFramebuffer(size_t size, const std:
 	return Framebuffer(new FramebufferData(renderContext(), _tf, desc, id));
 }
 
-Framebuffer FramebufferFactory::createFramebufferWrapper(GLuint fbo, const std::string& id)
+Framebuffer FramebufferFactory::createFramebufferWrapper(uint32_t fbo, const std::string& id)
 {
 	return Framebuffer(new FramebufferData(renderContext(), _tf, fbo, id));
 }

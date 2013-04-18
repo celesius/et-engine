@@ -68,15 +68,15 @@ namespace et
 	public:
 		struct State
 		{
-			StaticDataStorage<GLuint, MaxTextureUnits> boundTextures;
+			StaticDataStorage<uint32_t, MaxTextureUnits> boundTextures;
 			StaticDataStorage<size_t, Usage_max> enabledVertexAttributes;
 			
-			GLenum activeTextureUnit;
-			GLenum boundFramebuffer; 
-			GLenum boundArrayBuffer;
-			GLenum boundElementArrayBuffer;
-			GLuint boundVertexArrayObject;
-			GLuint boundProgram;
+			uint32_t activeTextureUnit;
+			uint32_t boundFramebuffer; 
+			uint32_t boundArrayBuffer;
+			uint32_t boundElementArrayBuffer;
+			uint32_t boundVertexArrayObject;
+			uint32_t boundProgram;
 			
 			recti clipRect;
 			vec2i mainViewportSize;
@@ -135,29 +135,29 @@ namespace et
 			{ return _defaultFramebuffer; }
 		
 		void setDefaultFramebuffer(const Framebuffer& framebuffer);
-		void bindDefaultFramebuffer(GLenum target = GL_FRAMEBUFFER);
-		void bindFramebuffer(GLuint framebuffer, GLenum target = GL_FRAMEBUFFER);
+		void bindDefaultFramebuffer(uint32_t target = GL_FRAMEBUFFER);
+		void bindFramebuffer(uint32_t framebuffer, uint32_t target = GL_FRAMEBUFFER);
 		void bindFramebuffer(const Framebuffer& fbo);
 
 		/*
 		 * Textures
 		 */
-		void setActiveTextureUnit(GLenum unit, bool force = false);
-		void bindTexture(GLenum unit, GLuint texture, GLenum target);
-		void bindTexture(GLenum unit, const Texture& texture);
+		void setActiveTextureUnit(uint32_t unit, bool force = false);
+		void bindTexture(uint32_t unit, uint32_t texture, uint32_t target);
+		void bindTexture(uint32_t unit, const Texture& texture);
 
 		/*
 		 * Programs
 		 */
-		void bindProgram(GLuint program, bool force);
+		void bindProgram(uint32_t program, bool force);
 		void bindProgram(const Program& prog, bool force = false);
 
 		/*
 	 	 * Buffers
 		 */
 		void resetBufferBindings();
-		void bindBuffer(GLenum target, GLuint buffer, bool force = false);
-		void bindVertexArray(GLuint buffer);
+		void bindBuffer(uint32_t target, uint32_t buffer, bool force = false);
+		void bindVertexArray(uint32_t buffer);
 
 		void bindBuffer(const VertexBuffer& buf, bool force = false);
 		void bindBuffer(const IndexBuffer& buf, bool force = false);
@@ -166,7 +166,7 @@ namespace et
 
 		void setVertexAttributes(const VertexDeclaration& decl, bool force = false);
 		void setVertexAttributesBaseIndex(const VertexDeclaration& decl, size_t index);
-		void setVertexAttribEnabled(GLuint attrib, bool enabled, bool foce = false);
+		void setVertexAttribEnabled(uint32_t attrib, bool enabled, bool foce = false);
 		void setVertexAttribPointer(const VertexElement& e, size_t baseIndex);
 
 		/*
@@ -214,12 +214,12 @@ namespace et
 		/*
 		 * Deletion handlers
 		 */
-		void programDeleted(GLuint program);
-		void textureDeleted(GLuint texture);
-		void vertexArrayDeleted(GLuint buffer);
-		void vertexBufferDeleted(GLuint buffer);
-		void indexBufferDeleted(GLuint buffer);
-		void frameBufferDeleted(GLuint buffer);
+		void programDeleted(uint32_t program);
+		void textureDeleted(uint32_t texture);
+		void vertexArrayDeleted(uint32_t buffer);
+		void vertexBufferDeleted(uint32_t buffer);
+		void indexBufferDeleted(uint32_t buffer);
+		void frameBufferDeleted(uint32_t buffer);
 
 		/*
 		 * Service

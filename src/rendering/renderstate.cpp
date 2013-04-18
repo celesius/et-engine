@@ -79,7 +79,7 @@ void RenderState::setViewportSize(const vec2i& sz, bool force)
 	etViewport(0, 0, _currentState.viewportSize.x, _currentState.viewportSize.y);
 }
 
-void RenderState::setActiveTextureUnit(GLenum unit, bool force)
+void RenderState::setActiveTextureUnit(uint32_t unit, bool force)
 {
 	if ((unit != _currentState.activeTextureUnit) || force)
 	{
@@ -88,7 +88,7 @@ void RenderState::setActiveTextureUnit(GLenum unit, bool force)
 	}
 }
 
-void RenderState::bindTexture(GLenum unit, GLuint texture, GLenum target)
+void RenderState::bindTexture(uint32_t unit, uint32_t texture, uint32_t target)
 {
 	setActiveTextureUnit(unit, false);
 	if (_currentState.boundTextures[unit] != texture)
@@ -99,7 +99,7 @@ void RenderState::bindTexture(GLenum unit, GLuint texture, GLenum target)
 
 }
 
-void RenderState::bindProgram(GLuint program, bool force)
+void RenderState::bindProgram(uint32_t program, bool force)
 {
 	if (force || (program != _currentState.boundProgram))
 	{ 
@@ -108,7 +108,7 @@ void RenderState::bindProgram(GLuint program, bool force)
 	}
 }
 
-void RenderState::bindBuffer(GLenum target, GLuint buffer, bool force)
+void RenderState::bindBuffer(uint32_t target, uint32_t buffer, bool force)
 { 
 	if ((target == GL_ARRAY_BUFFER) && (force || (_currentState.boundArrayBuffer != buffer)))
 	{
@@ -163,7 +163,7 @@ void RenderState::bindBuffers(const VertexBuffer& vb, const IndexBuffer& ib, boo
 	bindBuffer(ib, force);
 }
 
-void RenderState::bindVertexArray(GLuint buffer)
+void RenderState::bindVertexArray(uint32_t buffer)
 {
 	if ((_currentState.boundVertexArrayObject != buffer) && openGLCapabilites().supportVertexArrays())
 	{ 
@@ -184,7 +184,7 @@ void RenderState::resetBufferBindings()
 	bindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void RenderState::bindTexture(GLenum unit, const Texture& texture)
+void RenderState::bindTexture(uint32_t unit, const Texture& texture)
 {
 	if (texture.valid())
 		bindTexture(unit, texture->glID(), texture->target());
@@ -192,7 +192,7 @@ void RenderState::bindTexture(GLenum unit, const Texture& texture)
 		bindTexture(unit, 0, GL_TEXTURE_2D);
 }
 
-void RenderState::bindFramebuffer(GLuint framebuffer, GLenum target)
+void RenderState::bindFramebuffer(uint32_t framebuffer, uint32_t target)
 {
 	if (_currentState.boundFramebuffer != framebuffer)
 	{
@@ -227,7 +227,7 @@ void RenderState::setDefaultFramebuffer(const Framebuffer& framebuffer)
 	setMainViewportSize(_defaultFramebuffer->size());
 }
 
-void RenderState::bindDefaultFramebuffer(GLenum)
+void RenderState::bindDefaultFramebuffer(uint32_t)
 {
 	bindFramebuffer(_defaultFramebuffer);
 }
@@ -351,43 +351,43 @@ void RenderState::setBlend(bool enable, BlendState blend)
 	}
 }
 
-void RenderState::vertexArrayDeleted(GLuint buffer)
+void RenderState::vertexArrayDeleted(uint32_t buffer)
 {
 	if (_currentState.boundVertexArrayObject == buffer)
 		bindVertexArray(0);
 }
 
-void RenderState::vertexBufferDeleted(GLuint buffer)
+void RenderState::vertexBufferDeleted(uint32_t buffer)
 {
 	if (_currentState.boundArrayBuffer == buffer)
 		bindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void RenderState::indexBufferDeleted(GLuint buffer)
+void RenderState::indexBufferDeleted(uint32_t buffer)
 {
 	if (_currentState.boundElementArrayBuffer == buffer)
 		bindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void RenderState::programDeleted(GLuint program)
+void RenderState::programDeleted(uint32_t program)
 {
 	if (_currentState.boundProgram == program)
 		bindProgram(0, true);
 }
 
-void RenderState::textureDeleted(GLuint texture)
+void RenderState::textureDeleted(uint32_t texture)
 {
 	if (_currentState.boundTextures[_currentState.activeTextureUnit] == texture)
 		bindTexture(_currentState.activeTextureUnit, 0, GL_TEXTURE_2D);
 
-	for (GLuint i = 0; i < MaxTextureUnits; ++i)
+	for (uint32_t i = 0; i < MaxTextureUnits; ++i)
 	{
 		if (_currentState.boundTextures[i] == texture)
 			_currentState.boundTextures[i] = 0;
 	}
 }
 
-void RenderState::frameBufferDeleted(GLuint buffer)
+void RenderState::frameBufferDeleted(uint32_t buffer)
 {
 	if (_defaultFramebuffer.valid() && (_defaultFramebuffer->glID() == buffer))
 		_defaultFramebuffer = Framebuffer();
@@ -396,7 +396,7 @@ void RenderState::frameBufferDeleted(GLuint buffer)
 		bindDefaultFramebuffer();
 }
 
-void RenderState::setVertexAttribEnabled(GLuint attrib, bool enabled, bool force)
+void RenderState::setVertexAttribEnabled(uint32_t attrib, bool enabled, bool force)
 {
 	bool wasEnabled = _currentState.enabledVertexAttributes[attrib] > 0;
 
@@ -565,7 +565,7 @@ RenderState::State RenderState::currentState()
 	checkOpenGLError(keyCurrentStateBegin);
 	State s;
 
-	GLint value = 0;
+	int value = 0;
 	for (size_t i = 0; i < Usage_max; ++i)
 	{
 		int enabled = 0;

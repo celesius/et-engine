@@ -49,7 +49,7 @@ namespace et
 	std::string vertexAttributeToString(VertexAttributeUsage va);
 
 	size_t vertexAttributeTypeSize(VertexAttributeType t);
-	GLint vertexAttributeTypeComponents(VertexAttributeType t);
-	GLenum vertexAttributeTypeDataType(VertexAttributeType t);
+	int vertexAttributeTypeComponents(VertexAttributeType t);
+	uint32_t vertexAttributeTypeDataType(VertexAttributeType t);
 
 }

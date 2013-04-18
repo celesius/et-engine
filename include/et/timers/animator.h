@@ -27,14 +27,15 @@ namespace et
 	{
 	public:
 		BaseAnimator(const TimerPool& tp) : 
-			_tag(0), _delegate(0), _timerPool(tp) { }
+			_tag(0), _delegate(nullptr), _timerPool(tp) { }
 
-		ET_DECLARE_PROPERTY_SETTER_COPY(AnimatorDelegate*, delegate, setDelegate)
-		ET_DECLARE_PROPERTY(int, tag, setTag)
+	public:
+		ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(AnimatorDelegate*, delegate, setDelegate)
+		ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(int, tag, setTag)
 
 	protected:
-		BaseAnimator(AnimatorDelegate* delegate, int tag, const TimerPool& tp) : 
-			 _tag(tag), _delegate(delegate), _timerPool(tp) { }
+		BaseAnimator(AnimatorDelegate* aDelegate, int aTag, const TimerPool& tp) :
+			 _tag(aTag), _delegate(aDelegate), _timerPool(tp) { }
 
 		TimerPool& timerPool()
 			{ return _timerPool; }

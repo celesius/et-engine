@@ -16,8 +16,8 @@ namespace et
 
 	struct ProgramUniform
 	{
-		GLenum type;
-		GLint location;
+		uint32_t type;
+		int location;
 
 		ProgramUniform() : type(0), location(-1) { }
 	};
@@ -47,8 +47,8 @@ namespace et
 
 		~ProgramData();
 
-		GLint getUniformLocation(const std::string& uniform);
-		GLenum getUniformType(const std::string& uniform);
+		int getUniformLocation(const std::string& uniform);
+		uint32_t getUniformType(const std::string& uniform);
 		ProgramUniform getUniform(const std::string& uniform);
 
 		void validate() const;
@@ -92,7 +92,7 @@ namespace et
 		template <typename T>
 		void setUniform(int location, int type, const T& value, int count = 1);
 
-		GLenum glID() const
+		uint32_t glID() const
 			{ return _glID; }
 
 	private:
@@ -106,7 +106,7 @@ namespace et
 	private:
 		RenderState& _rs;
 
-		GLuint _glID;
+		uint32_t _glID;
 		UniformMap _uniforms;
 		AttribVector _attributes;
 
@@ -138,8 +138,8 @@ namespace et
 		assert(loaded());
 		if (nLoc == -1) return;
 
-		const GLint* intPtr = reinterpret_cast<const GLint*>(&value);
-		const GLfloat* floatPtr = reinterpret_cast<const GLfloat*>(&value);
+		const int* intPtr = reinterpret_cast<const int*>(&value);
+		const float* floatPtr = reinterpret_cast<const float*>(&value);
 
 		switch (type)
 		{

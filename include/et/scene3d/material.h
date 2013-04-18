@@ -16,7 +16,9 @@ namespace et
 	{
 	public:
 		MaterialData();
-		MaterialData(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath);
+
+		MaterialData(std::istream& stream, RenderContext* rc, TextureCache& cache,
+			const std::string& texturesBasePath);
 
 		const int getInt(size_t param) const;
 		const float getFloat(size_t param) const;
@@ -36,30 +38,26 @@ namespace et
 		bool hasTexture(size_t param) const;
 		bool hasString(size_t param) const;
 
-		BlendState blendState() const
-			{ return _blend; }
-
-		void setBlendState(BlendState b) 
-			{ _blend = b; }
-
-		bool depthWriteEnabled() const
-			{ return _depthMask; }
-
-		void setDepthWriteEnabled(bool d) 
-			{ _depthMask = d; }
-
-		void setName(const std::string& name)
-			{ APIObjectData::setName(name); }
-		
 		void serialize(std::ostream& stream) const;
-		void deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath);
+		
+		void deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache,
+			const std::string& texturesBasePath);
 
 		MaterialData* clone() const;
-		
+
+	public:
+		ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(BlendState, blendState, setBlendState)
+		ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(bool, depthWriteEnabled, setDepthWriteEnabled)
+
 	private:
-		void deserialize1(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath);
-		void deserialize2(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath);
-		void deserialize3(std::istream& stream, RenderContext* rc, TextureCache& cache, const std::string& texturesBasePath);
+		void deserialize1(std::istream& stream, RenderContext* rc, TextureCache& cache,
+			const std::string& texturesBasePath);
+		
+		void deserialize2(std::istream& stream, RenderContext* rc, TextureCache& cache,
+			const std::string& texturesBasePath);
+
+		void deserialize3(std::istream& stream, RenderContext* rc, TextureCache& cache,
+			const std::string& texturesBasePath);
 
 	private:
 		DefaultIntParameters _defaultIntParameters;
@@ -73,9 +71,6 @@ namespace et
 		CustomVectorParameters _customVectorParameters;
 		CustomTextureParameters _customTextureParameters;
 		CustomStringParameters _customStringParameters;
-
-		BlendState _blend;
-		bool _depthMask;
 	};
 
 	class Material : public IntrusivePtr<MaterialData>

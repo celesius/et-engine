@@ -12,8 +12,8 @@
 
 using namespace et;
 
-extern std::string FramebufferStatusToString(GLenum status);
-extern const GLenum renderbufferTargets[FramebufferData::MaxRenderTargets];
+extern std::string FramebufferStatusToString(uint32_t status);
+extern const uint32_t renderbufferTargets[FramebufferData::MaxRenderTargets];
 
 FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const FramebufferDescription& desc, const std::string& aName) :
 	APIObjectData(aName), _isCubemapBuffer(desc.isCubemap != 0), _id(0), _size(desc.size), _numTargets(0),
@@ -96,7 +96,7 @@ FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const Fr
 		checkStatus();
 }
 
-FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, GLuint fboId, const std::string& aName) : APIObjectData(aName), 
+FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, uint32_t fboId, const std::string& aName) : APIObjectData(aName), 
 	_isCubemapBuffer(false), _id(fboId), _numTargets(0), _colorRenderbuffer(0), _depthRenderbuffer(0), _rc(rc), _textureFactory(tf)
 {
 	if (!glIsFramebuffer(fboId)) return;
@@ -131,7 +131,7 @@ bool FramebufferData::checkStatus()
 	checkOpenGLError("FramebufferData::checkStatus");
 
 	_rc->renderState().bindFramebuffer(_id);
-	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	uint32_t status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	bool complete = status == GL_FRAMEBUFFER_COMPLETE;
 
 	if (!complete)
@@ -191,7 +191,7 @@ bool FramebufferData::setDepthTarget(const Texture& rt)
 	return checkStatus();
 }
 
-bool FramebufferData::setDepthTarget(const Texture& texture, GLenum target)
+bool FramebufferData::setDepthTarget(const Texture& texture, uint32_t target)
 {
 	if (!texture.valid() || (texture->width() != _size.x) || (texture->height() != _size.y)) return false;
 
@@ -240,7 +240,7 @@ bool FramebufferData::setCurrentRenderTarget(const Texture& texture)
 	return checkStatus();
 }
 
-bool FramebufferData::setCurrentRenderTarget(const Texture& texture, GLenum target)
+bool FramebufferData::setCurrentRenderTarget(const Texture& texture, uint32_t target)
 {
 	assert(texture.valid());
 	_rc->renderState().bindFramebuffer(_id);
@@ -280,7 +280,7 @@ bool FramebufferData::setCurrentCubemapFace(size_t faceIndex)
 
 	_rc->renderState().bindFramebuffer(_id);
 
-	GLenum target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex;
+	uint32_t target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex;
 	
 	if (_renderTargets[0].valid())
 	{
@@ -297,7 +297,7 @@ bool FramebufferData::setCurrentCubemapFace(size_t faceIndex)
 	return checkStatus();
 }
 
-void FramebufferData::createColorRenderbuffer(GLenum internalFormat)
+void FramebufferData::createColorRenderbuffer(uint32_t internalFormat)
 {
 	glGenRenderbuffers(1, &_colorRenderbuffer);
 	checkOpenGLError("glGenRenderbuffers -> color");
@@ -312,7 +312,7 @@ void FramebufferData::createColorRenderbuffer(GLenum internalFormat)
 	checkOpenGLError("glFramebufferRenderbuffer -> color");
 }
 
-void FramebufferData::createDepthRenderbuffer(GLenum internalFormat)
+void FramebufferData::createDepthRenderbuffer(uint32_t internalFormat)
 {
 	glGenRenderbuffers(1, &_depthRenderbuffer);
 	checkOpenGLError("glGenRenderbuffers -> depth");
@@ -335,7 +335,7 @@ void FramebufferData::forceSize(const vec2i& sz)
 /*
  * Support
  */
-std::string FramebufferStatusToString(GLenum status)
+std::string FramebufferStatusToString(uint32_t status)
 {
 	switch (status)
 	{
@@ -376,7 +376,7 @@ std::string FramebufferStatusToString(GLenum status)
 	}
 }
 
-const GLenum renderbufferTargets[FramebufferData::MaxRenderTargets] =
+const uint32_t renderbufferTargets[FramebufferData::MaxRenderTargets] =
 {
 	GL_COLOR_ATTACHMENT0,
 	

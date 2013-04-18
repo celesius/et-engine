@@ -21,15 +21,15 @@ namespace et
 		
 		~IndexBufferData();
 
-		GLenum primitiveType() const
+		uint32_t primitiveType() const
 			{ return _primitiveType; }
 		
-		GLenum dataType() const
+		uint32_t dataType() const
 			{ return _dataType; }
 
 		void* indexOffset(size_t offset) const;
 
-		GLuint glID() const
+		uint32_t glID() const
 			{ return _indexBuffer; }
 
 		size_t size() const
@@ -53,9 +53,9 @@ namespace et
 		RenderState& _rs;
 		size_t _size;
 		size_t _sourceTag;
-		GLuint _indexBuffer;
-		GLenum _dataType;
-		GLenum _primitiveType;
+		uint32_t _indexBuffer;
+		uint32_t _dataType;
+		uint32_t _primitiveType;
 		BufferDrawType _drawType;
 	};
 }

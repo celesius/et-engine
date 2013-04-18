@@ -7,30 +7,14 @@
 
 #pragma once
 
-#define ET_DECLARE_PROPERTY(T, name, setter) public: \
-		T name() const \
-			{ return _##name; } \
-		void setter(const T& value) \
-			{ _##name = value; } \
-	private: \
-		T _##name;
+#define ET_DECLARE_PROPERTY_GET_REF_SET_REF(TYPE, NAME, SETTER) public: \
+	const TYPE & NAME() const { return _##NAME; } \
+	void SETTER(const TYPE & new##NAME) { _##NAME = new##NAME; } \
+private: \
+	TYPE _##NAME;
 
-#define ET_DECLARE_PROPERTY_SETTER_COPY(T, name, setter) public: \
-		T name() const \
-			{ return _##name; } \
-		void setter(T value) \
-			{ _##name = value; } \
-	private: \
-		T _##name;
-
-#define ET_DECLARE_PROPERTY_READONLY(T, name) public: \
-		T name() const \
-			{ return _##name; } \
-	private: \
-		T _##name;
-
-#define ET_DECLARE_PROPERTY_READONLY_REF(T, name) public: \
-		const T& name() const \
-			{ return _##name; } \
-	private: \
-		T _##name;
+#define ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(TYPE, NAME, SETTER) public: \
+	TYPE NAME() const { return _##NAME; } \
+	void SETTER(TYPE new##NAME) { _##NAME = new##NAME; } \
+private: \
+	TYPE _##NAME;

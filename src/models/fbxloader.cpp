@@ -623,7 +623,7 @@ StringList FBXLoaderPrivate::loadNodeProperties(FbxNode* node)
 				char c = str[i];
 				if ((c == 0x0a) || (c == 0x0d))
 				{
-					if (line.currentIndex())
+					if (line.offset())
 						result.push_back(line.binary());
 
 					line.setOffset(0);
@@ -635,7 +635,7 @@ StringList FBXLoaderPrivate::loadNodeProperties(FbxNode* node)
 				}
 			}
 
-			if (line.currentIndex())
+			if (line.offset())
 				result.push_back(line.binary());
 		}
 
@@ -665,7 +665,7 @@ s3d::ElementContainer::Pointer FBXLoader::load(RenderContext* rc, TextureCache& 
 	if (loader->import(_filename))
 		result = loader->parse();
 
-	mainRunLoop()->addTask(new DeletionTask<FBXLoaderPrivate>(loader));
+	mainRunLoop().addTask(new DeletionTask<FBXLoaderPrivate>(loader));
 	return result;
 }
 

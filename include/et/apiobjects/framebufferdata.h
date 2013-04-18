@@ -21,13 +21,13 @@ namespace et
 		int numColorRenderTargets;
 		int includeDepthRenderTarget;
 
-		GLint colorInternalformat;
-		GLenum colorFormat;
-		GLenum colorType;
+		int colorInternalformat;
+		uint32_t colorFormat;
+		uint32_t colorType;
 
-		GLint depthInternalformat;
-		GLenum depthFormat;
-		GLenum depthType;
+		int depthInternalformat;
+		uint32_t depthFormat;
+		uint32_t depthType;
 		
 		bool colorIsRenderbuffer;
 		bool depthIsRenderbuffer;
@@ -53,10 +53,10 @@ namespace et
 		void addSameRendertarget();
 
 		bool setDepthTarget(const Texture& texture);
-		bool setDepthTarget(const Texture& texture, GLenum target);
+		bool setDepthTarget(const Texture& texture, uint32_t target);
 
 		bool setCurrentRenderTarget(const Texture& texture);
-		bool setCurrentRenderTarget(const Texture& texture, GLenum target);
+		bool setCurrentRenderTarget(const Texture& texture, uint32_t target);
 		bool setCurrentRenderTarget(size_t index);
 		
 		bool setCurrentCubemapFace(size_t faceIndex);
@@ -65,16 +65,16 @@ namespace et
 		
 		void setDrawBuffersCount(int c);
 
-		GLuint glID() const
+		uint32_t glID() const
 			{ return _id; }
 
 		vec2i size() const
 			{ return _size; }
 	
-		GLuint colorRenderbuffer() const
+		uint32_t colorRenderbuffer() const
 			{ return _colorRenderbuffer; }
 		
-		GLuint depthRenderbuffer() const
+		uint32_t depthRenderbuffer() const
 			{ return _depthRenderbuffer; }
 
 		Texture renderTarget(size_t index = 0) const
@@ -83,10 +83,10 @@ namespace et
 		Texture depthBuffer() const
 			{ return _depthBuffer; }
 		
-		void setColorRenderbuffer(GLuint r)
+		void setColorRenderbuffer(uint32_t r)
 			{ _colorRenderbuffer = r; }
 		
-		void setDepthRenderbuffer(GLuint r) 
+		void setDepthRenderbuffer(uint32_t r) 
 			{ _depthRenderbuffer = r; }
 		
 		void forceSize(const vec2i&);
@@ -94,10 +94,10 @@ namespace et
 	private:
 		friend class FramebufferFactory;
 		FramebufferData(RenderContext* rc, TextureFactory* tf, const FramebufferDescription& desc, const std::string& name);
-		FramebufferData(RenderContext* rc, TextureFactory* tf, GLuint fboId, const std::string& name);
+		FramebufferData(RenderContext* rc, TextureFactory* tf, uint32_t fboId, const std::string& name);
 
-		void createColorRenderbuffer(GLenum internalFormat);
-		void createDepthRenderbuffer(GLenum internalFormat);
+		void createColorRenderbuffer(uint32_t internalFormat);
+		void createDepthRenderbuffer(uint32_t internalFormat);
 
 	private:
 		RenderContext* _rc;
@@ -105,12 +105,12 @@ namespace et
 		Texture _renderTargets[MaxRenderTargets];
 		Texture _depthBuffer;
 
-		GLuint _id;
+		uint32_t _id;
 		vec2i _size;
-		GLenum _numTargets;
+		uint32_t _numTargets;
 		
-		GLuint _colorRenderbuffer;
-		GLuint _depthRenderbuffer;
+		uint32_t _colorRenderbuffer;
+		uint32_t _depthRenderbuffer;
 
 		bool _isCubemapBuffer;
 	};

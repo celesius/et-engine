@@ -42,7 +42,7 @@ void OpenGLCapabilites::checkCaps()
 	
 	_version = strToInt(_glslVersion) < 130 ? OpenGLVersion_Old : OpenGLVersion_New;
 
-	GLint maxSize = 0;
+	int maxSize = 0;
 	glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &maxSize);
 	_maxCubemapTextureSize = static_cast<size_t>(maxSize);
 
@@ -63,7 +63,7 @@ void OpenGLCapabilites::checkCaps()
 	
 	if (_vertex_arrays)
 	{
-		GLuint testArray = 0;
+		uint32_t testArray = 0;
 		glGenVertexArrays(1, &testArray);
 		if ((glGetError() == GL_NO_ERROR) && (testArray != 0))
 			glDeleteVertexArrays(1, &testArray);

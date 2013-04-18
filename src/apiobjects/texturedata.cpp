@@ -29,7 +29,7 @@ TextureData::TextureData(RenderContext* rc, TextureDescription::Pointer desc,
 	build(rc);
 }
 
-TextureData::TextureData(RenderContext*, GLuint texture, const vec2i& size, const std::string& name) : 
+TextureData::TextureData(RenderContext*, uint32_t texture, const vec2i& size, const std::string& name) : 
 	APIObjectData(name), _glID(texture), _own(false), _desc(new TextureDescription)
 {
 	if (!glIsTexture(texture))
@@ -69,7 +69,8 @@ void TextureData::setWrap(RenderContext* rc, TextureWrap s, TextureWrap t, Textu
 #endif	
 }
 
-void TextureData::setFiltration(RenderContext* rc, TextureFiltration minFiltration, TextureFiltration magFiltration)
+void TextureData::setFiltration(RenderContext* rc, TextureFiltration minFiltration,
+	TextureFiltration magFiltration)
 {
 	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
 
@@ -88,7 +89,7 @@ void TextureData::setFiltration(RenderContext* rc, TextureFiltration minFiltrati
 	checkOpenGLError("glTexParameteri<GL_TEXTURE_MAG_FILTER> - %s", name().c_str()); 
 }
 
-void TextureData::compareRefToTexture(RenderContext* rc, bool enable, GLenum compareFunc)
+void TextureData::compareRefToTexture(RenderContext* rc, bool enable, uint32_t compareFunc)
 {
 #if defined(GL_TEXTURE_COMPARE_MODE) && defined(GL_TEXTURE_COMPARE_FUNC)
 	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
