@@ -181,14 +181,14 @@ void Scene3d::buildAPIObjects(Scene3dStorage::Pointer p, RenderContext* rc)
 	VertexArrayList& vertexArrays = p->vertexArrays();
 	ET_START_ITERATION(vertexArrays, auto&, i)
 	{
-		std::string vbName = "vb-" + intToStr(i->tag);
-		std::string vaoName = "vao-" + intToStr(p->indexArray()->tag) + "-" + intToStr(i->tag);
-
+		std::string vbName = "vb-" + intToStr(static_cast<size_t>(i->tag));
+		std::string ibName = "ib-" + intToStr(static_cast<size_t>(p->indexArray()->tag));
+		std::string vaoName = "vao-" + ibName + "-" + vbName;
+		
 		VertexArrayObject vao = rc->vertexBufferFactory().createVertexArrayObject(vaoName);
 		VertexBuffer vb = rc->vertexBufferFactory().createVertexBuffer(vbName, i, BufferDrawType_Static);
 		if (!ib.valid())
 		{
-			std::string ibName = "ib-" + intToStr(p->indexArray()->tag);
 			ib = rc->vertexBufferFactory().createIndexBuffer(ibName, p->indexArray(), BufferDrawType_Static);
 			_indexBuffers.push_back(ib);
 		}
@@ -263,11 +263,13 @@ Material Scene3d::materialWithId(int id)
 
 VertexArrayObject Scene3d::vaoWithIdentifiers(const std::string& vbid, const std::string& ibid)
 {
-	ET_ITERATE(_vaos, const VertexArrayObject&, i,
+	ET_START_ITERATION(_vaos, auto, i)
 	{
 		if ((i->vertexBuffer()->name() == vbid) && (i->indexBuffer()->name() == ibid))
 			return i;
-	})
+	}
+	ET_END_ITERATION
+
 	return VertexArrayObject();
 }
 
