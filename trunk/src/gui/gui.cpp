@@ -252,7 +252,8 @@ void Gui::internal_pushLayout(Layout::Pointer newLayout, AnimationDescriptor des
 	animateLayoutAppearing(newLayout, _layouts.back().ptr(), desc.flags, desc.duration);
 }
 
-void Gui::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntryObject* newEntry, size_t animationFlags, float duration)
+void Gui::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntryObject* newEntry,
+	size_t animationFlags, float duration)
 {
 	newLayout->layout(_screenSize);
 

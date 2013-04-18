@@ -31,7 +31,7 @@ void OpenGLCounters::reset()
 	bindVertexArrayObjectCounter = 0;
 }
 
-std::string et::glErrorToString(GLenum error)
+std::string et::glErrorToString(uint32_t error)
 {
 	switch (error)
 	{
@@ -49,7 +49,7 @@ std::string et::glErrorToString(GLenum error)
 
 void et::checkOpenGLErrorEx(const char* caller, const char* fileName, const char* line, const char* tag, ...)
 {
-	GLenum error = glGetError();
+	uint32_t error = glGetError();
 	if (error != GL_NO_ERROR)
 	{
 		char buffer[1024] = { };
@@ -68,7 +68,7 @@ void et::checkOpenGLErrorEx(const char* caller, const char* fileName, const char
 	}
 }
 
-size_t et::primitiveCount(GLenum mode, GLsizei count)
+size_t et::primitiveCount(uint32_t mode, GLsizei count)
 {
 	switch (mode)
 	{
@@ -274,7 +274,7 @@ std::string et::glTypeToString(int type)
 
 }
 
-void et::etDrawElementsBaseVertex(GLenum mode, GLsizei count, GLenum type, const GLvoid* indices, GLint base)
+void et::etDrawElementsBaseVertex(uint32_t mode, GLsizei count, uint32_t type, const GLvoid* indices, int base)
 {
 #if (ET_OPENGL4_AVAILABLE)
 	glDrawElementsBaseVertex(mode, count, type, indices, base);
@@ -290,7 +290,7 @@ void et::etDrawElementsBaseVertex(GLenum mode, GLsizei count, GLenum type, const
 #endif
 }
 
-void et::etDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid* indices)
+void et::etDrawElements(uint32_t mode, GLsizei count, uint32_t type, const GLvoid* indices)
 {
 	glDrawElements(mode, count, type, indices);
 	checkOpenGLError("glDrawElements(%u, %u, %s, 0x%08X)", mode, count,
@@ -302,7 +302,7 @@ void et::etDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid* i
 #endif
 }
 
-void et::etBindTexture(GLenum target, GLint texture)
+void et::etBindTexture(uint32_t target, int texture)
 {
 	glBindTexture(target, texture);
 	checkOpenGLError("glBindTexture(%u, %d)", target, texture);
@@ -312,7 +312,7 @@ void et::etBindTexture(GLenum target, GLint texture)
 #endif
 }
 
-void et::etBindBuffer(GLenum target, GLuint buffer)
+void et::etBindBuffer(uint32_t target, uint32_t buffer)
 {
 	glBindBuffer(target, buffer);
 	checkOpenGLError("glBindBuffer(%u, %u)", target, buffer);
@@ -322,7 +322,7 @@ void et::etBindBuffer(GLenum target, GLuint buffer)
 #endif
 }
 
-void et::etBindFramebuffer(GLenum target, GLuint framebuffer)
+void et::etBindFramebuffer(uint32_t target, uint32_t framebuffer)
 {
 	glBindFramebuffer(target, framebuffer);
 	checkOpenGLError("glBindFramebuffer(%u, %u)", target, framebuffer);
@@ -332,13 +332,13 @@ void et::etBindFramebuffer(GLenum target, GLuint framebuffer)
 #endif
 }
 
-void et::etViewport(GLint x, GLint y, GLsizei width, GLsizei height)
+void et::etViewport(int x, int y, GLsizei width, GLsizei height)
 {
 	glViewport(x, y, width, height);
 	checkOpenGLError("glViewport(%d, %d, %u, %u)", x, y, width, height);
 }
 
-void et::etUseProgram(GLuint program)
+void et::etUseProgram(uint32_t program)
 {
 	glUseProgram(program);
 	checkOpenGLError("glUseProgram(%u)", program);
@@ -348,7 +348,7 @@ void et::etUseProgram(GLuint program)
 #endif
 }
 
-void et::etBindVertexArray(GLuint arr)
+void et::etBindVertexArray(uint32_t arr)
 {
 #if (ET_OPENGL3_AVAILABLE)
 	glBindVertexArray(arr);
@@ -439,7 +439,7 @@ int et::primitiveTypeValue(PrimitiveType t)
 	return 0;
 }
 
-void et::etCompressedTexImage1D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border,
+void et::etCompressedTexImage1D(uint32_t target, int level, uint32_t internalformat, GLsizei width, int border,
 	GLsizei imageSize, const GLvoid * data)
 {
 #if (!ET_OPENGLES)
@@ -451,8 +451,8 @@ void et::etCompressedTexImage1D(GLenum target, GLint level, GLenum internalforma
 #endif
 }
 
-void et::etCompressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height,
-	GLint border, GLsizei imageSize, const GLvoid * data)
+void et::etCompressedTexImage2D(uint32_t target, int level, uint32_t internalformat, GLsizei width, GLsizei height,
+	int border, GLsizei imageSize, const GLvoid * data)
 {
 	glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
 
@@ -463,8 +463,8 @@ void et::etCompressedTexImage2D(GLenum target, GLint level, GLenum internalforma
 #endif
 }
 
-void et::etTexImage1D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format,
-	GLenum type, const GLvoid * pixels)
+void et::etTexImage1D(uint32_t target, int level, int internalformat, GLsizei width, int border, uint32_t format,
+	uint32_t type, const GLvoid * pixels)
 {
 #if (!ET_OPENGLES)
 	glTexImage1D(target, level, internalformat, width, border, format, type, pixels);
@@ -475,8 +475,8 @@ void et::etTexImage1D(GLenum target, GLint level, GLint internalformat, GLsizei 
 #endif
 }
 
-void et::etTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height,
-	GLint border, GLenum format, GLenum type, const GLvoid * pixels)
+void et::etTexImage2D(uint32_t target, int level, int internalformat, GLsizei width, GLsizei height,
+	int border, uint32_t format, uint32_t type, const GLvoid * pixels)
 {
 	glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
 

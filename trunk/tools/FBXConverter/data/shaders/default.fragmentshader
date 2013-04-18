@@ -14,7 +14,7 @@ etFragmentIn vec3 vViewTS;
 etFragmentIn vec3 vLightTS;
 etFragmentIn vec2 TexCoord;
 
-#include <include\Phong.h>
+#include <include/Phong.h>
 
 vec2 defaultLight()
 {

@@ -9,7 +9,11 @@
 /* Begin PBXBuildFile section */
 		5C5128AC1681FA2500ED9B96 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C5128AA1681FA2500ED9B96 /* libjpeg.a */; };
 		5C5128AD1681FA2500ED9B96 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C5128AB1681FA2500ED9B96 /* libpng.a */; };
-		5C5128AF1681FA4700ED9B96 /* libfbxsdk-2013.3-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C5128AE1681FA4700ED9B96 /* libfbxsdk-2013.3-static.a */; };
+		A50D32DC1720AAB0001D31B3 /* atomiccounter.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50D32DB1720AAB0001D31B3 /* atomiccounter.unix.cpp */; };
+		A50D32DE1720AC27001D31B3 /* libfbxsdk-2013.3-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A50D32DD1720AC27001D31B3 /* libfbxsdk-2013.3-static.a */; };
+		A50D32E11720AC42001D31B3 /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50D32DF1720AC42001D31B3 /* log.cpp */; };
+		A50D32E21720AC42001D31B3 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50D32E01720AC42001D31B3 /* stream.cpp */; };
+		A50D32E41720AC51001D31B3 /* rendercontext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50D32E31720AC51001D31B3 /* rendercontext.cpp */; };
 		A53B4F3116811FA900C6B8EC /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A53B4F3016811FA900C6B8EC /* libiconv.dylib */; };
 		A53B4F331681212F00C6B8EC /* platformtools.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A53B4F321681212F00C6B8EC /* platformtools.mac.mm */; };
 		A53B4F351681220500C6B8EC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53B4F341681220500C6B8EC /* main.cpp */; };
@@ -46,7 +50,6 @@
 		A5A23EEC16811978001B3E98 /* geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E7A16811978001B3E98 /* geometry.cpp */; };
 		A5A23EED16811978001B3E98 /* rectplacer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E7B16811978001B3E98 /* rectplacer.cpp */; };
 		A5A23EEE16811978001B3E98 /* button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E7D16811978001B3E98 /* button.cpp */; };
-		A5A23EEF16811978001B3E98 /* carousel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E7E16811978001B3E98 /* carousel.cpp */; };
 		A5A23EF016811978001B3E98 /* element2d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E7F16811978001B3E98 /* element2d.cpp */; };
 		A5A23EF116811978001B3E98 /* element3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E8016811978001B3E98 /* element3d.cpp */; };
 		A5A23EF216811978001B3E98 /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E8116811978001B3E98 /* font.cpp */; };
@@ -54,7 +57,6 @@
 		A5A23EF416811978001B3E98 /* guibase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E8316811978001B3E98 /* guibase.cpp */; };
 		A5A23EF516811978001B3E98 /* guirenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E8416811978001B3E98 /* guirenderer.cpp */; };
 		A5A23EF616811978001B3E98 /* imageview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E8516811978001B3E98 /* imageview.cpp */; };
-		A5A23EF716811978001B3E98 /* keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E8616811978001B3E98 /* keyboard.cpp */; };
 		A5A23EF816811978001B3E98 /* label.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E8716811978001B3E98 /* label.cpp */; };
 		A5A23EF916811978001B3E98 /* layout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E8816811978001B3E98 /* layout.cpp */; };
 		A5A23EFA16811978001B3E98 /* listbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E8916811978001B3E98 /* listbox.cpp */; };
@@ -86,7 +88,6 @@
 		A5A23F1416811978001B3E98 /* rendercontext.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5A23EAA16811978001B3E98 /* rendercontext.mac.mm */; };
 		A5A23F1616811978001B3E98 /* criticalsection.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23EAD16811978001B3E98 /* criticalsection.unix.cpp */; };
 		A5A23F1716811978001B3E98 /* mutex.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23EAE16811978001B3E98 /* mutex.unix.cpp */; };
-		A5A23F1816811978001B3E98 /* referencecounter.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23EAF16811978001B3E98 /* referencecounter.unix.cpp */; };
 		A5A23F1916811978001B3E98 /* thread.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23EB016811978001B3E98 /* thread.unix.cpp */; };
 		A5A23F1A16811978001B3E98 /* threading.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23EB116811978001B3E98 /* threading.unix.cpp */; };
 		A5A23F1B16811978001B3E98 /* primitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23EB316811978001B3E98 /* primitives.cpp */; };
@@ -118,7 +119,11 @@
 /* Begin PBXFileReference section */
 		5C5128AA1681FA2500ED9B96 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../lib/osx/libjpeg.a; sourceTree = "<group>"; };
 		5C5128AB1681FA2500ED9B96 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = ../../lib/osx/libpng.a; sourceTree = "<group>"; };
-		5C5128AE1681FA4700ED9B96 /* libfbxsdk-2013.3-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfbxsdk-2013.3-static.a"; path = "../../../../../../../Applications/Autodesk/FBX SDK/2013.3/lib/gcc4/ub/libfbxsdk-2013.3-static.a"; sourceTree = "<group>"; };
+		A50D32DB1720AAB0001D31B3 /* atomiccounter.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = atomiccounter.unix.cpp; sourceTree = "<group>"; };
+		A50D32DD1720AC27001D31B3 /* libfbxsdk-2013.3-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfbxsdk-2013.3-static.a"; path = "../../../../../SDK/FBXSDK/lib/gcc4/ub/libfbxsdk-2013.3-static.a"; sourceTree = "<group>"; };
+		A50D32DF1720AC42001D31B3 /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = log.cpp; sourceTree = "<group>"; };
+		A50D32E01720AC42001D31B3 /* stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stream.cpp; sourceTree = "<group>"; };
+		A50D32E31720AC51001D31B3 /* rendercontext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rendercontext.cpp; sourceTree = "<group>"; };
 		A53B4F3016811FA900C6B8EC /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		A53B4F321681212F00C6B8EC /* platformtools.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = platformtools.mac.mm; sourceTree = "<group>"; };
 		A53B4F341681220500C6B8EC /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -162,7 +167,6 @@
 		A5A23E7A16811978001B3E98 /* geometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = geometry.cpp; sourceTree = "<group>"; };
 		A5A23E7B16811978001B3E98 /* rectplacer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rectplacer.cpp; sourceTree = "<group>"; };
 		A5A23E7D16811978001B3E98 /* button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = button.cpp; sourceTree = "<group>"; };
-		A5A23E7E16811978001B3E98 /* carousel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = carousel.cpp; sourceTree = "<group>"; };
 		A5A23E7F16811978001B3E98 /* element2d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = element2d.cpp; sourceTree = "<group>"; };
 		A5A23E8016811978001B3E98 /* element3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = element3d.cpp; sourceTree = "<group>"; };
 		A5A23E8116811978001B3E98 /* font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font.cpp; sourceTree = "<group>"; };
@@ -170,7 +174,6 @@
 		A5A23E8316811978001B3E98 /* guibase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = guibase.cpp; sourceTree = "<group>"; };
 		A5A23E8416811978001B3E98 /* guirenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = guirenderer.cpp; sourceTree = "<group>"; };
 		A5A23E8516811978001B3E98 /* imageview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imageview.cpp; sourceTree = "<group>"; };
-		A5A23E8616811978001B3E98 /* keyboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = keyboard.cpp; sourceTree = "<group>"; };
 		A5A23E8716811978001B3E98 /* label.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = label.cpp; sourceTree = "<group>"; };
 		A5A23E8816811978001B3E98 /* layout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = layout.cpp; sourceTree = "<group>"; };
 		A5A23E8916811978001B3E98 /* listbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = listbox.cpp; sourceTree = "<group>"; };
@@ -202,7 +205,6 @@
 		A5A23EAA16811978001B3E98 /* rendercontext.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = rendercontext.mac.mm; sourceTree = "<group>"; };
 		A5A23EAD16811978001B3E98 /* criticalsection.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = criticalsection.unix.cpp; sourceTree = "<group>"; };
 		A5A23EAE16811978001B3E98 /* mutex.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mutex.unix.cpp; sourceTree = "<group>"; };
-		A5A23EAF16811978001B3E98 /* referencecounter.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = referencecounter.unix.cpp; sourceTree = "<group>"; };
 		A5A23EB016811978001B3E98 /* thread.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = thread.unix.cpp; sourceTree = "<group>"; };
 		A5A23EB116811978001B3E98 /* threading.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = threading.unix.cpp; sourceTree = "<group>"; };
 		A5A23EB316811978001B3E98 /* primitives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = primitives.cpp; sourceTree = "<group>"; };
@@ -243,7 +245,7 @@
 				A5A23E2F16811838001B3E98 /* Cocoa.framework in Frameworks */,
 				5C5128AC1681FA2500ED9B96 /* libjpeg.a in Frameworks */,
 				5C5128AD1681FA2500ED9B96 /* libpng.a in Frameworks */,
-				5C5128AF1681FA4700ED9B96 /* libfbxsdk-2013.3-static.a in Frameworks */,
+				A50D32DE1720AC27001D31B3 /* libfbxsdk-2013.3-static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,7 +279,7 @@
 				A53B4F3016811FA900C6B8EC /* libiconv.dylib */,
 				5C5128AA1681FA2500ED9B96 /* libjpeg.a */,
 				5C5128AB1681FA2500ED9B96 /* libpng.a */,
-				5C5128AE1681FA4700ED9B96 /* libfbxsdk-2013.3-static.a */,
+				A50D32DD1720AC27001D31B3 /* libfbxsdk-2013.3-static.a */,
 				A5A23E3116811838001B3E98 /* AppKit.framework */,
 				A5A23E3216811838001B3E98 /* CoreData.framework */,
 				A5A23E3316811838001B3E98 /* Foundation.framework */,
@@ -410,6 +412,8 @@
 		A5A23E7416811978001B3E98 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				A50D32DF1720AC42001D31B3 /* log.cpp */,
+				A50D32E01720AC42001D31B3 /* stream.cpp */,
 				A5A23E7516811978001B3E98 /* debug.cpp */,
 				A5A23E7616811978001B3E98 /* plist.cpp */,
 				A5A23E7716811978001B3E98 /* tools.cpp */,
@@ -433,7 +437,6 @@
 			isa = PBXGroup;
 			children = (
 				A5A23E7D16811978001B3E98 /* button.cpp */,
-				A5A23E7E16811978001B3E98 /* carousel.cpp */,
 				A5A23E7F16811978001B3E98 /* element2d.cpp */,
 				A5A23E8016811978001B3E98 /* element3d.cpp */,
 				A5A23E8116811978001B3E98 /* font.cpp */,
@@ -441,7 +444,6 @@
 				A5A23E8316811978001B3E98 /* guibase.cpp */,
 				A5A23E8416811978001B3E98 /* guirenderer.cpp */,
 				A5A23E8516811978001B3E98 /* imageview.cpp */,
-				A5A23E8616811978001B3E98 /* keyboard.cpp */,
 				A5A23E8716811978001B3E98 /* label.cpp */,
 				A5A23E8816811978001B3E98 /* layout.cpp */,
 				A5A23E8916811978001B3E98 /* listbox.cpp */,
@@ -536,9 +538,9 @@
 		A5A23EAC16811978001B3E98 /* platform-unix */ = {
 			isa = PBXGroup;
 			children = (
+				A50D32DB1720AAB0001D31B3 /* atomiccounter.unix.cpp */,
 				A5A23EAD16811978001B3E98 /* criticalsection.unix.cpp */,
 				A5A23EAE16811978001B3E98 /* mutex.unix.cpp */,
-				A5A23EAF16811978001B3E98 /* referencecounter.unix.cpp */,
 				A5A23EB016811978001B3E98 /* thread.unix.cpp */,
 				A5A23EB116811978001B3E98 /* threading.unix.cpp */,
 			);
@@ -558,6 +560,7 @@
 		A5A23EB416811978001B3E98 /* rendering */ = {
 			isa = PBXGroup;
 			children = (
+				A50D32E31720AC51001D31B3 /* rendercontext.cpp */,
 				A5A23EB516811978001B3E98 /* renderer.cpp */,
 				A5A23EB616811978001B3E98 /* rendering.cpp */,
 				A5A23EB716811978001B3E98 /* renderstate.cpp */,
@@ -716,7 +719,6 @@
 				A5A23EEC16811978001B3E98 /* geometry.cpp in Sources */,
 				A5A23EED16811978001B3E98 /* rectplacer.cpp in Sources */,
 				A5A23EEE16811978001B3E98 /* button.cpp in Sources */,
-				A5A23EEF16811978001B3E98 /* carousel.cpp in Sources */,
 				A5A23EF016811978001B3E98 /* element2d.cpp in Sources */,
 				A5A23EF116811978001B3E98 /* element3d.cpp in Sources */,
 				A5A23EF216811978001B3E98 /* font.cpp in Sources */,
@@ -724,7 +726,6 @@
 				A5A23EF416811978001B3E98 /* guibase.cpp in Sources */,
 				A5A23EF516811978001B3E98 /* guirenderer.cpp in Sources */,
 				A5A23EF616811978001B3E98 /* imageview.cpp in Sources */,
-				A5A23EF716811978001B3E98 /* keyboard.cpp in Sources */,
 				A5A23EF816811978001B3E98 /* label.cpp in Sources */,
 				A5A23EF916811978001B3E98 /* layout.cpp in Sources */,
 				A5A23EFA16811978001B3E98 /* listbox.cpp in Sources */,
@@ -756,7 +757,6 @@
 				A5A23F1416811978001B3E98 /* rendercontext.mac.mm in Sources */,
 				A5A23F1616811978001B3E98 /* criticalsection.unix.cpp in Sources */,
 				A5A23F1716811978001B3E98 /* mutex.unix.cpp in Sources */,
-				A5A23F1816811978001B3E98 /* referencecounter.unix.cpp in Sources */,
 				A5A23F1916811978001B3E98 /* thread.unix.cpp in Sources */,
 				A5A23F1A16811978001B3E98 /* threading.unix.cpp in Sources */,
 				A5A23F1B16811978001B3E98 /* primitives.cpp in Sources */,
@@ -783,6 +783,10 @@
 				A5A23F3216811978001B3E98 /* vertexdeclaration.cpp in Sources */,
 				A53B4F331681212F00C6B8EC /* platformtools.mac.mm in Sources */,
 				A53B4F351681220500C6B8EC /* main.cpp in Sources */,
+				A50D32DC1720AAB0001D31B3 /* atomiccounter.unix.cpp in Sources */,
+				A50D32E11720AC42001D31B3 /* log.cpp in Sources */,
+				A50D32E21720AC42001D31B3 /* stream.cpp in Sources */,
+				A50D32E41720AC51001D31B3 /* rendercontext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -856,13 +860,13 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					$PROJECT_DIR/../../include,
-					"/Applications/Autodesk/FBX\\ SDK/2013.3/include",
+					/Users/sergey/SDK/FBXSDK/include,
 				);
 				INFOPLIST_FILE = "$PROJECT_DIR/FBXConverter-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SYSTEM_APPS_DIR)/Autodesk/FBX SDK/2013.3/lib/gcc4/ub\"",
 					"\"$(SRCROOT)/../../lib/osx\"",
+					"\"$(SRCROOT)/../../../../../SDK/FBXSDK/lib/gcc4/ub\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -884,13 +888,13 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					$PROJECT_DIR/../../include,
-					"/Applications/Autodesk/FBX\\ SDK/2013.3/include",
+					/Users/sergey/SDK/FBXSDK/include,
 				);
 				INFOPLIST_FILE = "$PROJECT_DIR/FBXConverter-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SYSTEM_APPS_DIR)/Autodesk/FBX SDK/2013.3/lib/gcc4/ub\"",
 					"\"$(SRCROOT)/../../lib/osx\"",
+					"\"$(SRCROOT)/../../../../../SDK/FBXSDK/lib/gcc4/ub\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

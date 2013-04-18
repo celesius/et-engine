@@ -43,13 +43,14 @@ inline size_t keyToMaterialParameter(const std::string& k)
 }
 
 MaterialData::MaterialData() :
-	APIObjectData("default"), _blend(Blend_Disabled), _depthMask(true)
+	APIObjectData("default"), _blendState(Blend_Disabled), _depthWriteEnabled(true)
 {
 	setVector(MaterialParameter_DiffuseColor, vec4(1.0f));
 }
 
 MaterialData::MaterialData(std::istream& stream, RenderContext* rc, TextureCache& cache,
-	const std::string& texturesBasePath) : APIObjectData("default"), _blend(Blend_Disabled), _depthMask(true)
+	const std::string& texturesBasePath) : APIObjectData("default"), _blendState(Blend_Disabled),
+	_depthWriteEnabled(true)
 {
 	deserialize(stream, rc, cache, texturesBasePath);
 }
@@ -71,8 +72,8 @@ MaterialData* MaterialData::clone() const
 	m->_customTextureParameters = _customTextureParameters;
 	m->_customStringParameters = _customStringParameters;
 
-	m->_blend = _blend;
-	m->_depthMask = _depthMask;
+	m->_blendState = _blendState;
+	m->_depthWriteEnabled = _depthWriteEnabled;
 	return m;
 }
 
@@ -133,8 +134,9 @@ void MaterialData::deserialize(std::istream& stream, RenderContext* rc, TextureC
 	int version = deserializeInt(stream);
 
 	setName(deserializeString(stream));
-	_blend = static_cast<BlendState>(deserializeInt(stream));
-	_depthMask = deserializeInt(stream) != 0;
+	
+	_blendState = static_cast<BlendState>(deserializeInt(stream));
+	_depthWriteEnabled = deserializeInt(stream) != 0;
 
 	if (version == MaterialVersion1_0_0)
 		deserialize1(stream, rc, cache, texturesBasePath);

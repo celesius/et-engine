@@ -7,8 +7,9 @@
 
 #pragma once
 
-#include <et/opengl/opengl.h>
 #include <et/core/intrusiveptr.h>
+#include <et/core/properties.h>
+#include <et/opengl/opengl.h>
 
 namespace et
 {
@@ -21,24 +22,16 @@ namespace et
 		static std::string uniqueName();
 
 	public:
-		APIObjectData() : tag(0), _name(APIObjectData::uniqueName())
+		APIObjectData() :
+			tag(0), _name(APIObjectData::uniqueName()) { }
+
+		APIObjectData(const std::string& aName) :
+			tag(0), _name(aName.empty() ? APIObjectData::uniqueName() : aName) { }
+
+		virtual ~APIObjectData()
 			{ }
 
-		APIObjectData(const std::string& aName) : tag(0), _name(aName.size() == 0 ? APIObjectData::uniqueName() : aName)
-			{ }
-
-		virtual ~APIObjectData() 
-			{ }
-
-		const std::string& name() const
-			{ return _name; };
-
-	protected:
-		void setName(const std::string& name)
-			{ _name = name; }
-
-	private:
-		std::string _name;
+		ET_DECLARE_PROPERTY_GET_REF_SET_REF(std::string, name, setName)
 	};
 
 }

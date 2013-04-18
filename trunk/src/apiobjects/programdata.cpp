@@ -86,7 +86,7 @@ void ProgramData::setPrimaryLightPosition(const vec3 &p)
 	checkOpenGLError("SetPrimaryLightPosition");
 }
 
-GLint ProgramData::getUniformLocation(const std::string& uniform) 
+int ProgramData::getUniformLocation(const std::string& uniform) 
 {
 	assert(loaded());
 
@@ -96,7 +96,7 @@ GLint ProgramData::getUniformLocation(const std::string& uniform)
 	return i->second.location;
 }
 
-GLenum ProgramData::getUniformType(const std::string& uniform) 
+uint32_t ProgramData::getUniformType(const std::string& uniform) 
 {
 	assert(loaded());
 
@@ -161,10 +161,10 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 		checkOpenGLError("glCreateProgram - %s", name().c_str());
 	}
 
-	GLuint VertexShader = glCreateShader(GL_VERTEX_SHADER);
+	uint32_t VertexShader = glCreateShader(GL_VERTEX_SHADER);
 	checkOpenGLError("glCreateShader<VERT> - %s", name().c_str());
 
-	GLint nLen = (GLint)vertex_source.size();
+	int nLen = static_cast<int>(vertex_source.size());
 	const GLchar* src = vertex_source.c_str();
 
 	glShaderSource(VertexShader, 1, &src, &nLen);
@@ -192,14 +192,14 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 		checkOpenGLError("glAttachShader<VERT> - %s", name().c_str());
 	} 
 
-	GLuint GeometryShader = 0;
+	uint32_t GeometryShader = 0;
 
 #if defined(GL_GEOMETRY_SHADER)
 	if ((geom_source.length() > 0) && (geom_source != ProgramData::emptyShaderSource)) 
 	{
 		GeometryShader = glCreateShader(GL_GEOMETRY_SHADER);
 		checkOpenGLError("glCreateShader<GEOM> - %s", name().c_str());
-		nLen = (GLint)geom_source.size();
+		nLen = static_cast<int>(geom_source.size());
 		src = geom_source.c_str();
 		glShaderSource(GeometryShader, 1, &src, &nLen);
 		checkOpenGLError("glShaderSource<GEOM> - %s", name().c_str());
@@ -228,10 +228,10 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 #endif
 
 	///////////////////////////////////////////////// FRAGMENT
-	GLuint FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	uint32_t FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	checkOpenGLError("glCreateShader<FRAG> - %s", name().c_str());
 
-	nLen = (GLint)frag_source.size();
+	nLen = static_cast<int>(frag_source.size());
 	src  = frag_source.c_str();
 
 	glShaderSource(FragmentShader, 1, &src, &nLen);
@@ -279,15 +279,15 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 
 	if (cStatus)
 	{
-		GLint activeAttribs = 0;
-		GLint maxNameLength = 0;
+		int activeAttribs = 0;
+		int maxNameLength = 0;
 		glGetProgramiv(_glID, GL_ACTIVE_ATTRIBUTES, &activeAttribs);
 		glGetProgramiv(_glID, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxNameLength);
-		for (GLint i = 0; i < activeAttribs; ++i)
+		for (int i = 0; i < activeAttribs; ++i)
 		{ 
-			GLint nameLength = 0;
-			GLint attribSize = 0; 
-			GLenum attribType = 0;
+			int nameLength = 0;
+			int attribSize = 0; 
+			uint32_t attribType = 0;
 			StringDataStorage name(maxNameLength, 0);
 			glGetActiveAttrib(_glID, i, maxNameLength, &nameLength, &attribSize, &attribType, name.data());
 
@@ -306,13 +306,13 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 
 		if (cStatus)
 		{
-			GLint activeUniforms = 0;
+			int activeUniforms = 0;
 			_uniforms.clear();
 			glGetProgramiv(_glID, GL_ACTIVE_UNIFORMS, &activeUniforms);
 			glGetProgramiv(_glID, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxNameLength);
-			for (GLint i = 0; i < activeUniforms; i++)
+			for (int i = 0; i < activeUniforms; i++)
 			{
-				GLint uSize = 0;
+				int uSize = 0;
 				GLsizei uLenght = 0;
 				StringDataStorage name(maxNameLength, 0);
 				ProgramUniform P;

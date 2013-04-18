@@ -179,7 +179,7 @@ namespace et
 
 	void checkOpenGLErrorEx(const char* caller, const char* fileName, const char* line, const char* tag, ...);
 
-	std::string glErrorToString(GLenum error);
+	std::string glErrorToString(uint32_t error);
 	std::string glTexTargetToString(int target);
 	std::string glInternalFormatToString(int format);
 	std::string glTypeToString(int type);
@@ -187,28 +187,28 @@ namespace et
 
 	void validateExtensions();
 
-	size_t primitiveCount(GLenum mode, GLsizei count);
+	size_t primitiveCount(uint32_t mode, GLsizei count);
 
-	void etViewport(GLint x, GLint y, GLsizei width, GLsizei height);
-	void etDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid* indices);
-	void etDrawElementsBaseVertex(GLenum mode, GLsizei count, GLenum type, const GLvoid* indices, GLint base);
-	void etBindTexture(GLenum target, GLint texture);
-	void etBindBuffer(GLenum target, GLuint buffer);
-	void etBindFramebuffer(GLenum target, GLuint framebuffer);
-	void etUseProgram(GLuint program);
-	void etBindVertexArray(GLuint arr);
+	void etViewport(int x, int y, GLsizei width, GLsizei height);
+	void etDrawElements(uint32_t mode, GLsizei count, uint32_t type, const GLvoid* indices);
+	void etDrawElementsBaseVertex(uint32_t mode, GLsizei count, uint32_t type, const GLvoid* indices, int base);
+	void etBindTexture(uint32_t target, int texture);
+	void etBindBuffer(uint32_t target, uint32_t buffer);
+	void etBindFramebuffer(uint32_t target, uint32_t framebuffer);
+	void etUseProgram(uint32_t program);
+	void etBindVertexArray(uint32_t arr);
 
-	void etCompressedTexImage1D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, 
-		GLsizei imageSize, const GLvoid * data);
+	void etCompressedTexImage1D(uint32_t target, int level, uint32_t internalformat, GLsizei width,
+		int border, GLsizei imageSize, const GLvoid * data);
 	
-	void etTexImage1D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, 
-		GLenum type, const GLvoid * pixels);
+	void etTexImage1D(uint32_t target, int level, int internalformat, GLsizei width, int border,
+		uint32_t format, uint32_t type, const GLvoid * pixels);
 	
-	void etCompressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, 
-		GLint border, GLsizei imageSize, const GLvoid * data);
+	void etCompressedTexImage2D(uint32_t target, int level, uint32_t internalformat, GLsizei width,
+		GLsizei height, int border, GLsizei imageSize, const GLvoid * data);
 
-	void etTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height,
-		GLint border, GLenum format, GLenum type, const GLvoid * pixels);
+	void etTexImage2D(uint32_t target, int level, int internalformat, GLsizei width, GLsizei height,
+		int border, uint32_t format, uint32_t type, const GLvoid * pixels);
 
 	int textureWrapValue(TextureWrap);
 	int textureFiltrationValue(TextureFiltration);

@@ -19,9 +19,9 @@ namespace et
 		GesturesRecognizer(bool automaticMode = true);
 
 	public:
-		ET_DECLARE_PROPERTY(float, clickThreshold, setClickThreshold)
-		ET_DECLARE_PROPERTY(float, doubleClickThreshold, setDoubleClickThreshold)
-		ET_DECLARE_PROPERTY(float, holdThreshold, setHoldThreshold)
+		ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(float, clickThreshold, setClickThreshold)
+		ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(float, doubleClickThreshold, setDoubleClickThreshold)
+		ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(float, holdThreshold, setHoldThreshold)
 
 	public:
 		ET_DECLARE_EVENT1(zoom, float)

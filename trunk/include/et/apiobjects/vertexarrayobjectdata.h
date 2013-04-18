@@ -24,7 +24,7 @@ namespace et
 		
 		~VertexArrayObjectData();
 
-		GLuint glID() const
+		uint32_t glID() const
 			{ return _vao; }
 
 		VertexBuffer& vertexBuffer() 
@@ -50,6 +50,6 @@ namespace et
 		RenderState& _rs;
 		VertexBuffer _vb;
 		IndexBuffer _ib;
-		GLuint _vao;
+		uint32_t _vao;
 	};
 }

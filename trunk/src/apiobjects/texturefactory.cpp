@@ -70,8 +70,8 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
 	return texture;
 }
 
-Texture TextureFactory::genTexture(GLenum target, GLint internalformat, const vec2i& size, GLenum format, 
-	GLenum type, const BinaryDataStorage& data, const std::string& id)
+Texture TextureFactory::genTexture(uint32_t target, int internalformat, const vec2i& size, uint32_t format, 
+	uint32_t type, const BinaryDataStorage& data, const std::string& id)
 {
 	TextureDescription::Pointer desc(new TextureDescription);
 	desc->target = target;
@@ -109,7 +109,7 @@ Texture TextureFactory::genTexture(GLenum target, GLint internalformat, const ve
 	return Texture(new TextureData(renderContext(), desc, id, false));
 }
 
-Texture TextureFactory::genCubeTexture(GLint internalformat, GLsizei size, GLenum format, GLenum type,
+Texture TextureFactory::genCubeTexture(int internalformat, GLsizei size, uint32_t format, uint32_t type,
 	const std::string& id)
 {
 	TextureDescription::Pointer desc(new TextureDescription);
@@ -189,6 +189,7 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 	int maxCubemapSize = sqr(openGLCapabilites().maxCubemapTextureSize());
 	for (size_t l = 0; l < 6; ++l)
 		assert(layers[l]->size.square() <= maxCubemapSize);
+	(void)maxCubemapSize;
 
 	std::string texId = layers[0]->source + ";";
 	for (size_t l = 1; l < 6; ++l)
@@ -231,7 +232,7 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 	return cache.manageTexture(Texture(new TextureData(renderContext(), desc, texId, false)));
 }
 
-Texture TextureFactory::createTextureWrapper(GLuint texture, const vec2i& size, const std::string& name)
+Texture TextureFactory::createTextureWrapper(uint32_t texture, const vec2i& size, const std::string& name)
 {
 	return Texture(new TextureData(renderContext(), texture, size, name));
 }

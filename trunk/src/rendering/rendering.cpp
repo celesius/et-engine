@@ -59,7 +59,7 @@ namespace et
 		}
 	}
 
-	GLenum vertexAttributeTypeDataType(VertexAttributeType t)
+	uint32_t vertexAttributeTypeDataType(VertexAttributeType t)
 	{
 		switch (t)
 		{ 
