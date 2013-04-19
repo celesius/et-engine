@@ -18,3 +18,8 @@ private: \
 	void SETTER(TYPE new##NAME) { _##NAME = new##NAME; } \
 private: \
 	TYPE _##NAME;
+
+#define ET_DECLARE_PROPERTY_GET_REF(TYPE, NAME) public: \
+	const TYPE& NAME() const { return _##NAME; } \
+	private: \
+		TYPE _##NAME;

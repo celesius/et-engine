@@ -25,9 +25,9 @@ namespace et
 	public:
 		~DownloadRequest();
 		
-		ET_DECLARE_PROPERTY_READONLY(std::string, url)
-		ET_DECLARE_PROPERTY_READONLY(std::string, destination)
-		ET_DECLARE_PROPERTY_READONLY(BinaryDataStorage, data)
+		ET_DECLARE_PROPERTY_GET_REF(std::string, url)
+		ET_DECLARE_PROPERTY_GET_REF(std::string, destination)
+		ET_DECLARE_PROPERTY_GET_REF(BinaryDataStorage, data)
 		
 	private:
 		friend class DownloadManager;
