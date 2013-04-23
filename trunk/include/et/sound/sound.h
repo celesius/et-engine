@@ -71,6 +71,9 @@ namespace et
 			void setPan(float);
 
 			float position() const;
+
+			bool playing() const;
+			
 			Track::Pointer currentTrack() const
 				{ return _currentTrack; }
 

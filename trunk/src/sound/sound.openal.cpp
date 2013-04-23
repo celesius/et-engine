@@ -321,6 +321,16 @@ float Player::position() const
 	return sampleOffset / static_cast<float>(_currentTrack->sampleRate());
 }
 
+bool Player::playing() const
+{
+	if (_currentTrack.invalid()) return false;
+	
+	ALint state = 0;
+	alGetSourcei(_private->source, AL_SOURCE_STATE, &state);
+	
+	return (state == AL_PLAYING);
+}
+
 void Player::setPan(float pan)
 {
 	if (_currentTrack.invalid()) return;
