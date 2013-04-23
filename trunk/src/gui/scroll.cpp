@@ -22,7 +22,7 @@ float bounceStopTreshold = 0.5f;
 
 Scroll::Scroll(Element2d* parent) : Element2d(parent), _offsetAnimator(0, 0, mainTimerPool()),
 	_updateTime(0.0f), _scrollbarsAlpha(0.0f), _scrollbarsAlphaTarget(0.0f),
-	_pointerCaptured(false), _manualScrolling(false), _bouncing(BounceDirection_None)
+	_pointerCaptured(false), _manualScrolling(false)
 {
 	_offsetAnimator.setDelegate(this);
 	setFlag(ElementFlag_HandlesChildEvents);
@@ -89,7 +89,7 @@ const mat4& Scroll::finalInverseTransform()
 
 bool Scroll::pointerPressed(const PointerInputInfo& p)
 {
-	if (p.type == PointerType_General)
+	if ((_currentPointer.id == 0) && (p.type == PointerType_General))
 	{
 		_previousPointer = p;
 		_currentPointer = p;
@@ -104,24 +104,34 @@ bool Scroll::pointerPressed(const PointerInputInfo& p)
 
 bool Scroll::pointerMoved(const PointerInputInfo& p)
 {
-	if (p.type != PointerType_General) return true;
+	if (p.id != _currentPointer.id) return true;
 
 	vec2 offset = p.pos - _currentPointer.pos;
 	if (offset.dotSelf() < SQRT_2) return true;
 
 	if (_manualScrolling)
 	{
-		float offsetScale = 1.0f;
-		
+		vec2 offsetScale(1.0f);
+
+		if (-_offset.x < scrollLeftDefaultValue())
+		{
+			float diff = fabsf(-_offset.x - scrollLeftDefaultValue());
+			offsetScale.x *= etMax(0.0f, 1.0f - diff / scrollOutOfContentXSize());
+		}
+		else if (-_offset.x > scrollRightDefaultValue())
+		{
+			float diff = fabsf(-_offset.x - scrollRightDefaultValue());
+			offsetScale.x *= etMax(0.0f, 1.0f - diff / scrollOutOfContentXSize());
+		}
 		if (-_offset.y < scrollUpperDefaultValue())
 		{
 			float diff = fabsf(-_offset.y - scrollUpperDefaultValue());
-			offsetScale *= etMax(0.0f, 1.0f - diff / scrollOutOfContentSize());
+			offsetScale.y *= etMax(0.0f, 1.0f - diff / scrollOutOfContentYSize());
 		}
 		else if (-_offset.y > scrollLowerDefaultValue())
 		{
 			float diff = fabsf(-_offset.y - scrollLowerDefaultValue());
-			offsetScale *= etMax(0.0f, 1.0f - diff / scrollOutOfContentSize());
+			offsetScale.y *= etMax(0.0f, 1.0f - diff / scrollOutOfContentYSize());
 		}
 		
 		applyOffset(sqr(offsetScale) * offset);
@@ -135,7 +145,7 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 		_manualScrolling = true;
 		_pointerCaptured = true;
 		_scrollbarsAlphaTarget = 1.0f;
-		_bouncing = BounceDirection_None;
+		_bouncing = vector2<BounceDirection>(BounceDirection_None);
 		broadcastCancelled(p);
 	}
 	
@@ -147,13 +157,15 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 
 bool Scroll::pointerReleased(const PointerInputInfo& p)
 {
-	if (p.type == PointerType_General)
+	if (p.id == _currentPointer.id)
 	{
 		if (!_pointerCaptured)
 			broadcastReleased(p);
 
 		_pointerCaptured = false;
 		_manualScrolling = false;
+		_currentPointer = PointerInputInfo();
+		_previousPointer = _currentPointer;
 	}
 	else 
 	{
@@ -253,6 +265,64 @@ bool Scroll::containsPoint(const vec2& p, const vec2& np)
 	return Element2d::containsPoint(p, np);
 }
 
+void Scroll::updateBouncing(float deltaTime)
+{
+	if (-_offset.x < scrollLeftDefaultValue())
+		_bouncing.x = BounceDirection_ToNear;
+	if (-_offset.x > scrollRightDefaultValue())
+		_bouncing.x = BounceDirection_ToFar;
+	if (-_offset.y < scrollUpperDefaultValue())
+		_bouncing.y = BounceDirection_ToNear;
+	if (-_offset.y > scrollLowerDefaultValue())
+		_bouncing.y = BounceDirection_ToFar;
+
+	if (_bouncing.x == BounceDirection_ToNear)
+	{
+		float diff = -_offset.x - scrollLeftDefaultValue();
+		_velocity.x += 0.25f * size().x * diff * deltaTime;
+		if ((_velocity.x <= bounceStopTreshold) && (fabsf(diff) <= bounceStopTreshold))
+		{
+			_velocity.x = 0.0f;
+			_offset.x = -scrollLeftDefaultValue();
+			_bouncing.x = BounceDirection_None;
+		}
+	}
+	else if (_bouncing.x == BounceDirection_ToFar)
+	{
+		float diff = -_offset.x - scrollRightDefaultValue();
+		_velocity.x += 0.25f * size().x * diff * deltaTime;
+		if ((_velocity.x <= bounceStopTreshold) && (fabsf(diff) <= bounceStopTreshold))
+		{
+			_velocity.x = 0.0f;
+			_offset.x = -scrollRightDefaultValue();
+			_bouncing.x = BounceDirection_None;
+		}
+	}
+
+	if (_bouncing.y == BounceDirection_ToNear)
+	{
+		float diff = -_offset.y - scrollUpperDefaultValue();
+		_velocity.y += 0.25f * size().y * diff * deltaTime;
+		if ((_velocity.y <= bounceStopTreshold) && (fabsf(diff) <= bounceStopTreshold))
+		{
+			_velocity.y = 0.0f;
+			_offset.y = -scrollUpperDefaultValue();
+			_bouncing.y = BounceDirection_None;
+		}
+	}
+	else if (_bouncing.y == BounceDirection_ToFar)
+	{
+		float diff = -_offset.y - scrollLowerDefaultValue();
+		_velocity.y += 0.25f * size().y * diff * deltaTime;
+		if ((_velocity.y <= bounceStopTreshold) && (fabsf(diff) <= bounceStopTreshold))
+		{
+			_velocity.y = 0.0f;
+			_offset.y = -scrollLowerDefaultValue();
+			_bouncing.y = BounceDirection_None;
+		}
+	}
+}
+
 void Scroll::update(float t)
 {
 	if (_updateTime == 0.0f)
@@ -281,38 +351,8 @@ void Scroll::update(float t)
 		return;
 	}
 	
-	if (-_offset.y < scrollUpperDefaultValue())
-		_bouncing = BounceDirection_ToUpper;
 
-	if (-_offset.y > scrollLowerDefaultValue())
-		_bouncing = BounceDirection_ToLower;
-	
-	if (_bouncing == BounceDirection_ToUpper)
-	{
-		float k = 0.25f * size().y;
-		float diff = -_offset.y - scrollUpperDefaultValue();
-		_velocity.y += k * diff * deltaTime;
-		
-		if ((_velocity.y <= bounceStopTreshold) && (fabsf(diff) <= bounceStopTreshold))
-		{
-			_velocity.y = 0.0f;
-			_offset.y = -scrollUpperDefaultValue();
-			_bouncing = BounceDirection_None;
-		}
-	}
-	else if (_bouncing == BounceDirection_ToLower)
-	{
-		float k = 0.25f * size().y;
-		float diff = -_offset.y - scrollLowerDefaultValue();
-		_velocity.y += k * diff * deltaTime;
-		
-		if ((_velocity.y <= bounceStopTreshold) && (fabsf(diff) <= bounceStopTreshold))
-		{
-			_velocity.y = 0.0f;
-			_offset.y = -scrollLowerDefaultValue();
-			_bouncing = BounceDirection_None;
-		}
-	}
+	updateBouncing(deltaTime);
 	
 	float dt = etMin(1.0f, deltaTime * deccelerationRate);
 	_velocity *= 1.0f - dt;
@@ -369,39 +409,58 @@ void Scroll::setOffset(const vec2& aOffset, float duration)
 	}
 }
 
-float Scroll::scrollOutOfContentSize() const
-{
-	return 0.5f * size().y;
-}
+float Scroll::scrollOutOfContentXSize() const
+	{ return 0.5f * size().x; }
 
-float Scroll::scrollUpperLimit() const
-{
-	return scrollUpperDefaultValue() - scrollOutOfContentSize();
-}
-
-float Scroll::scrollLowerLimit() const
-{
-	return scrollLowerDefaultValue() + scrollOutOfContentSize();
-}
+float Scroll::scrollOutOfContentYSize() const
+	{ return 0.5f * size().y; }
 
 float Scroll::scrollUpperDefaultValue() const
-{
-	return 0.0f;
-}
+	{ return 0.0f; }
+
+float Scroll::scrollUpperLimit() const
+	{ return scrollUpperDefaultValue() - scrollOutOfContentYSize(); }
+
+float Scroll::scrollLowerLimit() const
+	{ return scrollLowerDefaultValue() + scrollOutOfContentYSize(); }
 
 float Scroll::scrollLowerDefaultValue() const
-{
-	return etMax(0.0f, _contentSize.y - size().y);
-}
+	{ return etMax(0.0f, _contentSize.y - size().y); }
+
+float Scroll::scrollLeftDefaultValue() const
+	{ return 0.0f; }
+
+float Scroll::scrollLeftLimit() const
+	{ return scrollLeftDefaultValue() - scrollOutOfContentXSize(); }
+
+float Scroll::scrollRightDefaultValue() const
+	{ return etMax(0.0f, _contentSize.x - size().x); }
+
+float Scroll::scrollRightLimit() const
+	{ return scrollRightDefaultValue() + scrollOutOfContentXSize(); }
 
 void Scroll::internal_setOffset(const vec2& o)
 {
-	_offset = o * vec2(0.0f, 1.0f);
+	_offset = o;
 	vec2 actualOffset = -_offset;
 	
+	float leftLimit = scrollLeftLimit();
+	float rightLimit = scrollRightLimit();
 	float upperLimit = scrollUpperLimit();
 	float lowerLimit = scrollLowerLimit();
+
+	if (actualOffset.x < leftLimit)
+	{
+		_offset.x = -leftLimit;
+		_velocity.x = 0.0f;
+	}
 	
+	if (actualOffset.x > rightLimit)
+	{
+		_offset.x = -rightLimit;
+		_velocity.x = 0.0f;
+	}
+
 	if (actualOffset.y < upperLimit)
 	{
 		_offset.y = -upperLimit;
