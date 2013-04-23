@@ -199,7 +199,7 @@ void TextureData::build(RenderContext* rc)
 
 	_filtration.y = TextureFiltration_Linear;
 
-	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
+	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target, true);
 
 	glTexParameteri(_desc->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	checkOpenGLError("glTexParameteri(_desc->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR)");
@@ -211,7 +211,10 @@ void TextureData::build(RenderContext* rc)
 		setMaxLod(rc, _desc->mipMapCount - 1);
 
     buildData(_desc->data.constBinaryData(), _desc->data.dataSize());
+	checkOpenGLError("buildData");
+	
 	_desc->data.resize(0);
+	assert(glIsTexture(_glID));
 }
 
 vec2 TextureData::getTexCoord(const vec2& vec, TextureOrigin origin) const

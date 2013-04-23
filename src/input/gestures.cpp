@@ -29,13 +29,26 @@ void GesturesRecognizer::handlePointersMovement()
         {
             currentPositions[index] = i.second.current.normalizedPos;
             previousPositions[index] = i.second.previous.normalizedPos;
+			i.second.moved = false;
 			++index;
         })
-        
-        float currentDistance = (currentPositions[0] - currentPositions[1]).length();
-        float previousDistance = (previousPositions[0] - previousPositions[1]).length();
-        float dz = currentDistance / previousDistance;
-        zoom.invoke(dz);
+		
+		vec2 dir1 = currentPositions[0] - previousPositions[0];
+		vec2 dir2 = currentPositions[1] - previousPositions[1];
+		float direction = dot(normalize(dir1), normalize(dir2));
+		
+		if (direction < -0.95f) // handle zoom gesture
+		{
+			float currentDistance = (currentPositions[0] - currentPositions[1]).length();
+			float previousDistance = (previousPositions[0] - previousPositions[1]).length();
+			float zoomValue = currentDistance / previousDistance;
+			zoomAroundPoint.invoke(zoomValue, 0.5f * (currentPositions[0] + currentPositions[1]));
+			zoom.invoke(zoomValue);
+		}
+		else if (direction > 0.9f) // handle swipe gesture
+		{
+			swipe.invoke(0.5f * (dir1 + dir2), 2);
+		}
     }
     else 
     {
@@ -77,6 +90,7 @@ void GesturesRecognizer::onPointerMoved(et::PointerInputInfo pi)
 	pointerMoved.invoke(pi);
 	if (_pointers.count(pi.id) == 0) return;
 
+	_pointers[pi.id].moved = true;
 	_pointers[pi.id].previous = _pointers[pi.id].current;
 	_pointers[pi.id].current = pi;
 
@@ -91,7 +105,17 @@ void GesturesRecognizer::onPointerMoved(et::PointerInputInfo pi)
 	}
 	else
 	{
-		handlePointersMovement();
+		bool allMoved = true;
+		ET_ITERATE(_pointers, auto, p, {
+			if (!p.second.moved)
+			{
+				allMoved = false;
+				break;
+			}
+		});
+		
+		if (allMoved)
+			handlePointersMovement();
 	}
 	
 	cancelWaitingForClicks();
