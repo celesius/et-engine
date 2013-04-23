@@ -25,10 +25,24 @@ namespace et
 
 	public:
 		ET_DECLARE_EVENT1(zoom, float)
+		ET_DECLARE_EVENT2(zoomAroundPoint, float, vec2)
+		
 		ET_DECLARE_EVENT1(scroll, vec2)
 
-		ET_DECLARE_EVENT2(pressed, vec2, PointerType)
+		/**
+		 * Multiple pointers swipe gesture
+		 * first parameter - direction in normalized coordinates
+		 * second paramter - number of pointers
+		 */
+		ET_DECLARE_EVENT2(swipe, vec2, size_t)
+		
+		/*
+		 * Drag gesture
+		 * first parameter - velocity
+		 */
 		ET_DECLARE_EVENT2(drag, vec2, PointerType)
+		
+		ET_DECLARE_EVENT2(pressed, vec2, PointerType)
 		ET_DECLARE_EVENT2(moved, vec2, PointerType)
 		ET_DECLARE_EVENT2(released, vec2, PointerType)
 		ET_DECLARE_EVENT2(click, vec2, PointerType)
@@ -69,12 +83,13 @@ namespace et
 		{
 			PointerInputInfo current;
 			PointerInputInfo previous;
+			bool moved;
 
-			PointersInputDelta() 
+			PointersInputDelta() : moved(false)
 				{ } 
 
 			PointersInputDelta(const PointerInputInfo& c, const PointerInputInfo& p) : 
-				current(c), previous(p) { }
+				current(c), previous(p), moved(false) { }
 		};
         typedef std::map<size_t, PointersInputDelta> PointersInputDeltaMap;
 

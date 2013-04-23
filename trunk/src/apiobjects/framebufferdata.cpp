@@ -143,6 +143,7 @@ bool FramebufferData::checkStatus()
 bool FramebufferData::addRenderTarget(const Texture& rt)
 {
 	if (!rt.valid() || (rt->size() != _size)) return false;
+	assert(glIsTexture(rt->glID()));
 
 	_rc->renderState().bindFramebuffer(_id);
 

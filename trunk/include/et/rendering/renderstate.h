@@ -143,7 +143,7 @@ namespace et
 		 * Textures
 		 */
 		void setActiveTextureUnit(uint32_t unit, bool force = false);
-		void bindTexture(uint32_t unit, uint32_t texture, uint32_t target);
+		void bindTexture(uint32_t unit, uint32_t texture, uint32_t target, bool force = false);
 		void bindTexture(uint32_t unit, const Texture& texture);
 
 		/*
