@@ -36,8 +36,8 @@ void GesturesRecognizer::handlePointersMovement()
 		vec2 dir1 = currentPositions[0] - previousPositions[0];
 		vec2 dir2 = currentPositions[1] - previousPositions[1];
 		float direction = dot(normalize(dir1), normalize(dir2));
-		
-		if (direction < -0.95f) // handle zoom gesture
+
+		if (direction < -0.5f) // handle zoom gesture
 		{
 			float currentDistance = (currentPositions[0] - currentPositions[1]).length();
 			float previousDistance = (previousPositions[0] - previousPositions[1]).length();
@@ -45,7 +45,7 @@ void GesturesRecognizer::handlePointersMovement()
 			zoomAroundPoint.invoke(zoomValue, 0.5f * (currentPositions[0] + currentPositions[1]));
 			zoom.invoke(zoomValue);
 		}
-		else if (direction > 0.9f) // handle swipe gesture
+		else if (direction > 0.5f) // handle swipe gesture
 		{
 			swipe.invoke(0.5f * (dir1 + dir2), 2);
 		}

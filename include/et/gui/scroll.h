@@ -64,18 +64,27 @@ namespace et
 			
 			void internal_setOffset(const vec2& o);
 			
-			float scrollOutOfContentSize() const;
+			float scrollOutOfContentXSize() const;
+			float scrollOutOfContentYSize() const;
+
 			float scrollUpperLimit() const;
 			float scrollUpperDefaultValue() const;
 			float scrollLowerLimit() const;
 			float scrollLowerDefaultValue() const;
-			
+
+			float scrollLeftLimit() const;
+			float scrollLeftDefaultValue() const;
+			float scrollRightLimit() const;
+			float scrollRightDefaultValue() const;
+
+			void updateBouncing(float deltaTime);
+
 		private:
 			enum BounceDirection
 			{
 				BounceDirection_None,
-				BounceDirection_ToUpper,
-				BounceDirection_ToLower
+				BounceDirection_ToNear,
+				BounceDirection_ToFar
 			};
 			
 		private:
@@ -97,9 +106,11 @@ namespace et
 			float _updateTime;
 			float _scrollbarsAlpha;
 			float _scrollbarsAlphaTarget;
+
 			bool _pointerCaptured;
 			bool _manualScrolling;
-			BounceDirection _bouncing;
+
+			vector2<BounceDirection> _bouncing;
 		};
 
 	}

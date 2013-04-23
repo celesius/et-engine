@@ -250,7 +250,7 @@ namespace et
 
 	private:
 		EventReceiver* receiver()
-			{ return 0; }
+			{ return nullptr; }
 
 	private:
 		typedef std::vector<Event2ConnectionBase<Arg1Type, Arg2Type>*> ConnectionList;
