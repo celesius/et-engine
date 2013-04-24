@@ -26,16 +26,25 @@ namespace et
 	typedef vector2<float> vec2;
 	typedef vector3<float> vec3;
 	typedef vector4<float> vec4;
+	
 	typedef vector2<int> vec2i;
-	typedef vector2<size_t> vec2sz;
 	typedef vector3<int> vec3i;
 	typedef vector4<int> vec4i;
+	
+	typedef vector2<size_t> vec2sz;
+	typedef vector3<size_t> vec3sz;
+	typedef vector4<size_t> vec4sz;
+	
+	typedef vector2<unsigned char> vec2ub;
 	typedef vector3<unsigned char> vec3ub;
 	typedef vector4<unsigned char> vec4ub;
+	
 	typedef matrix3<float> mat3;
 	typedef matrix4<float> mat4;
+	
 	typedef matrix3<int> mat3i;
 	typedef matrix4<int> mat4i;
+	
 	typedef Quaternion<float> quaternion;
 	typedef Rect<float> rect;
 	typedef Rect<int> recti;
@@ -457,6 +466,10 @@ namespace et
 			result *= value;
 		return result;
 	}
+	
+	template <typename T>
+	inline vec2 vector2ToFloat(const vector2<T>& v)
+		{ return vec2(static_cast<float>(v.x), static_cast<float>(v.y)); }
 
 	quaternion matrixToQuaternion(const mat3& m);
 	vec3 removeMatrixScale(mat3& m);
