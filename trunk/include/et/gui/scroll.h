@@ -18,25 +18,16 @@ namespace et
 		public:
 			typedef IntrusivePtr<Scroll> Pointer;
 			
+			enum Bounce
+			{
+				Bounce_Horizontal = 0x01,
+				Bounce_Vertical = 0x02,
+			};
+			
 		public:
 			Scroll(Element2d* parent);
-			void addToRenderQueue(RenderContext*, GuiRenderer&);
-			void addToOverlayRenderQueue(RenderContext*, GuiRenderer&);
 			
-			const mat4& finalTransform();
-			const mat4& finalInverseTransform();
-			
-			bool pointerPressed(const PointerInputInfo&);			
-			bool pointerMoved(const PointerInputInfo&);			
-			bool pointerReleased(const PointerInputInfo&);
-			bool pointerCancelled(const PointerInputInfo&);
-			bool containsPoint(const vec2& p, const vec2& np);
-			
-			const vec2& contentSize() const
-				{ return _contentSize; }
-			
-			const vec2& offset() const
-				{ return _offset; }
+			void setBounce(size_t);
 			
 			void setContentSize(const vec2& cs);
 			
@@ -48,8 +39,26 @@ namespace et
 			void setBackgroundColor(const vec4& color);
 			void setScrollbarsColor(const vec4&);
 			
+			const vec2& contentSize() const
+				{ return _contentSize; }
+			
+			const vec2& offset() const
+				{ return _offset; }
+			
 		private:
 			void buildVertices(RenderContext* rc, GuiRenderer& r);
+			
+			void addToRenderQueue(RenderContext*, GuiRenderer&);
+			void addToOverlayRenderQueue(RenderContext*, GuiRenderer&);
+			
+			const mat4& finalTransform();
+			const mat4& finalInverseTransform();
+			
+			bool pointerPressed(const PointerInputInfo&);
+			bool pointerMoved(const PointerInputInfo&);
+			bool pointerReleased(const PointerInputInfo&);
+			bool pointerCancelled(const PointerInputInfo&);
+			bool containsPoint(const vec2& p, const vec2& np);
 			
 			void invalidateChildren();
 			void broadcastPressed(const PointerInputInfo&);
@@ -78,6 +87,12 @@ namespace et
 			float scrollRightDefaultValue() const;
 
 			void updateBouncing(float deltaTime);
+			
+			bool horizontalBounce() const
+				{ return (_bounce & Bounce_Horizontal) == Bounce_Horizontal; }
+			
+			bool verticalBounce() const
+				{ return (_bounce & Bounce_Vertical) == Bounce_Vertical; }
 
 		private:
 			enum BounceDirection
@@ -103,14 +118,14 @@ namespace et
 			vec2 _contentSize;
 			vec2 _offset;
 			vec2 _velocity;
+			vector2<BounceDirection> _bouncing;
+			size_t _bounce;
 			float _updateTime;
 			float _scrollbarsAlpha;
 			float _scrollbarsAlphaTarget;
 
 			bool _pointerCaptured;
 			bool _manualScrolling;
-
-			vector2<BounceDirection> _bouncing;
 		};
 
 	}

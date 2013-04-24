@@ -21,7 +21,7 @@ float alphaAnimationScale = 5.0f;
 float bounceStopTreshold = 0.5f;
 
 Scroll::Scroll(Element2d* parent) : Element2d(parent), _offsetAnimator(0, 0, mainTimerPool()),
-	_updateTime(0.0f), _scrollbarsAlpha(0.0f), _scrollbarsAlphaTarget(0.0f),
+	_updateTime(0.0f), _scrollbarsAlpha(0.0f), _scrollbarsAlphaTarget(0.0f), _bounce(0),
 	_pointerCaptured(false), _manualScrolling(false)
 {
 	_offsetAnimator.setDelegate(this);
@@ -410,19 +410,13 @@ void Scroll::setOffset(const vec2& aOffset, float duration)
 }
 
 float Scroll::scrollOutOfContentXSize() const
-	{ return 0.5f * size().x; }
+	{ return horizontalBounce() ? 0.5f * size().x : 0.001f; }
 
 float Scroll::scrollOutOfContentYSize() const
-	{ return 0.5f * size().y; }
+	{ return verticalBounce() ? 0.5f * size().y : 0.001f; }
 
 float Scroll::scrollUpperDefaultValue() const
 	{ return 0.0f; }
-
-float Scroll::scrollUpperLimit() const
-	{ return scrollUpperDefaultValue() - scrollOutOfContentYSize(); }
-
-float Scroll::scrollLowerLimit() const
-	{ return scrollLowerDefaultValue() + scrollOutOfContentYSize(); }
 
 float Scroll::scrollLowerDefaultValue() const
 	{ return etMax(0.0f, _contentSize.y - size().y); }
@@ -430,11 +424,17 @@ float Scroll::scrollLowerDefaultValue() const
 float Scroll::scrollLeftDefaultValue() const
 	{ return 0.0f; }
 
-float Scroll::scrollLeftLimit() const
-	{ return scrollLeftDefaultValue() - scrollOutOfContentXSize(); }
-
 float Scroll::scrollRightDefaultValue() const
 	{ return etMax(0.0f, _contentSize.x - size().x); }
+
+float Scroll::scrollUpperLimit() const
+	{ return scrollUpperDefaultValue() - scrollOutOfContentYSize(); }
+
+float Scroll::scrollLowerLimit() const
+	{ return scrollLowerDefaultValue() + scrollOutOfContentYSize(); }
+
+float Scroll::scrollLeftLimit() const
+	{ return scrollLeftDefaultValue() - scrollOutOfContentXSize(); }
 
 float Scroll::scrollRightLimit() const
 	{ return scrollRightDefaultValue() + scrollOutOfContentXSize(); }
@@ -500,4 +500,9 @@ void Scroll::setScrollbarsColor(const vec4& c)
 {
 	_scrollbarsColor = c;
 	invalidateContent();
+}
+
+void Scroll::setBounce(size_t b)
+{
+	_bounce = b;
 }
