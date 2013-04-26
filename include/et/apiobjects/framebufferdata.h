@@ -64,6 +64,9 @@ namespace et
 		bool checkStatus();
 		
 		void setDrawBuffersCount(int c);
+		
+		size_t numRendertargets() const
+			{ return _numTargets; }
 
 		uint32_t glID() const
 			{ return _id; }
@@ -105,10 +108,10 @@ namespace et
 		Texture _renderTargets[MaxRenderTargets];
 		Texture _depthBuffer;
 
-		uint32_t _id;
 		vec2i _size;
-		uint32_t _numTargets;
+		size_t _numTargets;
 		
+		uint32_t _id;
 		uint32_t _colorRenderbuffer;
 		uint32_t _depthRenderbuffer;
 
