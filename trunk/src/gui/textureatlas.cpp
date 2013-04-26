@@ -89,6 +89,7 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 			if (!fileExists(textureName))
 				textureName = TextureLoader::resolveFileName(filePath + textureId);
 			_textures[textureId] = rc->textureFactory().loadTexture(textureName, cache);
+			_textures[textureId]->setWrap(rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
 		}
 		else if (token == "image:")
 		{

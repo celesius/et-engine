@@ -86,6 +86,9 @@ namespace et
 		Texture depthBuffer() const
 			{ return _depthBuffer; }
 		
+		Texture currentRendertarget() const
+			{ return _currentRendertarget; }
+		
 		void setColorRenderbuffer(uint32_t r)
 			{ _colorRenderbuffer = r; }
 		
@@ -105,6 +108,8 @@ namespace et
 	private:
 		RenderContext* _rc;
 		TextureFactory* _textureFactory;
+		
+		Texture _currentRendertarget;
 		Texture _renderTargets[MaxRenderTargets];
 		Texture _depthBuffer;
 

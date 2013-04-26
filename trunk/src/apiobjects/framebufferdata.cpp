@@ -230,6 +230,10 @@ void FramebufferData::addSameRendertarget()
 bool FramebufferData::setCurrentRenderTarget(const Texture& texture)
 {
 	assert(texture.valid());
+	
+	if (texture == _currentRendertarget) return true;
+	
+	_currentRendertarget = texture;
 	_rc->renderState().bindFramebuffer(_id);
 
 	if (openGLCapabilites().version() == OpenGLVersion_New)
