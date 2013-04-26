@@ -17,6 +17,9 @@ namespace et
 	{
 	public:
 		GesturesRecognizer(bool automaticMode = true);
+		
+		size_t pointersCount() const
+			{ return _pointers.size(); }
 
 	public:
 		ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(float, clickThreshold, setClickThreshold)
@@ -45,11 +48,12 @@ namespace et
 		ET_DECLARE_EVENT2(pressed, vec2, PointerType)
 		ET_DECLARE_EVENT2(moved, vec2, PointerType)
 		ET_DECLARE_EVENT2(released, vec2, PointerType)
+		ET_DECLARE_EVENT2(cancelled, vec2, PointerType)
+		
 		ET_DECLARE_EVENT2(click, vec2, PointerType)
 		ET_DECLARE_EVENT2(doubleClick, vec2, PointerType)
 
 		ET_DECLARE_EVENT0(hold)
-		ET_DECLARE_EVENT0(cancelled)
 
 		ET_DECLARE_EVENT1(pointerPressed, PointerInputInfo)
 		ET_DECLARE_EVENT1(pointerMoved, PointerInputInfo)
