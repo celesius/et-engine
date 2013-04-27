@@ -186,6 +186,8 @@ namespace et
 	std::string addTrailingSlash(const std::string& path);
 	std::string replaceFileExt(const std::string& fileName, const std::string& newExt);
 	std::string removeFileExt(const std::string& fileName);
+
+	std::string removeWhitespace(const std::string&);
 	
 	float extractFloat(std::string& s);
 	
