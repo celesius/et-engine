@@ -315,3 +315,9 @@ namespace et
 
 }
 
+std::string et::removeWhitespace(const std::string& s)
+{
+	StringDataStorage result(s.size(), 0);
+	ET_ITERATE(s, auto, c, if (!isWhitespaceChar(c)) result.push_back(c));
+	return std::string(result.data());
+}
