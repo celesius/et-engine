@@ -23,9 +23,9 @@ namespace et
 		static std::string extensionForImageFormat(ImageFormat fmt);
 
 		static bool writeImageToFile(const std::string& fileName, const BinaryDataStorage& data,
-									 const vec2i& size, int components, int bitsPerComponent, ImageFormat fmt);
+									 const vec2i& size, int components, int bitsPerComponent, ImageFormat fmt, bool flip);
 		
 		static bool writeImageToBuffer(BinaryDataStorage& buffer, const BinaryDataStorage& data,
-									 const vec2i& size, int components, int bitsPerComponent, ImageFormat fmt);
+									 const vec2i& size, int components, int bitsPerComponent, ImageFormat fmt, bool flip);
 	};
 }

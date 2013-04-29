@@ -138,10 +138,10 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 	{
 		BinaryDataStorage data(i->texture->size.square() * 4);
 		data.fill(0);
-
+/*
 		BinaryDataStorage layoutData(i->texture->size.square() * 4);
 		layoutData.fill(0);
-
+*/
 		char textureName[1024] = { };
 		sprintf(textureName, textureNamePattern, textureIndex);
 		std::string texName = path + std::string(textureName);
@@ -155,14 +155,16 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 
 			vec2i iOrigin(static_cast<int>(ii->place.origin.x), static_cast<int>(ii->place.origin.y));
 
-			ii->place.size = vec2(static_cast<float>(i->texture->size.x), static_cast<float>(i->texture->size.y));
+/*			ii->place.size = vec2(static_cast<float>(i->texture->size.x), static_cast<float>(i->texture->size.y));
 
 			ImageOperations::fill(layoutData, i->texture->size, 4, recti(iOrigin, image.size),
 				vec4ub(rand() % 256, rand() % 256, rand() % 256, 255));
-
+*/
 			std::string sIndex = intToStr(index);
+			
 			if (sIndex.length() < 2)
 				sIndex = "0" + sIndex;
+			
 			std::string newFile = replaceFileExt(texName, ".layout" + sIndex + ".png");
 			std::string name = removeFileExt(getFileName(ii->image->source));
 
@@ -218,11 +220,16 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 			};
 
 			if (components)
-				ImageOperations::transfer(image.data, image.size, components, data, i->texture->size, 4, iOrigin);
+			{
+				ImageOperations::transfer(image.data, image.size, components,
+					data, i->texture->size, 4, iOrigin);
+			}
 		}
 
-		ImageWriter::writeImageToFile(replaceFileExt(texName, ".layout.png"), layoutData, i->texture->size, 4, 8, ImageFormat_PNG);
-		ImageWriter::writeImageToFile(texName, data, i->texture->size, 4, 8, ImageFormat_PNG);
+//		ImageWriter::writeImageToFile(replaceFileExt(texName, ".layout.png"), layoutData,
+//			i->texture->size, 4, 8, ImageFormat_PNG);
+		
+		ImageWriter::writeImageToFile(texName, data, i->texture->size, 4, 8, ImageFormat_PNG, true);
 	}
 }
 

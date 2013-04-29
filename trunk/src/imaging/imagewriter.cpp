@@ -11,19 +11,22 @@
 
 using namespace et;
 
-bool internal_writePNGtoFile(const std::string& fileName, const BinaryDataStorage& data, const vec2i& size, int components, int bitsPerComponent);
-bool internal_writePNGtoBuffer(BinaryDataStorage& buffer, const BinaryDataStorage& data, const vec2i& size, int components, int bitsPerComponent);
+bool internal_writePNGtoFile(const std::string& fileName, const BinaryDataStorage& data,
+	const vec2i& size, int components, int bitsPerComponent, bool flip);
+
+bool internal_writePNGtoBuffer(BinaryDataStorage& buffer, const BinaryDataStorage& data,
+	const vec2i& size, int components, int bitsPerComponent, bool flip);
 
 void internal_func_writePNGtoBuffer(png_structp png_ptr, png_bytep data, png_size_t length);
 void internal_func_PNGflush(png_structp png_ptr);
 
 bool ImageWriter::writeImageToFile(const std::string& fileName, const BinaryDataStorage& data,
-	const vec2i& size, int components, int bitsPerComponent, ImageFormat fmt)
+	const vec2i& size, int components, int bitsPerComponent, ImageFormat fmt, bool flip)
 {
 	switch (fmt)
 	{
 	case ImageFormat_PNG:
-		return internal_writePNGtoFile(fileName, data, size, components, bitsPerComponent);
+		return internal_writePNGtoFile(fileName, data, size, components, bitsPerComponent, flip);
 
 	default:
 		return false;
@@ -31,12 +34,12 @@ bool ImageWriter::writeImageToFile(const std::string& fileName, const BinaryData
 }
 
 bool ImageWriter::writeImageToBuffer(BinaryDataStorage& buffer, const BinaryDataStorage& data,
-						const vec2i& size, int components, int bitsPerComponent, ImageFormat fmt)
+	const vec2i& size, int components, int bitsPerComponent, ImageFormat fmt, bool flip)
 {
 	switch (fmt)
 	{
 		case ImageFormat_PNG:
-			return internal_writePNGtoBuffer(buffer, data, size, components, bitsPerComponent);
+			return internal_writePNGtoBuffer(buffer, data, size, components, bitsPerComponent, flip);
 			
 		default:
 			return false;
@@ -65,7 +68,8 @@ void internal_func_writePNGtoBuffer(png_structp png_ptr, png_bytep data, png_siz
 	buffer->applyOffset(length);
 }
 
-bool internal_writePNGtoBuffer(BinaryDataStorage& buffer, const BinaryDataStorage& data, const vec2i& size, int components, int bitsPerComponent)
+bool internal_writePNGtoBuffer(BinaryDataStorage& buffer, const BinaryDataStorage& data,
+	const vec2i& size, int components, int bitsPerComponent, bool flip)
 {
 	png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	
@@ -103,8 +107,16 @@ bool internal_writePNGtoBuffer(BinaryDataStorage& buffer, const BinaryDataStorag
 	
 	int rowSize = size.x * components * bitsPerComponent / 8;
 	
-	for (int y = 0; y < size.y; y++)
-		row_pointers[y] = (png_bytep)(&data[(size.y - 1 - y) * rowSize]);
+	if (flip)
+	{
+		for (int y = 0; y < size.y; y++)
+			row_pointers[y] = (png_bytep)(&data[(size.y - 1 - y) * rowSize]);
+	}
+	else
+	{
+		for (int y = 0; y < size.y; y++)
+			row_pointers[y] = (png_bytep)(&data[y * rowSize]);
+	}
 	
 	png_set_write_fn(png_ptr, &buffer, internal_func_writePNGtoBuffer, 0);
 	
@@ -118,7 +130,8 @@ bool internal_writePNGtoBuffer(BinaryDataStorage& buffer, const BinaryDataStorag
 	return true;
 }
 
-bool internal_writePNGtoFile(const std::string& fileName, const BinaryDataStorage& data, const vec2i& size, int components, int bitsPerComponent)
+bool internal_writePNGtoFile(const std::string& fileName, const BinaryDataStorage& data,
+	const vec2i& size, int components, int bitsPerComponent, bool flip)
 {
 	png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	
@@ -167,8 +180,16 @@ bool internal_writePNGtoFile(const std::string& fileName, const BinaryDataStorag
 	
 	int rowSize = size.x * components * bitsPerComponent / 8;
 	
-	for (int y = 0; y < size.y; y++)
-		row_pointers[y] = (png_bytep)(&data[(size.y - 1 - y) * rowSize]);
+	if (flip)
+	{
+		for (int y = 0; y < size.y; y++)
+			row_pointers[y] = (png_bytep)(&data[(size.y - 1 - y) * rowSize]);
+	}
+	else
+	{
+		for (int y = 0; y < size.y; y++)
+			row_pointers[y] = (png_bytep)(&data[y * rowSize]);
+	}
 	
 	png_write_image(png_ptr, row_pointers);
 	
