@@ -29,6 +29,9 @@ namespace et
 		void fullscreenPass();
 		void renderFullscreenTexture(const Texture&);
 		void renderFullscreenTexture(const Texture&, const vec2& scale);
+
+		void renderFullscreenDepthTexture(const Texture&, float factor);
+
 		void renderTexture(const Texture&, const vec2& position, const vec2& size);
 		void renderTexture(const Texture&, const vec2i& position, const vec2i& size = vec2i(-1));
 
@@ -52,9 +55,12 @@ namespace et
 		VertexArrayObject _fullscreenQuadVao;
 
 		Program _fullscreenProgram;
+		Program _fullscreenDepthProgram;
 		Program _fullscreenScaledProgram;
 		Program _scaledProgram;
-		int _fullScreenScaledProgram_PSUniform;
-		int _scaledProgram_PSUniform;
+
+		ProgramUniform _scaledProgram_PSUniform;
+		ProgramUniform _fullScreenScaledProgram_PSUniform;
+		ProgramUniform _fullScreenDepthProgram_FactorUniform;
 	};
 }

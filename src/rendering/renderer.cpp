@@ -16,6 +16,7 @@ extern const std::string fullscreen_vertex_shader;
 extern const std::string fullscreen_scaled_vertex_shader;
 extern const std::string scaled_copy_vertex_shader;
 extern const std::string copy_fragment_shader;
+extern const std::string depth_fragment_shader;
 
 Renderer::Renderer(RenderContext* rc) :
 	_rc(rc), _defaultTextureBindingUnit(6)
@@ -39,15 +40,20 @@ Renderer::Renderer(RenderContext* rc) :
 		copy_fragment_shader, ProgramDefinesList(), ".", "__fullscreeen__program__");
 	_fullscreenProgram->setUniform("color_texture", _defaultTextureBindingUnit);
 
+	_fullscreenDepthProgram = rc->programFactory().genProgram(fullscreen_vertex_shader, std::string(),
+		depth_fragment_shader, ProgramDefinesList(), ".", "__fullscreeen__depth__program__");
+	_fullscreenDepthProgram->setUniform("depth_texture", _defaultTextureBindingUnit);
+	_fullScreenDepthProgram_FactorUniform = _fullscreenDepthProgram->getUniform("factor");
+
 	_fullscreenScaledProgram = rc->programFactory().genProgram(fullscreen_scaled_vertex_shader, std::string(),
 		copy_fragment_shader, ProgramDefinesList(), ".", "__fullscreeen_scaled_program__");
 	_fullscreenScaledProgram->setUniform("color_texture", _defaultTextureBindingUnit);
-	_fullScreenScaledProgram_PSUniform = _fullscreenScaledProgram->getUniformLocation("vScale");
+	_fullScreenScaledProgram_PSUniform = _fullscreenScaledProgram->getUniform("vScale");
 
 	_scaledProgram = rc->programFactory().genProgram(scaled_copy_vertex_shader, std::string(), 
 		copy_fragment_shader, ProgramDefinesList(), ".", "__scaled_program__");
 	_scaledProgram->setUniform("color_texture", _defaultTextureBindingUnit);
-	_scaledProgram_PSUniform = _scaledProgram->getUniformLocation("PositionScale");
+	_scaledProgram_PSUniform = _scaledProgram->getUniform("PositionScale");
 }
 
 Renderer::~Renderer()
@@ -75,11 +81,19 @@ void Renderer::renderFullscreenTexture(const Texture& texture)
 	fullscreenPass();
 }
 
+void Renderer::renderFullscreenDepthTexture(const Texture& texture, float factor)
+{
+	_rc->renderState().bindTexture(_defaultTextureBindingUnit, texture);
+	_rc->renderState().bindProgram(_fullscreenDepthProgram);
+	_fullscreenDepthProgram->setUniform(_fullScreenDepthProgram_FactorUniform, factor);
+	fullscreenPass();
+}
+
 void Renderer::renderFullscreenTexture(const Texture& texture, const vec2& scale)
 {
 	_rc->renderState().bindTexture(_defaultTextureBindingUnit, texture);
 	_rc->renderState().bindProgram(_fullscreenScaledProgram);
-	_scaledProgram->setUniform(_fullScreenScaledProgram_PSUniform, GL_FLOAT_VEC2, scale);
+	_scaledProgram->setUniform(_fullScreenScaledProgram_PSUniform, scale);
 	fullscreenPass();
 }
 
@@ -87,14 +101,15 @@ void Renderer::renderTexture(const Texture& texture, const vec2& position, const
 {
 	_rc->renderState().bindTexture(_defaultTextureBindingUnit, texture);
 	_rc->renderState().bindProgram(_scaledProgram);
-	_scaledProgram->setUniform(_scaledProgram_PSUniform, GL_FLOAT_VEC4, vec4(position, size));
+	_scaledProgram->setUniform(_scaledProgram_PSUniform, vec4(position, size));
 	fullscreenPass();
 }
 
 vec2 Renderer::windowCoordinatesToScene(const vec2i& coord)
 {
 	const vec2& vpSize = _rc->size();
-	return vec2(2.0f * static_cast<float>(coord.x) / vpSize.x - 1.0f, 1.0f - 2.0f * static_cast<float>(coord.y) / vpSize.y );
+	return vec2(2.0f * static_cast<float>(coord.x) / vpSize.x - 1.0f,
+		1.0f - 2.0f * static_cast<float>(coord.y) / vpSize.y );
 }
 
 vec2 Renderer::windowSizeToScene(const vec2i& size)
@@ -113,14 +128,17 @@ void Renderer::renderTexture(const Texture& texture, const vec2i& position, cons
 
 void Renderer::drawElements(const IndexBuffer& ib, size_t first, size_t count)
 {
-	if (ib.valid())
-		etDrawElements(ib->primitiveType(), static_cast<GLsizei>(count), ib->dataType(), ib->indexOffset(first));
+	assert(ib.valid());
+	
+	etDrawElements(ib->primitiveType(), static_cast<GLsizei>(count), ib->dataType(), ib->indexOffset(first));
 }
 
 void Renderer::drawElements(PrimitiveType primitiveType, const IndexBuffer& ib, size_t first, size_t count)
 {
-	if (ib.valid())
-		etDrawElements(primitiveTypeValue(primitiveType), static_cast<GLsizei>(count), ib->dataType(), ib->indexOffset(first));
+	assert(ib.valid());
+
+	etDrawElements(primitiveTypeValue(primitiveType), static_cast<GLsizei>(count),
+		ib->dataType(), ib->indexOffset(first));
 }
 
 void Renderer::drawAllElements(const IndexBuffer& ib)
@@ -159,36 +177,40 @@ void Renderer::drawElementsBaseIndex(const VertexArrayObject& vao, int base, siz
 const std::string fullscreen_vertex_shader = 
 	"etVertexIn vec2 Vertex;"
 	"etVertexOut vec2 TexCoord;"
-	"void main()"
-	"{"
-	"TexCoord = vec2(0.5) + 0.5 * Vertex;"
-	"gl_Position = vec4(Vertex, 0.0, 1.0);"
+	"void main() {"
+	"	TexCoord = vec2(0.5) + 0.5 * Vertex;"
+	"	gl_Position = vec4(Vertex, 0.0, 1.0);"
 	"}";
 
 const std::string fullscreen_scaled_vertex_shader = 
 	"uniform vec2 vScale;"
 	"etVertexIn vec2 Vertex;"
 	"etVertexOut vec2 TexCoord;"
-	"void main()"
-	"{"
-	"TexCoord = vec2(0.5) + 0.5 * Vertex;"
-	"gl_Position = vec4(vScale * Vertex, 0.0, 1.0);"
+	"void main() {"
+	"	TexCoord = vec2(0.5) + 0.5 * Vertex;"
+	"	gl_Position = vec4(vScale * Vertex, 0.0, 1.0);"
 	"}";
 
 const std::string scaled_copy_vertex_shader = 
 	"uniform vec4 PositionScale;"
 	"etVertexIn vec2 Vertex;"
 	"etVertexOut vec2 TexCoord;"
-	"void main()"
-	"{"
-	"TexCoord = vec2(0.5) + 0.5 * Vertex;"
-	"gl_Position = vec4(PositionScale.xy + TexCoord * PositionScale.zw, 0.0, 1.0);"
+	"void main() {"
+	"	TexCoord = vec2(0.5) + 0.5 * Vertex;"
+	"	gl_Position = vec4(PositionScale.xy + TexCoord * PositionScale.zw, 0.0, 1.0);"
 	"}";
 
 const std::string copy_fragment_shader = 
 	"uniform sampler2D color_texture;"
 	"etFragmentIn etHighp vec2 TexCoord;"
-	"void main()"
-	"{"
-	" etFragmentOut = etTexture2D(color_texture, TexCoord);"
+	"void main() {"
+	"	etFragmentOut = etTexture2D(color_texture, TexCoord);"
+	"}";
+
+const std::string depth_fragment_shader =
+	"uniform sampler2D depth_texture;"
+	"uniform float factor;"
+	"etFragmentIn etHighp vec2 TexCoord;"
+	"void main() {"
+	"	etFragmentOut = pow(etTexture2D(depth_texture, TexCoord), vec4(factor));"
 	"}";
