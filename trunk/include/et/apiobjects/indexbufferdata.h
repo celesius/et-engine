@@ -56,6 +56,7 @@ namespace et
 		uint32_t _indexBuffer;
 		uint32_t _dataType;
 		uint32_t _primitiveType;
+		IndexArrayFormat _format;
 		BufferDrawType _drawType;
 	};
 }
