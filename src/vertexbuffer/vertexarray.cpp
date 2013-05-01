@@ -13,7 +13,8 @@ using namespace et;
 const int VertexArrayId_1 = 'VAV1';
 const int VertexArrayCurrentId = VertexArrayId_1;
 
-VertexArray::VertexArray() : tag(0), _decl(true), _size(0), _smoothing(Usage_Smoothing, Type_Int, 0)
+VertexArray::VertexArray() :
+	tag(0), _decl(true), _size(0), _smoothing(Usage_Smoothing, Type_Int, 0)
 {
 	
 }

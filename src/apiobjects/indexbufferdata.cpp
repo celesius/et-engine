@@ -12,7 +12,7 @@ using namespace et;
 
 IndexBufferData::IndexBufferData(RenderState& rs, IndexArray::Pointer i, BufferDrawType drawType,
 	const std::string& name) : APIObjectData(name), _rs(rs), _size(i->actualSize()), _sourceTag(0),
-	_indexBuffer(0), _dataType(0), _primitiveType(0), _drawType(drawType)
+	_indexBuffer(0), _dataType(0), _primitiveType(0), _format(IndexArrayFormat_Undefined), _drawType(drawType)
 {
 	build(i);
 }
@@ -28,6 +28,7 @@ IndexBufferData::~IndexBufferData()
 void IndexBufferData::setProperties(const IndexArray::Pointer& i)
 {
 	_size = i->actualSize();
+	_format = i->format();
 
 	switch (i->format())
 	{
@@ -77,23 +78,7 @@ void IndexBufferData::internal_setData(const unsigned char* data, size_t size)
 
 void* IndexBufferData::indexOffset(size_t offset) const
 {
-	switch (_dataType)
-	{
-	case GL_UNSIGNED_BYTE:
-	case GL_BYTE:
-		return reinterpret_cast<void*>(offset);
-
-	case GL_UNSIGNED_SHORT:
-	case GL_SHORT:
-		return reinterpret_cast<void*>(sizeof(short) * offset);
-
-	case GL_UNSIGNED_INT:
-	case GL_INT:
-		return reinterpret_cast<void*>(sizeof(int) * offset);
-
-	default: 
-		return 0;
-	}
+	return reinterpret_cast<void*>(_format * offset);
 }
 
 void IndexBufferData::setData(const IndexArray::Pointer& i)
