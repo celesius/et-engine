@@ -7,6 +7,7 @@
 
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSMenu.h>
+#include <AppKit/NSWindow.h>
 #include <et/app/applicationnotifier.h>
 
 using namespace et;
@@ -68,6 +69,8 @@ void Application::quit(int exitCode)
 
 void Application::setTitle(const std::string &s)
 {
+	NSWindow* mainWindow = [[[NSApplication sharedApplication] windows] objectAtIndex:0];
+	[mainWindow setTitle:[NSString stringWithUTF8String:s.c_str()]];
 }
 
 void Application::alert(const std::string&, const std::string&, AlertType)
