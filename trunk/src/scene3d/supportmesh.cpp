@@ -74,13 +74,17 @@ void SupportMesh::fillCollisionData(VertexArray::Pointer v, IndexArray::Pointer 
 
 SupportMesh* SupportMesh::duplicate()
 {
-	SupportMesh* result = new SupportMesh(name(), vertexArrayObject(), material(), startIndex(), numIndexes(), parent());
+	SupportMesh* result = new SupportMesh(name(), vertexArrayObject(), material(), startIndex(),
+		numIndexes(), parent());
+
+	duplicateBasePropertiesToObject(result);
 	duplicateChildrenToObject(result);
 
 	result->_size = _size;
 	result->_center = _center;
 	result->_radius = _radius;
 	result->_data = _data;
+	
 	return result;
 }
 

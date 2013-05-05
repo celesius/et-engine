@@ -97,6 +97,7 @@ namespace et
 			void deserializeChildren(std::istream& stream, ElementFactory* factory, SceneVersion version);
 
 			void duplicateChildrenToObject(Element* object);
+			void duplicateBasePropertiesToObject(Element* object);
 
 		private:
 			Pointer childWithNameCallback(const std::string& name, Pointer root, ElementType ofType);
