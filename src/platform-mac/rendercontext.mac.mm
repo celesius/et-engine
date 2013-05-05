@@ -43,7 +43,8 @@ public:
 	RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params);
 	~RenderContextPrivate();
 	
-	void displayLinkSynchronized();
+	int displayLinkSynchronized();
+	
 	void run();
 	
 public:
@@ -121,25 +122,23 @@ void RenderContext::endRender()
  * RenderContextPrivate
  *
  */
-CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *inNow,
-	const CVTimeStamp *inOutputTime, CVOptionFlags flagsIn, CVOptionFlags *flagsOut, void *displayLinkContext)
+CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*,
+	CVOptionFlags, CVOptionFlags*, void *displayLinkContext)
 {
 	@autoreleasepool
 	{
-		RenderContextPrivate* notifier = reinterpret_cast<RenderContextPrivate*>(displayLinkContext);
-		notifier->displayLinkSynchronized();
-		return kCVReturnSuccess;
+		return reinterpret_cast<RenderContextPrivate*>(displayLinkContext)->displayLinkSynchronized();
 	}
 }
 
-RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params) : _rc(rc),
-	_mainWindow(0), _pixelFormat(0), _openGlContext(0), _openGlView(0), _displayLink(0), firstSync(true)
+RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params) :
+	_rc(rc), _mainWindow(0), _pixelFormat(0), _openGlContext(0), _openGlView(0),
+	_displayLink(0), firstSync(true)
 {
 	NSRect screenRect = [[NSScreen mainScreen] frame];
 	
 	NSRect contentRect = NSMakeRect(0.5f * (screenRect.size.width - params.contextSize.x),
-									0.5f * (screenRect.size.height - params.contextSize.y),
-									params.contextSize.x, params.contextSize.y);
+		0.5f * (screenRect.size.height - params.contextSize.y), params.contextSize.x, params.contextSize.y);
 	
 	NSRect openglRect = NSMakeRect(0.0f, 0.0f, params.contextSize.x, params.contextSize.y);
 	
@@ -173,8 +172,7 @@ RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContex
 	assert(_pixelFormat != nil);
 	
 	_mainWindow = [[NSWindow alloc] initWithContentRect:contentRect
-											  styleMask:NSTitledWindowMask | NSClosableWindowMask
-												backing:NSBackingStoreBuffered defer:YES];
+		styleMask:NSTitledWindowMask | NSClosableWindowMask backing:NSBackingStoreBuffered defer:YES];
 	
 	_windowDelegate = [etWindowDelegate new];
 	[_mainWindow setDelegate:_windowDelegate];
@@ -209,7 +207,7 @@ void RenderContextPrivate::run()
 	CVDisplayLinkStart(_displayLink);
 }
 
-void RenderContextPrivate::displayLinkSynchronized()
+int RenderContextPrivate::displayLinkSynchronized()
 {
 	if (firstSync)
 	{
@@ -229,6 +227,8 @@ void RenderContextPrivate::displayLinkSynchronized()
 		[_openGlContext flushBuffer];
 		CGLUnlockContext(reinterpret_cast<CGLContextObj>([_openGlContext CGLContextObj]));
 	}
+
+	return kCVReturnSuccess;
 }
 
 @implementation etOpenGLView
