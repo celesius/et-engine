@@ -37,6 +37,6 @@ void main()
 	vec2 light = defaultLight();
 	light.x = 0.5 + 0.5 * light.x;
 
-	etFragmentOut = vColor;//(vColor * diffuse) * vec4(light.x * light.x) + (diffuse.w * light.y) * specularColor;
+	etFragmentOut = (vColor * diffuse) * vec4(light.x * light.x) + (diffuse.w * light.y) * specularColor;
 	etFragmentOut.w = diffuse.w;
 }
