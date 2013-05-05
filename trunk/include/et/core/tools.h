@@ -56,15 +56,25 @@ namespace et
 	inline std::string lowercase(const std::string& s)
 	{
 		std::string str(s);
-		for (size_t i = 0; i < str.length(); i++)
-			str[i] = static_cast<char>(tolower(str[i]));
+		std::transform(s.begin(), s.end(), str.begin(), ::tolower);
 		return str;
 	}
 	
-	inline void lowercase(std::string& str)
+	inline void lowercase(std::string& s)
 	{
-		for (size_t i = 0; i < str.length(); i++)
-			str[i] = static_cast<char>(tolower(str[i]));
+		std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+	}
+
+	inline std::string uppercase(const std::string& s)
+	{
+		std::string str(s);
+		std::transform(s.begin(), s.end(), str.begin(), ::toupper);
+		return str;
+	}
+
+	inline void uppercase(std::string& s)
+	{
+		std::transform(s.begin(), s.end(), s.begin(), ::toupper);
 	}
 	
 	inline size_t streamSize(std::istream& s)
