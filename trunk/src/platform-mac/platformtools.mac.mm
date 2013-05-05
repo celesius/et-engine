@@ -10,37 +10,61 @@
 
 using namespace et;
 
+@interface FilePicker : NSObject
+
++ (FilePicker*)picker;
+- (NSString*)openFile;
+- (NSString*)saveFile;
+
+@end
+
 std::string et::selectFile(const StringList&, SelectFileMode mode)
 {
+	NSString* pickerResult = nil;
+	SEL selector = nil;
+
 	if (mode == SelectFileMode_Open)
-	{
-		NSOpenPanel* openDlg = [NSOpenPanel openPanel];
-		[openDlg setCanChooseFiles:YES];
-		[openDlg setCanChooseDirectories:NO];
-		[openDlg setAllowsMultipleSelection:NO];
-		[openDlg setResolvesAliases:YES];
-		[openDlg setAllowedFileTypes:nil];
-		
-		if ([openDlg runModal] == NSOKButton)
-		{
-			for (NSURL* url in [openDlg URLs])
-				return std::string([[url path] UTF8String]);
-		}
-		
-		return std::string();
-	}
+		selector = @selector(openFile);
 	else if (mode == SelectFileMode_Save)
-	{
-		NSSavePanel* saveDlg = [NSSavePanel savePanel];
-		
-		if ([saveDlg runModal] == NSOKButton)
-			return std::string([[[saveDlg URL] path] UTF8String]);
-		
-		return std::string();
-	}
+		selector = @selector(saveFile);
 	else
-	{
-		assert(0 && "Invalid SelectFieMode value");
-		return std::string();
-	}
+		assert("Invalid SelectFieMode value" && 0);
+
+	NSInvocation* i = [NSInvocation invocationWithMethodSignature:
+		[FilePicker instanceMethodSignatureForSelector:selector]];
+
+	[i setSelector:selector];
+
+	[i performSelectorOnMainThread:@selector(invokeWithTarget:)
+		withObject:[FilePicker picker] waitUntilDone:YES];
+	
+	[i getReturnValue:&pickerResult];
+
+	return std::string([[pickerResult autorelease] UTF8String]);
 }
+
+@implementation FilePicker
+
++ (FilePicker*)picker
+	{ return [[[FilePicker alloc] init] autorelease]; }
+
+- (NSString*)openFile
+{
+	NSOpenPanel* openDlg = [NSOpenPanel openPanel];
+	[openDlg setCanChooseFiles:YES];
+	[openDlg setCanChooseDirectories:NO];
+	[openDlg setAllowsMultipleSelection:NO];
+	[openDlg setResolvesAliases:YES];
+	[openDlg setAllowedFileTypes:nil];
+
+	return ([openDlg runModal] == NSOKButton) ?
+		[[[[openDlg URLs] objectAtIndex:0] path] retain] : [NSString new];
+}
+
+- (NSString*)saveFile
+{
+	NSSavePanel* saveDlg = [NSSavePanel savePanel];
+	return ([saveDlg runModal] == NSOKButton) ? [[[saveDlg URL] path] retain] : [NSString new];
+}
+
+@end

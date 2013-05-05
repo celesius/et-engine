@@ -1,2 +1,2 @@
-VS: singletransform.vertexshader
-FS: default.fragmentshader
+VS: singletransform.vsh
+FS: default.fsh
