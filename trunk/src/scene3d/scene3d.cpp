@@ -212,12 +212,12 @@ bool Scene3d::deserialize(const std::string& filename, RenderContext* rc, Textur
 	CustomElementFactory* factory)
 {
 	std::ifstream file(filename.c_str(), std::ios::binary | std::ios::in);
-	bool result = deserialize(file, rc, tc, factory, getFilePath(filename));
-	if (!result)
-	{
-		std::cout << "Unable to load scene from file: " << filename << std::endl;
-	}
-	return result;
+	bool success = deserialize(file, rc, tc, factory, getFilePath(filename));
+
+	if (!success)
+		log::error("Unable to load scene from file: %s", filename.c_str());
+
+	return success;
 }
 
 Element::Pointer Scene3d::createElementOfType(size_t type, Element* parent)

@@ -39,7 +39,9 @@ namespace et
 		MaterialParameter_Roughness,
 		MaterialParameter_Transparency,
 		MaterialParameter_ShadingModel,
-		
+
+		MaterialParameter_TransparentColor,
+
 		MaterialParameter_max,
 		MaterialParameter_User = 0xffff
 	};
@@ -82,7 +84,7 @@ namespace et
 		DefaultMaterialEntry& operator = (const std::string& r)
 		{
 			this->value = r;
-			this->set = r.size() > 0;
+			this->set = !r.empty();
 			return *this;
 		}
 	};

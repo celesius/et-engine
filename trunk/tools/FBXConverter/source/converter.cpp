@@ -32,12 +32,13 @@ void Converter::applicationDidLoad(RenderContext* rc)
 
 	Texture uiTexture = rc->textureFactory().loadTexture("gui/keyboard.png", _texCache);
 
-	gui::Image imgNormalState(uiTexture, gui::ImageDescriptor(vec2(128.0f, 0.0f), vec2(32.0f), gui::ContentOffset(8.0f)));
-	gui::Image imgHoverState(uiTexture, gui::ImageDescriptor(vec2(160.0f, 0.0f), vec2(32.0f), gui::ContentOffset(8.0f)));
-	gui::Image imgPressedState(uiTexture, gui::ImageDescriptor(vec2(192.0f, 0.0f), vec2(32.0f), gui::ContentOffset(8.0f)));
-	gui::Image imgSelectedNormalState(uiTexture, gui::ImageDescriptor(vec2(128.0f, 32.0f), vec2(32.0f), gui::ContentOffset(8.0f)));
-	gui::Image imgSelectedHoverState(uiTexture, gui::ImageDescriptor(vec2(160.0f, 32.0f), vec2(32.0f), gui::ContentOffset(8.0f)));
-	gui::Image imgSelectedPressedState(uiTexture, gui::ImageDescriptor(vec2(192.0f, 32.0f), vec2(32.0f), gui::ContentOffset(8.0f)));
+	gui::ContentOffset defOffset(8.0f);
+	gui::Image imgNormalState(uiTexture, gui::ImageDescriptor(vec2(128.0f, 0.0f), vec2(32.0f), defOffset));
+	gui::Image imgHoverState(uiTexture, gui::ImageDescriptor(vec2(160.0f, 0.0f), vec2(32.0f), defOffset));
+	gui::Image imgPressedState(uiTexture, gui::ImageDescriptor(vec2(192.0f, 0.0f), vec2(32.0f), defOffset));
+	gui::Image imgSelectedNormalState(uiTexture, gui::ImageDescriptor(vec2(128.0f, 32.0f), vec2(32.0f), defOffset));
+	gui::Image imgSelectedHoverState(uiTexture, gui::ImageDescriptor(vec2(160.0f, 32.0f), vec2(32.0f), defOffset));
+	gui::Image imgSelectedPressedState(uiTexture, gui::ImageDescriptor(vec2(192.0f, 32.0f), vec2(32.0f), defOffset));
 
 	gui::Button::Pointer btnOpen(new gui::Button("Open", _mainFont, _mainLayout.ptr()));
 	btnOpen->setBackgroundForState(imgNormalState, gui::ElementState_Default);
@@ -232,17 +233,10 @@ void Converter::performLoading(std::string path)
 		FBXLoader loader(path);
 
 		s3d::ElementContainer::Pointer loadedScene = loader.load(_rc, _texCache);
+		
 		if (loadedScene.valid())
-		{
-			s3d::Element::List allObjects = loadedScene->childrenOfType(s3d::ElementType_Any);
-
-			std::cout << "Loaded elements:" << std::endl;
-			for (auto i = allObjects.begin(), e = allObjects.end(); i != e; ++i)
-				std::cout << (*i)->name() << " " << (*i)->properties() << std::endl;
-			std::cout << "End." << std::endl;
-
 			loadedScene->setParent(&_scene);
-		}
+
 	}
 	_labStatus->setText("Completed.");
 }

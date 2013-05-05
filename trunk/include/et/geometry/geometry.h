@@ -480,7 +480,7 @@ namespace et
 	vec3 randVector(float sx = 1.0f, float sy = 1.0f, float sz = 1.0f);
 	
 	float randf(float low = -1.0f, float up = 1.0f);
-	float sign(float s);
+	float signOrZero(float s);
 	float signNoZero(float s);
 	
 	vec3ub vec3fto3ubscaled(const vec3 &fv);
