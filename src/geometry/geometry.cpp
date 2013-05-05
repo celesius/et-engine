@@ -29,7 +29,7 @@ const mat4 et::lightProjectionMatrix(vec4(0.5f, 0.0f, 0.0f, 0.0f),
 									 vec4(0.0f, 0.0f, 0.5f, 0.0f),
 									 vec4(0.5f, 0.5f, 0.5f, 1.0f));
 
-float et::sign(float s)
+float et::signOrZero(float s)
 {
 	return (s == 0.0f) ? 0.0f : s / std::abs(s);
 }
@@ -58,10 +58,12 @@ quaternion et::matrixToQuaternion(const mat3& r)
 	float q1 = ( r[0][0] - r[1][1] - r[2][2] + 1.0f) / 4.0f;
 	float q2 = (-r[0][0] + r[1][1] - r[2][2] + 1.0f) / 4.0f;
 	float q3 = (-r[0][0] - r[1][1] + r[2][2] + 1.0f) / 4.0f;
+	
 	q0 = (q0 < 0.0f) ? 0.0f : sqrt(q0);
 	q1 = (q1 < 0.0f) ? 0.0f : sqrt(q1);
 	q2 = (q2 < 0.0f) ? 0.0f : sqrt(q2);
 	q3 = (q3 < 0.0f) ? 0.0f : sqrt(q3);
+	
 	if ((q0 >= q1) && (q0 >= q2) && (q0 >= q3))
 	{
 		q1 *= signNoZero(r[2][1] - r[1][2]);
@@ -106,7 +108,9 @@ vec3 et::removeMatrixScaleRowMajor(mat3& mat)
 	vec3& r0 = mat[0];
 	vec3& r1 = mat[1];
 	vec3& r2 = mat[2];
+
 	vec3 scale(r0.length(), r1.length(), r2.length());
+	
 	r0 /= scale.x;
 	r1 /= scale.y;
 	r2 /= scale.z;
@@ -118,10 +122,13 @@ vec3 et::removeMatrixScale(mat3& mat)
 	vec3& r0 = mat[0];
 	vec3& r1 = mat[1];
 	vec3& r2 = mat[2];
-	vec3 scale(vec3(r0.x, r1.x, r2.x).length(), vec3(r0.y, r1.y, r2.y).length(), vec3(r0.z, r1.z, r2.z).length());
+
+	vec3 scale(length(vec3(r0.x, r1.x, r2.x)), length(vec3(r0.y, r1.y, r2.y)), length(vec3(r0.z, r1.z, r2.z)));
+
 	r0 /= scale.x;
 	r1 /= scale.y;
 	r2 /= scale.z;
+	
 	return scale;
 }
 
@@ -130,10 +137,13 @@ vec3 et::removeMatrixScale(mat4& mat)
 	vec3& r0 = mat[0].xyz();
 	vec3& r1 = mat[1].xyz();
 	vec3& r2 = mat[2].xyz();
-	vec3 scale(vec3(r0.x, r1.x, r2.x).length(), vec3(r0.y, r1.y, r2.y).length(), vec3(r0.z, r1.z, r2.z).length());
+	
+	vec3 scale(length(vec3(r0.x, r1.x, r2.x)), length(vec3(r0.y, r1.y, r2.y)), length(vec3(r0.z, r1.z, r2.z)));
+
 	r0 /= scale.x;
 	r1 /= scale.y;
 	r2 /= scale.z;
+	
 	return scale;
 }
 

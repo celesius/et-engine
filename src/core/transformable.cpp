@@ -27,7 +27,7 @@ void ComponentTransformable::buildTransform()
 {
 	if (!shouldDecompose())
 	{
-		_cachedTransform = scaleMatrix(_scale) * _orientation.toMatrix();
+		_cachedTransform = _orientation.toMatrix() * scaleMatrix(_scale);
 		_cachedTransform[3] = vec4(_translation, 1.0f);
 	}
 
@@ -99,43 +99,34 @@ const mat4& ComponentTransformable::cachedTransform() const
 	return _cachedTransform; 
 }
 
-#if (ET_DEBUG)
-
-void ComponentTransformable::setTransform(mat4 originalMatrix)
+void ComponentTransformable::setTransform(const mat4& originalMatrix)
 {
-	mat4 m = originalMatrix;
-	mat3 rotationMatrix = m.mat3();
+	mat3 rotationMatrix = originalMatrix.mat3();
+	
 	_scale = removeMatrixScaleRowMajor(rotationMatrix);
 	_orientation = matrixToQuaternion(rotationMatrix);
-	_translation = m[3].xyz();
+	_translation = originalMatrix[3].xyz();
 	_flags &= ~Flag_ShouldDecompose;
+
+	invalidateTransform();
+
+#if (ET_DEBUG)
 	buildTransform();
 
 	float deviation = 0.0f;
-	
 	for (size_t v = 0; v < 4; ++v)
-	{
 		for (size_t u = 0; u < 4; ++u)
 			deviation += sqr(originalMatrix[v][u] - _cachedTransform[v][u]);
-	}
-	
+
 	if (deviation > 0.01f)
-		log::warning("Failed to convert matrix to quternion, deviation: %f", deviation);
-}
-
-#else
-
-void ComponentTransformable::setTransform(mat4 m)
-{
-	mat3 rotationMatrix = m.mat3();
-	_scale = removeMatrixScaleRowMajor(rotationMatrix);
-	_orientation = matrixToQuaternion(rotationMatrix);
-	_translation = m[3].xyz();
-	_flags &= ~Flag_ShouldDecompose;
-	invalidateTransform();
-}
-
+	{
+		log::warning("Failed to decompose matrix\n{\n\tscale: (%f %f %f)\n\torientation: (%f %f %f %f)\n\t"
+			"translation: (%f %f %f)\n\tdeviation: %f\n}", _scale.x, _scale.y, _scale.z, _orientation.scalar,
+			_orientation.vector.x, _orientation.vector.y, _orientation.vector.z,
+			_translation.x, _translation.y, _translation.z, deviation);
+	}
 #endif
+}
 
 void ComponentTransformable::setTransformDirectly(const mat4& m)
 {

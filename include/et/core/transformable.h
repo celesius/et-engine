@@ -47,7 +47,7 @@ namespace et
 		mat4 transform();
 		const mat4& cachedTransform() const;
 
-		void setTransform(mat4 m);
+		void setTransform(const mat4& m);
 		void setTransformDirectly(const mat4& m);
 
 		void setTranslation(const vec3& t);

@@ -496,7 +496,7 @@ void primitives::calculateTangents(VertexArray::Pointer data, const IndexArray::
 			vec3& n = nrm[p[k]];
 			vec3& t = tan1[p[k]]; 
 			float value = dot(cross(n, t), tan2[p[k]]);
-			tan[p[k]] = normalize(t - n * dot(n, t)) * sign(value);
+			tan[p[k]] = normalize(t - n * dot(n, t)) * signOrZero(value);
 		}
 	}
 }

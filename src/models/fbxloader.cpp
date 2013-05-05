@@ -19,12 +19,15 @@
 #include <et/models/fbxloader.h>
 
 #if (ET_PLATFORM_WIN)
+#
 #	pragma comment(lib, "wininet.lib")
+#
 #	if (ET_DEBUG)
 #		pragma comment(lib, "fbxsdk-2013.3-mtd.lib")
 #	else
 #		pragma comment(lib, "fbxsdk-2013.3-mt.lib")
 #	endif
+#
 #endif
 
 using namespace FBXSDK_NAMESPACE;
@@ -60,12 +63,16 @@ namespace et
 		void loadNode(FbxNode* node, s3d::Element::Pointer parent);
 		void buildVertexBuffers(RenderContext* rc, s3d::Element::Pointer root);
 
-		s3d::Mesh::Pointer loadMesh(FbxMesh* mesh, s3d::Element::Pointer parent, const Material::List& materials, const StringList& params);
+		s3d::Mesh::Pointer loadMesh(FbxMesh* mesh, s3d::Element::Pointer parent,
+			const Material::List& materials, const StringList& params);
+
 		Material loadMaterial(FbxSurfaceMaterial* material);
 
-		void loadMaterialColorValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, const char* fbxprop);
-		void loadMaterialValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, const char* fbxprop);
-		void loadMaterialTextureValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, const char* fbxprop);
+		void loadMaterialValue(Material& m, size_t propName,
+			FbxSurfaceMaterial* fbxm, const char* fbxprop);
+		
+		void loadMaterialTextureValue(Material& m, size_t propName,
+			FbxSurfaceMaterial* fbxm, const char* fbxprop);
 
 		StringList loadNodeProperties(FbxNode* node);
 	};
@@ -77,16 +84,14 @@ using namespace et;
 * Private implementation
 */ 
 
-FBXLoaderPrivate::FBXLoaderPrivate(RenderContext* rc, TextureCache& textureCache) : manager(FbxManager::Create()), 
-	_rc(rc), _texCache(textureCache)
+FBXLoaderPrivate::FBXLoaderPrivate(RenderContext* rc, TextureCache& textureCache) :
+	manager(FbxManager::Create()), _rc(rc), _texCache(textureCache)
 {
 	scene = FbxScene::Create(manager, 0);
 }
 
 FBXLoaderPrivate::~FBXLoaderPrivate()
 {
-	std::cout << "~FBXLoaderPrivate()" << std::endl;
-
 	if (manager)
 		manager->Destroy();
 }
@@ -115,8 +120,11 @@ bool FBXLoaderPrivate::import(const std::string& filename)
 		if (importer->GetLastErrorID() == FbxIOBase::eFileVersionNotSupportedYet ||
 			importer->GetLastErrorID() == FbxIOBase::eFileVersionNotSupportedAnymore)
 		{
-			printf("FBX version number for this FBX SDK is %d.%d.%d\n", lSDKMajor, lSDKMinor, lSDKRevision);
-			printf("FBX version number for file %s is %d.%d.%d\n\n", filename.c_str(), lFileMajor, lFileMinor, lFileRevision);
+			printf("FBX version number for this FBX SDK is %d.%d.%d\n", lSDKMajor,
+				lSDKMinor, lSDKRevision);
+			
+			printf("FBX version number for file %s is %d.%d.%d\n\n", filename.c_str(),
+				lFileMajor, lFileMinor, lFileRevision);
 		}
 		importer->Destroy();
 		return false;
@@ -125,7 +133,7 @@ bool FBXLoaderPrivate::import(const std::string& filename)
 	status = importer->IsFBX();
 	if (!status)
 	{
-		std::cout << "FBXLoader error: " << filename << " isn't FBX file" << std::endl;
+		log::error("FBXLoader error: %s is not an FBX file", filename.c_str());
 		importer->Destroy();
 		return false;
 	}
@@ -133,7 +141,7 @@ bool FBXLoaderPrivate::import(const std::string& filename)
 	status = importer->Import(scene);
 	if (!status)
 	{
-		std::cout << "FBXLoader error: unable to import scene from from" << filename << std::endl;
+		log::error("FBXLoader error: unable to import scene from from %s", filename.c_str());
 		importer->Destroy();
 		return false;
 	}
@@ -147,7 +155,8 @@ s3d::ElementContainer::Pointer FBXLoaderPrivate::parse()
 	s3d::ElementContainer::Pointer result(new s3d::ElementContainer("_fbx", 0));
 	storage = s3d::Scene3dStorage::Pointer(new s3d::Scene3dStorage("_fbx_storage", result.ptr()));
 
-	FbxAxisSystem targetAxisSystem(FbxAxisSystem::eYAxis, FbxAxisSystem::eParityOdd, FbxAxisSystem::eRightHanded);
+	FbxAxisSystem targetAxisSystem(FbxAxisSystem::eYAxis, FbxAxisSystem::eParityOdd,
+		FbxAxisSystem::eRightHanded);
 
 	int upAxis = scene->GetGlobalSettings().GetOriginalUpAxis();
 	if (upAxis != 1)
@@ -222,11 +231,10 @@ void FBXLoaderPrivate::loadNode(FbxNode* node, s3d::Element::Pointer parent)
 			FbxMesh* mesh = node->GetMesh();
 			if (!mesh->IsTriangleMesh())
 			{
-				std::cout << "Triangulating " << node->GetName() << "...";
+				log::info("Triangulating %s ...", node->GetName());
 				FbxGeometryConverter lConverter(node->GetFbxManager());
 				lConverter.TriangulateInPlace(node);
 				mesh = node->GetMesh();
-				std::cout << " done." << std::endl;
 			}
 		
 			s3d::Mesh* storedElement = static_cast<s3d::Mesh*>(mesh->GetUserDataPtr());
@@ -249,8 +257,11 @@ void FBXLoaderPrivate::loadNode(FbxNode* node, s3d::Element::Pointer parent)
 		}
 	}
 
-	if (!createdElement.valid())
-		createdElement = s3d::ElementContainer::Pointer(new s3d::ElementContainer(node->GetName(), parent.ptr()));
+	if (createdElement.invalid())
+	{
+		createdElement =
+			s3d::ElementContainer::Pointer(new s3d::ElementContainer(node->GetName(), parent.ptr()));
+	}
 
 	const FbxMatrix& fbxTransform = node->EvaluateLocalTransform();
 	mat4 transform;
@@ -270,18 +281,8 @@ void FBXLoaderPrivate::loadNode(FbxNode* node, s3d::Element::Pointer parent)
 		loadNode(node->GetChild(lChildIndex), createdElement);
 }
 
-void FBXLoaderPrivate::loadMaterialColorValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, 
+void FBXLoaderPrivate::loadMaterialTextureValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm,
 	const char* fbxprop)
-{
-	FbxProperty value = fbxm->FindProperty(fbxprop);
-	if (value.IsValid())
-	{
-		FbxDouble3 data = value.Get<FbxDouble3>();
-		m->setVector(propName,  vec4(static_cast<float>(data[0]),static_cast<float>(data[1]),static_cast<float>(data[2]), 1.0f));
-	}
-}
-
-void FBXLoaderPrivate::loadMaterialTextureValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, const char* fbxprop)
 {
 	FbxProperty value = fbxm->FindProperty(fbxprop);
 	if (value.IsValid())
@@ -299,11 +300,47 @@ void FBXLoaderPrivate::loadMaterialTextureValue(Material& m, size_t propName, Fb
 	}
 }
 
-void FBXLoaderPrivate::loadMaterialValue(Material& m, size_t propName, FbxSurfaceMaterial* fbxm, const char* fbxprop)
+void FBXLoaderPrivate::loadMaterialValue(Material& m, size_t propName,
+	FbxSurfaceMaterial* fbxm, const char* fbxprop)
 {
 	const FbxProperty value = fbxm->FindProperty(fbxprop);
-	if (value.IsValid())
+	if (!value.IsValid()) return;
+
+	EFbxType dataType = value.GetPropertyDataType().GetType();
+
+	if (dataType == eFbxFloat)
+	{
+		m->setFloat(propName, value.Get<float>());
+	}
+	else if (dataType == eFbxDouble)
+	{
 		m->setFloat(propName, static_cast<float>(value.Get<double>()));
+	}
+	else if (dataType == eFbxDouble2)
+	{
+		FbxDouble2 data = value.Get<FbxDouble2>();
+		m->setVector(propName, vec4(static_cast<float>(data[0]), static_cast<float>(data[1]), 0.0f, 0.0f));
+	}
+	else if (dataType == eFbxDouble3)
+	{
+		FbxDouble3 data = value.Get<FbxDouble3>();
+		m->setVector(propName, vec4(static_cast<float>(data[0]), static_cast<float>(data[1]),
+			static_cast<float>(data[2]), 1.0f));
+	}
+	else if (dataType == eFbxDouble4)
+	{
+		FbxDouble3 data = value.Get<FbxDouble4>();
+		m->setVector(propName, vec4(static_cast<float>(data[0]), static_cast<float>(data[1]),
+			static_cast<float>(data[2]), static_cast<float>(data[3])));
+	}
+	else if (dataType == eFbxString)
+	{
+		m->setString(propName, value.Get<FbxString>().Buffer());
+	}
+	else
+	{
+		log::warning("Unsupported data type %d for %s", dataType, fbxprop);
+	}
 }
 
 Material FBXLoaderPrivate::loadMaterial(FbxSurfaceMaterial* mat)
@@ -318,10 +355,12 @@ Material FBXLoaderPrivate::loadMaterial(FbxSurfaceMaterial* mat)
 	loadMaterialTextureValue(m, MaterialParameter_BumpMap, mat, FbxSurfaceMaterial::sBump);
 	loadMaterialTextureValue(m, MaterialParameter_ReflectionMap, mat, FbxSurfaceMaterial::sReflection);
 
-	loadMaterialColorValue(m, MaterialParameter_AmbientColor, mat, FbxSurfaceMaterial::sAmbient);
-	loadMaterialColorValue(m, MaterialParameter_DiffuseColor, mat, FbxSurfaceMaterial::sDiffuse);
-	loadMaterialColorValue(m, MaterialParameter_SpecularColor, mat, FbxSurfaceMaterial::sSpecular);
-	loadMaterialColorValue(m, MaterialParameter_EmissiveColor, mat, FbxSurfaceMaterial::sEmissive);
+	loadMaterialValue(m, MaterialParameter_AmbientColor, mat, FbxSurfaceMaterial::sAmbient);
+	loadMaterialValue(m, MaterialParameter_DiffuseColor, mat, FbxSurfaceMaterial::sDiffuse);
+	loadMaterialValue(m, MaterialParameter_SpecularColor, mat, FbxSurfaceMaterial::sSpecular);
+	loadMaterialValue(m, MaterialParameter_EmissiveColor, mat, FbxSurfaceMaterial::sEmissive);
+	
+	loadMaterialValue(m, MaterialParameter_TransparentColor, mat, FbxSurfaceMaterial::sTransparentColor);
 
 	loadMaterialValue(m, MaterialParameter_AmbientFactor, mat, FbxSurfaceMaterial::sAmbientFactor);
 	loadMaterialValue(m, MaterialParameter_DiffuseFactor, mat, FbxSurfaceMaterial::sDiffuseFactor);
@@ -330,13 +369,12 @@ Material FBXLoaderPrivate::loadMaterial(FbxSurfaceMaterial* mat)
 	loadMaterialValue(m, MaterialParameter_ReflectionFactor, mat, FbxSurfaceMaterial::sReflectionFactor);
 
 	loadMaterialValue(m, MaterialParameter_Roughness, mat, FbxSurfaceMaterial::sShininess);
+	loadMaterialValue(m, MaterialParameter_Transparency, mat, FbxSurfaceMaterial::sTransparencyFactor);
+
 	loadMaterialValue(m, MaterialParameter_ShadingModel, mat, FbxSurfaceMaterial::sShadingModel);
 
 	return m;
 }
-
-inline bool isWhiteSpaceSymbol(char c)
-	{ return isWhitespaceChar(c); }
 
 s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Pointer parent, 
 	const Material::List& materials, const StringList& params)
@@ -463,7 +501,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 #define ET_FBX_LOADER_PUSH_TANGENT if (hasTangents) { FbxVector4 t; \
 		if (tangents->GetReferenceMode() == FbxGeometryElement::eDirect) \
 			t = tangents->GetDirectArray().GetAt(vertexCount); \
-	else if (tangents->GetReferenceMode() == FbxGeometryElement::eIndexToDirect) \
+		else if (tangents->GetReferenceMode() == FbxGeometryElement::eIndexToDirect) \
 			t = tangents->GetDirectArray().GetAt(tangents->GetIndexArray().GetAt(vertexCount)); \
 		tang[vertexCount] = vec3(static_cast<float>(t[0]), static_cast<float>(t[1]), static_cast<float>(t[2])); }
 
@@ -568,7 +606,8 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 
 void FBXLoaderPrivate::buildVertexBuffers(RenderContext* rc, s3d::Element::Pointer root)
 {
-	IndexBuffer primaryIndexBuffer = rc->vertexBufferFactory().createIndexBuffer("fbx-i", storage->indexArray(), BufferDrawType_Static);
+	IndexBuffer primaryIndexBuffer =
+		rc->vertexBufferFactory().createIndexBuffer("fbx-i", storage->indexArray(), BufferDrawType_Static);
 
 	std::vector<VertexArrayObject> vertexArrayObjects;
 	VertexArrayList& vertexArrays = storage->vertexArrays();
@@ -610,22 +649,23 @@ StringList FBXLoaderPrivate::loadNodeProperties(FbxNode* node)
 {
 	StringList result;
 	FbxProperty prop = node->GetFirstProperty();
+
 	while (prop.IsValid())
 	{
-		if ((true || prop.GetFlag(FbxPropertyAttr::eUser)) && (prop.GetPropertyDataType().GetType() == eFbxString))
+		if (prop.GetPropertyDataType().GetType() == eFbxString)
 		{
 			FbxString str = prop.Get<FbxString>();
-			size_t len = str.GetLen();
+			StringDataStorage line(str.GetLen() + 1, 0);
 
-			BinaryDataStorage line(len+1, 0);
-			for (size_t i = 0; i < len; ++i)
+			char c = 0;
+			const char* strData = str.Buffer();
+			while ((c = *strData++))
 			{
-				char c = str[i];
-				if ((c == 0x0a) || (c == 0x0d))
+				if (isNewLineChar(c))
 				{
 					if (line.offset())
 						result.push_back(line.binary());
-
+					
 					line.setOffset(0);
 					line.fill(0);
 				}
@@ -636,7 +676,7 @@ StringList FBXLoaderPrivate::loadNodeProperties(FbxNode* node)
 			}
 
 			if (line.offset())
-				result.push_back(line.binary());
+				result.push_back(line.data());
 		}
 
 		prop = node->GetNextProperty(prop);
