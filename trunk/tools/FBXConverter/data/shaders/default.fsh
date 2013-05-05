@@ -13,6 +13,7 @@ etFragmentIn vec3 vLightWS;
 etFragmentIn vec3 vViewTS;
 etFragmentIn vec3 vLightTS;
 etFragmentIn vec2 TexCoord;
+etFragmentIn vec4 vColor;
 
 #include <include/Phong.h>
 
@@ -31,10 +32,11 @@ void main()
 	if (dot(diffuse, diffuse) == 0.0)
 		diffuse = diffuseColor;
 		
-	if (diffuse.w < 0.01) discard;
+	if (diffuse.w < 0.5) discard;
 
 	vec2 light = defaultLight();
 	light.x = 0.5 + 0.5 * light.x;
 
-	etFragmentOut = diffuse * vec4(light.x * light.x) + (diffuse.w * light.y) * specularColor;
+	etFragmentOut = vColor;//(vColor * diffuse) * vec4(light.x * light.x) + (diffuse.w * light.y) * specularColor;
+	etFragmentOut.w = diffuse.w;
 }
