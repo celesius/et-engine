@@ -175,6 +175,12 @@ void Element::duplicateChildrenToObject(Element* object)
 	ET_ITERATE(children(), Element::Pointer, i, i->duplicate()->setParent(object))
 }
 
+void Element::duplicateBasePropertiesToObject(Element* object)
+{
+	ET_ITERATE(properties(), auto, p, object->addPropertyString(p));
+	object->tag = tag;
+}
+
 void Element::serialize(std::ostream&, SceneVersion)
 {
 	log::error("Serialization method isn't defined for %s", typeid(*this).name());
