@@ -81,8 +81,10 @@ namespace et
 using namespace et;
 
 /* 
-* Private implementation
-*/ 
+ *
+ * Private implementation
+ *
+ */
 
 FBXLoaderPrivate::FBXLoaderPrivate(RenderContext* rc, TextureCache& textureCache) :
 	manager(FbxManager::Create()), _rc(rc), _texCache(textureCache)
@@ -273,8 +275,9 @@ void FBXLoaderPrivate::loadNode(FbxNode* node, s3d::Element::Pointer parent)
 
 	createdElement->setTransform(transform);
 	createdElement->setName(node->GetName());
-	for (StringList::const_iterator i = props.begin(), e = props.end(); i != e; ++i)
-		createdElement->addPropertyString(*i);
+	
+	for (auto p : props)
+		createdElement->addPropertyString(p);
 
 	int lChildCount = node->GetChildCount();
 	for (int lChildIndex = 0; lChildIndex < lChildCount; ++lChildIndex)
@@ -385,9 +388,8 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 
 	size_t lodIndex = 0;
 	bool support = false;
-	for (StringList::const_iterator i = params.begin(), e = params.end(); i != e; ++i)
+	for (auto p : params)
 	{
-		std::string p = *i;
 		lowercase(p);
 		p.erase(std::remove_if(p.begin(), p.end(), [](char c){ return isWhitespaceChar(c); } ), p.end());
 
@@ -545,6 +547,13 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 			meshElement->tag = vbIndex;
 			meshElement->setStartIndex(indexOffset);
 			meshElement->setMaterial(materials.at(m));
+			
+			for (auto prop : aParent->properties())
+			{
+				log::info("Copying property %s from %s to %s", prop.c_str(),
+					aParent->name().c_str(), meshElement->name().c_str());
+				meshElement->addPropertyString(prop);
+			}
 
 			for (int lPolygonIndex = 0; lPolygonIndex < lPolygonCount; ++lPolygonIndex)
 			{
@@ -578,9 +587,11 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 	else
 	{
 		s3d::Mesh* me = static_cast<s3d::Mesh*>(element.ptr());
+
 		me->tag = vbIndex;
 		me->setStartIndex(vertexBaseOffset);
 		me->setNumIndexes(lPolygonVertexCount);
+		
 		if (materials.size())
 			me->setMaterial(materials.front());
 		
@@ -636,31 +647,31 @@ void FBXLoaderPrivate::buildVertexBuffers(RenderContext* rc, s3d::Element::Point
 
 	std::vector<VertexArrayObject> vertexArrayObjects;
 	VertexArrayList& vertexArrays = storage->vertexArrays();
-	for (VertexArrayList::const_iterator i = vertexArrays.begin(), e = vertexArrays.end(); i != e; ++i)
+	for (auto i : vertexArrays)
 	{
 		VertexArrayObject vao = rc->vertexBufferFactory().createVertexArrayObject("fbx-vao");
-		VertexBuffer vb = rc->vertexBufferFactory().createVertexBuffer("fbx-v", *i, BufferDrawType_Static);
+		VertexBuffer vb = rc->vertexBufferFactory().createVertexBuffer("fbx-v", i, BufferDrawType_Static);
 		vao->setBuffers(vb, primaryIndexBuffer);
 		vertexArrayObjects.push_back(vao);
 	}
 
 	s3d::Element::List meshes = root->childrenOfType(s3d::ElementType_Mesh);
-	for (s3d::Element::List::iterator i = meshes.begin(), e = meshes.end(); i != e; ++i)
+	for (auto i : meshes)
 	{
-		s3d::Mesh* mesh = static_cast<s3d::Mesh*>(i->ptr());
+		s3d::Mesh* mesh = static_cast<s3d::Mesh*>(i.ptr());
 		mesh->setVertexArrayObject(vertexArrayObjects[mesh->tag]);
 	}
 
-	for (s3d::Element::List::iterator i = meshes.begin(), e = meshes.end(); i != e; ++i)
+	for (auto i : meshes)
 	{
-		s3d::Mesh* mesh = static_cast<s3d::Mesh*>(i->ptr());
+		s3d::Mesh* mesh = static_cast<s3d::Mesh*>(i.ptr());
 		mesh->cleanupLodChildren();
 	}
 
 	meshes = root->childrenOfType(s3d::ElementType_SupportMesh);
-	for (s3d::Element::List::iterator i = meshes.begin(), e = meshes.end(); i != e; ++i)
+	for (auto i : meshes)
 	{
-		s3d::SupportMesh* mesh = static_cast<s3d::SupportMesh*>(i->ptr());
+		s3d::SupportMesh* mesh = static_cast<s3d::SupportMesh*>(i.ptr());
 		mesh->setVertexArrayObject(vertexArrayObjects[mesh->tag]);
 		mesh->fillCollisionData(vertexArrays[mesh->tag], storage->indexArray());
 	}
@@ -672,6 +683,11 @@ void FBXLoaderPrivate::buildVertexBuffers(RenderContext* rc, s3d::Element::Point
 
 StringList FBXLoaderPrivate::loadNodeProperties(FbxNode* node)
 {
+	if (strcmp("Aim", node->GetName()) == 0)
+	{
+		log::info("!");
+	}
+
 	StringList result;
 	FbxProperty prop = node->GetFirstProperty();
 
@@ -711,7 +727,9 @@ StringList FBXLoaderPrivate::loadNodeProperties(FbxNode* node)
 }
 
 /*
+ *
  * Base objects
+ *
  */
 
 FBXLoader::FBXLoader(const std::string& filename) : _filename(filename)
@@ -733,5 +751,3 @@ s3d::ElementContainer::Pointer FBXLoader::load(RenderContext* rc, TextureCache& 
 	mainRunLoop().addTask(new DeletionTask<FBXLoaderPrivate>(loader));
 	return result;
 }
-
-// #endif
