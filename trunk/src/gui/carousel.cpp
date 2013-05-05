@@ -390,7 +390,7 @@ bool Carousel::pointerMoved(const PointerInputInfo& p)
 				_velocity += ds;
 
 				if (fabsf(_velocity) > maxVelocity)
-					_velocity = sign(_velocity) * maxVelocity;
+					_velocity = signNoZero(_velocity) * maxVelocity;
 
 			}
 
