@@ -11,25 +11,46 @@
 #include <et/scene3d/material.h>
 
 using namespace et;
+using namespace et::s3d;
 
 static const Texture _emptyTexture;
 static const std::string _emptyString;
 static const vec4 _emptyVector;
 
-const std::string materialKeys[MaterialParameter_max] = 
+const std::string materialKeys[MaterialParameter_max] =
 {
-	std::string(), 
-	"ambient_color", "diffuse_color", "specular_color",
-	"emissive_color", "ambient_map", "diffuse_map",
-	"specular_map", "emissive_map", "normalmap_map",
-	"lightmap_map", "roughness", "transparency",
-	"bump_factor", "illumination_type",
+	std::string(),						//	MaterialParameter_Undefined,
+	
+	std::string("ambient_color"),		//	MaterialParameter_AmbientColor,
+	std::string("diffuse_color"),		//	MaterialParameter_DiffuseColor,
+	std::string("specular_color"),		//	MaterialParameter_SpecularColor,
+	std::string("emissive_color"),		//	MaterialParameter_EmissiveColor,
+	std::string("ambient_map"),			//	MaterialParameter_AmbientMap,
+	std::string("diffuse_map"),			//	MaterialParameter_DiffuseMap,
+	std::string("specular_map"),		//	MaterialParameter_SpecularMap,
+	std::string("emissive_map"),		//	MaterialParameter_EmissiveMap,
+	std::string("normalmap_map"),		//	MaterialParameter_NormalMap,
+	std::string("bump_map"),			//	MaterialParameter_BumpMap,
+	std::string("reflection_map"),		//	MaterialParameter_ReflectionMap,
+
+	std::string("ambient_factor"),		//	MaterialParameter_AmbientFactor,
+	std::string("diffuse_factor"),		//	MaterialParameter_DiffuseFactor,
+	std::string("specular_factor"),		//	MaterialParameter_SpecularFactor,
+	std::string("bump_factor"),			//	MaterialParameter_BumpFactor,
+	std::string("reflection_factor"),	//	MaterialParameter_ReflectionFactor,
+
+	std::string("roughness"),			//	MaterialParameter_Roughness,
+	std::string("transparency"),		//	MaterialParameter_Transparency,
+	std::string("shading_model"),		//	MaterialParameter_ShadingModel,
+
+	std::string("transparent_color"),	//	MaterialParameter_TransparentColor,
 };
 
 const int MaterialVersion1_0_0 = 'MAT1';
 const int MaterialVersion1_0_1 = 'MAT2';
 const int MaterialVersion1_0_2 = 'MAT3';
-const int MaterialCurrentVersion = MaterialVersion1_0_2;
+const int MaterialVersion1_0_3 = 'MAT4';
+const int MaterialCurrentVersion = MaterialVersion1_0_3;
 
 inline size_t keyToMaterialParameter(const std::string& k)
 {
@@ -77,7 +98,125 @@ MaterialData* MaterialData::clone() const
 	return m;
 }
 
-void MaterialData::serialize(std::ostream& stream) const
+void MaterialData::serialize(std::ostream& stream, StorageFormat format) const
+{
+	if (format == StorageFormat_Binary)
+		serializeBinary(stream);
+	else if (format == StorageFormat_HumanReadableMaterials)
+		serializeReadable(stream);
+	else
+		assert("Unknown storage format specified." && 0);
+}
+
+template <typename T>
+void keyValue(std::ostream& s, const std::string& key, const T& value)
+	{ s << " " << key << "=\"" << value << "\""; }
+
+#define START_BLOCK(NAME, TABS, E)	{ s << TABS << "<" << NAME; { E; } s << ">" << std::endl; }
+
+#define END_BLOCK(NAME, TABS)		{ s << TABS << "</" << NAME ">" << std::endl; }
+
+#define SINGLE_BLOCK(NAME, TABS, E)	{ s << TABS << "<" << NAME; { E; } s << "/>" << std::endl; }
+
+
+void MaterialData::serializeReadable(std::ostream& s) const
+{
+	s << "<?xml version=\"1.0\" encoding='UTF-8'?>" << std::endl;
+
+	START_BLOCK("material", "",
+		keyValue(s, "name", name());
+		keyValue(s, "version", MaterialCurrentVersion);
+		keyValue(s, "key", intToStr(this));
+		keyValue(s, "blend", blendState());
+		keyValue(s, "depth_write", depthWriteEnabled());
+	);
+
+	START_BLOCK("default_values", "\t",
+		keyValue(s, "capacity", MaterialParameter_max);
+	)
+
+	for (size_t i = 0; i < MaterialParameter_max; ++i)
+	{
+		if (_defaultIntParameters[i].set)
+		{
+			SINGLE_BLOCK(materialKeys[i], "\t\t",
+				keyValue(s, "type", "int");
+				keyValue(s, "value", _defaultIntParameters[i].value)
+			);
+		}
+
+		if (_defaultFloatParameters[i].set)
+		{
+			SINGLE_BLOCK(materialKeys[i], "\t\t",
+				keyValue(s, "type", "float");
+				keyValue(s, "value", _defaultFloatParameters[i].value)
+			);
+		}
+
+		if (_defaultVectorParameters[i].set)
+		{
+			SINGLE_BLOCK(materialKeys[i], "\t\t",
+				keyValue(s, "type", "vector");
+				keyValue(s, "value", _defaultVectorParameters[i].value);
+			);
+		}
+
+		if (_defaultTextureParameters[i].set && _defaultTextureParameters[i].value.valid())
+		{
+			SINGLE_BLOCK(materialKeys[i], "\t\t",
+				keyValue(s, "type", "texture");
+				keyValue(s, "source", _defaultTextureParameters[i].value->name());
+			);
+		}
+
+		if (_defaultStringParameters[i].set && _defaultStringParameters[i].value.size())
+		{
+			SINGLE_BLOCK(materialKeys[i], "\t\t",
+				keyValue(s, "type", "string");
+				keyValue(s, "value", _defaultStringParameters[i].value)
+			);
+		}
+	}
+	END_BLOCK("default_values", "\t");
+
+	START_BLOCK("custom_values", "\t", ; )
+
+	ET_ITERATE(_customIntParameters, auto&, i, SINGLE_BLOCK("value", "\t\t",
+		keyValue(s, "type", "int");
+		keyValue(s, "key", i.first);
+		keyValue(s, "value", i.second)))
+
+	ET_ITERATE(_customFloatParameters, auto&, i, SINGLE_BLOCK("value", "\t\t",
+		keyValue(s, "type", "float");
+		keyValue(s, "key", i.first);
+		keyValue(s, "value", i.second)))
+
+	ET_ITERATE(_customVectorParameters, auto&, i, SINGLE_BLOCK("value", "\t\t",
+		keyValue(s, "type", "vector");
+		keyValue(s, "key", i.first);
+		keyValue(s, "value", i.second)))
+
+	ET_ITERATE(_customStringParameters, auto&, i, SINGLE_BLOCK("value", "\t\t",
+		keyValue(s, "type", "string");
+		keyValue(s, "key", i.first);
+		keyValue(s, "value", i.second)))
+
+	ET_ITERATE(_customTextureParameters, auto&, i, {
+		if (i.second.valid())
+		{
+			SINGLE_BLOCK("value", "\t\t",
+				keyValue(s, "type", "texture");
+				keyValue(s, "key", i.first);
+				keyValue(s, "value", i.second->name()))
+		}
+	});
+
+	END_BLOCK("custom_values", "\t")
+
+	END_BLOCK("material", "");
+}
+
+void MaterialData::serializeBinary(std::ostream& stream) const
 {
 	serializeInt(stream, MaterialCurrentVersion);
 	serializeString(stream, name());
@@ -142,7 +281,7 @@ void MaterialData::deserialize(std::istream& stream, RenderContext* rc, TextureC
 		deserialize1(stream, rc, cache, texturesBasePath);
 	else if (version == MaterialVersion1_0_1)
 		deserialize2(stream, rc, cache, texturesBasePath);
-	else if (version == MaterialVersion1_0_2)
+	else if (version >= MaterialVersion1_0_2)
 		deserialize3(stream, rc, cache, texturesBasePath);
 }
 
@@ -317,7 +456,9 @@ void MaterialData::deserialize3(std::istream& stream, RenderContext* rc, Texture
 }
 
 /*
+ *
  * Setters / getters
+ *
  */
 
 const int MaterialData::getInt(size_t param) const

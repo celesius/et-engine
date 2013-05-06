@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <list>
 #include <map>
 #include <et/apiobjects/texture.h>
 

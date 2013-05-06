@@ -24,11 +24,19 @@ namespace et
 			SceneVersion_1_0_0 = 100,
 			SceneVersion_1_0_1 = 101,
 			SceneVersion_1_0_2 = 102,
+			SceneVersion_1_0_3 = 103,
 		};
 
 		enum StorageVersion
 		{
 			StorageVersion_1_0_0 = 100,
+			StorageVersion_1_0_1 = 101,
+		};
+
+		enum StorageFormat
+		{
+			StorageFormat_Binary,
+			StorageFormat_HumanReadableMaterials,
 		};
 
 		extern const SceneVersion SceneVersionLatest;

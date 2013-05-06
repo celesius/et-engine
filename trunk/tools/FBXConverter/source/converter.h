@@ -33,7 +33,8 @@ namespace fbxc
 		void onBtnOpenClick(et::gui::Button*); 
 		void onBtnSaveClick(et::gui::Button*); 
 		void performLoading(std::string);
-		void performSaving(std::string);
+		void performBinarySaving(std::string);
+		void performBinaryWithReadableMaterialsSaving(std::string);
 
 		void renderMeshList(et::RenderContext* rc, const et::s3d::Element::List& meshes);
 		void performSceneRendering();

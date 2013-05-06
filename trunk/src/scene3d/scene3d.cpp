@@ -18,7 +18,7 @@ Scene3d::Scene3d(const std::string& name) : ElementContainer(name, 0), _external
 {
 }
 
-void Scene3d::serialize(std::ostream& stream)
+void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::string& basePath)
 {
 	if (stream.fail()) return;
 
@@ -30,16 +30,40 @@ void Scene3d::serialize(std::ostream& stream)
 	serializeChunk(stream, HeaderData);
 	serializeInt(stream, StorageVersionLatest);
 
+	serializeInt(stream, fmt);
+
 	serializeInt(stream, storages.size());
 	ET_START_ITERATION(storages, Scene3dStorage::Pointer, s)
 	{
 		serializeChunk(stream, HeaderMaterials);
 		serializeInt(stream, s->materials().size());
-		ET_ITERATE(s->materials(), auto&, mi,
+		if (fmt == StorageFormat_Binary)
 		{
-			serializeInt(stream, reinterpret_cast<int>(mi.ptr()));
-			mi->serialize(stream);
-		})
+			ET_ITERATE(s->materials(), auto&, mi,
+			{
+				serializeInt(stream, reinterpret_cast<int>(mi.ptr()));
+				mi->serialize(stream, fmt);
+			})
+		}
+		else if (fmt == StorageFormat_HumanReadableMaterials)
+		{
+			ET_START_ITERATION(s->materials(), auto&, mi)
+			{
+				std::string matId = intToStr(mi.ptr());
+				std::string mFile = basePath + mi->name() + "_" + matId + ".xml";
+				serializeInt(stream, reinterpret_cast<int>(mi.ptr()));
+				serializeString(stream, mFile);
+
+				std::ofstream mStream(mFile.c_str());
+				mi->serialize(mStream, fmt);
+				mStream.close();
+			}
+			ET_END_ITERATION
+		}
+		else
+		{
+			assert("Invalid storage format specified." && 0);
+		}
 
 		serializeChunk(stream, HeaderVertexArrays);
 		serializeInt(stream, s->vertexArrays().size());
@@ -202,10 +226,10 @@ void Scene3d::buildAPIObjects(Scene3dStorage::Pointer p, RenderContext* rc)
 	rc->renderState().resetBufferBindings();
 }
 
-void Scene3d::serialize(const std::string& filename)
+void Scene3d::serialize(const std::string& filename, s3d::StorageFormat fmt)
 {
 	std::ofstream file(filename.c_str(), std::ios::binary | std::ios::out);
-	serialize(file);
+	serialize(file, fmt, getFilePath(filename));
 }
 
 bool Scene3d::deserialize(const std::string& filename, RenderContext* rc, TextureCache& tc,
