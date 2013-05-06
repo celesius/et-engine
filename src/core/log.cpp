@@ -44,6 +44,8 @@ void et::log::debug(const char* format, ...)
 {
 #if (ET_DEBUG)
 	JUST_DO_IT()
+#else
+	(void)format;
 #endif
 }
 
@@ -66,6 +68,8 @@ void et::log::debug(const wchar_t* format, ...)
 {
 #if (ET_DEBUG)
 	JUST_DO_IT_W()
+#else
+	(void)format;
 #endif
 }
 

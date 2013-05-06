@@ -133,7 +133,7 @@ std::string et::applicationLibraryBaseFolder()
 	return applicationDataFolder();
 }
 
-bool et::createDirectory(const std::string& name, bool recursive)
+bool et::createDirectory(const std::string& name, bool /* recursive */)
 {
 	return CreateDirectory(name.c_str(), nullptr) != 0;
 }

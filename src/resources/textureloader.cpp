@@ -100,12 +100,7 @@ std::string TextureLoader::resolveScalableFileName(const std::string& fileName,
             result = name;
     }	
     
-	if (!found)
-	{
-		if (!silent)
-			log::warning("Unable to resolve file name for: %s", fileName.c_str());
-	}
-	else if (extPtr)
+	if (found && (extPtr != nullptr))
 	{
 		*extPtr = result.substr(result.rfind('.'));
 		lowercase(*extPtr);
@@ -153,10 +148,6 @@ TextureDescription::Pointer TextureLoader::loadDescription(const std::string& na
 		desc->target = GL_TEXTURE_2D;
 		desc->source = fileName;
 		JPGLoader::loadInfoFromFile(fileName, *desc);
-	}
-	else
-	{
-		log::warning("Unable to load texture description from file: %s", name.c_str());
 	}
 	
 	if ((desc != nullptr) && initWithZero)
