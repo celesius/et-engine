@@ -56,25 +56,25 @@ namespace et
 	inline std::string lowercase(const std::string& s)
 	{
 		std::string str(s);
-		std::transform(s.begin(), s.end(), str.begin(), ::tolower);
+		ET_ITERATE(str, char&, c, c = ::tolower(c));
 		return str;
 	}
 	
 	inline void lowercase(std::string& s)
 	{
-		std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+		ET_ITERATE(s, char&, c, c = ::tolower(c));
 	}
 
 	inline std::string uppercase(const std::string& s)
 	{
 		std::string str(s);
-		std::transform(s.begin(), s.end(), str.begin(), ::toupper);
+		ET_ITERATE(str, char&, c, c = ::toupper(c));
 		return str;
 	}
 
 	inline void uppercase(std::string& s)
 	{
-		std::transform(s.begin(), s.end(), s.begin(), ::toupper);
+		ET_ITERATE(s, char&, c, c = ::toupper(c));
 	}
 	
 	inline size_t streamSize(std::istream& s)

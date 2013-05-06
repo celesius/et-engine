@@ -11,8 +11,8 @@
 #ifndef __XML_ENTITIES_H__
 #define __XML_ENTITIES_H__
 
-#include "xmlversion.h"
-#include "tree.h"
+#include <libxml/xmlversion.h>
+#include <libxml/tree.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,7 +58,8 @@ struct _xmlEntity {
     int                    owner;	/* does the entity own the childrens */
     int			 checked;	/* was the entity content checked */
 					/* this is also used to count entites
-					 * references done from that entity */
+					 * references done from that entity
+					 * and if it contains '<' */
 };
 
 /*

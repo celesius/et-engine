@@ -11,7 +11,7 @@
 #ifndef __XML_MODULE_H__
 #define __XML_MODULE_H__
 
-#include "xmlversion.h"
+#include <libxml/xmlversion.h>
 
 #ifdef LIBXML_MODULES_ENABLED
 
@@ -50,7 +50,7 @@ XMLPUBFUN int XMLCALL xmlModuleFree		(xmlModulePtr module);
 
 #ifdef __cplusplus
 }
-#endif 
+#endif
 
 #endif /* LIBXML_MODULES_ENABLED */
 

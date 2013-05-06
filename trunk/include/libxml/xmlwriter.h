@@ -1,4 +1,3 @@
-
 /*
  * Summary: text writing API for XML
  * Description: text writing API for XML
@@ -11,14 +10,14 @@
 #ifndef __XML_XMLWRITER_H__
 #define __XML_XMLWRITER_H__
 
-#include "xmlversion.h"
+#include <libxml/xmlversion.h>
 
 #ifdef LIBXML_WRITER_ENABLED
 
 #include <stdarg.h>
-#include "xmlio.h"
-#include "list.h"
-#include "xmlstring.h"
+#include <libxml/xmlIO.h>
+#include <libxml/list.h>
+#include <libxml/xmlstring.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -470,6 +469,10 @@ extern "C" {
     XMLPUBFUN int XMLCALL
         xmlTextWriterSetIndentString(xmlTextWriterPtr writer,
                                      const xmlChar * str);
+
+    XMLPUBFUN int XMLCALL
+        xmlTextWriterSetQuoteChar(xmlTextWriterPtr writer, xmlChar quotechar);
+
 
 /*
  * misc

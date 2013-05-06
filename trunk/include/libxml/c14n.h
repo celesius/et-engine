@@ -23,9 +23,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "xmlversion.h"
-#include "tree.h"
-#include "xpath.h"
+#include <libxml/xmlversion.h>
+#include <libxml/tree.h>
+#include <libxml/xpath.h>
 
 /*
  * XML Canonicazation
@@ -54,7 +54,7 @@ extern "C" {
 
 /*
  * xmlC14NMode:
- * 
+ *
  * Predefined values for C14N modes
  *
  */

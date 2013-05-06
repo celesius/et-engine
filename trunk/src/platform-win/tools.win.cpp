@@ -44,18 +44,13 @@ float et::queryTime()
 } 
 
 char et::pathDelimiter = '\\';
+char et::invalidPathDelimiter = '/';
 
 std::string et::applicationPath()
 {
 	char ExePath[MAX_PATH] = { };
 	GetModuleFileNameA(0, ExePath, MAX_PATH);
 	return getFilePath(normalizeFilePath(ExePath));
-}
-
-std::string et::normalizeFilePath(std::string s)
-{
-	ET_ITERATE(s, char&, i, if (i == '/') i = pathDelimiter)
-	return s;
 }
 
 bool et::fileExists(const std::string& name)
@@ -138,9 +133,9 @@ std::string et::applicationLibraryBaseFolder()
 	return applicationDataFolder();
 }
 
-void et::createDirectory(const std::string& name)
+bool et::createDirectory(const std::string& name, bool recursive)
 {
-	CreateDirectory(name.c_str(), 0);
+	return CreateDirectory(name.c_str(), nullptr) != 0;
 }
 
 void et::findSubfolders(const std::string& folder, bool recursive, StringList& list)

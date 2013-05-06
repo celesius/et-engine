@@ -169,7 +169,7 @@ FontGeneratorResult FontGenerator::generate(ImageFormat fmt)
 
 	FontGeneratorResult result = FontGeneratorResult_Success;
 
-	if (!ImageWriter::writeImageToFile(_outFontFile, data, textureSize, 4, 8, fmt))
+	if (!ImageWriter::writeImageToFile(_outFontFile, data, textureSize, 4, 8, fmt, false))
 		result = FontGeneratorResult_OutputFileFailed;
 
 	data.fill(0);
@@ -195,7 +195,7 @@ FontGeneratorResult FontGenerator::generate(ImageFormat fmt)
 		}
 	}
 
-	if (!ImageWriter::writeImageToFile(_outLayoutFile, data, textureSize, 4, 8, fmt))
+	if (!ImageWriter::writeImageToFile(_outLayoutFile, data, textureSize, 4, 8, fmt, false))
 		result = FontGeneratorResult_OutputFileFailed;
 
 	DeleteObject(bitmap);
