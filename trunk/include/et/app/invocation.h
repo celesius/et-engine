@@ -128,7 +128,7 @@ namespace et
 
 		template <typename T>
 		void setTarget(T* o, void(T::*m)())
-			{ _target = new InvocationTarget<T>(o, m); }
+			{ assert(o); _target = new InvocationTarget<T>(o, m); }
 
 	private:
 		AutoPtr<PureInvocationTarget> _target;
@@ -143,7 +143,7 @@ namespace et
 
 		template <typename T, typename A1>
 		void setTarget(T* o, void(T::*m)(A1), A1 param)
-			{ _target = new Invocation1Target<T, A1>(o, m, param); }
+			{ assert(o); _target = new Invocation1Target<T, A1>(o, m, param); }
 
 		template <typename T, typename A1>
 		void setParameter(A1 p)
@@ -159,7 +159,7 @@ namespace et
 
 		template <typename T, typename A1, typename A2>
 		void setTarget(T* o, void(T::*m)(A1, A2), A1 p1, A2 p2)
-			{ _target = new Invocation2Target<T, A1, A2>(o, m, p1, p2); }
+			{ assert(o); _target = new Invocation2Target<T, A1, A2>(o, m, p1, p2); }
 
 		template <typename T, typename A1, typename A2>
 		void setParameters(A1 p1, A2 p2)
