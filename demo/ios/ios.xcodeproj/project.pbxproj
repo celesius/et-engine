@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C4AAC431737B7F80024763B /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4AAC411737B7F80024763B /* log.cpp */; };
+		5C4AAC441737B7F80024763B /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4AAC421737B7F80024763B /* stream.cpp */; };
+		5C4AAC461737B80B0024763B /* rendercontext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4AAC451737B80B0024763B /* rendercontext.cpp */; };
 		A53398CD16CC1AC700A9682D /* atomiccounter.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53398CC16CC1AC700A9682D /* atomiccounter.unix.cpp */; };
 		A53398F216CC3C3700A9682D /* cameraelement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53398EA16CC3C3700A9682D /* cameraelement.cpp */; };
 		A53398F316CC3C3700A9682D /* element.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53398EB16CC3C3700A9682D /* element.cpp */; };
@@ -117,6 +120,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5C4AAC411737B7F80024763B /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = log.cpp; sourceTree = "<group>"; };
+		5C4AAC421737B7F80024763B /* stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stream.cpp; sourceTree = "<group>"; };
+		5C4AAC451737B80B0024763B /* rendercontext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rendercontext.cpp; sourceTree = "<group>"; };
 		A53398CB16CC1A2100A9682D /* atomiccounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomiccounter.h; sourceTree = "<group>"; };
 		A53398CC16CC1AC700A9682D /* atomiccounter.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = atomiccounter.unix.cpp; sourceTree = "<group>"; };
 		A53398E016CC3C2D00A9682D /* cameraelement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cameraelement.h; sourceTree = "<group>"; };
@@ -588,6 +594,8 @@
 		A56E14E816C44133006C86BF /* core */ = {
 			isa = PBXGroup;
 			children = (
+				5C4AAC411737B7F80024763B /* log.cpp */,
+				5C4AAC421737B7F80024763B /* stream.cpp */,
 				A56E14E916C44133006C86BF /* debug.cpp */,
 				A56E14EA16C44133006C86BF /* plist.cpp */,
 				A56E14EB16C44133006C86BF /* tools.cpp */,
@@ -717,6 +725,7 @@
 		A56E152C16C44133006C86BF /* rendering */ = {
 			isa = PBXGroup;
 			children = (
+				5C4AAC451737B80B0024763B /* rendercontext.cpp */,
 				A56E152D16C44133006C86BF /* renderer.cpp */,
 				A56E152E16C44133006C86BF /* rendering.cpp */,
 				A56E152F16C44133006C86BF /* renderstate.cpp */,
@@ -1261,6 +1270,9 @@
 				A53398F716CC3C3700A9682D /* serialization.cpp in Sources */,
 				A53398F816CC3C3700A9682D /* storage.cpp in Sources */,
 				A53398F916CC3C3700A9682D /* supportmesh.cpp in Sources */,
+				5C4AAC431737B7F80024763B /* log.cpp in Sources */,
+				5C4AAC441737B7F80024763B /* stream.cpp in Sources */,
+				5C4AAC461737B80B0024763B /* rendercontext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
