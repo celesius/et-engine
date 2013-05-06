@@ -12,9 +12,10 @@ using namespace et;
 using namespace et::gui;
 
 Button::Button(const std::string& title, Font font, Element2d* parent) : Element2d(parent), 
-	_title(title), _font(font), _textSize(font->measureStringSize(title, true)), _textColor(vec3(0.0f), 1.0f),
-	_textPressedColor(vec3(0.0f), 1.0f), _type(Button::Type_PushButton), _state(ElementState_Default), 
-	_imageLayout(ImageLayout_Left),	_pressed(false), _hovered(false), _selected(false)
+	_title(title), _font(font), _textSize(font->measureStringSize(title, true)),
+	_textColor(vec3(0.0f), 1.0f), _textPressedColor(vec3(0.0f), 1.0f),
+	_type(Button::Type_PushButton), _state(ElementState_Default), _imageLayout(ImageLayout_Left),
+	_contentMode(ContentMode_Fit), _pressed(false), _hovered(false), _selected(false)
 {
 	setSize(sizeForText(title));
 }
@@ -37,22 +38,35 @@ void Button::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 {
 	mat4 transform = finalTransform();
-	vec2 frameSize = size() + _contentOffset;
 	
+	vec2 frameSize = size() + _contentOffset;
 	vec2 imageSize = absv(_image.descriptor.size);
-
-	float imageAspect = imageSize.aspect();
-	if (imageSize.x > frameSize.x)
+	
+	if (_contentMode == ContentMode_Fit)
 	{
-		imageSize.x = frameSize.x;
-		imageSize.y = frameSize.x / imageAspect;
+		float imageAspect = imageSize.aspect();
+		if (imageSize.x > frameSize.x)
+		{
+			imageSize.x = frameSize.x;
+			imageSize.y = frameSize.x / imageAspect;
+		}
+		if (imageSize.y > frameSize.y)
+		{
+			imageSize.x = frameSize.y * imageAspect;
+			imageSize.y = frameSize.y;
+		}
 	}
-	if (imageSize.y > frameSize.y)
+	else if (_contentMode == ContentMode_ScaleMaxToMin)
 	{
-		imageSize.x = frameSize.y * imageAspect;
-		imageSize.y = frameSize.y;
+		float maxImageDim = etMax(imageSize.x, imageSize.y);
+		float minFrameDim = etMin(frameSize.x, frameSize.y);
+		imageSize *= minFrameDim / maxImageDim;
 	}
-
+	else
+	{
+		assert("Uknown content mode" && 0);
+	}
+	
 	float contentGap = (imageSize.x > 0.0f) && (_textSize.x > 0.0f) ? 5.0f : 0.0f;
 	float contentWidth = imageSize.x + _textSize.x + contentGap;
 
@@ -305,4 +319,10 @@ void Button::setBackgroundColor(const vec4& color)
 const vec4& Button::backgroundColor() const
 {
 	return _backgroundColor;
+}
+
+void Button::setContentMode(ContentMode m)
+{
+	_contentMode = m;
+	invalidateContent();
 }

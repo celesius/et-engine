@@ -31,6 +31,12 @@ namespace et
 				ImageLayout_Left,
 				ImageLayout_Right
 			};
+			
+			enum ContentMode
+			{
+				ContentMode_Fit,
+				ContentMode_ScaleMaxToMin
+			};
 
 		public:
 			Button(const std::string& title, Font font, Element2d* parent);
@@ -44,6 +50,8 @@ namespace et
 			void adjustSize(float duration = 0.0f);
 			void adjustSizeForText(const std::string&, float duration = 0.0f);
 			vec2 sizeForText(const std::string&);
+			
+			void setContentMode(ContentMode);
 
 			ET_DECLARE_EVENT1(clicked, Button*)
 			ET_DECLARE_EVENT1(pressed, Button*)
@@ -88,6 +96,7 @@ namespace et
 
 			bool selected() const
 				{ return _selected; }
+			
 			void setSelected(bool s);
 
 			void setContentOffset(const vec2& o);
@@ -116,6 +125,7 @@ namespace et
 			Type _type;
 			ElementState _state;
 			ImageLayout _imageLayout;
+			ContentMode _contentMode;
 			bool _pressed;
 			bool _hovered;
 			bool _selected;
