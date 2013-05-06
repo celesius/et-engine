@@ -13,7 +13,7 @@
 #define __DEBUG_MEMORY_ALLOC__
 
 #include <stdio.h>
-#include "xmlversion.h"
+#include <libxml/xmlversion.h>
 
 /**
  * DEBUG_MEMORY:
@@ -28,7 +28,7 @@
 
 #ifdef DEBUG
 #ifndef DEBUG_MEMORY
-//#define DEBUG_MEMORY
+#define DEBUG_MEMORY
 #endif
 #endif
 
@@ -215,8 +215,8 @@ XMLPUBFUN char * XMLCALL
 
 #ifndef __XML_GLOBALS_H
 #ifndef __XML_THREADS_H__
-#include "threads.h"
-#include "globals.h"
+#include <libxml/threads.h>
+#include <libxml/globals.h>
 #endif
 #endif
 

@@ -11,7 +11,7 @@
 #ifndef __XML_REGEXP_H__
 #define __XML_REGEXP_H__
 
-#include "xmlversion.h"
+#include <libxml/xmlversion.h>
 
 #ifdef LIBXML_REGEXP_ENABLED
 
@@ -39,8 +39,8 @@ typedef xmlRegExecCtxt *xmlRegExecCtxtPtr;
 #ifdef __cplusplus
 }
 #endif
-#include "tree.h"
-#include "dict.h"
+#include <libxml/tree.h>
+#include <libxml/dict.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

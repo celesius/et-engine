@@ -15,7 +15,7 @@
 #ifndef __XML_UNICODE_H__
 #define __XML_UNICODE_H__
 
-#include "xmlversion.h"
+#include <libxml/xmlversion.h>
 
 #ifdef LIBXML_UNICODE_ENABLED
 

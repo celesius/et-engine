@@ -11,9 +11,9 @@
 #ifndef __XML_PATTERN_H__
 #define __XML_PATTERN_H__
 
-#include "xmlversion.h"
-#include "tree.h"
-#include "dict.h"
+#include <libxml/xmlversion.h>
+#include <libxml/tree.h>
+#include <libxml/dict.h>
 
 #ifdef LIBXML_PATTERN_ENABLED
 
