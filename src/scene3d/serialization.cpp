@@ -11,8 +11,8 @@ namespace et
 {
 	namespace s3d
 	{
-		const SceneVersion SceneVersionLatest = SceneVersion_1_0_2;
-		const StorageVersion StorageVersionLatest = StorageVersion_1_0_0;
+		const SceneVersion SceneVersionLatest = SceneVersion_1_0_3;
+		const StorageVersion StorageVersionLatest = StorageVersion_1_0_1;
 
 		ChunkId HeaderScene = "ETSCN";
 		ChunkId HeaderData = "SDATA";

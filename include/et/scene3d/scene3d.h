@@ -22,14 +22,20 @@ namespace et
 		public:
 			Scene3d(const std::string& name = "scene");
 
-			void serialize(std::ostream& stream);
-			void serialize(const std::string& filename);
+			void serialize(std::ostream& stream, StorageFormat fmt, const std::string& basePath);
+			
+			void serialize(const std::string& filename, StorageFormat fmt);
 
-			bool deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory, const std::string& basePath);
-			bool deserialize(const std::string& filename, RenderContext* rc, TextureCache& tc, CustomElementFactory* factory);
+			bool deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc,
+				CustomElementFactory* factory, const std::string& basePath);
+			
+			bool deserialize(const std::string& filename, RenderContext* rc, TextureCache& tc,
+				CustomElementFactory* factory);
 
 		private:
-			Scene3dStorage::Pointer deserializeStorage(std::istream& stream, RenderContext* rc, TextureCache& tc, const std::string& basePath);
+			Scene3dStorage::Pointer deserializeStorage(std::istream& stream, RenderContext* rc,
+				TextureCache& tc, const std::string& basePath);
+			
 			void buildAPIObjects(Scene3dStorage::Pointer p, RenderContext* rc);
 
 			Element::Pointer createElementOfType(size_t type, Element* parent);

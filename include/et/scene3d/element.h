@@ -11,6 +11,7 @@
 #include <et/core/flags.h>
 #include <et/core/transformable.h>
 #include <et/core/serialization.h>
+
 #include <et/scene3d/material.h>
 #include <et/scene3d/serialization.h>
 
@@ -19,6 +20,7 @@ namespace et
 	namespace s3d
 	{
 		class Element;
+		class Scene3dStorage;
 
 		enum ElementFlags
 		{
@@ -70,7 +72,9 @@ namespace et
 
 			void setParent(Element* p);
 
-			Pointer childWithName(const std::string& name, ElementType ofType = ElementType_Any, bool assertFail = false);
+			Pointer childWithName(const std::string& name, ElementType ofType = ElementType_Any,
+				bool assertFail = false);
+			
 			Element::List childrenOfType(ElementType ofType) const;
 			Element::List childrenHavingFlag(size_t flag);
 
@@ -150,8 +154,8 @@ namespace et
 			typedef IntrusivePtr<RenderableElement> Pointer;
 
 		public:
-			RenderableElement(const std::string& name, Element* parent) : Element(name, parent), _visible(true)
-				{ setFlag(ElementFlag_Renderable); }
+			RenderableElement(const std::string& name, Element* parent) : Element(name, parent),
+				_visible(true) { setFlag(ElementFlag_Renderable); }
 
 			Material& material() 
 				{ return _material; }
@@ -173,7 +177,6 @@ namespace et
 			bool _visible;
 		};
 
-		class Scene3dStorage;
 		class CustomElementFactory
 		{
 		public:

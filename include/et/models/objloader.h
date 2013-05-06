@@ -53,8 +53,9 @@ namespace et
 			std::string name;
 			size_t start;
 			size_t count;
-			Material material;
-			OBJMeshIndexBounds(const std::string& n, size_t s, size_t c, Material m) : 
+			s3d::Material material;
+
+			OBJMeshIndexBounds(const std::string& n, size_t s, size_t c, s3d::Material m) :
 				name(n), start(s), count(c), material(m) { }
 		};
 		typedef std::vector<OBJMeshIndexBounds> OBJMeshIndexBoundsList;
@@ -103,8 +104,8 @@ namespace et
 		std::ifstream materialFile;
 
 		OBJGroup* lastGroup;
-		Material lastMaterial;
-        Material::List materials;
+		s3d::Material lastMaterial;
+		s3d::Material::List materials;
 		OBJMeshIndexBoundsList _meshes;
         IndexArray::Pointer _indices;
 		VertexArray::Pointer _vertexData;

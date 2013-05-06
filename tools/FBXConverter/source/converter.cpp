@@ -46,12 +46,21 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	btnOpen->setBackgroundForState(imgPressedState, gui::ElementState_Pressed);
 	btnOpen->clicked.connect(this, &Converter::onBtnOpenClick);
 
-	gui::Button::Pointer btnSave(new gui::Button("Save", _mainFont, _mainLayout.ptr()));
-	btnSave->setBackgroundForState(imgNormalState, gui::ElementState_Default);
-	btnSave->setBackgroundForState(imgHoverState, gui::ElementState_Hovered);
-	btnSave->setBackgroundForState(imgPressedState, gui::ElementState_Pressed);
-	btnSave->setPosition(btnOpen->size().x, 0.0f);
-	btnSave->clicked.connect(this, &Converter::onBtnSaveClick);
+	gui::Button::Pointer btnSaveBin(new gui::Button("Save (etm)", _mainFont, _mainLayout.ptr()));
+	btnSaveBin->tag = 1;
+	btnSaveBin->setBackgroundForState(imgNormalState, gui::ElementState_Default);
+	btnSaveBin->setBackgroundForState(imgHoverState, gui::ElementState_Hovered);
+	btnSaveBin->setBackgroundForState(imgPressedState, gui::ElementState_Pressed);
+	btnSaveBin->setPosition(btnOpen->size().x, 0.0f);
+	btnSaveBin->clicked.connect(this, &Converter::onBtnSaveClick);
+
+	gui::Button::Pointer btnSaveHRM(new gui::Button("Save (etm+xml)", _mainFont, _mainLayout.ptr()));
+	btnSaveHRM->tag = 2;
+	btnSaveHRM->setBackgroundForState(imgNormalState, gui::ElementState_Default);
+	btnSaveHRM->setBackgroundForState(imgHoverState, gui::ElementState_Hovered);
+	btnSaveHRM->setBackgroundForState(imgPressedState, gui::ElementState_Pressed);
+	btnSaveHRM->setPosition(btnOpen->size().x + btnSaveBin->size().x, 0.0f);
+	btnSaveHRM->clicked.connect(this, &Converter::onBtnSaveClick);
 
 	_btnDrawNormalMeshes = gui::Button::Pointer(new gui::Button("Normal", _mainFont, _mainLayout.ptr()));
 	_btnDrawNormalMeshes->setBackgroundForState(imgNormalState, gui::ElementState_Default);
@@ -125,7 +134,7 @@ void Converter::renderMeshList(RenderContext* rc, const s3d::Element::List& mesh
 		s3d::Mesh::Pointer mesh = *i;
 		if (mesh->active())
 		{
-			Material& m = mesh->material();
+			s3d::Material& m = mesh->material();
 			_defaultProgram->setUniform("ambientColor", m->getVector(MaterialParameter_AmbientColor));
 			_defaultProgram->setUniform("diffuseColor", m->getVector(MaterialParameter_DiffuseColor));
 			_defaultProgram->setUniform("specularColor", m->getVector(MaterialParameter_SpecularColor));
@@ -205,16 +214,17 @@ void Converter::onBtnOpenClick(et::gui::Button*)
 	_scene.clear();
 }
 
-void Converter::onBtnSaveClick(et::gui::Button*)
+void Converter::onBtnSaveClick(et::gui::Button* b)
 {
-	StringList types;
-	types.push_back("fbx");
-	types.push_back("etm");
-	std::string fileName = selectFile(types, SelectFileMode_Save);
+	std::string fileName = selectFile(StringList(), SelectFileMode_Save);
 	
 	Invocation1 i;
-	i.setTarget(this, &Converter::performSaving, fileName);
+
+	i.setTarget(this, (b->tag == 1 ? &Converter::performBinarySaving :
+		&Converter::performBinaryWithReadableMaterialsSaving), fileName);
+	
 	i.invokeInMainRunLoop();
+	
 	_labStatus->setText("Saving...");
 }
 
@@ -241,12 +251,21 @@ void Converter::performLoading(std::string path)
 	_labStatus->setText("Completed.");
 }
 
-void Converter::performSaving(std::string path)
+void Converter::performBinarySaving(std::string path)
 {
 	if (path.find_last_of(".etm") != path.length() - 1)
 		path += ".etm";
 
-	_scene.serialize(path);
+	_scene.serialize(path, s3d::StorageFormat_Binary);
+	_labStatus->setText("Completed.");
+}
+
+void Converter::performBinaryWithReadableMaterialsSaving(std::string path)
+{
+	if (path.find_last_of(".etm") != path.length() - 1)
+		path += ".etm";
+
+	_scene.serialize(path, s3d::StorageFormat_HumanReadableMaterials);
 	_labStatus->setText("Completed.");
 }
 
