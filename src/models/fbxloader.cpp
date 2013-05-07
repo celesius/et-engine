@@ -350,6 +350,8 @@ s3d::Material FBXLoaderPrivate::loadMaterial(FbxSurfaceMaterial* mat)
 {
 	s3d::Material m;
 
+	m->setName(mat->GetName());
+
 	loadMaterialTextureValue(m, MaterialParameter_DiffuseMap, mat, FbxSurfaceMaterial::sDiffuse);
 	loadMaterialTextureValue(m, MaterialParameter_AmbientMap, mat, FbxSurfaceMaterial::sAmbient);
 	loadMaterialTextureValue(m, MaterialParameter_EmissiveMap, mat, FbxSurfaceMaterial::sEmissive);

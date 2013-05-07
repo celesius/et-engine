@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <et/core/tools.h>
+#include <et/core/stream.h>
 #include <et/rendering/rendercontext.h>
 #include <et/scene3d/scene3d.h>
 #include <et/scene3d/serialization.h>
@@ -119,18 +120,31 @@ bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 		if (chunkEqualTo(readChunk, HeaderData))
 		{
 			size_t storageVersion = deserializeInt(stream);
-			if (storageVersion != StorageVersion_1_0_0) 
+			
+			size_t numStorages = 0;
+			StorageFormat format = StorageFormat_Binary;
+			
+			if (storageVersion == StorageVersion_1_0_0)
+			{
+				numStorages = deserializeInt(stream);
+			}
+			else if (storageVersion == StorageVersion_1_0_1)
+			{
+				format = static_cast<StorageFormat>(deserializeInt(stream));
+				numStorages = deserializeInt(stream);
+			}
+			else
 			{
 				log::error("Unsupported version of binary storage the ETM file.");
 				return false;
 			}
 
-			size_t numStorages = deserializeInt(stream);
 			for (size_t i = 0; i < numStorages; ++i)
 			{
-				Scene3dStorage::Pointer ptr = deserializeStorage(stream, rc, tc, basePath);
+				Scene3dStorage::Pointer ptr = deserializeStorage(stream, rc, tc, basePath, format);
 				ptr->setParent(this);
 			}
+
 		}
 		else if (chunkEqualTo(readChunk, HeaderElements))
 		{
@@ -145,7 +159,7 @@ bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 
 
 Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, RenderContext* rc,
-	TextureCache& tc, const std::string& basePath)
+	TextureCache& tc, const std::string& basePath, StorageFormat fmt)
 {
 	Scene3dStorage::Pointer result(new Scene3dStorage("storage", 0));
 
@@ -161,12 +175,37 @@ Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, Render
 		if (chunkEqualTo(readChunk, HeaderMaterials))
 		{
 			size_t numMaterials = deserializeInt(stream);
-			for (size_t i = 0; i < numMaterials; ++i)
+
+			if (fmt == StorageFormat_Binary)
 			{
-				Material m;
-				m->tag = deserializeInt(stream);
-				m->deserialize(stream, rc, tc, basePath);
-				result->addMaterial(m);
+				for (size_t i = 0; i < numMaterials; ++i)
+				{
+					Material m;
+					m->tag = deserializeInt(stream);
+					m->deserialize(stream, rc, tc, basePath, StorageFormat_Binary);
+					result->addMaterial(m);
+				}
+			}
+			else if (fmt == StorageFormat_HumanReadableMaterials)
+			{
+				for (size_t i = 0; i < numMaterials; ++i)
+				{
+					Material m;
+					m->tag = deserializeInt(stream);
+
+					std::string matFile = basePath + getFileName(deserializeString(stream));
+					
+					InputStream mStream(matFile, StreamMode_Text);
+					
+					if (mStream.valid())
+						m->deserialize(mStream.stream(), rc, tc, basePath, fmt);
+					
+					result->addMaterial(m);
+				}
+			}
+			else
+			{
+				assert("Invalid storage format specified" && false);
 			}
 			materialsRead = true;
 		}

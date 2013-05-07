@@ -12,7 +12,7 @@
 
 namespace et
 {
-	enum  MaterialParameters
+	enum MaterialParameters
 	{
 		MaterialParameter_Undefined,
 		
@@ -146,4 +146,7 @@ namespace et
 	typedef DefaultParameters<vec4> DefaultVectorParameters;
 	typedef DefaultParameters<Texture> DefaultTextureParameters;
 	typedef DefaultParameters<std::string> DefaultStringParameters;
+
+	typedef struct _xmlNode xmlNode;
 }
+

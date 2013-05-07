@@ -5,6 +5,9 @@
 *
 */
 
+#include <libxml/tree.h>
+#include <libxml/parser.h>
+
 #include <et/core/serialization.h>
 #include <et/core/tools.h>
 #include <et/rendering/rendercontext.h>
@@ -16,6 +19,24 @@ using namespace et::s3d;
 static const Texture _emptyTexture;
 static const std::string _emptyString;
 static const vec4 _emptyVector;
+
+const char* kMaterial = "material";
+const char* kDefaultValues = "default_values";
+const char* kCustomValues = "custom_values";
+const char* kType = "type";
+const char* kValue = "value";
+const char* kSource = "source";
+const char* kKey = "key";
+const char* kCapacity = "capacity";
+const char* kInt = "int";
+const char* kFloat = "float";
+const char* kVector = "vector";
+const char* kTexture = "texture";
+const char* kString = "string";
+const char* kName = "name";
+const char* kVersion = "version";
+const char* kDepthWrite = "depth_write";
+const char* kBlend = "blend";
 
 const std::string materialKeys[MaterialParameter_max] =
 {
@@ -69,13 +90,6 @@ MaterialData::MaterialData() :
 	setVector(MaterialParameter_DiffuseColor, vec4(1.0f));
 }
 
-MaterialData::MaterialData(std::istream& stream, RenderContext* rc, TextureCache& cache,
-	const std::string& texturesBasePath) : APIObjectData("default"), _blendState(Blend_Disabled),
-	_depthWriteEnabled(true)
-{
-	deserialize(stream, rc, cache, texturesBasePath);
-}
-
 MaterialData* MaterialData::clone() const
 {
 	MaterialData* m = new MaterialData();
@@ -114,7 +128,7 @@ void keyValue(std::ostream& s, const std::string& key, const T& value)
 
 #define START_BLOCK(NAME, TABS, E)	{ s << TABS << "<" << NAME; { E; } s << ">" << std::endl; }
 
-#define END_BLOCK(NAME, TABS)		{ s << TABS << "</" << NAME ">" << std::endl; }
+#define END_BLOCK(NAME, TABS)		{ s << TABS << "</" << NAME << ">" << std::endl; }
 
 #define SINGLE_BLOCK(NAME, TABS, E)	{ s << TABS << "<" << NAME; { E; } s << "/>" << std::endl; }
 
@@ -123,16 +137,16 @@ void MaterialData::serializeReadable(std::ostream& s) const
 {
 	s << "<?xml version=\"1.0\" encoding='UTF-8'?>" << std::endl;
 
-	START_BLOCK("material", "",
-		keyValue(s, "name", name());
-		keyValue(s, "version", MaterialCurrentVersion);
-		keyValue(s, "key", intToStr(this));
-		keyValue(s, "blend", blendState());
-		keyValue(s, "depth_write", depthWriteEnabled());
+	START_BLOCK(kMaterial, "",
+		keyValue(s, kName, name());
+		keyValue(s, kVersion, MaterialCurrentVersion);
+		keyValue(s, kKey, intToStr(this));
+		keyValue(s, kBlend, blendState());
+		keyValue(s, kDepthWrite, depthWriteEnabled());
 	);
 
-	START_BLOCK("default_values", "\t",
-		keyValue(s, "capacity", MaterialParameter_max);
+	START_BLOCK(kDefaultValues, "\t",
+		keyValue(s, kCapacity, MaterialParameter_max);
 	)
 
 	for (size_t i = 0; i < MaterialParameter_max; ++i)
@@ -140,80 +154,79 @@ void MaterialData::serializeReadable(std::ostream& s) const
 		if (_defaultIntParameters[i].set)
 		{
 			SINGLE_BLOCK(materialKeys[i], "\t\t",
-				keyValue(s, "type", "int");
-				keyValue(s, "value", _defaultIntParameters[i].value)
+				keyValue(s, kType, kInt);
+				keyValue(s, kValue, _defaultIntParameters[i].value)
 			);
 		}
 
 		if (_defaultFloatParameters[i].set)
 		{
 			SINGLE_BLOCK(materialKeys[i], "\t\t",
-				keyValue(s, "type", "float");
-				keyValue(s, "value", _defaultFloatParameters[i].value)
+				keyValue(s, kType, kFloat);
+				keyValue(s, kValue, _defaultFloatParameters[i].value)
 			);
 		}
 
 		if (_defaultVectorParameters[i].set)
 		{
 			SINGLE_BLOCK(materialKeys[i], "\t\t",
-				keyValue(s, "type", "vector");
-				keyValue(s, "value", _defaultVectorParameters[i].value);
+				keyValue(s, kType, kVector);
+				keyValue(s, kValue, _defaultVectorParameters[i].value);
 			);
 		}
 
 		if (_defaultTextureParameters[i].set && _defaultTextureParameters[i].value.valid())
 		{
 			SINGLE_BLOCK(materialKeys[i], "\t\t",
-				keyValue(s, "type", "texture");
-				keyValue(s, "source", _defaultTextureParameters[i].value->name());
+				keyValue(s, kType, kTexture);
+				keyValue(s, kSource, _defaultTextureParameters[i].value->name());
 			);
 		}
 
 		if (_defaultStringParameters[i].set && _defaultStringParameters[i].value.size())
 		{
 			SINGLE_BLOCK(materialKeys[i], "\t\t",
-				keyValue(s, "type", "string");
-				keyValue(s, "value", _defaultStringParameters[i].value)
+				keyValue(s, kType, kString);
+				keyValue(s, kValue, _defaultStringParameters[i].value)
 			);
 		}
 	}
-	END_BLOCK("default_values", "\t");
+	END_BLOCK(kDefaultValues, "\t");
 
-	START_BLOCK("custom_values", "\t", ; )
+	START_BLOCK(kCustomValues, "\t", ; )
 
-	ET_ITERATE(_customIntParameters, auto&, i, SINGLE_BLOCK("value", "\t\t",
-		keyValue(s, "type", "int");
-		keyValue(s, "key", i.first);
-		keyValue(s, "value", i.second)))
+	ET_ITERATE(_customIntParameters, auto&, i, SINGLE_BLOCK(kValue, "\t\t",
+		keyValue(s, kType, kInt);
+		keyValue(s, kKey, i.first);
+		keyValue(s, kValue, i.second)))
 
-	ET_ITERATE(_customFloatParameters, auto&, i, SINGLE_BLOCK("value", "\t\t",
-		keyValue(s, "type", "float");
-		keyValue(s, "key", i.first);
-		keyValue(s, "value", i.second)))
+	ET_ITERATE(_customFloatParameters, auto&, i, SINGLE_BLOCK(kValue, "\t\t",
+		keyValue(s, kType, kFloat);
+		keyValue(s, kKey, i.first);
+		keyValue(s, kValue, i.second)))
 
-	ET_ITERATE(_customVectorParameters, auto&, i, SINGLE_BLOCK("value", "\t\t",
-		keyValue(s, "type", "vector");
-		keyValue(s, "key", i.first);
-		keyValue(s, "value", i.second)))
+	ET_ITERATE(_customVectorParameters, auto&, i, SINGLE_BLOCK(kValue, "\t\t",
+		keyValue(s, kType, kVector);
+		keyValue(s, kKey, i.first);
+		keyValue(s, kValue, i.second)))
 
-	ET_ITERATE(_customStringParameters, auto&, i, SINGLE_BLOCK("value", "\t\t",
-		keyValue(s, "type", "string");
-		keyValue(s, "key", i.first);
-		keyValue(s, "value", i.second)))
+	ET_ITERATE(_customStringParameters, auto&, i, SINGLE_BLOCK(kValue, "\t\t",
+		keyValue(s, kType, kString);
+		keyValue(s, kKey, i.first);
+		keyValue(s, kValue, i.second)))
 
 	ET_ITERATE(_customTextureParameters, auto&, i, {
 		if (i.second.valid())
 		{
-			SINGLE_BLOCK("value", "\t\t",
-				keyValue(s, "type", "texture");
-				keyValue(s, "key", i.first);
-				keyValue(s, "value", i.second->name()))
+			SINGLE_BLOCK(kValue, "\t\t",
+				keyValue(s, kType, kTexture);
+				keyValue(s, kKey, i.first);
+				keyValue(s, kValue, i.second->name()))
 		}
 	});
 
-	END_BLOCK("custom_values", "\t")
-
-	END_BLOCK("material", "");
+	END_BLOCK(kCustomValues, "\t")
+	END_BLOCK(kMaterial, "");
 }
 
 void MaterialData::serializeBinary(std::ostream& stream) const
@@ -268,21 +281,32 @@ void MaterialData::serializeBinary(std::ostream& stream) const
 }
 
 void MaterialData::deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache,
-	const std::string& texturesBasePath)
+	const std::string& texturesBasePath, StorageFormat format)
 {
-	int version = deserializeInt(stream);
+	if (format == StorageFormat_HumanReadableMaterials)
+	{
+		deserialize3FromXml(stream, rc, cache, texturesBasePath);
+	}
+	else if (format == StorageFormat_Binary)
+	{
+		int version = deserializeInt(stream);
 
-	setName(deserializeString(stream));
-	
-	_blendState = static_cast<BlendState>(deserializeInt(stream));
-	_depthWriteEnabled = deserializeInt(stream) != 0;
+		setName(deserializeString(stream));
 
-	if (version == MaterialVersion1_0_0)
-		deserialize1(stream, rc, cache, texturesBasePath);
-	else if (version == MaterialVersion1_0_1)
-		deserialize2(stream, rc, cache, texturesBasePath);
-	else if (version >= MaterialVersion1_0_2)
-		deserialize3(stream, rc, cache, texturesBasePath);
+		_blendState = static_cast<BlendState>(deserializeInt(stream));
+		_depthWriteEnabled = deserializeInt(stream) != 0;
+
+		if (version == MaterialVersion1_0_0)
+			deserialize1(stream, rc, cache, texturesBasePath);
+		else if (version == MaterialVersion1_0_1)
+			deserialize2(stream, rc, cache, texturesBasePath);
+		else if (version >= MaterialVersion1_0_2)
+			deserialize3(stream, rc, cache, texturesBasePath);
+	}
+	else
+	{
+		assert("Invalid storage format specified" && false);
+	}
 }
 
 void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, TextureCache& cache,
@@ -317,20 +341,7 @@ void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, Texture
 	{
 		std::string param = deserializeString(stream);
 		std::string path = deserializeString(stream);
-		if (path.length())
-		{
-			Texture t = rc->textureFactory().loadTexture(path, cache);
-			if (t.invalid())
-			{
-				std::string relativePath = texturesBasePath + getFileName(path);
-				t = rc->textureFactory().loadTexture(relativePath, cache);
-			}
-
-			if (t.valid())
-				setTexture(keyToMaterialParameter(param), t);
-			else
-				std::cout << "Unable to load texture: " << path << std::endl;
-		}
+		setTexture(keyToMaterialParameter(param), loadTexture(rc, path, texturesBasePath, cache));
 	}
 
 	count = deserializeInt(stream);
@@ -374,20 +385,7 @@ void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, Texture
 	{
 		int param = deserializeInt(stream);
 		std::string path = deserializeString(stream);
-		if (path.length())
-		{
-			Texture t = rc->textureFactory().loadTexture(path, cache);
-			if (t.invalid())
-			{
-				std::string relativePath = texturesBasePath + getFileName(path);
-				t = rc->textureFactory().loadTexture(relativePath, cache);
-			}
-
-			if (t.valid())
-				setTexture(param, t);
-			else
-				std::cout << "Unable to load texture: " << path << std::endl;
-		}
+		setTexture(param, loadTexture(rc, path, texturesBasePath, cache));
 	}
 
 	count = deserializeInt(stream);
@@ -427,21 +425,10 @@ void MaterialData::deserialize3(std::istream& stream, RenderContext* rc, Texture
 		}
 
 		has = deserializeInt(stream);
-		std::string tval = deserializeString(stream);
-		if (has && tval.size()) 
+		std::string path = deserializeString(stream);
+		if (has)
 		{
-			tval = normalizeFilePath(tval);
-			Texture t = rc->textureFactory().loadTexture(tval, cache);
-			if (t.invalid())
-			{
-				std::string relativePath = texturesBasePath + getFileName(tval);
-				t = rc->textureFactory().loadTexture(relativePath, cache);
-			}
-
-			if (t.valid())
-				setTexture(i, t);
-			else
-				std::cout << "Unable to load texture: " << tval << std::endl;
+			setTexture(i, loadTexture(rc, path, texturesBasePath, cache));
 		}
 
 		has = deserializeInt(stream);
@@ -453,6 +440,167 @@ void MaterialData::deserialize3(std::istream& stream, RenderContext* rc, Texture
 	}
 
 	deserialize2(stream, rc, cache, texturesBasePath);
+}
+
+void MaterialData::loadProperties(xmlNode* root)
+{
+	for (xmlAttr* prop = root->properties; prop; prop = prop->next)
+	{
+		xmlChar* value = xmlNodeListGetString(prop->doc, prop->children, 1);
+		const char* pName = reinterpret_cast<const char*>(prop->name);
+		const char* pValue = reinterpret_cast<const char*>(value);
+		if (strcmp(pName, kName) == 0)
+			setName(std::string(pValue));
+		else if (strcmp(pName, kDepthWrite) == 0)
+			_depthWriteEnabled = strToBool(pValue);
+		else if (strcmp(pName, kBlend) == 0)
+			_blendState = static_cast<BlendState>(strToInt(pValue));
+		else if (strcmp(pName, kKey) && strcmp(pName, kVersion))
+		{
+			log::warning("Unknown material property: %s = \"%s\"", pName, pValue);
+		}
+		xmlFree(value);
+	}
+}
+
+void MaterialData::loadDefaultValues(xmlNode* node, RenderContext* rc, TextureCache& cache,
+	const std::string& basePath)
+{
+	for (xmlNode* c = node->children; c; c = c->next)
+	{
+		if (c->type == XML_ELEMENT_NODE)
+		{
+			const char* cName = reinterpret_cast<const char*>(c->name);
+			for (size_t i = 0; i < MaterialParameter_max; ++i)
+			{
+				if (materialKeys[i] == cName)
+					loadDefaultValue(c, static_cast<MaterialParameters>(i), rc, cache, basePath);
+			}
+		}
+	}
+}
+
+void MaterialData::loadDefaultValue(xmlNode* node, MaterialParameters param, RenderContext* rc,
+	TextureCache& cache, const std::string& basePath)
+{
+	std::string type;
+	std::string value;
+	std::string source;
+
+	for (xmlAttr* prop = node->properties; prop; prop = prop->next)
+	{
+		xmlChar* xmlValue = xmlNodeListGetString(prop->doc, prop->children, 1);
+		const char* pName = reinterpret_cast<const char*>(prop->name);
+		const char* pValue = reinterpret_cast<const char*>(xmlValue);
+
+		if (strcmp(pName, kType) == 0)
+			type = std::string(pValue);
+		else if (strcmp(pName, kValue) == 0)
+			value = std::string(pValue);
+		else if (strcmp(pName, kSource) == 0)
+			source = std::string(pValue);
+		else
+			log::warning("Unknown material parameter property: %s = \"%s\"", pName, pValue);
+
+		xmlFree(xmlValue);
+	}
+
+	if (type == kInt)
+	{
+		setInt(param, strToInt(value));
+	}
+	else if (type == kFloat)
+	{
+		setFloat(param, strToFloat(value));
+	}
+	else if (type == kVector)
+	{
+		vec4 v;
+		size_t i = 0;
+		while ((value.find_first_of(ET_CSV_DELIMITER) != std::string::npos) && (i < 4))
+		{
+			std::string subVal = value.substr(0, value.find_first_of(ET_CSV_DELIMITER));
+			v[i++] = strToFloat(subVal);
+			value.erase(0, subVal.size() + 1);
+		}
+		if ((i < 4) && value.size())
+			v[i++] = strToFloat(value);
+
+		setVector(param, v);
+	}
+	else if (type == kString)
+	{
+		setString(param, value);
+	}
+	else if (type == kTexture)
+	{
+		setTexture(param, loadTexture(rc, source, basePath, cache));
+	}
+	else
+	{
+		log::warning("Unknown type %s in material parameter %s", type.c_str(), materialKeys[param].c_str());
+	}
+}
+
+void MaterialData::deserialize3FromXml(std::istream& stream, RenderContext* rc, TextureCache& cache,
+	const std::string& basePath)
+{
+	size_t size = streamSize(stream) - static_cast<size_t>(stream.tellg());
+	StringDataStorage data(size + 1, 0);
+	stream.read(data.data(), size);
+
+	xmlDoc* xml = xmlReadMemory(data.data(), size, basePath.c_str(), nullptr, 0);
+	if (xml == nullptr)
+	{
+		log::error("Unable to deserialize material from xml.");
+		return;
+	}
+
+	xmlNode* root = xmlDocGetRootElement(xml);
+	if ((root == nullptr) || (strcmp(reinterpret_cast<const char*>(root->name), "material") != 0))
+	{
+		log::error("Unable to deserialize material from xml.");
+		return;
+	}
+
+	loadProperties(root);
+
+	for (xmlNode* c = root->children; c; c = c->next)
+	{
+		if (c->type == XML_ELEMENT_NODE)
+		{
+			const char* cName = reinterpret_cast<const char*>(c->name);
+			if (strcmp(cName, kDefaultValues) == 0)
+			{
+				loadDefaultValues(c, rc, cache, basePath);
+			}
+			else if (strcmp(cName, kCustomValues) == 0)
+			{
+
+			}
+			else
+			{
+				log::warning("Unknown material entry: %s", cName);
+			}
+		}
+	}
+
+	xmlFreeDoc(xml);
+}
+
+Texture MaterialData::loadTexture(RenderContext* rc, const std::string& path, const std::string& basePath,
+	TextureCache& cache)
+{
+	if (path.empty()) return Texture();
+
+	Texture t = rc->textureFactory().loadTexture(normalizeFilePath(path), cache);
+	if (t.invalid())
+	{
+		std::string relativePath = normalizeFilePath(basePath + getFileName(path));
+		t = rc->textureFactory().loadTexture(relativePath, cache);
+	}
+
+	return t;
 }
 
 /*

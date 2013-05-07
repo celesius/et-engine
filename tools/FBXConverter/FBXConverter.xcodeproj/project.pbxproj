@@ -19,6 +19,7 @@
 		A53B4F351681220500C6B8EC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53B4F341681220500C6B8EC /* main.cpp */; };
 		A53B4F421681247300C6B8EC /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A53B4F411681247300C6B8EC /* libz.dylib */; };
 		A53B4F441681256B00C6B8EC /* data in Resources */ = {isa = PBXBuildFile; fileRef = A53B4F431681256B00C6B8EC /* data */; };
+		A5963FDB1739B55A00837C6C /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A5963FDA1739B55A00837C6C /* libxml2.dylib */; };
 		A5A23E2F16811838001B3E98 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A23E2E16811838001B3E98 /* Cocoa.framework */; };
 		A5A23E5616811900001B3E98 /* converter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E5416811900001B3E98 /* converter.cpp */; };
 		A5A23ED216811978001B3E98 /* apiobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E5B16811978001B3E98 /* apiobject.cpp */; };
@@ -129,6 +130,7 @@
 		A53B4F341681220500C6B8EC /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A53B4F411681247300C6B8EC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		A53B4F431681256B00C6B8EC /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; path = data; sourceTree = "<group>"; };
+		A5963FDA1739B55A00837C6C /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		A5A23E2A16811838001B3E98 /* FBXConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FBXConverter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5A23E2E16811838001B3E98 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		A5A23E3116811838001B3E98 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -238,6 +240,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5963FDB1739B55A00837C6C /* libxml2.dylib in Frameworks */,
 				A53B4F421681247300C6B8EC /* libz.dylib in Frameworks */,
 				A53B4F3116811FA900C6B8EC /* libiconv.dylib in Frameworks */,
 				A5A23F3616811EC3001B3E98 /* OpenGL.framework in Frameworks */,
@@ -277,6 +280,7 @@
 			children = (
 				A53B4F411681247300C6B8EC /* libz.dylib */,
 				A53B4F3016811FA900C6B8EC /* libiconv.dylib */,
+				A5963FDA1739B55A00837C6C /* libxml2.dylib */,
 				5C5128AA1681FA2500ED9B96 /* libjpeg.a */,
 				5C5128AB1681FA2500ED9B96 /* libpng.a */,
 				A50D32DD1720AC27001D31B3 /* libfbxsdk-2013.3-static.a */,

@@ -34,7 +34,7 @@ namespace et
 
 		private:
 			Scene3dStorage::Pointer deserializeStorage(std::istream& stream, RenderContext* rc,
-				TextureCache& tc, const std::string& basePath);
+				TextureCache& tc, const std::string& basePath, StorageFormat fmt);
 			
 			void buildAPIObjects(Scene3dStorage::Pointer p, RenderContext* rc);
 
