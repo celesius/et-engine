@@ -13,7 +13,7 @@ using namespace et;
 using namespace et::gui;
 
 Slider::Slider(Element2d* parent) :
-	Element2d(parent), _min(0.0f), _max(1.0f), _value(0.5f), _drag(false)
+	Element2d(parent), _handleScale(1.0f), _min(0.0f), _max(1.0f), _value(0.5f), _drag(false)
 {
 	
 }
@@ -82,12 +82,7 @@ void Slider::buildVertices(RenderContext*, GuiRenderer& renderer)
 		renderer.createImageVertices(_backgroundVertices, _background.texture, _background.descriptor,
 			mainRect, vec4(1.0f), transform, RenderLayer_Layer0);
 	}
-/*
-	else
-	{
-		renderer.createColorVertices(_backgroundVertices, mainRect, vec4(1.0f), transform, RenderLayer_Layer0);
-	}
-*/	
+	
 	if (_sliderLeft.texture.valid() && (_value > 0.0f))
 	{
 		rect r(vec2(halfHandleWidth, 0.0f), _sliderLeft.descriptor.size);
@@ -109,7 +104,7 @@ void Slider::buildVertices(RenderContext*, GuiRenderer& renderer)
 
 	if (_handle.texture.valid())
 	{
-		rect r(vec2(0.0f), _handle.descriptor.size);
+		rect r(vec2(0.0f), _handleScale * _handle.descriptor.size);
 		r.top = 0.5f * (mainRect.height - r.height);
 		r.left = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
 		renderer.createImageVertices(_handleVertices, _handle.texture, _handle.descriptor, r,
@@ -125,9 +120,10 @@ void Slider::setBackgroundImage(const Image& i)
 	invalidateContent();
 }
 
-void Slider::setHandleImage(const Image& i)
+void Slider::setHandleImage(const Image& i, float scale)
 {
 	_handle = i;
+	_handleScale = scale;
 	invalidateContent();
 }
 

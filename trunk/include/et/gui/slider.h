@@ -22,7 +22,7 @@ namespace et
 			Slider(Element2d* parent);
 			
 			void setBackgroundImage(const Image&);
-			void setHandleImage(const Image&);
+			void setHandleImage(const Image&, float scale);
 			void setSliderImages(const Image& left, const Image& right);
 			
 			float minValue() const
@@ -60,6 +60,8 @@ namespace et
 			GuiVertexList _sliderLeftVertices;
 			GuiVertexList _sliderRightVertices;
 			GuiVertexList _handleVertices;
+			
+			float _handleScale;
 			
 			float _min;
 			float _max;
