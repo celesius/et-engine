@@ -208,8 +208,8 @@ const std::string copy_fragment_shader =
 	"}";
 
 const std::string depth_fragment_shader =
-	"uniform sampler2D depth_texture;"
-	"uniform float factor;"
+	"uniform etHighp sampler2D depth_texture;"
+	"uniform etHighp float factor;"
 	"etFragmentIn etHighp vec2 TexCoord;"
 	"void main() {"
 	"	etFragmentOut = pow(etTexture2D(depth_texture, TexCoord), vec4(factor));"
