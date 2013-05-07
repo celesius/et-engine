@@ -61,6 +61,8 @@ void TextureCache::flush()
 {
 	CriticalSectionScope lock(_lock);
 
+	size_t erased = 0;
+	
 	TextureMap::iterator i = _textures.begin();
 	while (i != _textures.end())
 	{
@@ -69,12 +71,16 @@ void TextureCache::flush()
 			TextureMap::iterator toErase = i;
 			++i;
 			_textures.erase(toErase);
+			++erased;
 		}
 		else
 		{
 			++i;
 		}
 	}
+	
+	if (erased)
+		log::info("[TextureCache] %lu textures flushed.", erased);
 }
 
 void TextureCache::clear()

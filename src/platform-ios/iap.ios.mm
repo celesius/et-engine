@@ -395,16 +395,14 @@ static ObjCPurchasesManager* sharedInstance = nil;
 				}
                     
 				default:
-                {
 					break;
-                }
 			}
-			
-			if (state != SKPaymentTransactionStatePurchasing)
-            {
-                NSLog(@"Finishing transaction: %@", _productIdentifier);
-				[[SKPaymentQueue defaultQueue] finishTransaction:t];
-            }
+		}
+		
+		if (state != SKPaymentTransactionStatePurchasing)
+		{
+			NSLog(@"Finishing transaction: %@", _productIdentifier);
+			[[SKPaymentQueue defaultQueue] finishTransaction:t];
 		}
 	}
 }

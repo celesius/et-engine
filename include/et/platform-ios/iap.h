@@ -8,7 +8,7 @@
 #pragma once
 
 #include <set>
-#include <et/platform/platform.h>
+#include <et/core/et.h>
 
 namespace et
 {
