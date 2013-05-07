@@ -19,10 +19,7 @@ namespace et
 		{
 		public:
 			MaterialData();
-
-			MaterialData(std::istream& stream, RenderContext* rc, TextureCache& cache,
-				const std::string& texturesBasePath);
-
+			
 			const int getInt(size_t param) const;
 			const float getFloat(size_t param) const;
 			const vec4& getVector(size_t param) const;
@@ -44,7 +41,7 @@ namespace et
 			void serialize(std::ostream& stream, StorageFormat format) const;
 
 			void deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache,
-				const std::string& texturesBasePath);
+				const std::string& texturesBasePath, StorageFormat format);
 
 			MaterialData* clone() const;
 
@@ -64,6 +61,23 @@ namespace et
 
 			void deserialize3(std::istream& stream, RenderContext* rc, TextureCache& cache,
 				const std::string& texturesBasePath);
+
+			/*
+			 * Loading from XML
+			 */
+			void deserialize3FromXml(std::istream& stream, RenderContext* rc, TextureCache& cache,
+				const std::string& texturesBasePath);
+
+			void loadProperties(xmlNode*);
+
+			void loadDefaultValues(xmlNode*, RenderContext* rc, TextureCache& cache,
+				const std::string& basePath);
+			
+			void loadDefaultValue(xmlNode*, MaterialParameters, RenderContext* rc, TextureCache& cache,
+				const std::string& basePath);
+
+			Texture loadTexture(RenderContext* rc, const std::string& path,
+				const std::string& basePath, TextureCache& cache);
 
 		private:
 			DefaultIntParameters _defaultIntParameters;

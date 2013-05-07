@@ -137,9 +137,6 @@ namespace et
 		return stream;
 	}
 		
-	inline int strToInt(const std::string& value)
-		{ return std::atoi(value.c_str()); }
-	
 	inline std::string intToStr(int value)
 	{
 		char buffer[32] = { };
@@ -174,6 +171,19 @@ namespace et
 		sprintf(buffer, "%08zX", reinterpret_cast<size_t>(value));
 		return buffer;
 	}
+
+	inline int strToInt(const std::string& value)
+		{ return std::atoi(value.c_str()); }
+
+	inline float strToFloat(const std::string& value)
+		{ return static_cast<float>(std::atof(value.c_str())); }
+		
+	inline bool strToBool(std::string s)
+	{
+		lowercase(s);
+		return (s == "true") || (s == "1");
+	}
+
 
 	inline bool isPowerOfTwo(int value)
 		{ return (value & (value - 1)) == 0; }
