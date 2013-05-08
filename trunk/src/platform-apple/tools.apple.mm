@@ -158,7 +158,22 @@ bool et::removeDirectory(const std::string& name)
 	
 	if (error)
 	{
-		NSLog(@"Unable to create directory at %@, error: %@", path, error);
+		NSLog(@"Unable to delete directory at %@, error: %@", path, error);
+	}
+	
+	return (error == nil);
+}
+
+bool et::removeFile(const std::string& name)
+{
+	NSError* error = nil;
+	
+	NSString* path = [NSString stringWithCString:name.c_str() encoding:NSUTF8StringEncoding];
+	[[NSFileManager defaultManager]	removeItemAtPath:path error:&error];
+	
+	if (error)
+	{
+		NSLog(@"Unable to delete file at %@, error: %@", path, error);
 	}
 	
 	return (error == nil);
