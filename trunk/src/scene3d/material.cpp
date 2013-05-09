@@ -85,7 +85,7 @@ inline size_t keyToMaterialParameter(const std::string& k)
 }
 
 MaterialData::MaterialData() :
-	APIObjectData("default"), _blendState(Blend_Disabled), _depthWriteEnabled(true)
+	APIObject("default"), _blendState(Blend_Disabled), _depthWriteEnabled(true)
 {
 	setVector(MaterialParameter_DiffuseColor, vec4(1.0f));
 }
@@ -138,7 +138,7 @@ void MaterialData::serializeReadable(std::ostream& s) const
 	s << "<?xml version=\"1.0\" encoding='UTF-8'?>" << std::endl;
 
 	START_BLOCK(kMaterial, "",
-		keyValue(s, kName, name());
+		keyValue(s, kName, objectName());
 		keyValue(s, kVersion, MaterialCurrentVersion);
 		keyValue(s, kKey, intToStr(this));
 		keyValue(s, kBlend, blendState());
@@ -179,7 +179,7 @@ void MaterialData::serializeReadable(std::ostream& s) const
 		{
 			SINGLE_BLOCK(materialKeys[i], "\t\t",
 				keyValue(s, kType, kTexture);
-				keyValue(s, kSource, _defaultTextureParameters[i].value->name());
+				keyValue(s, kSource, _defaultTextureParameters[i].value->origin());
 			);
 		}
 
@@ -221,7 +221,7 @@ void MaterialData::serializeReadable(std::ostream& s) const
 			SINGLE_BLOCK(kValue, "\t\t",
 				keyValue(s, kType, kTexture);
 				keyValue(s, kKey, i.first);
-				keyValue(s, kValue, i.second->name()))
+				keyValue(s, kValue, i.second->origin()))
 		}
 	});
 
@@ -232,7 +232,7 @@ void MaterialData::serializeReadable(std::ostream& s) const
 void MaterialData::serializeBinary(std::ostream& stream) const
 {
 	serializeInt(stream, MaterialCurrentVersion);
-	serializeString(stream, name());
+	serializeString(stream, objectName());
 	serializeInt(stream, blendState());
 	serializeInt(stream, depthWriteEnabled());
 
@@ -251,7 +251,7 @@ void MaterialData::serializeBinary(std::ostream& stream) const
 		serializeVector(stream, _defaultVectorParameters[i].value);
 
 		serializeInt(stream, _defaultTextureParameters[i].set);
-		serializeString(stream, t.valid() ? t->name() : std::string());
+		serializeString(stream, t.valid() ? t->origin() : std::string());
 
 		serializeInt(stream, _defaultStringParameters[i].set);
 		serializeString(stream, _defaultStringParameters[i].value);
@@ -271,7 +271,7 @@ void MaterialData::serializeBinary(std::ostream& stream) const
 
 	serializeInt(stream, static_cast<int>(_customTextureParameters.size()));
 	ET_ITERATE(_customTextureParameters, auto&, i, serializeInt(stream, i.first);
-		std::string path = i.second.valid() ? i.second->name() : std::string();
+		std::string path = i.second.valid() ? i.second->origin() : std::string();
 		serializeInt(stream, i.first);
 		serializeString(stream, path));
 
@@ -291,7 +291,7 @@ void MaterialData::deserialize(std::istream& stream, RenderContext* rc, TextureC
 	{
 		int version = deserializeInt(stream);
 
-		setName(deserializeString(stream));
+		setObjectName(deserializeString(stream));
 
 		_blendState = static_cast<BlendState>(deserializeInt(stream));
 		_depthWriteEnabled = deserializeInt(stream) != 0;
@@ -450,7 +450,7 @@ void MaterialData::loadProperties(xmlNode* root)
 		const char* pName = reinterpret_cast<const char*>(prop->name);
 		const char* pValue = reinterpret_cast<const char*>(value);
 		if (strcmp(pName, kName) == 0)
-			setName(std::string(pValue));
+			setObjectName(std::string(pValue));
 		else if (strcmp(pName, kDepthWrite) == 0)
 			_depthWriteEnabled = strToBool(pValue);
 		else if (strcmp(pName, kBlend) == 0)

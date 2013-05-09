@@ -39,6 +39,8 @@ namespace et
 	void findFiles(const std::string& folder, const std::string& mask, bool recursive, StringList& list);
 	void findSubfolders(const std::string& folder, bool recursive, StringList& list);
 	void openUrl(const std::string& url);
+
+	unsigned long getFileDate(const std::string& path);
 	
 	std::string unicodeToUtf8(const std::wstring& w);
 	std::wstring utf8ToUnicode(const std::string& mbcs);

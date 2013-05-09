@@ -7,17 +7,18 @@
 
 #pragma once
 
-#include <et/rendering/renderstate.h>
 #include <et/apiobjects/apiobject.h>
 #include <et/vertexbuffer/vertexarray.h>
 
 namespace et
 {
-	class VertexBufferData : public APIObjectData
+	class RenderState;
+	
+	class VertexBufferData : public APIObject
 	{
 	public:
-		VertexBufferData(RenderState& rs, const VertexArray::Description& desc, BufferDrawType vertexDrawType, 
-			const std::string& name = std::string());
+		VertexBufferData(RenderState& rs, const VertexArray::Description& desc,
+			BufferDrawType vertexDrawType, const std::string& name = std::string());
 
 		~VertexBufferData();
 	
@@ -42,8 +43,8 @@ namespace et
 			{ return _sourceTag; }
 
 	private:
-		VertexBufferData(RenderState& rs, const VertexDeclaration& decl, const void* vertexData, size_t vertexDataSize, 
-			BufferDrawType vertexDrawType, const std::string& name = std::string());
+		VertexBufferData(RenderState& rs, const VertexDeclaration& decl, const void* vertexData,
+			size_t vertexDataSize, BufferDrawType vertexDrawType, const std::string& name = std::string());
 
 	private:
 		RenderState& _rs;

@@ -8,8 +8,7 @@
 #pragma once
 
 #include <et/core/containers.h>
-#include <et/rendering/rendering.h>
-#include <et/apiobjects/framebuffer.h>
+#include <et/apiobjects/objects.h>
 
 namespace et
 {
@@ -54,9 +53,6 @@ namespace et
 	};
 
 	class RenderContext;
-	class Texture;
-	class Program;
-	class Framebuffer;
 	class VertexBuffer;
 	class IndexBuffer;
 	class VertexArrayObject;

@@ -5,12 +5,13 @@
  *
  */
 
+#include <et/rendering/renderstate.h>
 #include <et/apiobjects/vertexbufferdata.h>
 
 using namespace et;
 
 VertexBufferData::VertexBufferData(RenderState& rs, const VertexArray::Description& desc, BufferDrawType vertexDrawType, 
-	const std::string& name) : APIObjectData(name), _rs(rs), _vertexBuffer(0), _decl(desc.declaration), 
+	const std::string& name) : APIObject(name), _rs(rs), _vertexBuffer(0), _decl(desc.declaration), 
 	_dataSize(desc.data.dataSize()), _sourceTag(0), _drawType(vertexDrawType)
 {
 	glGenBuffers(1, &_vertexBuffer);
@@ -18,7 +19,7 @@ VertexBufferData::VertexBufferData(RenderState& rs, const VertexArray::Descripti
 }
 
 VertexBufferData::VertexBufferData(RenderState& rs, const VertexDeclaration& decl, const void* vertexData, size_t vertexDataSize, 
-	BufferDrawType vertexDrawType, const std::string& name) : APIObjectData(name), _rs(rs), _vertexBuffer(0), 
+	BufferDrawType vertexDrawType, const std::string& name) : APIObject(name), _rs(rs), _vertexBuffer(0), 
 	_decl(decl), _dataSize(vertexDataSize), _sourceTag(0), _drawType(vertexDrawType)
 {
 	glGenBuffers(1, &_vertexBuffer);

@@ -5,6 +5,7 @@
  *
  */
 
+#include <et/rendering/rendercontext.h>
 #include <et/gui/layout.h>
 
 using namespace et;

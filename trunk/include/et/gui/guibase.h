@@ -15,12 +15,13 @@
 #include <et/app/events.h>
 #include <et/timers/animator.h>
 #include <et/input/input.h>
-#include <et/rendering/rendercontext.h>
 #include <et/gui/guibaseconst.h>
 #include <et/gui/guibaseclasses.h>
 
 namespace et
 {
+	class RenderContext;
+	
 	namespace gui
 	{
 		class Element;

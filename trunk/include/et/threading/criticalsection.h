@@ -26,8 +26,8 @@ namespace et
 	class CriticalSectionScope
 	{
 	public:
-		CriticalSectionScope(CriticalSection& section) : _cs(section)
-			{ _cs.enter(); }
+		CriticalSectionScope(CriticalSection& section) :
+			_cs(section) { _cs.enter(); }
 
 		~CriticalSectionScope()
 			{ _cs.leave(); }

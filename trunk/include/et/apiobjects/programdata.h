@@ -7,26 +7,24 @@
 
 #pragma once
 
-#include <map>
-
-#include <et/rendering/renderstate.h>
-
 namespace et
 {
-
 	struct ProgramUniform
 	{
 		uint32_t type;
 		int location;
 
-		ProgramUniform() : type(0), location(-1) { }
+		ProgramUniform() :
+			type(0), location(-1) { }
 	};
 
 	struct ProgramAttrib
 	{
 		std::string name;
 		VertexAttributeUsage usage;
-		ProgramAttrib(const std::string& a_name, VertexAttributeUsage a_usage) : name(a_name), usage(a_usage) { }
+		
+		ProgramAttrib(const std::string& a_name, VertexAttributeUsage a_usage) :
+			name(a_name), usage(a_usage) { }
 	};
 
 	typedef std::map<std::string, ProgramUniform> UniformMap;
@@ -34,7 +32,9 @@ namespace et
 	typedef StringList ProgramDefinesList;
 
 	class Camera;
-	class ProgramData : public APIObjectData
+	class RenderState;
+	
+	class ProgramData : public APIObject
 	{
 	public:
 		static const std::string emptyShaderSource;
@@ -43,7 +43,7 @@ namespace et
 		ProgramData(RenderState& rs);
 		
 		ProgramData(RenderState& rs, const std::string& vertexShader, const std::string& geometryShader,
-			const std::string& fragmentShader, const std::string& id = "");
+			const std::string& fragmentShader, const std::string& objName, const std::string& origin);
 
 		~ProgramData();
 

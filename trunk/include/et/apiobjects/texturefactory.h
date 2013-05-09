@@ -8,10 +8,8 @@
 #pragma once
 
 #include <et/app/events.h>
-#include <et/threading/criticalsection.h>
+#include <et/apiobjects/objects.h>
 #include <et/apiobjects/apiobjectfactory.h>
-#include <et/apiobjects/texture.h>
-#include <et/apiobjects/texturecache.h>
 #include <et/apiobjects/textureloadingthread.h>
 
 namespace et

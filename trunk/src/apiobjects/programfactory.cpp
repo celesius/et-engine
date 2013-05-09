@@ -97,8 +97,7 @@ Program ProgramFactory::loadProgram(const std::string& file, const ProgramDefine
 
 		if (id == "defines") 
 			parseDefinesString(s.substr(s.find_first_of(':') + 1), resultDefines);
-
-	} 
+	}
 
 	normalizeFilePath(trim(vertex_source));
 	normalizeFilePath(trim(geometry_source));
@@ -117,15 +116,8 @@ Program ProgramFactory::loadProgram(const std::string& file, const ProgramDefine
 		fName = application().environment().findFile(vertex_source);
 
 	bool gl2 = openGLCapabilites().version() == OpenGLVersion_Old;
-	std::string gl2Name;
-
-	if (gl2)
-		gl2Name = replaceFileExt(fName, ".gl2." + getFileExt(fName));
-
-	if (gl2 && fileExists(gl2Name))
-		vertex_shader = loadTextFile(gl2Name);
-	else
-		vertex_shader = loadTextFile(fName);
+	std::string gl2Name = replaceFileExt(fName, ".gl2." + getFileExt(fName));
+	vertex_shader = loadTextFile(gl2 && fileExists(gl2Name) ? gl2Name : fName);
 
 	if ((geometry_source.length()) > 0 && (geometry_source != ProgramData::emptyShaderSource))
 	{
@@ -147,13 +139,8 @@ Program ProgramFactory::loadProgram(const std::string& file, const ProgramDefine
 	if (!fileExists(fName))
 		fName = application().environment().findFile(fragment_source);
 
-	if (gl2)
-		gl2Name = replaceFileExt(fName, ".gl2." + getFileExt(fName));
-
-	if (gl2 && fileExists(gl2Name))
-		frag_shader = loadTextFile(gl2Name);
-	else
-		frag_shader = loadTextFile(fName);
+	gl2Name = replaceFileExt(fName, ".gl2." + getFileExt(fName));
+	frag_shader = loadTextFile((gl2 && fileExists(gl2Name)) ? gl2Name : fName);
 
 	return genProgram(vertex_shader, geom_shader, frag_shader, defines, getFilePath(filename), file);
 }
@@ -166,24 +153,28 @@ Program ProgramFactory::loadProgram(const std::string& file, const std::string& 
 
 Program ProgramFactory::genProgram(std::string& vertexshader, std::string& geometryshader,
 	std::string& fragmentshader, const ProgramDefinesList& defines, const std::string& workFolder,
-	const std::string& id)
+	const std::string& origin)
 {
 	parseSourceCode(ShaderType_Vertex, vertexshader, defines, workFolder);
 	parseSourceCode(ShaderType_Geometry, geometryshader, defines, workFolder);
 	parseSourceCode(ShaderType_Fragment, fragmentshader, defines, workFolder);
-	return Program(new ProgramData(renderContext()->renderState(), vertexshader, geometryshader, fragmentshader, id));
+	
+	return Program(new ProgramData(renderContext()->renderState(), vertexshader,
+		geometryshader, fragmentshader, getFileName(origin), origin));
 }
 
-Program ProgramFactory::genProgram(const std::string& vertexshader, const std::string& geometryshader, const std::string& fragmentshader, 
-	const ProgramDefinesList& defines, const std::string& workFolder, const std::string& id)
+Program ProgramFactory::genProgram(const std::string& vertexshader, const std::string& geometryshader,
+	const std::string& fragmentshader, const ProgramDefinesList& defines, const std::string& workFolder,
+	const std::string& origin)
 {
 	std::string vs = vertexshader;
 	std::string gs = geometryshader;
 	std::string fs = fragmentshader;
-	return genProgram(vs, gs, fs, defines, workFolder, id);
+	return genProgram(vs, gs, fs, defines, workFolder, origin);
 }
 
-void ProgramFactory::parseSourceCode(ShaderType type, std::string& source, const ProgramDefinesList& defines, const std::string& workFolder)
+void ProgramFactory::parseSourceCode(ShaderType type, std::string& source, const ProgramDefinesList& defines,
+	const std::string& workFolder)
 {
 	if ((source.length() == 0) || (source == ProgramData::emptyShaderSource)) return;
 

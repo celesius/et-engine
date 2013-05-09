@@ -7,15 +7,16 @@
 
 #include <time.h>
 #include <et/core/tools.h>
+#include <et/threading/atomiccounter.h>
 #include <et/apiobjects/apiobject.h>
 
 using namespace et;
 
-static size_t apiObjectCounter = 0;
+static AtomicCounter apiObjectCounter;
 
-std::string et::APIObjectData::uniqueName()
+std::string et::uniqueObjectName()
 { 
 	std::string result;
-	size_t unique = time(0) % (rand() + 1) + reinterpret_cast<size_t>(&result) % (rand() + 1) + rand();
-	return "Obj-" + intToStr(++apiObjectCounter) + "-" + intToStr(unique);
+	size_t unique = time(nullptr) + reinterpret_cast<size_t>(&result) % (rand() + 1) + rand();
+	return "Obj-" + intToStr(apiObjectCounter.retain()) + "-" + intToStr(unique);
 }

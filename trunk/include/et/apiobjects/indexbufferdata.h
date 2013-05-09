@@ -13,7 +13,7 @@
 namespace et
 {
 	class RenderState;
-	class IndexBufferData : public APIObjectData
+	class IndexBufferData : public APIObject
 	{
 	public:
 		IndexBufferData(RenderState& rs, IndexArray::Pointer i, BufferDrawType drawType,

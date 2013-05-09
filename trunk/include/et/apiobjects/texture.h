@@ -13,16 +13,7 @@
 
 namespace et
 {
-	class Texture : public IntrusivePtr<TextureData>
-	{
-	public:
-		Texture() : IntrusivePtr<TextureData>(0)
-			{ }
-
-		Texture(TextureData* data) : IntrusivePtr<TextureData>(data)
-			{ }
-	};
-
+	typedef IntrusivePtr<TextureData> Texture;
 	typedef std::vector<Texture> TextureList;
 	typedef std::map<std::string, Texture> TextureMap;
 }

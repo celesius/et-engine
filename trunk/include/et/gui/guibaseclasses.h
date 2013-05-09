@@ -1,5 +1,7 @@
 #pragma once
 
+#include <et/apiobjects/texture.h>
+
 namespace et
 {
 	namespace gui

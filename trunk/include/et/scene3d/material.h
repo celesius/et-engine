@@ -15,7 +15,7 @@ namespace et
 {
 	namespace s3d
 	{
-		class MaterialData : public APIObjectData
+		class MaterialData : public APIObject
 		{
 		public:
 			MaterialData();
@@ -41,7 +41,7 @@ namespace et
 			void serialize(std::ostream& stream, StorageFormat format) const;
 
 			void deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache,
-				const std::string& texturesBasePath, StorageFormat format);
+				const std::string& basePath, StorageFormat format);
 
 			MaterialData* clone() const;
 
@@ -106,7 +106,6 @@ namespace et
 				IntrusivePtr<MaterialData>(data) { }
 		};
 
-		inline bool operator < (const Material& m1, const Material& m2)
-			{ return reinterpret_cast<size_t>(m1.ptr()) < reinterpret_cast<size_t>(m2.ptr()); }
+		typedef ObjectsCache MaterialCache;
 	}
 }
