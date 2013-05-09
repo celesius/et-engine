@@ -11,130 +11,40 @@
 #include <et/core/tools.h>
 #include <et/threading/criticalsection.h>
 #include <et/timers/timedobject.h>
+#include <et/apiobjects/apiobject.h>
 
 namespace et
 {
-	class ObjectsCacheBase : public TimedObject
+	class ObjectsCache : public TimedObject
 	{
 	public:
-		ObjectsCacheBase()
-			{ }
+		ObjectsCache();
+		~ObjectsCache();
+
+		void manage(const APIObject::Pointer& o);
+		void discard(const APIObject::Pointer& o);
+		void clear();
 		
-	private:
-		ET_DENY_COPY(ObjectsCacheBase)
-	};
+		void flush();
 
-	class ObjectsCache : public ObjectsCacheBase
-	{
-	public:
-		ObjectsCache() : _updateTime(0.0f)
-			{ }
+		APIObject::Pointer find(const std::string& key);
 
-		~ObjectsCache()
-			{ clear(); }
-
-		void manage(const APIObject::Pointer& o)
-		{
-			if (o.valid())
-			{
-				CriticalSectionScope lock(_lock);
-				_objects[o->origin()] = o;
-				_properties[o->origin()] = getFileProperty(o->origin());
-			}
-		}
-		
-		APIObject::Pointer find(const std::string& key)
-		{
-			CriticalSectionScope lock(_lock);
-			auto i = _objects.find(key);
-			return (i == _objects.end()) ? APIObject::Pointer() : i->second;
-		}
-		
-		void discard(const APIObject::Pointer& o)
-		{
-			if (o.valid())
-			{
-				CriticalSectionScope lock(_lock);
-				_objects.erase(o->origin());
-				_properties.erase(o->origin());
-			}
-		}
-
-		void clear()
-		{
-			CriticalSectionScope lock(_lock);
-			_objects.clear();
-			_properties.clear();
-		}
-		
-		void flush()
-		{
-			CriticalSectionScope lock(_lock);
-			auto i = _objects.begin();
-			while (i != _objects.end())
-			{
-				if (i->second->atomicCounterValue() == 1)
-				{
-					auto toErase = i++;
-					_properties.erase(i->first);
-					_objects.erase(toErase);
-				}
-				else
-				{
-					++i;
-				}
-			}
-		}
-
-		void startMonitoring()
-		{
-			startUpdates();
-		}
-
-		void stopMonitoring()
-		{
-			cancelUpdates();
-		}
-
-		void update(float t)
-		{
-			if (_updateTime == 0.0f)
-				_updateTime = t;
-			float dt = t - _updateTime;
-
-			if (dt > 1.0f)
-			{
-				performUpdate();
-				_updateTime = t;
-			}
-		}
+		void startMonitoring();
+		void stopMonitoring();
 
 	private:
 		ET_DENY_COPY(ObjectsCache)
 
-		unsigned long getFileProperty(const std::string& p)
-			{ return getFileDate(p); }
+		unsigned long getFileProperty(const std::string& p);
+		void performUpdate();
+		void update(float t);
 
-		void performUpdate()
-		{
-			for (auto& p : _properties)
-			{
-				unsigned long newProp = getFileProperty(p.first);
-				if (newProp != p.second)
-				{
-					_objects[p.first]->reload(p.first);
-					p.second = newProp;
-				}
-			}
-		}
-		
 	private:
-		typedef std::map<const std::string, APIObject::Pointer> ObjectMap;
-		typedef std::map<const std::string, unsigned long> ObjectPropertyMap;
+		typedef std::pair<APIObject::Pointer, unsigned long> ObjectProperty;
+		typedef std::map<const std::string, ObjectProperty> ObjectMap;
 
 		CriticalSection _lock;
 		ObjectMap _objects;
-		ObjectPropertyMap _properties;
 		float _updateTime;
 	};
 }

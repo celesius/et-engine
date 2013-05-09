@@ -17,12 +17,12 @@ namespace et
 		{
 		public:
 			TextureAtlas();
-			TextureAtlas(RenderContext* rc, const std::string& filename, TextureCache& cache);
+			TextureAtlas(RenderContext* rc, const std::string& filename, ObjectsCache& cache);
 			
 			bool loaded() const
 				{ return _loaded; }
 			
-			void loadFromFile(RenderContext* rc, const std::string& filename, TextureCache& cache);
+			void loadFromFile(RenderContext* rc, const std::string& filename, ObjectsCache& cache);
 			void unload();
 			
 			const gui::Image& image(const std::string& key) const;

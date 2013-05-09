@@ -84,10 +84,9 @@ namespace et
 		void build(RenderContext* rc);
         void buildData(const char* ptr, size_t dataSize);
 
-		void reload(const std::string& anOrigin);
-		
+		void reload(const std::string& anOrigin, RenderContext*, ObjectsCache&);
+
 	private:
-		RenderContext* _rc;
 		uint32_t _glID;
 		TextureDescription::Pointer _desc;
 		vector3<TextureWrap> _wrap;

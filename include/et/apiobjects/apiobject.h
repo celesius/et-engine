@@ -14,6 +14,9 @@
 namespace et
 {
 	std::string uniqueObjectName();
+
+	class RenderContext;
+	class ObjectsCache;
 	
 	class APIObject : public Shared
 	{
@@ -33,7 +36,7 @@ namespace et
 		APIObject(const std::string& aName, const std::string& aOrigin) :
 			tag(0), _objectName(aName.empty() ? uniqueObjectName() : aName), _origin(aOrigin) { }
 
-		virtual void reload(const std::string& anOrigin)
+		virtual void reload(const std::string& anOrigin, RenderContext*, ObjectsCache&)
 			{ }
 
 		virtual ~APIObject()

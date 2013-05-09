@@ -26,15 +26,15 @@ namespace et
 			
 			void serialize(const std::string& filename, StorageFormat fmt);
 
-			bool deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc,
+			bool deserialize(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
 				CustomElementFactory* factory, const std::string& basePath);
 			
-			bool deserialize(const std::string& filename, RenderContext* rc, TextureCache& tc,
+			bool deserialize(const std::string& filename, RenderContext* rc, ObjectsCache& tc,
 				CustomElementFactory* factory);
 
 		private:
 			Scene3dStorage::Pointer deserializeStorage(std::istream& stream, RenderContext* rc,
-				TextureCache& tc, const std::string& basePath, StorageFormat fmt);
+				ObjectsCache& tc, const std::string& basePath, StorageFormat fmt);
 			
 			void buildAPIObjects(Scene3dStorage::Pointer p, RenderContext* rc);
 
