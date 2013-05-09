@@ -91,10 +91,13 @@ MaterialData::MaterialData() :
 	setVector(MaterialParameter_DiffuseColor, vec4(1.0f));
 }
 
-MaterialData* MaterialData::clone() const
+MaterialData* MaterialData::duplicate() const
 {
 	MaterialData* m = new MaterialData();
+	
 	m->tag = tag;
+	m->setObjectName(objectName());
+	m->setOrigin(origin());
 
 	m->_defaultIntParameters = _defaultIntParameters;
 	m->_defaultFloatParameters = _defaultFloatParameters;
@@ -110,6 +113,7 @@ MaterialData* MaterialData::clone() const
 
 	m->_blendState = _blendState;
 	m->_depthWriteEnabled = _depthWriteEnabled;
+
 	return m;
 }
 
@@ -610,7 +614,7 @@ void MaterialData::reload(const std::string& anOrigin, RenderContext* rc, Object
 	
 	InputStream stream(anOrigin, StreamMode_Text);
 	if (stream.valid())
-		deserialize3FromXml(stream.stream(), rc, cache, getFileName(anOrigin));
+		deserialize3FromXml(stream.stream(), rc, cache, getFilePath(anOrigin));
 }
 
 void MaterialData::clear()

@@ -47,7 +47,7 @@ namespace et
 
 			void clear();
 			
-			MaterialData* clone() const;
+			MaterialData* duplicate() const;
 
 		public:
 			ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(BlendState, blendState, setBlendState)

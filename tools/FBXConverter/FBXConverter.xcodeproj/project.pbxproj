@@ -28,7 +28,6 @@
 		A5A23ED516811978001B3E98 /* indexbufferdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E5E16811978001B3E98 /* indexbufferdata.cpp */; };
 		A5A23ED616811978001B3E98 /* programdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E5F16811978001B3E98 /* programdata.cpp */; };
 		A5A23ED716811978001B3E98 /* programfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E6016811978001B3E98 /* programfactory.cpp */; };
-		A5A23ED816811978001B3E98 /* texturecache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E6116811978001B3E98 /* texturecache.cpp */; };
 		A5A23ED916811978001B3E98 /* texturedata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E6216811978001B3E98 /* texturedata.cpp */; };
 		A5A23EDA16811978001B3E98 /* texturefactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E6316811978001B3E98 /* texturefactory.cpp */; };
 		A5A23EDB16811978001B3E98 /* textureloadingthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E6416811978001B3E98 /* textureloadingthread.cpp */; };
@@ -115,6 +114,7 @@
 		A5A23F3216811978001B3E98 /* vertexdeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23ED116811978001B3E98 /* vertexdeclaration.cpp */; };
 		A5A23F3416811EBF001B3E98 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A23F3316811EBF001B3E98 /* QuartzCore.framework */; };
 		A5A23F3616811EC3001B3E98 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A23F3516811EC3001B3E98 /* OpenGL.framework */; };
+		A5E2AB41173C448300579BC7 /* objectscache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E2AB40173C448300579BC7 /* objectscache.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -146,7 +146,6 @@
 		A5A23E5E16811978001B3E98 /* indexbufferdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = indexbufferdata.cpp; sourceTree = "<group>"; };
 		A5A23E5F16811978001B3E98 /* programdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = programdata.cpp; sourceTree = "<group>"; };
 		A5A23E6016811978001B3E98 /* programfactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = programfactory.cpp; sourceTree = "<group>"; };
-		A5A23E6116811978001B3E98 /* texturecache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texturecache.cpp; sourceTree = "<group>"; };
 		A5A23E6216811978001B3E98 /* texturedata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texturedata.cpp; sourceTree = "<group>"; };
 		A5A23E6316811978001B3E98 /* texturefactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texturefactory.cpp; sourceTree = "<group>"; };
 		A5A23E6416811978001B3E98 /* textureloadingthread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = textureloadingthread.cpp; sourceTree = "<group>"; };
@@ -233,6 +232,7 @@
 		A5A23ED116811978001B3E98 /* vertexdeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vertexdeclaration.cpp; sourceTree = "<group>"; };
 		A5A23F3316811EBF001B3E98 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A5A23F3516811EC3001B3E98 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		A5E2AB40173C448300579BC7 /* objectscache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = objectscache.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -362,13 +362,13 @@
 		A5A23E5A16811978001B3E98 /* apiobjects */ = {
 			isa = PBXGroup;
 			children = (
+				A5E2AB40173C448300579BC7 /* objectscache.cpp */,
 				A5A23E5B16811978001B3E98 /* apiobject.cpp */,
 				A5A23E5C16811978001B3E98 /* framebufferdata.cpp */,
 				A5A23E5D16811978001B3E98 /* framebufferfactory.cpp */,
 				A5A23E5E16811978001B3E98 /* indexbufferdata.cpp */,
 				A5A23E5F16811978001B3E98 /* programdata.cpp */,
 				A5A23E6016811978001B3E98 /* programfactory.cpp */,
-				A5A23E6116811978001B3E98 /* texturecache.cpp */,
 				A5A23E6216811978001B3E98 /* texturedata.cpp */,
 				A5A23E6316811978001B3E98 /* texturefactory.cpp */,
 				A5A23E6416811978001B3E98 /* textureloadingthread.cpp */,
@@ -700,7 +700,6 @@
 				A5A23ED516811978001B3E98 /* indexbufferdata.cpp in Sources */,
 				A5A23ED616811978001B3E98 /* programdata.cpp in Sources */,
 				A5A23ED716811978001B3E98 /* programfactory.cpp in Sources */,
-				A5A23ED816811978001B3E98 /* texturecache.cpp in Sources */,
 				A5A23ED916811978001B3E98 /* texturedata.cpp in Sources */,
 				A5A23EDA16811978001B3E98 /* texturefactory.cpp in Sources */,
 				A5A23EDB16811978001B3E98 /* textureloadingthread.cpp in Sources */,
@@ -791,6 +790,7 @@
 				A50D32E11720AC42001D31B3 /* log.cpp in Sources */,
 				A50D32E21720AC42001D31B3 /* stream.cpp in Sources */,
 				A50D32E41720AC51001D31B3 /* rendercontext.cpp in Sources */,
+				A5E2AB41173C448300579BC7 /* objectscache.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

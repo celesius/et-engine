@@ -145,7 +145,7 @@ void Element::deserializeGeneralParameters(std::istream& stream, SceneVersion ve
 	{
 		size_t numProperties = deserializeInt(stream);
 		for (size_t i = 0; i < numProperties; ++i)
-			_properites.push_back(deserializeString(stream));
+			_properites.insert(deserializeString(stream));
 	}
 }
 
@@ -204,5 +204,5 @@ void Element::setActive(bool active)
 
 bool Element::hasPropertyString(const std::string& s) const
 {
-	return std::find(_properites.begin(), _properites.end(), s) != _properites.end();
+	return _properites.find(s) != _properites.end();
 }
