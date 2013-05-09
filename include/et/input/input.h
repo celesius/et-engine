@@ -37,6 +37,14 @@ namespace et
 		PointerType_MiddleButton = 0x04,
 	};
 
+	enum PointerOrigin
+	{
+		PointerOrigin_Mouse,
+		PointerOrigin_Trackpad,
+		PointerOrigin_Touchscreen,
+		PointerOrigin_Any
+	};
+
 	typedef size_t PointerType;
 
 	struct PointerInputInfo
@@ -47,21 +55,22 @@ namespace et
 		vec2 normalizedPos;
 		vec2 scroll;
 		PointerType type;
+		PointerOrigin origin;
 		char tag;
 
 		PointerInputInfo() :
-			id(0), timestamp(0), scroll(0), type(PointerType_None), tag(0) { }
+			id(0), timestamp(0), scroll(0), type(PointerType_None), origin(PointerOrigin_Any), tag(0) { }
 		
-		PointerInputInfo(const PointerInputInfo& p) : 
+		PointerInputInfo(const PointerInputInfo& p) :
 			id(p.id), timestamp(p.timestamp), pos(p.pos), normalizedPos(p.normalizedPos), scroll(p.scroll), 
-			type(p.type), tag(p.tag) { }
+			type(p.type), origin(p.origin), tag(p.tag) { }
 
 		PointerInputInfo(PointerInputInfo&& r) : id(r.id), timestamp(r.timestamp), pos(r.pos),
-			normalizedPos(r.normalizedPos), scroll(r.scroll), type(r.type), tag(r.tag) { }
+			normalizedPos(r.normalizedPos), scroll(r.scroll), type(r.type), origin(r.origin), tag(r.tag) { }
 		
 		PointerInputInfo(PointerType t, const vec2& p, const vec2& np, const vec2& aScroll,
-			long aId, float time) : id(aId), timestamp(time), pos(p), normalizedPos(np),
-			scroll(aScroll), type(t), tag(0) { }
+			long aId, float time, PointerOrigin o) : id(aId), timestamp(time), pos(p), normalizedPos(np),
+			scroll(aScroll), type(t), origin(o), tag(0) { }
 
 		PointerInputInfo& operator = (const PointerInputInfo& p)
 		{
@@ -71,6 +80,7 @@ namespace et
 			normalizedPos = p.normalizedPos;
 			scroll = p.scroll;
 			type = p.type;
+			origin = p.origin;
 			tag = p.tag;
 			return *this;
 		}

@@ -240,8 +240,9 @@ int RenderContextPrivate::displayLinkSynchronized()
 	NSPoint nativePoint = [theEvent locationInWindow];
 	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
 	vec2 np(2.0f * p.x / ownFrame.size.width - 1.0f, 1.0f - 2.0f * p.y / ownFrame.size.height);
-	
-	return PointerInputInfo(type, p, np, vec2(0.0f), [theEvent eventNumber], [theEvent timestamp]);
+
+	return PointerInputInfo(type, p, np, vec2(0.0f), [theEvent eventNumber],
+		[theEvent timestamp], PointerOrigin_Any);
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
@@ -288,9 +289,12 @@ int RenderContextPrivate::displayLinkSynchronized()
 	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
 	vec2 np(2.0f * p.x / ownFrame.size.width - 1.0f, 1.0f - 2.0f * p.y / ownFrame.size.height);
 	vec2 scroll([theEvent deltaX] / ownFrame.size.width, [theEvent deltaY] / ownFrame.size.height);
-	
+
+	PointerOrigin origin = (([theEvent momentumPhase] != NSEventPhaseNone) ||
+		([theEvent phase] != NSEventPhaseNone)) ? PointerOrigin_Trackpad : PointerOrigin_Mouse;
+
 	pointerInputSource.pointerScrolled(PointerInputInfo(PointerType_General, p, np,
-		scroll, [theEvent hash], [theEvent timestamp]));
+		scroll, [theEvent hash], [theEvent timestamp], origin));
 }
 
 - (void)beginGestureWithEvent:(NSEvent *)event

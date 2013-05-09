@@ -71,7 +71,7 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 	if (_capturedElement)
 	{
 		_capturedElement->pointerPressed(PointerInputInfo(p.type, _capturedElement->positionInElement(p.pos), 
-			p.normalizedPos, p.scroll, p.id, p.timestamp));
+			p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 		return true;
 	}
 	else 
@@ -86,7 +86,7 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 		else
 		{
 			processed = active->pointerPressed(PointerInputInfo(p.type, active->positionInElement(p.pos),
-				p.normalizedPos, p.scroll, p.id, p.timestamp));
+				p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 
 			if ((p.type == PointerType_General))
 			{
@@ -133,23 +133,19 @@ bool Layout::pointerMoved(const et::PointerInputInfo& p)
 				ElementDragInfo(currentPos, _dragInitialPosition, p.normalizedPos));
 		}
 
-		_capturedElement->pointerMoved(PointerInputInfo(p.type,
-			_capturedElement->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp));
+		_capturedElement->pointerMoved(PointerInputInfo(p.type, _capturedElement->positionInElement(p.pos),
+			p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 
 		return true;
 	}
 	else 
 	{
-		bool processed = false;
-
 		Element* active = activeElement(p);
+		
 		setCurrentElement(p, active);
 
-		if (active)
-		{
-			processed = active->pointerMoved(PointerInputInfo(p.type, active->positionInElement(p.pos), 
-				p.normalizedPos, p.scroll, p.id, p.timestamp));
-		}
+		bool processed = active && active->pointerMoved(PointerInputInfo(p.type,
+			active->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 
 		return processed;
 	}
@@ -162,16 +158,19 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 	Element* active = activeElement(p);
 	if (_capturedElement)
 	{
-		bool processed = _capturedElement->pointerReleased(PointerInputInfo(p.type, _capturedElement->positionInElement(p.pos), 
-			p.normalizedPos, p.scroll, p.id, p.timestamp));
+		bool processed = _capturedElement->pointerReleased(PointerInputInfo(p.type,
+			_capturedElement->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id,
+			p.timestamp, p.origin));
 
 		if ((p.type == PointerType_General) && _dragging)
 		{
 			if (input().canGetCurrentPointerInfo())
 				cancelUpdates();
 
-			vec2 currentPos = _capturedElement->parent()->positionInElement(p.pos);
-			_capturedElement->dragFinished.invoke(_capturedElement, ElementDragInfo(currentPos, _dragInitialPosition, p.normalizedPos));
+			_capturedElement->dragFinished.invoke(_capturedElement,
+				ElementDragInfo(_capturedElement->parent()->positionInElement(p.pos),
+				_dragInitialPosition, p.normalizedPos));
+
 			_dragging = false;
 			_capturedElement = 0;
 		}
@@ -190,7 +189,7 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 		if (active)
 		{
 			processed = active->pointerReleased(PointerInputInfo(p.type, active->positionInElement(p.pos), 
-				p.normalizedPos, p.scroll, p.id, p.timestamp));
+				p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 		}
 
 		return processed;
@@ -204,19 +203,18 @@ bool Layout::pointerScrolled(const et::PointerInputInfo& p)
 	if (_capturedElement)
 	{
 		_capturedElement->pointerScrolled(PointerInputInfo(p.type, _capturedElement->positionInElement(p.pos),
-			p.normalizedPos, p.scroll, p.id, p.timestamp));
+			p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
+		
 		return true;
 	}
 	else 
 	{
 		Element* active = activeElement(p);
 		setCurrentElement(p, active);
-		bool processed = false;
-		if (active)
-		{
-			processed = active->pointerScrolled(PointerInputInfo(p.type, active->positionInElement(p.pos), 
-				p.normalizedPos, p.scroll, p.id, p.timestamp));
-		}
+
+		bool processed = active && active->pointerScrolled(PointerInputInfo(p.type,
+			active->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
+
 		return processed;
 	}
 }

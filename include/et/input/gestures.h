@@ -30,7 +30,7 @@ namespace et
 		ET_DECLARE_EVENT1(zoom, float)
 		ET_DECLARE_EVENT2(zoomAroundPoint, float, vec2)
 		
-		ET_DECLARE_EVENT1(scroll, vec2)
+		ET_DECLARE_EVENT2(scroll, vec2, PointerOrigin)
 
 		/**
 		 * Multiple pointers swipe gesture
