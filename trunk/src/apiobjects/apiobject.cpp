@@ -17,6 +17,6 @@ static AtomicCounter apiObjectCounter;
 std::string et::uniqueObjectName()
 { 
 	std::string result;
-	size_t unique = time(nullptr) + reinterpret_cast<size_t>(&result) % (rand() + 1) + rand();
+	size_t unique = static_cast<size_t>(time(nullptr)) + reinterpret_cast<size_t>(&result) % (rand() + 1) + rand();
 	return "Obj-" + intToStr(apiObjectCounter.retain()) + "-" + intToStr(unique);
 }

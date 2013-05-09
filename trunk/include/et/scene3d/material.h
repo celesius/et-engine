@@ -11,6 +11,8 @@
 #include <et/scene3d/serialization.h>
 #include <et/scene3d/material.parameters.h>
 
+typedef struct _xmlNode xmlNode;
+
 namespace et
 {
 	namespace s3d
