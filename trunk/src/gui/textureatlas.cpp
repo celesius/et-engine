@@ -57,13 +57,13 @@ TextureAtlas::TextureAtlas() : _loaded(false)
 {
 }
 
-TextureAtlas::TextureAtlas(RenderContext* rc, const std::string& filename, TextureCache& cache) :
+TextureAtlas::TextureAtlas(RenderContext* rc, const std::string& filename, ObjectsCache& cache) :
 	_loaded(false)
 {
 	loadFromFile(rc, filename, cache);
 }
 
-void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, TextureCache& cache)
+void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, ObjectsCache& cache)
 {
 	std::string resolvedFileName =
 		application().environment().resolveScalableFileName(filename, rc->screenScaleFactor());

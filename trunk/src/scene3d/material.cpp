@@ -8,8 +8,9 @@
 #include <libxml/tree.h>
 #include <libxml/parser.h>
 
-#include <et/core/serialization.h>
 #include <et/core/tools.h>
+#include <et/core/stream.h>
+#include <et/core/serialization.h>
 #include <et/rendering/rendercontext.h>
 #include <et/scene3d/material.h>
 
@@ -280,7 +281,7 @@ void MaterialData::serializeBinary(std::ostream& stream) const
 		serializeString(stream, i.second))
 }
 
-void MaterialData::deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache,
+void MaterialData::deserialize(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
 	const std::string& texturesBasePath, StorageFormat format)
 {
 	if (format == StorageFormat_HumanReadableMaterials)
@@ -309,7 +310,7 @@ void MaterialData::deserialize(std::istream& stream, RenderContext* rc, TextureC
 	}
 }
 
-void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, TextureCache& cache,
+void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
 	const std::string& texturesBasePath)
 {
 	size_t count = deserializeInt(stream);
@@ -353,7 +354,7 @@ void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, Texture
 	}
 }
 
-void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, TextureCache& cache,
+void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
 	const std::string& texturesBasePath)
 {
 	size_t count = deserializeInt(stream);
@@ -397,7 +398,7 @@ void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, Texture
 	}
 }
 
-void MaterialData::deserialize3(std::istream& stream, RenderContext* rc, TextureCache& cache,
+void MaterialData::deserialize3(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
 	const std::string& texturesBasePath)
 {
 	int numParameters = deserializeInt(stream);
@@ -463,7 +464,7 @@ void MaterialData::loadProperties(xmlNode* root)
 	}
 }
 
-void MaterialData::loadDefaultValues(xmlNode* node, RenderContext* rc, TextureCache& cache,
+void MaterialData::loadDefaultValues(xmlNode* node, RenderContext* rc, ObjectsCache& cache,
 	const std::string& basePath)
 {
 	for (xmlNode* c = node->children; c; c = c->next)
@@ -481,7 +482,7 @@ void MaterialData::loadDefaultValues(xmlNode* node, RenderContext* rc, TextureCa
 }
 
 void MaterialData::loadDefaultValue(xmlNode* node, MaterialParameters param, RenderContext* rc,
-	TextureCache& cache, const std::string& basePath)
+	ObjectsCache& cache, const std::string& basePath)
 {
 	std::string type;
 	std::string value;
@@ -542,7 +543,7 @@ void MaterialData::loadDefaultValue(xmlNode* node, MaterialParameters param, Ren
 	}
 }
 
-void MaterialData::deserialize3FromXml(std::istream& stream, RenderContext* rc, TextureCache& cache,
+void MaterialData::deserialize3FromXml(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
 	const std::string& basePath)
 {
 	size_t size = streamSize(stream) - static_cast<size_t>(stream.tellg());
@@ -589,7 +590,7 @@ void MaterialData::deserialize3FromXml(std::istream& stream, RenderContext* rc, 
 }
 
 Texture MaterialData::loadTexture(RenderContext* rc, const std::string& path, const std::string& basePath,
-	TextureCache& cache)
+	ObjectsCache& cache)
 {
 	if (path.empty()) return Texture();
 
@@ -601,6 +602,38 @@ Texture MaterialData::loadTexture(RenderContext* rc, const std::string& path, co
 	}
 
 	return t;
+}
+
+void MaterialData::reload(const std::string& anOrigin, RenderContext* rc, ObjectsCache& cache)
+{
+	clear();
+	
+	InputStream stream(anOrigin, StreamMode_Text);
+	if (stream.valid())
+		deserialize3FromXml(stream.stream(), rc, cache, getFileName(anOrigin));
+}
+
+void MaterialData::clear()
+{
+	for (size_t i = 0; i < MaterialParameter_max; ++i)
+	{
+		_defaultFloatParameters[i].set = false;
+		_defaultFloatParameters[i].value = 0.0;
+		_defaultIntParameters[i].set = false;
+		_defaultIntParameters[i].value = 0.0;
+		_defaultVectorParameters[i].set = false;
+		_defaultVectorParameters[i].value = vec4();
+		_defaultStringParameters[i].set = false;
+		_defaultStringParameters[i].value = std::string();
+		_defaultTextureParameters[i].set = false;
+		_defaultTextureParameters[i].value = Texture();
+	}
+	
+	_customIntParameters.clear();
+	_customFloatParameters.clear();
+	_customVectorParameters.clear();
+	_customTextureParameters.clear();
+	_customStringParameters.clear();
 }
 
 /*

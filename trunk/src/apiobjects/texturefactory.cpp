@@ -18,7 +18,7 @@ TextureFactory::TextureFactory(RenderContext* rc) : APIObjectFactory(rc)
 	_loadingThread = new TextureLoadingThread(this);
 }
 
-Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache,
+Texture TextureFactory::loadTexture(const std::string& file, ObjectsCache& cache,
 	bool async, TextureLoaderDelegate* delegate)
 {
 	if (file.length() == 0) return Texture();
@@ -176,7 +176,7 @@ void TextureFactory::textureLoadingThreadDidLoadTextureData(TextureLoadingReques
 
 Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std::string& negx,
 	const std::string& posy, const std::string& negy, const std::string& posz, const std::string& negz,
-	TextureCache& cache)
+	ObjectsCache& cache)
 {
 	size_t screenScale = renderContext()->screenScaleFactor();
 	TextureDescription::Pointer layers[6] = 

@@ -17,12 +17,12 @@ namespace et
 	class TextureFactory : public APIObjectFactory, public TextureLoadingThreadDelegate
 	{
 	public:
-		Texture loadTexture(const std::string& file, TextureCache& cache, bool async = false,
+		Texture loadTexture(const std::string& file, ObjectsCache& cache, bool async = false,
 			TextureLoaderDelegate* delegate = 0);
 
 		Texture loadTexturesToCubemap(const std::string& posx, const std::string& negx,
 			const std::string& posy, const std::string& negy, const std::string& posz,
-			const std::string& negz, TextureCache& cache);
+			const std::string& negz, ObjectsCache& cache);
 
 		Texture genNoiseTexture(const vec2i& size, bool normalize, const std::string& id = "");
 		Texture genCubeTexture(int internalformat, GLsizei size, uint32_t format, uint32_t type,

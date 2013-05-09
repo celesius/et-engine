@@ -15,7 +15,7 @@ static const int defaultBindingUnit = 7;
 
 TextureData::TextureData(RenderContext* rc, TextureDescription::Pointer desc,
 	const std::string& id, bool deferred) : APIObject(id, desc->source),
-	_rc(rc), _glID(0), _desc(desc), _own(true)
+	_glID(0), _desc(desc), _own(true)
 {
 	if (deferred) return;
 	
@@ -29,7 +29,7 @@ TextureData::TextureData(RenderContext* rc, TextureDescription::Pointer desc,
 }
 
 TextureData::TextureData(RenderContext* rc, uint32_t texture, const vec2i& size, const std::string& name) :
-	APIObject(name), _rc(rc), _glID(texture), _own(false), _desc(new TextureDescription)
+	APIObject(name), _glID(texture), _own(false), _desc(new TextureDescription)
 {
 	if (!glIsTexture(texture))
 	{
@@ -273,13 +273,13 @@ void TextureData::setMaxLod(RenderContext* rc, size_t value)
 #endif
 }
 
-void TextureData::reload(const std::string& anOrigin)
+void TextureData::reload(const std::string& anOrigin, RenderContext* rc, ObjectsCache&)
 {
-	TextureDescription::Pointer newDesc = TextureLoader::load(anOrigin, _rc->screenScaleFactor());
+	TextureDescription::Pointer newDesc = TextureLoader::load(anOrigin, rc->screenScaleFactor());
 	if (newDesc.valid())
 	{
 		_desc = newDesc;
-		generateTexture(_rc);
-		build(_rc);
+		generateTexture(rc);
+		build(rc);
 	}
 }

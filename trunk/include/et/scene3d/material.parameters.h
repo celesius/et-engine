@@ -57,8 +57,11 @@ namespace et
 		}
 		
 	protected:
-		DefaultMaterialEntryBase() : value(0), set(0) { }
-		DefaultMaterialEntryBase(const T& v) : value(v), set(1) { }
+		DefaultMaterialEntryBase() :
+			value(0), set(0) { }
+		
+		DefaultMaterialEntryBase(const T& v) :
+			value(v), set(1) { }
 	};
 	
 	template <typename T>

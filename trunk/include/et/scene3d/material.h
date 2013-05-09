@@ -40,9 +40,13 @@ namespace et
 
 			void serialize(std::ostream& stream, StorageFormat format) const;
 
-			void deserialize(std::istream& stream, RenderContext* rc, TextureCache& cache,
+			void deserialize(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
 				const std::string& basePath, StorageFormat format);
 
+			void reload(const std::string& anOrigin, RenderContext*, ObjectsCache&);
+
+			void clear();
+			
 			MaterialData* clone() const;
 
 		public:
@@ -53,31 +57,31 @@ namespace et
 			void serializeBinary(std::ostream& stream) const;
 			void serializeReadable(std::ostream& stream) const;
 
-			void deserialize1(std::istream& stream, RenderContext* rc, TextureCache& cache,
+			void deserialize1(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
 				const std::string& texturesBasePath);
 
-			void deserialize2(std::istream& stream, RenderContext* rc, TextureCache& cache,
+			void deserialize2(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
 				const std::string& texturesBasePath);
 
-			void deserialize3(std::istream& stream, RenderContext* rc, TextureCache& cache,
+			void deserialize3(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
 				const std::string& texturesBasePath);
 
 			/*
 			 * Loading from XML
 			 */
-			void deserialize3FromXml(std::istream& stream, RenderContext* rc, TextureCache& cache,
+			void deserialize3FromXml(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
 				const std::string& texturesBasePath);
 
 			void loadProperties(xmlNode*);
 
-			void loadDefaultValues(xmlNode*, RenderContext* rc, TextureCache& cache,
+			void loadDefaultValues(xmlNode*, RenderContext* rc, ObjectsCache& cache,
 				const std::string& basePath);
 			
-			void loadDefaultValue(xmlNode*, MaterialParameters, RenderContext* rc, TextureCache& cache,
+			void loadDefaultValue(xmlNode*, MaterialParameters, RenderContext* rc, ObjectsCache& cache,
 				const std::string& basePath);
 
 			Texture loadTexture(RenderContext* rc, const std::string& path,
-				const std::string& basePath, TextureCache& cache);
+				const std::string& basePath, ObjectsCache& cache);
 
 		private:
 			DefaultIntParameters _defaultIntParameters;

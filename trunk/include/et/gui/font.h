@@ -18,11 +18,11 @@ namespace et
 		{
 		public:
 			FontData();
-			FontData(RenderContext* rc, const std::string& fileName, TextureCache& cache);
+			FontData(RenderContext* rc, const std::string& fileName, ObjectsCache& cache);
 			FontData(const CharacterGenerator::Pointer& generator);
 			~FontData();
 
-			void loadFromFile(RenderContext* rc, const std::string& fileName, TextureCache& cache);
+			void loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsCache& cache);
 
 			const Texture& texture() const 
 				{ return _generator.valid() ? _generator->texture() : _texture; }
@@ -67,7 +67,7 @@ namespace et
 			Font() : IntrusivePtr<FontData>(0) 
 				{ }
 
-			Font(RenderContext* rc, const std::string& fileName, TextureCache& cache) : 
+			Font(RenderContext* rc, const std::string& fileName, ObjectsCache& cache) : 
 				IntrusivePtr<FontData>(new FontData(rc, fileName, cache)) { }
 
 			Font(const CharacterGenerator::Pointer& generator) : 

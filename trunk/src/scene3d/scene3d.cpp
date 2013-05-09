@@ -100,7 +100,7 @@ void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::stri
 	ElementContainer::serialize(stream, SceneVersionLatest);
 }
 
-bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache& tc,
+bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
 	CustomElementFactory* factory, const std::string& basePath)
 {
 	if (stream.fail()) 
@@ -172,7 +172,7 @@ bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, TextureCache&
 
 
 Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, RenderContext* rc,
-	TextureCache& tc, const std::string& basePath, StorageFormat fmt)
+	ObjectsCache& tc, const std::string& basePath, StorageFormat fmt)
 {
 	Scene3dStorage::Pointer result(new Scene3dStorage("storage", 0));
 
@@ -213,6 +213,7 @@ Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, Render
 						m->deserialize(mStream.stream(), rc, tc, basePath, fmt);
 
 					result->addMaterial(m);
+					tc.manage(m);
 				}
 			}
 			else
@@ -283,7 +284,7 @@ void Scene3d::serialize(const std::string& filename, s3d::StorageFormat fmt)
 	serialize(file, fmt, getFilePath(filename));
 }
 
-bool Scene3d::deserialize(const std::string& filename, RenderContext* rc, TextureCache& tc,
+bool Scene3d::deserialize(const std::string& filename, RenderContext* rc, ObjectsCache& tc,
 	CustomElementFactory* factory)
 {
 	std::ifstream file(filename.c_str(), std::ios::binary | std::ios::in);

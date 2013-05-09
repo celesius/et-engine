@@ -18,7 +18,7 @@ FontData::FontData() : _size(0)
 {
 }
 
-FontData::FontData(RenderContext* rc, const std::string& fileName, TextureCache& cache) :  _size(0)
+FontData::FontData(RenderContext* rc, const std::string& fileName, ObjectsCache& cache) :  _size(0)
 {
 	loadFromFile(rc, fileName, cache);
 }
@@ -32,7 +32,7 @@ FontData::~FontData()
 
 }
 
-void FontData::loadFromFile(RenderContext* rc, const std::string& fileName, TextureCache& cache)
+void FontData::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsCache& cache)
 {
 	_chars.clear();
 	_boldChars.clear();
