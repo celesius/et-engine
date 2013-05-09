@@ -28,7 +28,7 @@ TextureData::TextureData(RenderContext* rc, TextureDescription::Pointer desc,
 	build(rc);
 }
 
-TextureData::TextureData(RenderContext* rc, uint32_t texture, const vec2i& size, const std::string& name) :
+TextureData::TextureData(RenderContext*, uint32_t texture, const vec2i& size, const std::string& name) :
 	APIObject(name), _glID(texture), _own(false), _desc(new TextureDescription)
 {
 	if (!glIsTexture(texture))
