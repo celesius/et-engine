@@ -7,11 +7,12 @@
 
 #pragma once
 
+#include <set>
+
 #include <et/core/hierarchy.h>
 #include <et/core/flags.h>
 #include <et/core/transformable.h>
 #include <et/core/serialization.h>
-
 #include <et/scene3d/material.h>
 #include <et/scene3d/serialization.h>
 
@@ -83,14 +84,14 @@ namespace et
 			
 			void clear();
 
-			const StringList& properties() const
+			const std::set<std::string>& properties() const
 				{ return _properites; }
 
-			StringList& properties()
+			std::set<std::string>& properties()
 				{ return _properites; }
 
 			void addPropertyString(const std::string& s)
-				{ _properites.push_back(s); }
+				{ _properites.insert(s); }
 			
 			bool hasPropertyString(const std::string& s) const;
 			
@@ -110,7 +111,7 @@ namespace et
 
 		private:
 			std::string _name;
-			StringList _properites;
+			std::set<std::string> _properites;
 			mat4 _cachedFinalTransform;
 			bool _active;
 		};

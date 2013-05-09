@@ -42,7 +42,7 @@ namespace et
 	{
 	private:
 		RenderContext* _rc;
-		TextureCache& _texCache;
+		ObjectsCache& _texCache;
 		std::string _folder;
 
 	public:
@@ -53,7 +53,7 @@ namespace et
 		s3d::Scene3dStorage::Pointer storage;
 		
 	public:
-		FBXLoaderPrivate(RenderContext* rc, TextureCache& textureCache);
+		FBXLoaderPrivate(RenderContext* rc, ObjectsCache& ObjectsCache);
 		~FBXLoaderPrivate();
 
 		s3d::ElementContainer::Pointer parse();
@@ -86,8 +86,8 @@ using namespace et;
  *
  */
 
-FBXLoaderPrivate::FBXLoaderPrivate(RenderContext* rc, TextureCache& textureCache) :
-	manager(FbxManager::Create()), _rc(rc), _texCache(textureCache)
+FBXLoaderPrivate::FBXLoaderPrivate(RenderContext* rc, ObjectsCache& ObjectsCache) :
+	manager(FbxManager::Create()), _rc(rc), _texCache(ObjectsCache)
 {
 	scene = FbxScene::Create(manager, 0);
 }
@@ -186,16 +186,34 @@ void FBXLoaderPrivate::loadTextures()
 		FbxFileTexture* fileTexture = FbxCast<FbxFileTexture>(scene->GetTexture(i));
 		if (fileTexture && !fileTexture->GetUserDataPtr())
 		{
-			std::string originalName = removeFileExt(fileTexture->GetRelativeFileName());
-			std::string fileName = _folder + originalName;
+			bool shouldLoad = false;
+			
+			std::string originalName;
+			std::string fileName = normalizeFilePath(std::string(fileTexture->GetFileName()));
+			
+			if (fileExists(fileName))
+			{
+				originalName = getFileName(fileName);
+				shouldLoad = true;
+			}
+			else if (getFileExt(fileName).size())
+			{
+				originalName = removeFileExt(getFileName(fileName));
+	
+				fileName = TextureLoader::resolveFileName(_folder + originalName);
+				shouldLoad = fileExists(fileName);
 
-			fileName = TextureLoader::resolveFileName(fileName, 0, true);
-			if (!fileExists(fileName))
-				fileName = TextureLoader::resolveFileName(_folder + getFileName(originalName), 0, true);
+				if (!shouldLoad)
+					log::warning("Unable to resolve file name for texture:\n\t%s", fileName.c_str());
+			}
 
-			Texture tex = _rc->textureFactory().loadTexture(fileName, _texCache);
-			storage->addTexture(tex);
-			fileTexture->SetUserDataPtr(tex.ptr());
+			if (shouldLoad)
+			{
+				Texture texture = _rc->textureFactory().loadTexture(fileName, _texCache);
+				texture->setOrigin(originalName);
+				storage->addTexture(texture);
+				fileTexture->SetUserDataPtr(texture.ptr());
+			}
 		}
 	}
 }
@@ -277,7 +295,10 @@ void FBXLoaderPrivate::loadNode(FbxNode* node, s3d::Element::Pointer parent)
 	createdElement->setName(node->GetName());
 	
 	for (auto p : props)
-		createdElement->addPropertyString(p);
+	{
+		if (!createdElement->hasPropertyString(p))
+			createdElement->addPropertyString(p);
+	}
 
 	int lChildCount = node->GetChildCount();
 	for (int lChildIndex = 0; lChildIndex < lChildCount; ++lChildIndex)
@@ -350,7 +371,7 @@ s3d::Material FBXLoaderPrivate::loadMaterial(FbxSurfaceMaterial* mat)
 {
 	s3d::Material m;
 
-	m->setName(mat->GetName());
+	m->setObjectName(mat->GetName());
 
 	loadMaterialTextureValue(m, MaterialParameter_DiffuseMap, mat, FbxSurfaceMaterial::sDiffuse);
 	loadMaterialTextureValue(m, MaterialParameter_AmbientMap, mat, FbxSurfaceMaterial::sAmbient);
@@ -531,7 +552,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 		for (int m = 0; m < numMaterials; ++m)
 		{
 			s3d::Element* aParent = (m == 0) ? parent.ptr() : element.ptr();
-			std::string aName = (m == 0) ? meshName : (meshName + "~" + materials.at(m)->name());
+			std::string aName = (m == 0) ? meshName : (meshName + "~" + materials.at(m)->objectName());
 
 			s3d::Mesh::Pointer meshElement;
 			if (m == 0)
@@ -551,11 +572,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 			meshElement->setMaterial(materials.at(m));
 			
 			for (auto prop : aParent->properties())
-			{
-				log::info("Copying property %s from %s to %s", prop.c_str(),
-					aParent->name().c_str(), meshElement->name().c_str());
 				meshElement->addPropertyString(prop);
-			}
 
 			for (int lPolygonIndex = 0; lPolygonIndex < lPolygonCount; ++lPolygonIndex)
 			{
@@ -685,11 +702,6 @@ void FBXLoaderPrivate::buildVertexBuffers(RenderContext* rc, s3d::Element::Point
 
 StringList FBXLoaderPrivate::loadNodeProperties(FbxNode* node)
 {
-	if (strcmp("Aim", node->GetName()) == 0)
-	{
-		log::info("!");
-	}
-
 	StringList result;
 	FbxProperty prop = node->GetFirstProperty();
 
@@ -734,18 +746,15 @@ StringList FBXLoaderPrivate::loadNodeProperties(FbxNode* node)
  *
  */
 
-FBXLoader::FBXLoader(const std::string& filename) : _filename(filename)
+FBXLoader::FBXLoader(const std::string& filename) :
+	_filename(filename)
 {
 }
 
-FBXLoader::~FBXLoader()
-{
-}
-
-s3d::ElementContainer::Pointer FBXLoader::load(RenderContext* rc, TextureCache& textureCache)
+s3d::ElementContainer::Pointer FBXLoader::load(RenderContext* rc, ObjectsCache& ObjectsCache)
 {
 	s3d::ElementContainer::Pointer result;
-	FBXLoaderPrivate* loader = new FBXLoaderPrivate(rc, textureCache);
+	FBXLoaderPrivate* loader = new FBXLoaderPrivate(rc, ObjectsCache);
 
 	if (loader->import(_filename))
 		result = loader->parse();

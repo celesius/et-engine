@@ -27,12 +27,12 @@ namespace et
 		ThreadResult main();
 
 	private:
-		OBJLoaderThread(OBJLoader*, TextureCache&);
+		OBJLoaderThread(OBJLoader*, ObjectsCache&);
 
 	private:
 		friend class OBJLoader;
 		OBJLoader* _owner;
-		TextureCache& _cache;
+		ObjectsCache& _cache;
 	};
 	
 	class OBJLoader
@@ -79,17 +79,17 @@ namespace et
 		OBJLoader(RenderContext* rc, const std::string& inFile);
 		~OBJLoader();
 
-		s3d::ElementContainer::Pointer load(TextureCache& cahce);
-		void loadAsync(TextureCache& cahce);
+		s3d::ElementContainer::Pointer load(ObjectsCache& cahce);
+		void loadAsync(ObjectsCache& cahce);
 
 		ET_DECLARE_EVENT1(loaded, s3d::ElementContainer::Pointer)
 
 	private:
-		void loadData(bool async, TextureCache& cache);
+		void loadData(bool async, ObjectsCache& cache);
 		void processLoadedData();
 		s3d::ElementContainer::Pointer generateVertexBuffers();
 
-		void loadMaterials(const std::string& fileName, bool async, TextureCache& cache);
+		void loadMaterials(const std::string& fileName, bool async, ObjectsCache& cache);
 		void threadFinished();
 
 	private:

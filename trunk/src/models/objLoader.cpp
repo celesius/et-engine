@@ -18,7 +18,7 @@ using namespace et;
 using namespace et::s3d;
 using namespace et::obj;
 
-OBJLoaderThread::OBJLoaderThread(OBJLoader* owner, TextureCache& cache) : Thread(false), 
+OBJLoaderThread::OBJLoaderThread(OBJLoader* owner, ObjectsCache& cache) : Thread(false), 
 	_owner(owner), _cache(cache)
 {
 	run();
@@ -79,7 +79,7 @@ void getLine(std::ifstream& stream, std::string& line)
 	}
 }
 
-void OBJLoader::loadData(bool async, TextureCache& cache)
+void OBJLoader::loadData(bool async, ObjectsCache& cache)
 {
 	std::string line;
 	int lineNumber = 0;
@@ -240,7 +240,7 @@ void OBJLoader::loadData(bool async, TextureCache& cache)
 
 }
 
-s3d::ElementContainer::Pointer OBJLoader::load(TextureCache& cache)
+s3d::ElementContainer::Pointer OBJLoader::load(ObjectsCache& cache)
 {
 	loadData(false, cache);
 	processLoadedData();
@@ -250,12 +250,12 @@ s3d::ElementContainer::Pointer OBJLoader::load(TextureCache& cache)
 	return result;
 }
 
-void OBJLoader::loadAsync(TextureCache& cache)
+void OBJLoader::loadAsync(ObjectsCache& cache)
 {
 	_thread = new OBJLoaderThread(this, cache);
 }
 
-void OBJLoader::loadMaterials(const std::string& fileName, bool async, TextureCache& cache)
+void OBJLoader::loadMaterials(const std::string& fileName, bool async, ObjectsCache& cache)
 {
 	std::string filePath = application().environment().findFile(fileName);
 	if (!fileExists(filePath))
@@ -556,7 +556,7 @@ void OBJLoader::loadMaterials(const std::string& fileName, bool async, TextureCa
 					materials.push_back(lastMaterial);
 					std::string name;
 					materialFile >> name;
-					lastMaterial->setName(name);
+					lastMaterial->setObjectName(name);
 				}
 				else
 				{
@@ -647,7 +647,7 @@ void OBJLoader::processLoadedData()
 		Material m;
 		for (Material::List::iterator mi = materials.begin(), me = materials.end(); mi != me; ++mi)
 		{
-			if ((*mi)->name() == (*gi)->material)
+			if ((*mi)->objectName() == (*gi)->material)
 			{
 				m = *mi;
 				break;

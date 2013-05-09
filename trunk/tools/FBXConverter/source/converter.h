@@ -41,7 +41,7 @@ namespace fbxc
 
 	private:
 		et::RenderContext* _rc;
-		et::TextureCache _texCache;
+		et::ObjectsCache _texCache;
 		et::GesturesRecognizer _gestures;
 		et::AutoPtr<et::gui::Gui> _gui;
 		et::s3d::Scene3d _scene;

@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <string>
 #include <et/scene3d/scene3d.h>
 
 namespace et
@@ -17,9 +16,8 @@ namespace et
 	{
 	public:
 		FBXLoader(const std::string& filename);
-		~FBXLoader();
 
-		s3d::ElementContainer::Pointer load(RenderContext* rc, TextureCache& textureCache);
+		s3d::ElementContainer::Pointer load(RenderContext* rc, ObjectsCache& textureCache);
 
 	private:
 		std::string _filename;
