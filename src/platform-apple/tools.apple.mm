@@ -6,6 +6,7 @@
  */
 
 #include <sys/time.h>
+#include <sys/stat.h>
 #include <et/core/datastorage.h>
 #include <et/core/tools.h>
 
@@ -342,6 +343,13 @@ et::vec2i et::nativeScreenSize()
 
 	NSSize size = [[NSScreen mainScreen] frame].size;
 	return vec2i(static_cast<int>(size.width), static_cast<int>(size.height));
-	
+
 #endif
+}
+
+unsigned long et::getFileDate(const std::string& path)
+{
+	struct stat s = { };
+	stat(path.c_str(), &s);
+	return s.st_mtimespec.tv_sec;
 }

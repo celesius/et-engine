@@ -17,7 +17,7 @@ namespace et
 {
 	class RenderContext;
 
-	class TextureData : public APIObjectData
+	class TextureData : public APIObject
 	{
 	public:
 		~TextureData();
@@ -83,8 +83,11 @@ namespace et
 		void generateTexture(RenderContext* rc);
 		void build(RenderContext* rc);
         void buildData(const char* ptr, size_t dataSize);
+
+		void reload(const std::string& anOrigin);
 		
 	private:
+		RenderContext* _rc;
 		uint32_t _glID;
 		TextureDescription::Pointer _desc;
 		vector3<TextureWrap> _wrap;

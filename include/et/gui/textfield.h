@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <et/timers/notifytimer.h>
 #include <et/gui/element2d.h>
 #include <et/gui/font.h>
 

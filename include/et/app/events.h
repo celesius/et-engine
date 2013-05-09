@@ -32,6 +32,7 @@ namespace et
 	{
 	public:
 		virtual ~EventReceiver();
+		
 		void eventConnected(Event* e);
 		void eventDisconnected(Event* e);
 

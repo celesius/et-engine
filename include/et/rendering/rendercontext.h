@@ -16,7 +16,6 @@
 #include <et/rendering/renderer.h>
 #include <et/rendering/renderstate.h>
 
-#include <et/apiobjects/framebuffer.h>
 #include <et/apiobjects/programfactory.h>
 #include <et/apiobjects/texturefactory.h>
 #include <et/apiobjects/framebufferfactory.h>
@@ -36,6 +35,7 @@ namespace et
 
 	class RenderContextPrivate;
 	class RenderContextNotifier;
+	
 	class RenderContext : public EventReceiver
 	{
 	public:

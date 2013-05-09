@@ -17,7 +17,6 @@ namespace et
 		ShaderType_Vertex,
 		ShaderType_Geometry,
 		ShaderType_Fragment,
-		ShaderType_max
 	};
 	
 	class RenderContext;
@@ -26,17 +25,17 @@ namespace et
 	public:
 		ProgramFactory(RenderContext* rc);
 
-		Program loadProgram(const std::string& file, const std::string& defines = "");
+		Program loadProgram(const std::string& file, const std::string& defines = std::string());
 
 		Program loadProgram(const std::string& file, const ProgramDefinesList& defines);
 
 		Program genProgram(std::string& vertexshader, std::string& geometryshader, std::string& fragmentshader, 
 			const ProgramDefinesList& defines = ProgramDefinesList(0), const std::string& workFolder = ".", 
-			const std::string& id = "");
+			const std::string& origin = std::string());
 
 		Program genProgram(const std::string& vertexshader, const std::string& geometryshader,
 			const std::string& fragmentshader, const ProgramDefinesList& defines = ProgramDefinesList(0),
-			const std::string& workFolder = ".", const std::string& id = "");
+			const std::string& workFolder = ".", const std::string& origin = std::string());
 
 		void parseSourceCode(ShaderType type, std::string& code, const ProgramDefinesList& defines,
 			const std::string& workFolder = ".");

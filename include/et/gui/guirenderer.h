@@ -33,19 +33,20 @@ namespace et
 			void setProjectionMatrices(const vec2& contextSize);
 			void setRendernigElement(const RenderingElement::Pointer& r);
 
-			size_t addVertices(const GuiVertexList& vertices, const Texture& texture, ElementClass cls, RenderLayer layer);
-			
+			size_t addVertices(const GuiVertexList& vertices, const Texture& texture,
+				ElementClass cls, RenderLayer layer);
+
 			int measusevertexCountForImageDescriptor(const ImageDescriptor& desc);
 			
 			void createStringVertices(GuiVertexList& vertices, const CharDescriptorList& chars, 
-									  ElementAlignment hAlign, ElementAlignment vAlign, const vec2& pos, 
-									  const vec4& color, const mat4& transform, RenderLayer layer);
-			
+				ElementAlignment hAlign, ElementAlignment vAlign, const vec2& pos,
+				const vec4& color, const mat4& transform, RenderLayer layer);
+
 			void createImageVertices(GuiVertexList& vertices, const Texture& tex, const ImageDescriptor& desc, 
-									 const rect& p, const vec4& color, const mat4& transform, RenderLayer layer);
-			
-			void createColorVertices(GuiVertexList& vertices, const rect& p, const vec4& color, const mat4& transform, 
-									 RenderLayer layer);
+				const rect& p, const vec4& color, const mat4& transform, RenderLayer layer);
+
+			void createColorVertices(GuiVertexList& vertices, const rect& p, const vec4& color,
+				const mat4& transform, RenderLayer layer);
 			
 			void buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, const GuiVertex& topRight,
 						   const GuiVertex& bottomLeft, const GuiVertex& bottomRight);
@@ -61,8 +62,9 @@ namespace et
 		private:
 			void init(RenderContext* rc);
 			void alloc(size_t count);
-			GuiVertexPointer allocateVertices(size_t count, const Texture& texture, ElementClass cls, RenderLayer layer);
-			
+			GuiVertexPointer allocateVertices(size_t count, const Texture& texture,
+				ElementClass cls, RenderLayer layer);
+
 			GuiRenderer& operator = (const GuiRenderer&)
 				{ return *this; }
 			
@@ -85,13 +87,12 @@ namespace et
 			vec2i _customWindowOffset;
 			float _customAlpha;
 	
+			size_t _blendState;
 			bool _saveFillRate;
 			bool _depthTestEnabled;
 			bool _depthMask;
 			bool _blendEnabled;
 			bool _clipEnabled;
-			BlendState _blendState;
 		};
-		
 	}
 }

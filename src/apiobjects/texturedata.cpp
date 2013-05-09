@@ -6,9 +6,7 @@
  */
 
 #include <et/core/tools.h>
-#include <et/opengl/openglcaps.h>
-#include <et/app/application.h>
-#include <et/apiobjects/texture.h>
+#include <et/resources/textureloader.h>
 #include <et/rendering/rendercontext.h>
 
 using namespace et;
@@ -16,7 +14,8 @@ using namespace et;
 static const int defaultBindingUnit = 7;
 
 TextureData::TextureData(RenderContext* rc, TextureDescription::Pointer desc,
-	const std::string& id, bool deferred) : APIObjectData(id), _glID(0), _desc(desc), _own(true)
+	const std::string& id, bool deferred) : APIObject(id, desc->source),
+	_rc(rc), _glID(0), _desc(desc), _own(true)
 {
 	if (deferred) return;
 	
@@ -29,8 +28,8 @@ TextureData::TextureData(RenderContext* rc, TextureDescription::Pointer desc,
 	build(rc);
 }
 
-TextureData::TextureData(RenderContext*, uint32_t texture, const vec2i& size, const std::string& name) : 
-	APIObjectData(name), _glID(texture), _own(false), _desc(new TextureDescription)
+TextureData::TextureData(RenderContext* rc, uint32_t texture, const vec2i& size, const std::string& name) :
+	APIObject(name), _rc(rc), _glID(texture), _own(false), _desc(new TextureDescription)
 {
 	if (!glIsTexture(texture))
 	{
@@ -58,14 +57,14 @@ void TextureData::setWrap(RenderContext* rc, TextureWrap s, TextureWrap t, Textu
 	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
 
 	glTexParameteri(_desc->target, GL_TEXTURE_WRAP_S, textureWrapValue(_wrap.x)); 
-	checkOpenGLError("glTexParameteri<WRAP_S> - %s", name().c_str());
+	checkOpenGLError("glTexParameteri<WRAP_S> - %s", objectName().c_str());
 	
 	glTexParameteri(_desc->target, GL_TEXTURE_WRAP_T, textureWrapValue(_wrap.y));
-	checkOpenGLError("glTexParameteri<WRAP_T> - %s", name().c_str());
+	checkOpenGLError("glTexParameteri<WRAP_T> - %s", objectName().c_str());
 	
 #if defined(GL_TEXTURE_WRAP_R)
 	glTexParameteri(_desc->target, GL_TEXTURE_WRAP_R, textureWrapValue(_wrap.z));
-	checkOpenGLError("glTexParameteri<WRAP_R> - %s", name().c_str()); 
+	checkOpenGLError("glTexParameteri<WRAP_R> - %s", objectName().c_str()); 
 #endif	
 }
 
@@ -83,10 +82,10 @@ void TextureData::setFiltration(RenderContext* rc, TextureFiltration minFiltrati
 		_filtration.y = TextureFiltration_Linear;
 
 	glTexParameteri(_desc->target, GL_TEXTURE_MIN_FILTER, textureFiltrationValue(_filtration.x)); 
-	checkOpenGLError("glTexParameteri<GL_TEXTURE_MIN_FILTER> - %s", name().c_str());
+	checkOpenGLError("glTexParameteri<GL_TEXTURE_MIN_FILTER> - %s", objectName().c_str());
 	
 	glTexParameteri(_desc->target, GL_TEXTURE_MAG_FILTER, textureFiltrationValue(_filtration.y)); 
-	checkOpenGLError("glTexParameteri<GL_TEXTURE_MAG_FILTER> - %s", name().c_str()); 
+	checkOpenGLError("glTexParameteri<GL_TEXTURE_MAG_FILTER> - %s", objectName().c_str()); 
 }
 
 void TextureData::compareRefToTexture(RenderContext* rc, bool enable, uint32_t compareFunc)
@@ -104,7 +103,7 @@ void TextureData::compareRefToTexture(RenderContext* rc, bool enable, uint32_t c
 	else
 	{
 		glTexParameteri(_desc->target, GL_TEXTURE_COMPARE_MODE, GL_NONE);
-		checkOpenGLError("glTexParameteri(_target, GL_TEXTURE_COMPARE_MODE, GL_NONE) - %s", name().c_str()); 
+		checkOpenGLError("glTexParameteri(_target, GL_TEXTURE_COMPARE_MODE, GL_NONE) - %s", objectName().c_str()); 
 	}
 #else
 	assert(0 && "WARNING: GL_TEXTURE_COMPARE_MODE and GL_TEXTURE_COMPARE_FUNC are not defined.");
@@ -113,8 +112,10 @@ void TextureData::compareRefToTexture(RenderContext* rc, bool enable, uint32_t c
 
 void TextureData::generateTexture(RenderContext*)
 {
-	glGenTextures(1, &_glID);
-	checkOpenGLError("TextureData::generateTexture - %s", name().c_str());
+	if (_glID == 0)
+		glGenTextures(1, &_glID);
+
+	checkOpenGLError("TextureData::generateTexture - %s", objectName().c_str());
 }
 
 void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
@@ -190,6 +191,8 @@ void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
 void TextureData::build(RenderContext* rc)
 {
 	assert(_desc.valid());
+	setOrigin(_desc->source);
+
 	if ((_desc->size.square() == 0) || (_desc->internalformat == 0) || (_desc->type == 0)) return;
 
 	_texel = vec2( 1.0f / static_cast<float>(_desc->size.x), 1.0f / static_cast<float>(_desc->size.y) );
@@ -226,10 +229,8 @@ vec2 TextureData::getTexCoord(const vec2& vec, TextureOrigin origin) const
 
 void TextureData::updateData(RenderContext* rc, TextureDescription::Pointer desc)
 {
-	if (_glID == 0)
-		generateTexture(rc);
-
 	_desc = desc;
+	generateTexture(rc);
 	build(rc);
 }
 
@@ -268,6 +269,17 @@ void TextureData::setMaxLod(RenderContext* rc, size_t value)
 #if defined(GL_TEXTURE_MAX_LEVEL)
     rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
 	glTexParameteri(_desc->target, GL_TEXTURE_MAX_LEVEL, value);
-	checkOpenGLError("TextureData::setMaxLod - %s", name().c_str());
+	checkOpenGLError("TextureData::setMaxLod - %s", objectName().c_str());
 #endif
+}
+
+void TextureData::reload(const std::string& anOrigin)
+{
+	TextureDescription::Pointer newDesc = TextureLoader::load(anOrigin, _rc->screenScaleFactor());
+	if (newDesc.valid())
+	{
+		_desc = newDesc;
+		generateTexture(_rc);
+		build(_rc);
+	}
 }

@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <et/apiobjects/texture.h>
 #include <et/gui/guibase.h>
 
 namespace et

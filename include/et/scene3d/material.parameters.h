@@ -7,9 +7,6 @@
 
 #pragma once
 
-#include <map>
-#include <et/apiobjects/texture.h>
-
 namespace et
 {
 	enum MaterialParameters

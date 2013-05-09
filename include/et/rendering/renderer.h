@@ -11,9 +11,6 @@
 #include <et/core/properties.h>
 
 #include <et/rendering/renderstate.h>
-#include <et/apiobjects/vertexarrayobject.h>
-#include <et/apiobjects/texture.h>
-#include <et/apiobjects/program.h>
 
 namespace et
 {

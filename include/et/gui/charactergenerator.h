@@ -7,11 +7,14 @@
 
 #pragma once
 
+#include <et/core/intrusiveptr.h>
 #include <et/gui/fontbase.h>
-#include <et/apiobjects/texturecache.h>
+#include <et/apiobjects/texture.h>
 
 namespace et
 {
+	class RenderContext;
+	
 	namespace gui
 	{
 		class CharacterGeneratorPrivate;

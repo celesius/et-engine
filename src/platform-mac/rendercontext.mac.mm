@@ -217,7 +217,7 @@ int RenderContextPrivate::displayLinkSynchronized()
 		firstSync = false;
 	}
 	
-	if (application().active())
+	if (application().running() && !application().suspended())
 	{
 		CGLLockContext(reinterpret_cast<CGLContextObj>([_openGlContext CGLContextObj]));
 		[_openGlContext makeCurrentContext];

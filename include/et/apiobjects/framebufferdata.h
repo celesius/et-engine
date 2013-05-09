@@ -7,13 +7,13 @@
 
 #pragma once
 
-#include <et/apiobjects/apiobject.h>
 #include <et/apiobjects/texture.h>
-#include <et/apiobjects/texturefactory.h>
 
 namespace et
 {
 	class RenderContext;
+	class TextureFactory;
+	
 	struct FramebufferDescription
 	{
 		vec2i size;
@@ -38,7 +38,7 @@ namespace et
 			colorIsRenderbuffer(false), depthIsRenderbuffer(false), isCubemap(false) { }
 	};
 
-	class FramebufferData : public APIObjectData
+	class FramebufferData : public APIObject
 	{
 	public:
 		enum
@@ -99,8 +99,12 @@ namespace et
 
 	private:
 		friend class FramebufferFactory;
-		FramebufferData(RenderContext* rc, TextureFactory* tf, const FramebufferDescription& desc, const std::string& name);
-		FramebufferData(RenderContext* rc, TextureFactory* tf, uint32_t fboId, const std::string& name);
+		
+		FramebufferData(RenderContext* rc, TextureFactory* tf,
+			const FramebufferDescription& desc, const std::string& name);
+		
+		FramebufferData(RenderContext* rc, TextureFactory* tf,
+			uint32_t fboId, const std::string& name);
 
 		void createColorRenderbuffer(uint32_t internalFormat);
 		void createDepthRenderbuffer(uint32_t internalFormat);

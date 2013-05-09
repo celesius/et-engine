@@ -48,10 +48,23 @@ void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::stri
 		}
 		else if (fmt == StorageFormat_HumanReadableMaterials)
 		{
+			std::map<std::string, int> materialsMap;
 			ET_START_ITERATION(s->materials(), auto&, mi)
 			{
-				std::string matId = intToStr(mi.ptr());
-				std::string mFile = basePath + mi->name() + "_" + matId + ".xml";
+				std::string mFile;
+				std::string matName = mi->objectName();
+				
+				if (materialsMap.find(matName) == materialsMap.end())
+				{
+					mFile = basePath + matName + ".xml";
+					materialsMap[matName] = 1;
+				}
+				else
+				{
+					mFile = basePath + matName + intToStr(materialsMap[matName]) + ".xml";
+					materialsMap[matName] = materialsMap[matName] + 1;
+				}
+
 				serializeInt(stream, reinterpret_cast<int>(mi.ptr()));
 				serializeString(stream, mFile);
 
@@ -192,14 +205,13 @@ Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, Render
 				{
 					Material m;
 					m->tag = deserializeInt(stream);
+					m->setOrigin(basePath + getFileName(deserializeString(stream)));
 
-					std::string matFile = basePath + getFileName(deserializeString(stream));
-					
-					InputStream mStream(matFile, StreamMode_Text);
+					InputStream mStream(m->origin(), StreamMode_Text);
 					
 					if (mStream.valid())
 						m->deserialize(mStream.stream(), rc, tc, basePath, fmt);
-					
+
 					result->addMaterial(m);
 				}
 			}
@@ -328,7 +340,7 @@ VertexArrayObject Scene3d::vaoWithIdentifiers(const std::string& vbid, const std
 {
 	ET_START_ITERATION(_vaos, auto, i)
 	{
-		if ((i->vertexBuffer()->name() == vbid) && (i->indexBuffer()->name() == ibid))
+		if ((i->vertexBuffer()->objectName() == vbid) && (i->indexBuffer()->objectName() == ibid))
 			return i;
 	}
 	ET_END_ITERATION

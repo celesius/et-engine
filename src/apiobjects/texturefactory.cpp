@@ -25,7 +25,7 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
 
 	CriticalSectionScope lock(_csTextureLoading);
     
-    Texture texture = cache.findTexture(file);
+    Texture texture = cache.find(file);
 	if (texture.invalid())
 	{
 		bool calledFromAnotherThread = Threading::currentThread() != threading().renderingThread();
@@ -38,7 +38,7 @@ Texture TextureFactory::loadTexture(const std::string& file, TextureCache& cache
 		if (desc.valid())
 		{
 			texture = Texture(new TextureData(renderContext(), desc, desc->source, calledFromAnotherThread));
-			cache.manageTexture(texture);
+			cache.manage(texture);
 			
 			if (async)
 			{
@@ -228,15 +228,9 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 
 	size_t layerSize = layers[0]->dataSizeForAllMipLevels();
 	TextureDescription::Pointer desc(new TextureDescription);
+	desc->source = posx;
 	desc->target = GL_TEXTURE_CUBE_MAP;
 	desc->layersCount = 6;
-	desc->data.resize(6 * layerSize);
-
-	for (size_t l = 0; l < 6; ++l)
-	{
-		etCopyMemory(desc->data.element_ptr(l * layerSize), layers[l]->data.element_ptr(0), layerSize);
-	}
-	
 	desc->bitsPerPixel = layers[0]->bitsPerPixel;
 	desc->channels = layers[0]->channels;
 	desc->compressed = layers[0]->compressed;
@@ -245,8 +239,13 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 	desc->mipMapCount= layers[0]->mipMapCount;
 	desc->size = layers[0]->size;
 	desc->type = layers[0]->type;
+	desc->data.resize(desc->layersCount * layerSize);
+	for (size_t l = 0; l < desc->layersCount; ++l)
+		etCopyMemory(desc->data.element_ptr(l * layerSize), layers[l]->data.element_ptr(0), layerSize);
 
-	return cache.manageTexture(Texture(new TextureData(renderContext(), desc, texId, false)));
+	Texture result(new TextureData(renderContext(), desc, texId, false));
+	cache.manage(result);
+	return result;
 }
 
 Texture TextureFactory::createTextureWrapper(uint32_t texture, const vec2i& size, const std::string& name)

@@ -5,6 +5,7 @@
  *
  */
 
+#include <et/rendering/rendercontext.h>
 #include <et/gui/guirenderer.h>
 #include <et/opengl/openglcaps.h>
 
@@ -18,19 +19,20 @@ extern std::string gui_default_frag_src;
 extern std::string gui_savefillrate_vertex_src;
 extern std::string gui_savefillrate_frag_src;
 
-GuiRenderer::GuiRenderer(RenderContext* rc, bool saveFillRate) : _rc(rc), _customAlpha(1.0f), _saveFillRate(saveFillRate)
+GuiRenderer::GuiRenderer(RenderContext* rc, bool saveFillRate) :
+	_rc(rc), _customAlpha(1.0f), _saveFillRate(saveFillRate)
 {
 	pushClipRect(recti(vec2i(0), rc->sizei()));
 
 	if (saveFillRate)
 	{
-		_guiProgram = rc->programFactory().genProgram(gui_savefillrate_vertex_src, std::string(), gui_savefillrate_frag_src,
-			ProgramDefinesList(),  std::string(), "shader-gui");
+		_guiProgram = rc->programFactory().genProgram(gui_savefillrate_vertex_src, std::string(),
+			gui_savefillrate_frag_src, ProgramDefinesList(),  std::string(), "shader-gui");
 	}
 	else 
 	{
-		_guiProgram = rc->programFactory().genProgram(gui_default_vertex_src, std::string(), gui_default_frag_src,
-			ProgramDefinesList(),  std::string(), "shader-gui");
+		_guiProgram = rc->programFactory().genProgram(gui_default_vertex_src, std::string(),
+			gui_default_frag_src, ProgramDefinesList(),  std::string(), "shader-gui");
 	}
 
 	_guiDefaultTransformUniform = _guiProgram->getUniformLocation("mDefaultTransform");
@@ -186,7 +188,7 @@ void GuiRenderer::beginRender(RenderContext* rc)
 void GuiRenderer::endRender(RenderContext* rc)
 {
 	rc->renderState().setDepthTest(_depthTestEnabled);
-	rc->renderState().setBlend(_blendEnabled, _blendState);
+	rc->renderState().setBlend(_blendEnabled, static_cast<BlendState>(_blendState));
 	rc->renderState().setDepthMask(_depthMask);
 	rc->renderState().setClip(_clipEnabled, _clipRect);
 }

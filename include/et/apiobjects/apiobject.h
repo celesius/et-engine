@@ -13,25 +13,34 @@
 
 namespace et
 {
-	class APIObjectData : public Shared
+	std::string uniqueObjectName();
+	
+	class APIObject : public Shared
 	{
+	public:
+		typedef IntrusivePtr<APIObject> Pointer;
+		
 	public:
 		int tag;
 
 	public:
-		static std::string uniqueName();
+		APIObject() :
+			tag(0), _objectName(uniqueObjectName()) { }
 
-	public:
-		APIObjectData() :
-			tag(0), _name(APIObjectData::uniqueName()) { }
+		APIObject(const std::string& aName) :
+			tag(0), _objectName(aName.empty() ? uniqueObjectName() : aName) { }
+		
+		APIObject(const std::string& aName, const std::string& aOrigin) :
+			tag(0), _objectName(aName.empty() ? uniqueObjectName() : aName), _origin(aOrigin) { }
 
-		APIObjectData(const std::string& aName) :
-			tag(0), _name(aName.empty() ? APIObjectData::uniqueName() : aName) { }
-
-		virtual ~APIObjectData()
+		virtual void reload(const std::string& anOrigin)
 			{ }
 
-		ET_DECLARE_PROPERTY_GET_REF_SET_REF(std::string, name, setName)
+		virtual ~APIObject()
+			{ }
+
+		ET_DECLARE_PROPERTY_GET_REF_SET_REF(std::string, objectName, setObjectName)
+		ET_DECLARE_PROPERTY_GET_REF_SET_REF(std::string, origin, setOrigin)
 	};
 
 }

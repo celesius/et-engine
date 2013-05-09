@@ -5,12 +5,8 @@
  *
  */
 
-#include <et/vertexbuffer/vertexdeclaration.h>
 #include <et/opengl/openglcaps.h>
-#include <et/apiobjects/program.h>
-#include <et/apiobjects/texture.h>
-#include <et/apiobjects/framebuffer.h>
-#include <et/apiobjects/vertexarrayobject.h>
+#include <et/vertexbuffer/vertexdeclaration.h>
 #include <et/rendering/rendercontext.h>
 #include <et/rendering/renderstate.h>
 

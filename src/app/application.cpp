@@ -25,6 +25,8 @@ Application::Application() : _renderContext(0), _exitCode(0), _lastQueuedTimeMSe
 
 Application::~Application()
 {
+	_running = false;
+
 	platformDeactivate();
 	platformFinalize();
 }
@@ -65,12 +67,13 @@ void Application::idle()
 
 	if (elapsedTime >= _fpsLimitMSec)
 	{
-		if (_active)
+		if (!_suspended)
 		{
 			_runLoop.update(currentTime);
 			_delegate->idle(_runLoop.mainTimerPool()->actualTime());
 			performRendering();
 		}
+		
 		_lastQueuedTimeMSec = queryTimeMSec();
 	}
 	else 

@@ -14,7 +14,7 @@
 namespace et
 {
 	class RenderState;
-	class VertexArrayObjectData : public APIObjectData
+	class VertexArrayObjectData : public APIObject
 	{
 	public:
 		VertexArrayObjectData(RenderState& rs, VertexBuffer vb, IndexBuffer ib,
