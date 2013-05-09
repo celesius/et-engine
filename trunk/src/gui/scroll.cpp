@@ -190,7 +190,7 @@ void Scroll::invalidateChildren()
 void Scroll::broadcastPressed(const PointerInputInfo& p)
 {
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos,
-		p.scroll, p.id, p.timestamp);
+		p.scroll, p.id, p.timestamp, p.origin);
 
 	for (auto i = children().rbegin(), e = children().rend(); i != e; ++i)
 	{
@@ -199,7 +199,7 @@ void Scroll::broadcastPressed(const PointerInputInfo& p)
 		{
 			vec2 posInElement = el->positionInElement(globalPos.pos);
 			if (el->pointerPressed(PointerInputInfo(p.type, posInElement, globalPos.normalizedPos,
-				p.scroll, p.id, p.timestamp)))
+				p.scroll, p.id, p.timestamp, p.origin)))
 			{
 				_selectedElement = Element::Pointer(el);
 				break;
@@ -211,7 +211,7 @@ void Scroll::broadcastPressed(const PointerInputInfo& p)
 void Scroll::broadcastMoved(const PointerInputInfo& p)
 {
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
-		p.id, p.timestamp);
+		p.id, p.timestamp, p.origin);
 
 	for (auto i = children().rbegin(), e = children().rend(); i != e; ++i)
 	{
@@ -219,7 +219,7 @@ void Scroll::broadcastMoved(const PointerInputInfo& p)
 		if (el-visible() && el->enabled())
 		{
 			el->pointerMoved(PointerInputInfo(p.type, el->positionInElement(globalPos.pos),
-				globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
+				globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 		}
 	}
 }
@@ -227,7 +227,7 @@ void Scroll::broadcastMoved(const PointerInputInfo& p)
 void Scroll::broadcastReleased(const PointerInputInfo& p)
 {
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
-		p.id, p.timestamp);
+		p.id, p.timestamp, p.origin);
 
 	for (auto i = children().rbegin(), e = children().rend(); i != e; ++i)
 	{
@@ -235,7 +235,7 @@ void Scroll::broadcastReleased(const PointerInputInfo& p)
 		if (el-visible() && el->enabled())
 		{
 			el->pointerReleased(PointerInputInfo(p.type, el->positionInElement(globalPos.pos),
-				globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
+				globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 		}
 	}
 	
@@ -245,7 +245,7 @@ void Scroll::broadcastReleased(const PointerInputInfo& p)
 void Scroll::broadcastCancelled(const PointerInputInfo& p)
 {
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
-		p.id, p.timestamp);
+		p.id, p.timestamp, p.origin);
 
 	for (auto i = children().rbegin(), e = children().rend(); i != e; ++i)
 	{
@@ -253,7 +253,7 @@ void Scroll::broadcastCancelled(const PointerInputInfo& p)
 		if (el-visible() && el->enabled())
 		{
 			el->pointerCancelled(PointerInputInfo(p.type, el->positionInElement(globalPos.pos),
-				globalPos.normalizedPos, p.scroll, p.id, p.timestamp));
+				globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 		}
 	}
 	
