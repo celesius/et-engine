@@ -621,10 +621,10 @@ void MaterialData::clear()
 {
 	for (size_t i = 0; i < MaterialParameter_max; ++i)
 	{
-		_defaultFloatParameters[i].set = false;
-		_defaultFloatParameters[i].value = 0.0;
 		_defaultIntParameters[i].set = false;
-		_defaultIntParameters[i].value = 0.0;
+		_defaultIntParameters[i].value = 0;
+		_defaultFloatParameters[i].set = false;
+		_defaultFloatParameters[i].value = 0.0f;
 		_defaultVectorParameters[i].set = false;
 		_defaultVectorParameters[i].value = vec4();
 		_defaultStringParameters[i].set = false;

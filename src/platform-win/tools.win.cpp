@@ -260,3 +260,12 @@ std::wstring et::utf8ToUnicode(const std::string& mbcs)
 
 std::string et::applicationIdentifierForCurrentProject()
 	{ return "com.et.app"; }
+
+unsigned long et::getFileDate(const std::string& path)
+{
+	WIN32_FIND_DATA findData = { };
+	HANDLE search = FindFirstFile(path.c_str(), &findData);
+	FindClose(search);
+
+	return static_cast<unsigned long>(findData.ftLastWriteTime.dwLowDateTime);
+}
