@@ -340,7 +340,7 @@ int RenderContextPrivate::displayLinkSynchronized()
 
 - (BOOL)windowShouldClose:(id)sender
 {
-	applicationNotifier.notifyDeactivated();
+	applicationNotifier.notifySuspended();
 	return YES;
 }
 
