@@ -24,6 +24,7 @@ using namespace et;
 {
 @public
 	ApplicationNotifier applicationNotifier;
+	RenderContextPrivate* rcPrivate;
 }
 @end
 
@@ -46,6 +47,7 @@ public:
 	int displayLinkSynchronized();
 	
 	void run();
+	void stop();
 	
 public:
 	RenderContext* _rc;
@@ -174,7 +176,8 @@ RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContex
 	_mainWindow = [[NSWindow alloc] initWithContentRect:contentRect
 		styleMask:NSTitledWindowMask | NSClosableWindowMask backing:NSBackingStoreBuffered defer:YES];
 	
-	_windowDelegate = [etWindowDelegate new];
+	_windowDelegate = [[etWindowDelegate alloc] init];
+	_windowDelegate->rcPrivate = this;
 	[_mainWindow setDelegate:_windowDelegate];
 	
 	_openGlView = [[etOpenGLView alloc] initWithFrame:openglRect pixelFormat:_pixelFormat];
@@ -205,6 +208,13 @@ void RenderContextPrivate::run()
 	}
 	
 	CVDisplayLinkStart(_displayLink);
+}
+
+void RenderContextPrivate::stop()
+{
+	CVDisplayLinkStop(_displayLink);
+	CVDisplayLinkRelease(_displayLink);
+	_displayLink = nil;
 }
 
 int RenderContextPrivate::displayLinkSynchronized()
@@ -341,6 +351,7 @@ int RenderContextPrivate::displayLinkSynchronized()
 - (BOOL)windowShouldClose:(id)sender
 {
 	applicationNotifier.notifySuspended();
+	rcPrivate->stop();
 	return YES;
 }
 
