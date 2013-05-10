@@ -51,13 +51,16 @@ namespace et
 	{
 	public:
 		Animator(const TimerPool& tp) :
-			BaseAnimator(0, 0, tp) { }
+			BaseAnimator(0, 0, tp), _from(), _to(), _value(nullptr),
+			_startTime(0.0f), _duration(0.0f) { }
 
 		Animator(AnimatorDelegate* delegate, int tag, const TimerPool& tp) : 
-			BaseAnimator(delegate, tag, tp) { }
+			BaseAnimator(delegate, tag, tp), _from(), _to(), _value(nullptr),
+			_startTime(0.0f), _duration(0.0f) { }
 
-		Animator(AnimatorDelegate* delegate, T* value, const T& from, const T& to, float duration, int tag, const TimerPool& tp) : 
-			BaseAnimator(delegate, tag, tp)
+		Animator(AnimatorDelegate* delegate, T* value, const T& from, const T& to, float duration,
+			int tag, const TimerPool& tp) : BaseAnimator(delegate, tag, tp), _from(), _to(),
+			_value(nullptr), _startTime(0.0f), _duration(0.0f)
 		{
 			animate(value, from, to, duration);
 		}
@@ -76,6 +79,7 @@ namespace et
 		};
 		
 	protected:
+		
 		void update(float t)
 		{
 			float dt = (t - _startTime) / _duration;
