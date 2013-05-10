@@ -47,4 +47,7 @@ namespace et
 		ObjectMap _objects;
 		float _updateTime;
 	};
+
+	// backward compatibility
+	typedef ObjectsCache TextureCache;
 }
