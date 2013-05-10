@@ -20,7 +20,7 @@ public:
 	void updateTexture(RenderContext* rc, const vec2i& position, const vec2i& size,
 		Texture texture, BinaryDataStorage& data);
 	
-	void renderCharacter(NSString* value, const vec2i& position, const vec2i& size,
+	void renderCharacter(NSAttributedString* value, const vec2i& position, const vec2i& size,
 		NSFont* font, BinaryDataStorage& data);
 	
 public:
@@ -31,8 +31,8 @@ public:
 	
 	NSFont* font;
 	NSFont* boldFont;
-		
-	CGColorRef whiteColor;
+	NSColor* whiteColor;
+
 	CGColorSpaceRef colorSpace;
 };
 
@@ -54,11 +54,17 @@ CharacterGenerator::~CharacterGenerator()
 CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTexture)
 {
 	wchar_t string[2] = { value, 0 };
-    NSString* wString = [[NSString alloc] initWithBytesNoCopy:string length:sizeof(string)
-		encoding:NSUTF32LittleEndianStringEncoding freeWhenDone:NO];
 	
-	NSDictionary* attrib = [[_private->font fontDescriptor] fontAttributes];
-	NSSize characterSize = [wString sizeWithAttributes:attrib];
+	NSString* wString = [[NSString alloc] initWithBytesNoCopy:string length:sizeof(string)
+		encoding:NSUTF32LittleEndianStringEncoding freeWhenDone:NO];
+
+	NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithString:wString];
+
+	NSRange wholeString = NSMakeRange(0, [attrString length]);
+	[attrString addAttribute:NSFontAttributeName value:_private->font range:wholeString];
+	[attrString addAttribute:NSForegroundColorAttributeName value:_private->whiteColor range:wholeString];
+
+	NSSize characterSize = [attrString size];
 	vec2i charSize = vec2i(characterSize.width, characterSize.height);
 		
 	BinaryDataStorage data(charSize.square() * 4, 0);
@@ -66,9 +72,10 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTextu
 	rect textureRect;
 	_private->_placer.place(charSize + vec2i(2), textureRect);
 	vec2i position = vec2i(static_cast<int>(textureRect.left + 1.0f), static_cast<int>(textureRect.top + 1.0f));
-	_private->renderCharacter(wString, position, charSize, _private->font, data);
+	_private->renderCharacter(attrString, position, charSize, _private->font, data);
 	_private->updateTexture(_rc, position, charSize, _texture, data);
-	
+
+	[attrString release];
 	[wString release];
 	
 	CharDescriptor desc(value);
@@ -84,21 +91,28 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTextu
 CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateTexture)
 {
 	wchar_t string[2] = { value, 0 };
-    NSString* wString = [[NSString alloc] initWithBytesNoCopy:string length:sizeof(string)
+
+	NSString* wString = [[NSString alloc] initWithBytesNoCopy:string length:sizeof(string)
 		encoding:NSUTF32LittleEndianStringEncoding freeWhenDone:NO];
-	
-	NSDictionary* attrib = [[_private->boldFont fontDescriptor] fontAttributes];
-	NSSize characterSize = [wString sizeWithAttributes:attrib];
+
+	NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithString:wString];
+
+	NSRange wholeString = NSMakeRange(0, [attrString length]);
+	[attrString addAttribute:NSFontAttributeName value:_private->boldFont range:wholeString];
+	[attrString addAttribute:NSForegroundColorAttributeName value:_private->whiteColor range:wholeString];
+
+	NSSize characterSize = [attrString size];
 	vec2i charSize = vec2i(characterSize.width, characterSize.height);
-	
+
 	BinaryDataStorage data(charSize.square() * 4, 0);
-	
+
 	rect textureRect;
 	_private->_placer.place(charSize + vec2i(2), textureRect);
 	vec2i position = vec2i(static_cast<int>(textureRect.left + 1.0f), static_cast<int>(textureRect.top + 1.0f));
-	_private->renderCharacter(wString, position, charSize, _private->boldFont, data);
+	_private->renderCharacter(attrString, position, charSize, _private->font, data);
 	_private->updateTexture(_rc, position, charSize, _texture, data);
-	
+
+	[attrString release];
 	[wString release];
 	
 	CharDescriptor desc(value, CharParameter_Bold);
@@ -129,7 +143,7 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
 		traits:NSBoldFontMask weight:2 size:size] retain];
 	assert(boldFont);
 	
-	whiteColor = CGColorCreateGenericRGB(1.0f, 1.0f, 1.0f, 1.0f);
+	whiteColor = [[NSColor whiteColor] retain];
 	assert(whiteColor);
 	
 	colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -138,9 +152,9 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
 
 CharacterGeneratorPrivate::~CharacterGeneratorPrivate()
 {
-	CGColorRelease(whiteColor);
 	CGColorSpaceRelease(colorSpace);
-	
+
+	[whiteColor release];
     [font release];
 	[boldFont release];
 }
@@ -152,34 +166,22 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& po
 	texture->updatePartialDataDirectly(rc, dest, size, data.binary(), data.dataSize());
 }
 
-void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i& position,
+void CharacterGeneratorPrivate::renderCharacter(NSAttributedString* value, const vec2i& position,
 	const vec2i& size, NSFont* font, BinaryDataStorage& data)
 {
 	CGContextRef context = CGBitmapContextCreateWithData(data.data(), size.x, size.y, 8, 4 * size.x,
-		colorSpace, kCGImageAlphaPremultipliedLast, 0, 0);
-	assert(context);
-	
-	CGContextSetTextDrawingMode(context, kCGTextFill);
-	CGContextSetRGBFillColor(context, 1.0f, 1.0f, 1.0f, 1.0f);
-	
-	NSDictionary* attrib = [[font fontDescriptor] fontAttributes];
+		colorSpace, kCGImageAlphaPremultipliedLast, nil, nil);
+
 	NSGraphicsContext* aContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:YES];
 	[NSGraphicsContext setCurrentContext:aContext];
-	[font setInContext:aContext];
+
+	[value drawAtPoint:NSMakePoint(0.0, 0.0)];
 	
-	NSRect r = NSMakeRect(0.0 * position.x, 0.0 * position.y, size.x, size.y);
-	[value drawWithRect:r options:NSStringDrawingUsesLineFragmentOrigin attributes:attrib];
-	[value drawAtPoint:NSMakePoint(0 * position.x, 0 * position.y) withAttributes:attrib];
 	[aContext flushGraphics];
-	
 	CGContextRelease(context);
 	
 	unsigned int* ptr = reinterpret_cast<unsigned int*>(data.data());
 	unsigned int* endPtr = ptr + data.dataSize() / 4;
 	while (ptr != endPtr)
 		*ptr++ |= 0x00FFFFFF;
-/*
-	std::string fn = applicationDocumentsBaseFolder() + "'" + [value cStringUsingEncoding:NSUTF8StringEncoding] + "'.png";
-	ImageWriter::writeImageToFile(fn, data, size, 4, 8, ImageFormat_PNG);
-*/ 
 }
