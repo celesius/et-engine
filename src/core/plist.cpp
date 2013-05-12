@@ -28,9 +28,9 @@ static const std::string keyBoolFalse = "<false/>";
 static const std::string keyIntegerOpen = "<integer>";
 static const std::string keyIntegerClose = "</integer>";
 
-DictionaryValueRef Reader::load(const std::string& filename)
+DictionaryEntry<Dictionary>::Pointer Reader::load(const std::string& filename)
 {
-	DictionaryValueRef result(new DictionaryValue());
+	DictionaryEntry<Dictionary>::Pointer result(new DictionaryEntry<Dictionary>);
 	
 	InputStream file(filename, StreamMode_Binary);
 	if (file.invalid())
@@ -38,8 +38,8 @@ DictionaryValueRef Reader::load(const std::string& filename)
 	
 	BinaryDataStorage buffer(streamSize(file.stream()) + 1, 0);
 	file.stream().read(buffer.binary(), buffer.size() - 1);
-	parseBuffer(buffer, static_cast<DictionaryValue*>(result.ptr()));
-	
+	parseBuffer(buffer, result.ptr());
+
 	return result;
 }
 
@@ -110,7 +110,7 @@ inline bool readKey(char*& ptr, std::string& name)
 	return (key == keyClose);
 }
 
-void Reader::parseBuffer(BinaryDataStorage& buffer, DictionaryValue* root)
+void Reader::parseBuffer(BinaryDataStorage& buffer, DictionaryEntry<Dictionary>* root)
 {
 	char* ptr = buffer.binary();
 
@@ -145,10 +145,10 @@ void Reader::parseBuffer(BinaryDataStorage& buffer, DictionaryValue* root)
 		return;
 	}
 
-	parseDictionary(root, ptr);
+	parseDictionary(ptr, root);
 }
 
-bool Reader::parseDictionary(DictionaryValue* owner, char*& ptr)
+bool Reader::parseDictionary(char*& ptr, DictionaryEntry<Dictionary>* owner)
 {
 	if (!isOpeningTag(ptr[0])) 
 	{
@@ -169,7 +169,7 @@ bool Reader::parseDictionary(DictionaryValue* owner, char*& ptr)
 		DictionaryEntryBase* val = 0;
 		if (parseValue(ptr, &val))
 		{
-			owner->setValueForKey(DictionaryEntryBaseRef(val), key);
+			owner->setValueForKey(DictionaryEntryBase::Pointer(val), key);
 		}
 		else
 		{
@@ -192,7 +192,8 @@ bool Reader::parseString(char*& ptr, DictionaryEntryBase** value)
 	std::string v = readValue(ptr);
 
 	if (readTag(ptr) != keyStringClose) return false;
-	*value = new StringValue(v);
+	*value = new DictionaryEntry<std::string>(v);
+	
 	return true;
 }
 
@@ -201,7 +202,8 @@ bool Reader::parseInteger(char*& ptr, DictionaryEntryBase** value)
 	std::string v = readValue(ptr);
 
 	if (readTag(ptr) != keyIntegerClose) return false;
-	*value = new NumericValue(static_cast<double>(strToInt(v)));
+	*value = new DictionaryEntry<double>(strToDouble(v));
+
 	return true;
 }
 
@@ -211,8 +213,8 @@ bool Reader::parseValue(char*& ptr, DictionaryEntryBase** value)
 
 	if (valueType == keyDictionaryOpen)
 	{
-		*value = new DictionaryValue();
-		return parseDictionary(static_cast<DictionaryValue*>(*value), ptr);
+		*value = new DictionaryEntry<Dictionary>;
+		return parseDictionary(ptr, static_cast<DictionaryEntry<Dictionary>*>(*value));
 	}
 	else if (valueType == keyArrayOpen)
 	{
@@ -228,12 +230,12 @@ bool Reader::parseValue(char*& ptr, DictionaryEntryBase** value)
 	}
 	else if (valueType == keyBoolTrue)
 	{
-		*value = new BoolValue(true);
+		*value = new DictionaryEntry<bool>(true);
 		return true;
 	}
 	else if (valueType == keyBoolFalse)
 	{
-		*value = new BoolValue(false);
+		*value = new DictionaryEntry<bool>(false);
 		return true;
 	}
 	else
@@ -246,7 +248,7 @@ bool Reader::parseValue(char*& ptr, DictionaryEntryBase** value)
 
 bool Reader::parseArray(char*& ptr, DictionaryEntryBase** value)
 {
-	ArrayValue* aValue = new ArrayValue();
+	DictionaryEntry<Array>* aValue = new DictionaryEntry<Array>();
 	*value = aValue;
 
 	volatile bool reading = true;
@@ -262,7 +264,7 @@ bool Reader::parseArray(char*& ptr, DictionaryEntryBase** value)
 		{
 			DictionaryEntryBase* v = 0;
 			if (parseValue(ptr, &v))
-				aValue->push_back(DictionaryEntryBaseRef(v));
+				aValue->push_back(DictionaryEntryBase::Pointer(v));
 		}
 
 	}

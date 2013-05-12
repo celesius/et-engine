@@ -14,7 +14,8 @@ using namespace et;
  * Invocation Task
  */
 
-InvocationTask::InvocationTask(PureInvocationTarget* invocation) : _invocation(invocation)
+InvocationTask::InvocationTask(PureInvocationTarget* invocation) :
+	_invocation(invocation)
 {
 }
 

@@ -178,9 +178,12 @@ namespace et
 	inline int strToInt(const std::string& value)
 		{ return std::atoi(value.c_str()); }
 
+	inline float strToDouble(const std::string& value)
+		{ return std::atof(value.c_str()); }
+
 	inline float strToFloat(const std::string& value)
-		{ return static_cast<float>(std::atof(value.c_str())); }
-		
+		{ return static_cast<float>(strToDouble(value)); }
+
 	inline bool strToBool(std::string s)
 	{
 		lowercase(s);
