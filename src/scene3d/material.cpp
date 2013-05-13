@@ -554,10 +554,12 @@ void MaterialData::deserialize3FromXml(std::istream& stream, RenderContext* rc, 
 	StringDataStorage data(size + 1, 0);
 	stream.read(data.data(), size);
 
+	xmlInitParser();
 	xmlDoc* xml = xmlReadMemory(data.data(), size, basePath.c_str(), nullptr, 0);
 	if (xml == nullptr)
 	{
 		log::error("Unable to deserialize material from xml.");
+		xmlCleanupParser();
 		return;
 	}
 
@@ -565,6 +567,8 @@ void MaterialData::deserialize3FromXml(std::istream& stream, RenderContext* rc, 
 	if ((root == nullptr) || (strcmp(reinterpret_cast<const char*>(root->name), "material") != 0))
 	{
 		log::error("Unable to deserialize material from xml.");
+		xmlFreeDoc(xml);
+		xmlCleanupParser();
 		return;
 	}
 
@@ -591,6 +595,7 @@ void MaterialData::deserialize3FromXml(std::istream& stream, RenderContext* rc, 
 	}
 
 	xmlFreeDoc(xml);
+	xmlCleanupParser();
 }
 
 Texture MaterialData::loadTexture(RenderContext* rc, const std::string& path, const std::string& basePath,

@@ -22,6 +22,7 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	_gestures.pointerPressed.connect(this, &Converter::onPointerPressed);
 	_gestures.pointerMoved.connect(this, &Converter::onPointerMoved);
 	_gestures.pointerReleased.connect(this, &Converter::onPointerReleased);
+	_gestures.scroll.connect(this, &Converter::onScroll);
 	_gestures.zoom.connect(this, &Converter::onZoom);
 	_gestures.drag.connect(this, &Converter::onDrag);
 
@@ -197,6 +198,12 @@ void Converter::onZoom(float z)
 void Converter::onDrag(et::vec2 v, et::PointerType)
 {
 	_vAngle.addVelocity(0.25f * vec2(-v.y, v.x));
+}
+
+void Converter::onScroll(et::vec2 s, et::PointerOrigin o)
+{
+	if (o == PointerOrigin_Mouse)
+		onZoom(1.0f + 0.5f * s.y);
 }
 
 void Converter::onBtnOpenClick(et::gui::Button*)

@@ -198,9 +198,12 @@ void FBXLoaderPrivate::loadTextures()
 			if (shouldLoad)
 			{
 				Texture texture = _rc->textureFactory().loadTexture(fileName, _texCache);
-				texture->setOrigin(originalName);
-				storage->addTexture(texture);
-				fileTexture->SetUserDataPtr(texture.ptr());
+				if (texture.valid())
+				{
+					texture->setOrigin(originalName);
+					storage->addTexture(texture);
+					fileTexture->SetUserDataPtr(texture.ptr());
+				}
 			}
 		}
 	}
@@ -237,6 +240,7 @@ void FBXLoaderPrivate::loadNode(FbxNode* node, s3d::Element::Pointer parent)
 		if (lNodeAttribute->GetAttributeType() == FbxNodeAttribute::eMesh)
 		{
 			FbxMesh* mesh = node->GetMesh();
+
 			if (!mesh->IsTriangleMesh())
 			{
 				log::info("Triangulating %s ...", node->GetName());
@@ -246,20 +250,19 @@ void FBXLoaderPrivate::loadNode(FbxNode* node, s3d::Element::Pointer parent)
 			}
 		
 			s3d::Mesh* storedElement = static_cast<s3d::Mesh*>(mesh->GetUserDataPtr());
-			if (storedElement == 0)
+
+			if (storedElement == nullptr)
 			{
 				createdElement = loadMesh(mesh, parent, materials, props);
 				mesh->SetUserDataPtr(createdElement.ptr());
 			}
 			else
 			{
-				s3d::Mesh* instance = 0;
-
+				s3d::Mesh* instance = nullptr;
 				if (storedElement->type() == s3d::ElementType_Mesh)
 					 instance = storedElement->duplicate();
 				else if (storedElement->type() == s3d::ElementType_SupportMesh)
 					instance = static_cast<s3d::SupportMesh*>(storedElement->duplicate());
-
 				createdElement.reset(instance);
 			}
 		}
@@ -537,7 +540,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 
 	if (isContainer)
 	{
-		for (int m = 0; m < numMaterials; ++m)
+		for (int m = 0; m < materials.size(); ++m)
 		{
 			s3d::Element* aParent = (m == 0) ? parent.ptr() : element.ptr();
 			std::string aName = (m == 0) ? meshName : (meshName + "~" + materials.at(m)->objectName());
@@ -597,10 +600,10 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 		me->tag = vbIndex;
 		me->setStartIndex(vertexBaseOffset);
 		me->setNumIndexes(lPolygonVertexCount);
-		
+
 		if (materials.size())
 			me->setMaterial(materials.front());
-		
+
 		for (int lPolygonIndex = 0; lPolygonIndex < lPolygonCount; ++lPolygonIndex)
 		{
 			for (int lVerticeIndex = 0; lVerticeIndex < 3; ++lVerticeIndex)
