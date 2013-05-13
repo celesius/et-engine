@@ -28,6 +28,7 @@ namespace fbxc
 		void onPointerReleased(et::PointerInputInfo);
 		void onZoom(float);
 		void onDrag(et::vec2, et::PointerType);
+		void onScroll(et::vec2, et::PointerOrigin);
 		void onCameraUpdated();
 
 		void onBtnOpenClick(et::gui::Button*); 
