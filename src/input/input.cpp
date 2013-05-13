@@ -22,7 +22,7 @@ void Input::pushKeyboardInputAction(size_t key, InputAction action)
 	} 
 	else if (action == InputAction_KeyUp)
 	{
-		_pressedKeys.erase(_pressedKeys.find(key));
+		_pressedKeys.erase(key);
 		keyReleased.invokeInMainRunLoop(key);
 	}
 	else if (action == InputAction_Char)
