@@ -6,6 +6,11 @@
  */
 
 #include <QuartzCore/QuartzCore.h>
+
+#if defined(ET_SUPPORT_FACEBOOK_SDK)
+#	include <FacebookSDK/FacebookSDK.h>
+#endif
+
 #include <et/app/application.h>
 #include <et/app/applicationnotifier.h>
 #include <et/platform-ios/applicationdelegate.h>
@@ -103,6 +108,14 @@ using namespace et;
 	return [vc supportedInterfaceOrientations];
 }
 
+#endif
+
+#if defined(ET_SUPPORT_FACEBOOK_SDK)
+- (BOOL)application:(UIApplication*)application openURL:(NSURL*)url
+	sourceApplication:(NSString*)sourceApplication annotation:(id)annotation
+{
+    return [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
+}
 #endif
 
 @end
