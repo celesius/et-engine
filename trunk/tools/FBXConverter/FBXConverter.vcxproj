@@ -22,13 +22,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v110</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -45,12 +45,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>D:\SDK\FBX\include;$(SolutionDir)\..\..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\SDK\FBX\lib\vs2010\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\msvc2012;D:\SDK\FBX\lib\vs2010\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>D:\SDK\FBX\include;$(SolutionDir)\..\..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\SDK\FBX\lib\vs2010\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\msvc2012;D:\SDK\FBX\lib\vs2010\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -58,7 +58,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;FBXSDK_NEW_API;ET_MSC_USE_1600_TOOLSET;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;FBXSDK_NEW_API;ET_MSC_USE_1600_TOOLSET;FBXSDK_SHARED;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/MP4 %(AdditionalOptions)</AdditionalOptions>
       <MinimalRebuild>false</MinimalRebuild>
@@ -67,7 +67,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fbxsdk-2013.3-mdd.lib;wininet.lib;psapi.lib;libpng.lib;libjpeg.lib;zlib.lib;libxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -78,7 +78,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;FBXSDK_NEW_API;ET_MSC_USE_1600_TOOLSET;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;FBXSDK_NEW_API;ET_MSC_USE_1600_TOOLSET;FBXSDK_SHARED;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/MP4 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
@@ -88,7 +88,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>psapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fbxsdk-2013.3.lib;wininet.lib;psapi.lib;libpng.lib;libjpeg.lib;zlib.lib;libxml2.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -96,9 +96,9 @@
     <ClCompile Include="..\..\src\apiobjects\framebufferdata.cpp" />
     <ClCompile Include="..\..\src\apiobjects\framebufferfactory.cpp" />
     <ClCompile Include="..\..\src\apiobjects\indexbufferdata.cpp" />
+    <ClCompile Include="..\..\src\apiobjects\objectscache.cpp" />
     <ClCompile Include="..\..\src\apiobjects\programdata.cpp" />
     <ClCompile Include="..\..\src\apiobjects\programfactory.cpp" />
-    <ClCompile Include="..\..\src\apiobjects\texturecache.cpp" />
     <ClCompile Include="..\..\src\apiobjects\texturedata.cpp" />
     <ClCompile Include="..\..\src\apiobjects\texturefactory.cpp" />
     <ClCompile Include="..\..\src\apiobjects\textureloadingthread.cpp" />
@@ -113,8 +113,9 @@
     <ClCompile Include="..\..\src\camera\camera.cpp" />
     <ClCompile Include="..\..\src\camera\frustum.cpp" />
     <ClCompile Include="..\..\src\collision\aabb.cpp" />
-    <ClCompile Include="..\..\src\core\debug.cpp" />
+    <ClCompile Include="..\..\src\core\log.cpp" />
     <ClCompile Include="..\..\src\core\plist.cpp" />
+    <ClCompile Include="..\..\src\core\stream.cpp" />
     <ClCompile Include="..\..\src\core\tools.cpp" />
     <ClCompile Include="..\..\src\core\transformable.cpp" />
     <ClCompile Include="..\..\src\geometry\geometry.cpp" />
@@ -127,7 +128,6 @@
     <ClCompile Include="..\..\src\gui\guibase.cpp" />
     <ClCompile Include="..\..\src\gui\guirenderer.cpp" />
     <ClCompile Include="..\..\src\gui\imageview.cpp" />
-    <ClCompile Include="..\..\src\gui\keyboard.cpp" />
     <ClCompile Include="..\..\src\gui\label.cpp" />
     <ClCompile Include="..\..\src\gui\layout.cpp" />
     <ClCompile Include="..\..\src\gui\listbox.cpp" />
@@ -145,105 +145,31 @@
     <ClCompile Include="..\..\src\imaging\pvrloader.cpp" />
     <ClCompile Include="..\..\src\input\gestures.cpp" />
     <ClCompile Include="..\..\src\input\input.cpp" />
-    <ClCompile Include="..\..\src\libjpeg\cdjpeg.c" />
-    <ClCompile Include="..\..\src\libjpeg\jaricom.c" />
-    <ClCompile Include="..\..\src\libjpeg\jcapimin.c" />
-    <ClCompile Include="..\..\src\libjpeg\jcapistd.c" />
-    <ClCompile Include="..\..\src\libjpeg\jcarith.c" />
-    <ClCompile Include="..\..\src\libjpeg\jccoefct.c" />
-    <ClCompile Include="..\..\src\libjpeg\jccolor.c" />
-    <ClCompile Include="..\..\src\libjpeg\jcdctmgr.c" />
-    <ClCompile Include="..\..\src\libjpeg\jchuff.c" />
-    <ClCompile Include="..\..\src\libjpeg\jcinit.c" />
-    <ClCompile Include="..\..\src\libjpeg\jcmainct.c" />
-    <ClCompile Include="..\..\src\libjpeg\jcmarker.c" />
-    <ClCompile Include="..\..\src\libjpeg\jcmaster.c" />
-    <ClCompile Include="..\..\src\libjpeg\jcomapi.c" />
-    <ClCompile Include="..\..\src\libjpeg\jcparam.c" />
-    <ClCompile Include="..\..\src\libjpeg\jcprepct.c" />
-    <ClCompile Include="..\..\src\libjpeg\jcsample.c" />
-    <ClCompile Include="..\..\src\libjpeg\jctrans.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdapimin.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdapistd.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdarith.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdatadst.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdatasrc.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdcoefct.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdcolor.c" />
-    <ClCompile Include="..\..\src\libjpeg\jddctmgr.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdhuff.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdinput.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdmainct.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdmarker.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdmaster.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdmerge.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdpostct.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdsample.c" />
-    <ClCompile Include="..\..\src\libjpeg\jdtrans.c" />
-    <ClCompile Include="..\..\src\libjpeg\jerror.c" />
-    <ClCompile Include="..\..\src\libjpeg\jfdctflt.c" />
-    <ClCompile Include="..\..\src\libjpeg\jfdctfst.c" />
-    <ClCompile Include="..\..\src\libjpeg\jfdctint.c" />
-    <ClCompile Include="..\..\src\libjpeg\jidctflt.c" />
-    <ClCompile Include="..\..\src\libjpeg\jidctfst.c" />
-    <ClCompile Include="..\..\src\libjpeg\jidctint.c" />
-    <ClCompile Include="..\..\src\libjpeg\jmemansi.c" />
-    <ClCompile Include="..\..\src\libjpeg\jmemmgr.c" />
-    <ClCompile Include="..\..\src\libjpeg\jquant1.c" />
-    <ClCompile Include="..\..\src\libjpeg\jquant2.c" />
-    <ClCompile Include="..\..\src\libjpeg\jutils.c" />
-    <ClCompile Include="..\..\src\libjpeg\rdbmp.c" />
-    <ClCompile Include="..\..\src\libjpeg\rdcolmap.c" />
-    <ClCompile Include="..\..\src\libjpeg\rdgif.c" />
-    <ClCompile Include="..\..\src\libjpeg\rdppm.c" />
-    <ClCompile Include="..\..\src\libjpeg\rdrle.c" />
-    <ClCompile Include="..\..\src\libjpeg\rdswitch.c" />
-    <ClCompile Include="..\..\src\libjpeg\rdtarga.c" />
-    <ClCompile Include="..\..\src\libjpeg\transupp.c" />
-    <ClCompile Include="..\..\src\libjpeg\wrbmp.c" />
-    <ClCompile Include="..\..\src\libjpeg\wrgif.c" />
-    <ClCompile Include="..\..\src\libjpeg\wrppm.c" />
-    <ClCompile Include="..\..\src\libjpeg\wrrle.c" />
-    <ClCompile Include="..\..\src\libjpeg\wrtarga.c" />
-    <ClCompile Include="..\..\src\libpng\png.c" />
-    <ClCompile Include="..\..\src\libpng\pngerror.c" />
-    <ClCompile Include="..\..\src\libpng\pngget.c" />
-    <ClCompile Include="..\..\src\libpng\pngmem.c" />
-    <ClCompile Include="..\..\src\libpng\pngpread.c" />
-    <ClCompile Include="..\..\src\libpng\pngread.c" />
-    <ClCompile Include="..\..\src\libpng\pngrio.c" />
-    <ClCompile Include="..\..\src\libpng\pngrtran.c" />
-    <ClCompile Include="..\..\src\libpng\pngrutil.c" />
-    <ClCompile Include="..\..\src\libpng\pngset.c" />
-    <ClCompile Include="..\..\src\libpng\pngtrans.c" />
-    <ClCompile Include="..\..\src\libpng\pngwio.c" />
-    <ClCompile Include="..\..\src\libpng\pngwrite.c" />
-    <ClCompile Include="..\..\src\libpng\pngwtran.c" />
-    <ClCompile Include="..\..\src\libpng\pngwutil.c" />
     <ClCompile Include="..\..\src\locale\locale.cpp" />
     <ClCompile Include="..\..\src\models\3dsloader.cpp" />
     <ClCompile Include="..\..\src\models\fbxloader.cpp" />
     <ClCompile Include="..\..\src\models\objLoader.cpp" />
     <ClCompile Include="..\..\src\opengl\opengl.common.cpp" />
+    <ClCompile Include="..\..\src\opengl\openglcaps.cpp" />
     <ClCompile Include="..\..\src\platform-win\application.win.cpp" />
+    <ClCompile Include="..\..\src\platform-win\atomiccounter.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\charactergenerator.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\criticalsection.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\fontgen.win.cpp" />
-    <ClCompile Include="..\..\src\platform-win\gl.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\input.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\locale.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\location.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\mutex.win.cpp" />
+    <ClCompile Include="..\..\src\platform-win\opengl.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\orientation.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\platformtools.win.cpp" />
-    <ClCompile Include="..\..\src\platform-win\referencecounter.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\rendercontext.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\sound.openal.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\thread.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\threading.win.cpp" />
     <ClCompile Include="..\..\src\platform-win\tools.win.cpp" />
-    <ClCompile Include="..\..\src\platform-win\videocapture.win.cpp" />
     <ClCompile Include="..\..\src\primitives\primitives.cpp" />
+    <ClCompile Include="..\..\src\rendering\rendercontext.cpp" />
     <ClCompile Include="..\..\src\rendering\renderer.cpp" />
     <ClCompile Include="..\..\src\rendering\rendering.cpp" />
     <ClCompile Include="..\..\src\rendering\renderstate.cpp" />
@@ -265,55 +191,10 @@
     <ClCompile Include="..\..\src\vertexbuffer\vertexarray.cpp" />
     <ClCompile Include="..\..\src\vertexbuffer\vertexdatachunk.cpp" />
     <ClCompile Include="..\..\src\vertexbuffer\vertexdeclaration.cpp" />
-    <ClCompile Include="..\..\src\zlib\adler32.c" />
-    <ClCompile Include="..\..\src\zlib\compress.c" />
-    <ClCompile Include="..\..\src\zlib\crc32.c" />
-    <ClCompile Include="..\..\src\zlib\deflate.c" />
-    <ClCompile Include="..\..\src\zlib\gzclose.c" />
-    <ClCompile Include="..\..\src\zlib\gzlib.c" />
-    <ClCompile Include="..\..\src\zlib\gzread.c" />
-    <ClCompile Include="..\..\src\zlib\gzwrite.c" />
-    <ClCompile Include="..\..\src\zlib\infback.c" />
-    <ClCompile Include="..\..\src\zlib\inffast.c" />
-    <ClCompile Include="..\..\src\zlib\inflate.c" />
-    <ClCompile Include="..\..\src\zlib\inftrees.c" />
-    <ClCompile Include="..\..\src\zlib\trees.c" />
-    <ClCompile Include="..\..\src\zlib\uncompr.c" />
-    <ClCompile Include="..\..\src\zlib\zutil.c" />
     <ClCompile Include="FBXConverter.cpp" />
     <ClCompile Include="source\converter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\libjpeg\cderror.h" />
-    <ClInclude Include="..\..\include\libjpeg\cdjpeg.h" />
-    <ClInclude Include="..\..\include\libjpeg\jconfig.h" />
-    <ClInclude Include="..\..\include\libjpeg\jdct.h" />
-    <ClInclude Include="..\..\include\libjpeg\jerror.h" />
-    <ClInclude Include="..\..\include\libjpeg\jinclude.h" />
-    <ClInclude Include="..\..\include\libjpeg\jmemsys.h" />
-    <ClInclude Include="..\..\include\libjpeg\jmorecfg.h" />
-    <ClInclude Include="..\..\include\libjpeg\jpegint.h" />
-    <ClInclude Include="..\..\include\libjpeg\jpeglib.h" />
-    <ClInclude Include="..\..\include\libjpeg\jversion.h" />
-    <ClInclude Include="..\..\include\libjpeg\transupp.h" />
-    <ClInclude Include="..\..\include\libpng\png.h" />
-    <ClInclude Include="..\..\include\libpng\pngconf.h" />
-    <ClInclude Include="..\..\include\libpng\pngdebug.h" />
-    <ClInclude Include="..\..\include\libpng\pnginfo.h" />
-    <ClInclude Include="..\..\include\libpng\pnglibconf.h" />
-    <ClInclude Include="..\..\include\libpng\pngpriv.h" />
-    <ClInclude Include="..\..\include\libpng\pngstruct.h" />
-    <ClInclude Include="..\..\include\zlib\crc32.h" />
-    <ClInclude Include="..\..\include\zlib\deflate.h" />
-    <ClInclude Include="..\..\include\zlib\gzguts.h" />
-    <ClInclude Include="..\..\include\zlib\inffast.h" />
-    <ClInclude Include="..\..\include\zlib\inffixed.h" />
-    <ClInclude Include="..\..\include\zlib\inflate.h" />
-    <ClInclude Include="..\..\include\zlib\inftrees.h" />
-    <ClInclude Include="..\..\include\zlib\trees.h" />
-    <ClInclude Include="..\..\include\zlib\zconf.h" />
-    <ClInclude Include="..\..\include\zlib\zlib.h" />
-    <ClInclude Include="..\..\include\zlib\zutil.h" />
     <ClInclude Include="source\converter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

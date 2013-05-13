@@ -178,7 +178,7 @@ namespace et
 	inline int strToInt(const std::string& value)
 		{ return std::atoi(value.c_str()); }
 
-	inline float strToDouble(const std::string& value)
+	inline double strToDouble(const std::string& value)
 		{ return std::atof(value.c_str()); }
 
 	inline float strToFloat(const std::string& value)

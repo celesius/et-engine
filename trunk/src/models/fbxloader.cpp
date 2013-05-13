@@ -18,18 +18,6 @@
 #include <et/scene3d/supportmesh.h>
 #include <et/models/fbxloader.h>
 
-#if (ET_PLATFORM_WIN)
-#
-#	pragma comment(lib, "wininet.lib")
-#
-#	if (ET_DEBUG)
-#		pragma comment(lib, "fbxsdk-2013.3-mtd.lib")
-#	else
-#		pragma comment(lib, "fbxsdk-2013.3-mt.lib")
-#	endif
-#
-#endif
-
 using namespace FBXSDK_NAMESPACE;
 
 const std::string s_supportMeshProperty = "support=true";
@@ -294,11 +282,11 @@ void FBXLoaderPrivate::loadNode(FbxNode* node, s3d::Element::Pointer parent)
 	createdElement->setTransform(transform);
 	createdElement->setName(node->GetName());
 	
-	for (auto p : props)
+	ET_ITERATE(props, auto, p,
 	{
 		if (!createdElement->hasPropertyString(p))
 			createdElement->addPropertyString(p);
-	}
+	})
 
 	int lChildCount = node->GetChildCount();
 	for (int lChildIndex = 0; lChildIndex < lChildCount; ++lChildIndex)
@@ -411,7 +399,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 
 	size_t lodIndex = 0;
 	bool support = false;
-	for (auto p : params)
+	ET_ITERATE(params, auto, p,
 	{
 		lowercase(p);
 		p.erase(std::remove_if(p.begin(), p.end(), [](char c){ return isWhitespaceChar(c); } ), p.end());
@@ -427,7 +415,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 			std::string prop = p.substr(s_lodMeshProperty.size());
 			lodIndex = strToInt(trim(prop));
 		}
-	}
+	})
 
 	int lPolygonCount = mesh->GetPolygonCount();
 	int lPolygonVertexCount = lPolygonCount * 3;
@@ -571,8 +559,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 			meshElement->setStartIndex(indexOffset);
 			meshElement->setMaterial(materials.at(m));
 			
-			for (auto prop : aParent->properties())
-				meshElement->addPropertyString(prop);
+			ET_ITERATE(aParent->properties(), auto, prop, meshElement->addPropertyString(prop))
 
 			for (int lPolygonIndex = 0; lPolygonIndex < lPolygonCount; ++lPolygonIndex)
 			{
@@ -666,34 +653,34 @@ void FBXLoaderPrivate::buildVertexBuffers(RenderContext* rc, s3d::Element::Point
 
 	std::vector<VertexArrayObject> vertexArrayObjects;
 	VertexArrayList& vertexArrays = storage->vertexArrays();
-	for (auto i : vertexArrays)
+	ET_ITERATE(vertexArrays, auto, i,
 	{
 		VertexArrayObject vao = rc->vertexBufferFactory().createVertexArrayObject("fbx-vao");
 		VertexBuffer vb = rc->vertexBufferFactory().createVertexBuffer("fbx-v", i, BufferDrawType_Static);
 		vao->setBuffers(vb, primaryIndexBuffer);
 		vertexArrayObjects.push_back(vao);
-	}
+	})
 
 	s3d::Element::List meshes = root->childrenOfType(s3d::ElementType_Mesh);
-	for (auto i : meshes)
+	ET_ITERATE(meshes, auto, i,
 	{
 		s3d::Mesh* mesh = static_cast<s3d::Mesh*>(i.ptr());
 		mesh->setVertexArrayObject(vertexArrayObjects[mesh->tag]);
-	}
+	})
 
-	for (auto i : meshes)
+	ET_ITERATE(meshes, auto, i,
 	{
 		s3d::Mesh* mesh = static_cast<s3d::Mesh*>(i.ptr());
 		mesh->cleanupLodChildren();
-	}
+	})
 
 	meshes = root->childrenOfType(s3d::ElementType_SupportMesh);
-	for (auto i : meshes)
+	ET_ITERATE(meshes, auto, i,
 	{
 		s3d::SupportMesh* mesh = static_cast<s3d::SupportMesh*>(i.ptr());
 		mesh->setVertexArrayObject(vertexArrayObjects[mesh->tag]);
 		mesh->fillCollisionData(vertexArrays[mesh->tag], storage->indexArray());
-	}
+	})
 
 	rc->renderState().bindVertexArray(0);
 	rc->renderState().bindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
