@@ -8,18 +8,6 @@
     <Filter Include="engine">
       <UniqueIdentifier>{40d6369a-4ce3-4d15-af63-5bf5e5210cd0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\libjpeg">
-      <UniqueIdentifier>{2a0b2be9-053f-4704-901c-cf8f3a4d501e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\zlib">
-      <UniqueIdentifier>{02f9883b-2964-4534-9fc6-978fcda82d2f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\libpng">
-      <UniqueIdentifier>{c72b094e-c843-46dd-8f42-aac86fbfbc42}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\engine">
-      <UniqueIdentifier>{8d740f99-0561-4def-a668-b8e97bed94ab}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\converter.cpp">
@@ -28,664 +16,307 @@
     <ClCompile Include="FBXConverter.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdsample.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdtrans.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jerror.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jfdctflt.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jfdctfst.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jfdctint.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jidctflt.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jidctfst.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jidctint.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jmemansi.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jmemmgr.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jquant1.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jquant2.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jutils.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\rdbmp.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\rdcolmap.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\rdgif.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\rdppm.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\rdrle.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\rdswitch.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\rdtarga.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\transupp.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\wrbmp.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\wrgif.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\wrppm.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\wrrle.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\wrtarga.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\cdjpeg.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jaricom.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jcapimin.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jcapistd.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jcarith.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jccoefct.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jccolor.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jcdctmgr.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jchuff.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jcinit.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jcmainct.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jcmarker.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jcmaster.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jcomapi.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jcparam.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jcprepct.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jcsample.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jctrans.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdapimin.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdapistd.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdarith.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdatadst.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdatasrc.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdcoefct.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdcolor.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jddctmgr.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdhuff.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdinput.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdmainct.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdmarker.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdmaster.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdmerge.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libjpeg\jdpostct.c">
-      <Filter>engine\libjpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zlib\adler32.c">
-      <Filter>engine\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zlib\compress.c">
-      <Filter>engine\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zlib\crc32.c">
-      <Filter>engine\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zlib\deflate.c">
-      <Filter>engine\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zlib\gzclose.c">
-      <Filter>engine\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zlib\gzlib.c">
-      <Filter>engine\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zlib\gzread.c">
-      <Filter>engine\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zlib\gzwrite.c">
-      <Filter>engine\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zlib\infback.c">
-      <Filter>engine\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zlib\inffast.c">
-      <Filter>engine\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zlib\inflate.c">
-      <Filter>engine\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zlib\inftrees.c">
-      <Filter>engine\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zlib\trees.c">
-      <Filter>engine\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zlib\uncompr.c">
-      <Filter>engine\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zlib\zutil.c">
-      <Filter>engine\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libpng\png.c">
-      <Filter>engine\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libpng\pngerror.c">
-      <Filter>engine\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libpng\pngget.c">
-      <Filter>engine\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libpng\pngmem.c">
-      <Filter>engine\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libpng\pngpread.c">
-      <Filter>engine\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libpng\pngread.c">
-      <Filter>engine\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libpng\pngrio.c">
-      <Filter>engine\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libpng\pngrtran.c">
-      <Filter>engine\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libpng\pngrutil.c">
-      <Filter>engine\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libpng\pngset.c">
-      <Filter>engine\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libpng\pngtrans.c">
-      <Filter>engine\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libpng\pngwio.c">
-      <Filter>engine\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libpng\pngwrite.c">
-      <Filter>engine\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libpng\pngwtran.c">
-      <Filter>engine\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\libpng\pngwutil.c">
-      <Filter>engine\libpng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\apiobject.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\framebufferdata.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\framebufferfactory.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\indexbufferdata.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\programdata.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\programfactory.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\texturecache.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\texturedata.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\texturefactory.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\textureloadingthread.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\vertexarrayobjectdata.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\vertexbufferdata.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\vertexbufferfactory.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\app\appevironment.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\app\events.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\app\invocation.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\app\runloop.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\camera\camera.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\camera\frustum.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\core\debug.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\core\plist.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\core\tools.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\core\transformable.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\geometry\geometry.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\geometry\rectplacer.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\button.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\element2d.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\element3d.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\font.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\gui.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\guibase.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\guirenderer.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\imageview.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\keyboard.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\label.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\layout.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\listbox.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\messageview.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\renderingelement.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\scroll.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\textfield.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\textureatlas.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\gui\textureatlaswriter.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\imaging\ddsloader.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\imaging\imageoperations.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\imaging\imagewriter.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\imaging\jpgloader.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\imaging\pngloader.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\imaging\pvrloader.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\input\gestures.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\input\input.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\locale\locale.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\models\3dsloader.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\models\fbxloader.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\models\objLoader.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\opengl\opengl.common.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\application.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\charactergenerator.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\criticalsection.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\fontgen.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\gl.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\input.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\locale.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\location.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\mutex.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\orientation.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\platformtools.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\referencecounter.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\rendercontext.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\sound.openal.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\thread.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\threading.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\tools.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\videocapture.win.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\primitives\primitives.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\rendering\renderer.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\rendering\rendering.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\rendering\renderstate.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\resources\textureloader.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scene3d\cameraelement.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scene3d\element.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scene3d\material.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scene3d\mesh.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scene3d\scene3d.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scene3d\serialization.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scene3d\storage.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\scene3d\supportmesh.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tasks\taskpool.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\timers\notifytimer.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\timers\sequence.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\timers\timedobject.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\timers\timerpool.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\vertexbuffer\indexarray.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\vertexbuffer\vertexarray.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\vertexbuffer\vertexdatachunk.cpp">
-      <Filter>engine\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\vertexbuffer\vertexdeclaration.cpp">
-      <Filter>engine\engine</Filter>
+      <Filter>engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\collision\aabb.cpp">
-      <Filter>engine\engine</Filter>
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\apiobject.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\app\appevironment.cpp">
+      <Filter>engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\app\application.cpp">
-      <Filter>engine\engine</Filter>
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\application.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\atomiccounter.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\button.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\camera\camera.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\scene3d\cameraelement.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\charactergenerator.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\criticalsection.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\imaging\ddsloader.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\scene3d\element.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\element2d.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\element3d.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\app\events.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\models\fbxloader.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\font.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\fontgen.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\framebufferdata.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\framebufferfactory.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\camera\frustum.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geometry\geometry.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\input\gestures.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\gui.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\guibase.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\guirenderer.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\imaging\imageoperations.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\imageview.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\imaging\imagewriter.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vertexbuffer\indexarray.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\indexbufferdata.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\input\input.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\input.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\app\invocation.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\imaging\jpgloader.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\label.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\layout.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\listbox.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\locale\locale.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\locale.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\location.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\log.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\scene3d\material.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\scene3d\mesh.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\messageview.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\mutex.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\timers\notifytimer.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\objectscache.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\models\objLoader.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\opengl\opengl.common.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\orientation.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\platformtools.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\plist.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\imaging\pngloader.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\primitives\primitives.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\programdata.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\programfactory.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\imaging\pvrloader.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geometry\rectplacer.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\rendercontext.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\rendering\renderer.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\rendering\rendering.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\renderingelement.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\rendering\renderstate.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\app\runloop.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\scene3d\scene3d.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\scroll.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\timers\sequence.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\scene3d\serialization.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\sound.openal.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\scene3d\storage.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\stream.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\scene3d\supportmesh.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tasks\taskpool.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\textfield.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\textureatlas.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui\textureatlaswriter.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\texturedata.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\texturefactory.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\resources\textureloader.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\textureloadingthread.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\thread.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\threading.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\timers\timedobject.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\timers\timerpool.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\tools.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\tools.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\transformable.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vertexbuffer\vertexarray.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\vertexarrayobjectdata.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\vertexbufferdata.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\vertexbufferfactory.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vertexbuffer\vertexdatachunk.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vertexbuffer\vertexdeclaration.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\opengl.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\opengl\openglcaps.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\rendering\rendercontext.cpp">
+      <Filter>engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\converter.h">
       <Filter>Файлы исходного кода</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libjpeg\cderror.h">
-      <Filter>engine\libjpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libjpeg\cdjpeg.h">
-      <Filter>engine\libjpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libjpeg\jdct.h">
-      <Filter>engine\libjpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libjpeg\jerror.h">
-      <Filter>engine\libjpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libjpeg\jinclude.h">
-      <Filter>engine\libjpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libjpeg\jmemsys.h">
-      <Filter>engine\libjpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libjpeg\jmorecfg.h">
-      <Filter>engine\libjpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libjpeg\jpegint.h">
-      <Filter>engine\libjpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libjpeg\jpeglib.h">
-      <Filter>engine\libjpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libjpeg\jversion.h">
-      <Filter>engine\libjpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libjpeg\transupp.h">
-      <Filter>engine\libjpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\zlib\crc32.h">
-      <Filter>engine\zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\zlib\deflate.h">
-      <Filter>engine\zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\zlib\gzguts.h">
-      <Filter>engine\zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\zlib\inffast.h">
-      <Filter>engine\zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\zlib\inffixed.h">
-      <Filter>engine\zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\zlib\inflate.h">
-      <Filter>engine\zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\zlib\inftrees.h">
-      <Filter>engine\zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\zlib\trees.h">
-      <Filter>engine\zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\zlib\zconf.h">
-      <Filter>engine\zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\zlib\zlib.h">
-      <Filter>engine\zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\zlib\zutil.h">
-      <Filter>engine\zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libpng\png.h">
-      <Filter>engine\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libpng\pngconf.h">
-      <Filter>engine\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libpng\pngdebug.h">
-      <Filter>engine\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libpng\pnginfo.h">
-      <Filter>engine\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libpng\pnglibconf.h">
-      <Filter>engine\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libpng\pngpriv.h">
-      <Filter>engine\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libpng\pngstruct.h">
-      <Filter>engine\libpng</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\libjpeg\jconfig.h">
-      <Filter>engine\libjpeg</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

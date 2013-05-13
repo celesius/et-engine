@@ -100,7 +100,7 @@ unsigned long ObjectsCache::getFileProperty(const std::string& p)
 
 void ObjectsCache::performUpdate()
 {
-	for (auto& p : _objects)
+	ET_ITERATE(_objects, auto&, p, 
 	{
 		unsigned long newProp = getFileProperty(p.first);
 		if (newProp != p.second.second)
@@ -109,5 +109,5 @@ void ObjectsCache::performUpdate()
 			_objects[p.first].first->reload(p.first, ApplicationNotifier().accessRenderContext(), *this);
 			p.second.second = newProp;
 		}
-	}
+	})
 }

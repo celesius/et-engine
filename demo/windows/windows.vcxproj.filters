@@ -50,9 +50,6 @@
     <ClCompile Include="..\..\src\apiobjects\programfactory.cpp">
       <Filter>Engine\source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\texturecache.cpp">
-      <Filter>Engine\source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\apiobjects\texturedata.cpp">
       <Filter>Engine\source</Filter>
     </ClCompile>
@@ -233,9 +230,6 @@
     <ClCompile Include="..\..\src\platform-win\platformtools.win.cpp">
       <Filter>Engine\source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\platform-win\referencecounter.win.cpp">
-      <Filter>Engine\source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\platform-win\rendercontext.win.cpp">
       <Filter>Engine\source</Filter>
     </ClCompile>
@@ -294,6 +288,21 @@
       <Filter>Engine\source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\vertexbuffer\vertexdeclaration.cpp">
+      <Filter>Engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\objectscache.cpp">
+      <Filter>Engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform-win\atomiccounter.win.cpp">
+      <Filter>Engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\rendering\rendercontext.cpp">
+      <Filter>Engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\log.cpp">
+      <Filter>Engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\stream.cpp">
       <Filter>Engine\source</Filter>
     </ClCompile>
   </ItemGroup>
