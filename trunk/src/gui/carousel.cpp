@@ -22,6 +22,7 @@ const float minDragToNextItemVelocity = 1.0f;
 const float slowdownCoefficient = 10.0f;
 const float movementScale = 1300.0f;
 const float maxVelocity = 30.0f;
+const float defaultAnimationDuration = 0.3f;
 
 CarouselItem::CarouselItem(const Camera& camera, const Texture& texture,
 	const ImageDescriptor& desc, size_t aTag, Carousel* parent) : Element3D(camera, parent), 
@@ -268,17 +269,17 @@ void Carousel::buildItems()
 	invalidateContent();
 }
 
-void Carousel::setSelectedItem(int item, bool animated)
+void Carousel::setSelectedItem(size_t item, float duration)
 {
 	if (_type == CarouselType_Ribbon)
 	{
-		item = clamp(item, 0, static_cast<int>(_items.size()) - 1);
+		item = clamp(item, 0u, _items.size() - 1);
 		float newSelectedItem = static_cast<float>(item);
 
-		if (animated)
+		if (duration > 0.0f)
 		{
 			_animating = true;
-			_setItemAnimator.animate(&_selectedItem, _selectedItem, newSelectedItem, 0.25f);
+			_setItemAnimator.animate(&_selectedItem, _selectedItem, newSelectedItem, duration);
 		}
 		else 
 		{
@@ -319,16 +320,17 @@ void Carousel::animatorFinished(BaseAnimator* a)
 		_animating = false;
 }
 
-int Carousel::selectedItem() const
+size_t Carousel::selectedItem() const
 {
 	float f = floorf(_selectedItem);
-	int result = static_cast<int>(f);
+	size_t result = static_cast<size_t>(f);
 	return (_selectedItem - f > 0.5f) ? result + 1 : result;
 } 
 
 bool Carousel::pointerPressed(const PointerInputInfo& p)
 {
-	if ((_alpha < 1.0e-4) || (_dragOnlyItems && itemForInputInfo(p, 0).invalid())) return false;
+	size_t item = 0;
+	if ((_alpha < 1.0e-4) || (_dragOnlyItems && itemForInputInfo(p, item).invalid())) return false;
 
 	if (p.type == PointerType_General)
 	{
@@ -343,12 +345,13 @@ bool Carousel::pointerPressed(const PointerInputInfo& p)
 		_waitingClick = false;
 	}
 
-	return itemForInputInfo(p, 0).valid();
+	return itemForInputInfo(p, item).valid();
 }
 
 bool Carousel::pointerMoved(const PointerInputInfo& p)
 {
-	if (!_dragging && _dragOnlyItems && itemForInputInfo(p, 0).invalid()) return false;
+	size_t item = 0;
+	if (!_dragging && _dragOnlyItems && itemForInputInfo(p, item).invalid()) return false;
 
 	if ((p.type == PointerType_General))
 	{
@@ -380,12 +383,13 @@ bool Carousel::pointerMoved(const PointerInputInfo& p)
 		}
 	}
 
-	return itemForInputInfo(p, 0).valid();
+	return itemForInputInfo(p, item).valid();
 }
 
 bool Carousel::pointerReleased(const PointerInputInfo& p)
 {
-	if (!_dragging && _dragOnlyItems && itemForInputInfo(p, 0).invalid()) return false;
+	size_t item = 0;
+	if (!_dragging && _dragOnlyItems && itemForInputInfo(p, item).invalid()) return false;
 
 	bool processed = _dragging;
 	if (p.type == PointerType_General)
@@ -424,8 +428,9 @@ void Carousel::pointerLeaved(const PointerInputInfo&)
 
 bool Carousel::containsPoint(const vec2& p, const vec2& np)
 {
+	size_t iIndex = 0;
 	CarouselItem::Pointer item = itemForInputInfo(PointerInputInfo(PointerType_General, p, np,
-		vec2(0.0f), 0, 0.0f, PointerOrigin_Any), 0);
+		vec2(0.0f), 0, 0.0f, PointerOrigin_Any), iIndex);
 	
 	return (_alpha > 0.0f) && (_dragOnlyItems ? item.valid() : true);
 }
@@ -436,11 +441,11 @@ void Carousel::alignSelectedItem(bool)
 	if (_dragging || (fvel > minUpdateVelocity)) return;
 
 	_velocity = 0.0f;
-	float f = floor(_selectedItem);
+	float f = clamp(floor(_selectedItem), 0.0f, static_cast<float>(_items.size() - 1));
 	int newItem = static_cast<int>(f);
 	newItem += (_selectedItem - f) > 0.5f ? 1 : 0;
 
-	setSelectedItem(newItem, true);
+	setSelectedItem(newItem, defaultAnimationDuration);
 }
 
 void Carousel::update(float t)
@@ -475,14 +480,14 @@ void Carousel::update(float t)
 
 bool Carousel::performClick(const PointerInputInfo& p)
 {
-	int index = 0;
+	size_t index = 0;
 
-	CarouselItem::Pointer item = itemForInputInfo(p, &index);
+	CarouselItem::Pointer item = itemForInputInfo(p, index);
 	if (item.valid())
 	{
 		if (std::abs(_selectedItem - index) > minUpdateDelta)
 		{
-			setSelectedItem(static_cast<int>(index), true);
+			setSelectedItem(index, defaultAnimationDuration);
 		}
 		else 
 		{
@@ -507,9 +512,9 @@ void Carousel::setCenter(const vec2& c, float duration)
 	}
 }
 
-CarouselItem::Pointer Carousel::itemForInputInfo(const PointerInputInfo& p, int* index)
+CarouselItem::Pointer Carousel::itemForInputInfo(const PointerInputInfo& p, size_t& index)
 {
-	int aIndex = 0;
+	size_t aIndex = 0;
 
 	ray3d r = camera().castRay(p.normalizedPos);
 	for (CarouselItemList::iterator i = _items.begin(), e = _items.end(); i != e; ++i, ++aIndex)
@@ -517,9 +522,7 @@ CarouselItem::Pointer Carousel::itemForInputInfo(const PointerInputInfo& p, int*
 		CarouselItem::Pointer& item = *i;
 		if (item->rayIntersect(r))
 		{
-			if (index)
-				*index = aIndex;
-
+			index = aIndex;
 			return item;
 		}
 	}
