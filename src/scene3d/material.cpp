@@ -555,7 +555,7 @@ void MaterialData::deserialize3FromXml(std::istream& stream, RenderContext* rc, 
 	stream.read(data.data(), size);
 
 	xmlInitParser();
-	xmlDoc* xml = xmlReadMemory(data.data(), size, basePath.c_str(), nullptr, 0);
+	xmlDoc* xml = xmlParseMemory(data.data(), size);
 	if (xml == nullptr)
 	{
 		log::error("Unable to deserialize material from xml.");

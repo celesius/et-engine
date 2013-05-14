@@ -92,8 +92,9 @@ namespace et
 
 			void setScale(const vec2& s);
 
-			void setSelectedItem(int item, bool animated);
-			int selectedItem() const;
+			void setSelectedItem(size_t item, float duration);
+
+			size_t selectedItem() const;
 
 			void setDragOnlyItems(bool value);
 
@@ -138,7 +139,7 @@ namespace et
 			void alignSelectedItem(bool fromUpdate);
 			bool performClick(const PointerInputInfo& p);
 
-			CarouselItem::Pointer itemForInputInfo(const PointerInputInfo& p, int* index);
+			CarouselItem::Pointer itemForInputInfo(const PointerInputInfo& p, size_t& index);
 
 			vec2 origin() const
 				{ return vec2(0.0f); }
