@@ -120,6 +120,8 @@ void TextureData::generateTexture(RenderContext*)
 
 void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
 {
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
 #if defined(GL_TEXTURE_1D)
 	if (_desc->target == GL_TEXTURE_1D)
 	{

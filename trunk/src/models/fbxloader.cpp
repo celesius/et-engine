@@ -540,7 +540,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 
 	if (isContainer)
 	{
-		for (int m = 0; m < materials.size(); ++m)
+		for (size_t m = 0; m < materials.size(); ++m)
 		{
 			s3d::Element* aParent = (m == 0) ? parent.ptr() : element.ptr();
 			std::string aName = (m == 0) ? meshName : (meshName + "~" + materials.at(m)->objectName());
