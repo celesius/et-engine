@@ -228,7 +228,7 @@ void Gui::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor d
 	oldLayout->layoutDoesntNeedKeyboard.disconnect(this);
 	oldLayout->layoutRequiresKeyboard.disconnect(this);
 
-	if ((desc.flags == AnimationFlag_None) || (fabsf(desc.duration) < std::numeric_limits<float>::epsilon()))
+	if ((desc.flags == AnimationFlag_None) || (std::abs(desc.duration) < std::numeric_limits<float>::epsilon()))
 	{
 		oldLayout->didDisappear();
 		removeLayoutFromList(oldLayout);
@@ -237,7 +237,7 @@ void Gui::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor d
 	{
 		vec3 destOffsetAlpha;
 		getAnimationParams(desc.flags, 0, 0, &destOffsetAlpha);
-		entry->animateTo(destOffsetAlpha, fabsf(desc.duration), Gui::LayoutEntryObject::State_Disappear);
+		entry->animateTo(destOffsetAlpha, std::abs(desc.duration), Gui::LayoutEntryObject::State_Disappear);
 	}
 }
 
@@ -272,7 +272,7 @@ void Gui::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntryObject* n
 	{
 		vec3 destOffsetAlpha;
 		getAnimationParams(animationFlags, &newEntry->offsetAlpha, &destOffsetAlpha, 0);
-		newEntry->animateTo(destOffsetAlpha, fabsf(duration), Gui::LayoutEntryObject::State_Appear);
+		newEntry->animateTo(destOffsetAlpha, std::abs(duration), Gui::LayoutEntryObject::State_Appear);
 	}
 }
 

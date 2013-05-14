@@ -162,7 +162,7 @@ namespace et
 		{ return v.length(); }
 
 	inline float length(float v)
-		{ return fabsf(v); }
+		{ return std::abs(v); }
 
 	template<typename T>
 	inline T clamp(T value, T min, T max)

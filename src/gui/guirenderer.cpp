@@ -35,7 +35,6 @@ GuiRenderer::GuiRenderer(RenderContext* rc, bool saveFillRate) :
 			gui_default_frag_src, ProgramDefinesList(),  std::string(), "shader-gui");
 	}
 
-	_guiDefaultTransformUniform = _guiProgram->getUniformLocation("mDefaultTransform");
 	_guiCustomOffsetUniform = _guiProgram->getUniformLocation("vCustomOffset");
 	_guiCustomAlphaUniform = _guiProgram->getUniformLocation("customAlpha");
 	_guiProgram->setUniform("layer0_texture", 0);
@@ -89,8 +88,8 @@ void GuiRenderer::setProjectionMatrices(const vec2& contextSize)
 	_defaultTransform[3][1] = 1.0f;
 	_defaultTransform[3][3] = 1.0f;
 
-	_guiCamera.perspectiveProjection(DEG_30, contextSize.aspect(), 1.0f, 100.0f);
-	_guiCamera.lookAt(vec3(0.0f, 0.0f, cos(DEG_15) / sin(DEG_15)), vec3(0.0f), unitY);
+	_guiCamera.perspectiveProjection(DEG_30, contextSize.aspect(), 0.1f, 10.0f);
+	_guiCamera.lookAt(vec3(0.0f, 0.0f, std::cos(DEG_15) / std::sin(DEG_15)), vec3(0.0f), unitY);
 }
 
 void GuiRenderer::alloc(size_t count)
@@ -217,8 +216,7 @@ void GuiRenderer::render(RenderContext* rc)
 			bool is3D = i.elementClass == ElementClass_3d;
 			rs.setDepthTest(is3D);
 			rs.setDepthMask(is3D);
-			_guiProgram->setUniform(_guiDefaultTransformUniform, GL_FLOAT_MAT4,
-					is3D ? _guiCamera.modelViewProjectionMatrix() : _defaultTransform);
+			_guiProgram->setTransformMatrix(is3D ? _guiCamera.modelViewProjectionMatrix() : _defaultTransform);
 		}
 
 		renderer->drawElements(vao->indexBuffer(), i.first, i.count);
@@ -339,8 +337,8 @@ void GuiRenderer::createImageVertices(GuiVertexList& vertices, const Texture& te
 
 	vec2 mask(layer == RenderLayer_Layer0 ? 0.0f : 1.0f, 0.0f);
 
-	float width = fabsf(p.width);
-	float height = fabsf(p.height);
+	float width = std::abs(p.width);
+	float height = std::abs(p.height);
 	
 	vec2 topLeft = (p.origin());
 	vec2 topRight = (topLeft + vec2(width, 0.0f));
@@ -517,17 +515,17 @@ void GuiRenderer::setCustomOffset(const vec2& offset)
 
 
 std::string gui_default_vertex_src =
-	"uniform mat4 mDefaultTransform;"
+	"uniform mat4 mTransform;"
 	"uniform vec2 vCustomOffset;"
 	"uniform float customAlpha;"
 	"etVertexIn vec3 Vertex;"
 	"etVertexIn vec4 TexCoord0;"
 	"etVertexIn vec4 Color;"
-	"etVertexOut etMediump vec2 vTexCoord;"
-	"etVertexOut etLowp float texture0Mask;"
-	"etVertexOut etLowp float texture1Mask;"
-	"etVertexOut etLowp vec4 additiveColor;"
-	"etVertexOut etLowp vec4 tintColor;"
+	"etVertexOut vec2 vTexCoord;"
+	"etVertexOut float texture0Mask;"
+	"etVertexOut float texture1Mask;"
+	"etVertexOut vec4 additiveColor;"
+	"etVertexOut vec4 tintColor;"
 	"void main()"
 	"{"
 	"	tintColor = Color * vec4(1.0, 1.0, 1.0, customAlpha);"
@@ -537,7 +535,7 @@ std::string gui_default_vertex_src =
 	"	texture0Mask = 1.0 - TexCoord0.z;"
 	"	texture1Mask = TexCoord0.z;"
 
-	"	vec4 vTransformed = mDefaultTransform * vec4(Vertex, 1.0);"
+	"	vec4 vTransformed = mTransform * vec4(Vertex, 1.0);"
 	"	gl_Position = vTransformed + vec4(vTransformed.w * vCustomOffset, 0.0, 0.0);"
 	"}";
 
@@ -556,21 +554,21 @@ std::string gui_default_frag_src =
 	"}";
 
 std::string gui_savefillrate_vertex_src = 
-	"uniform mat4 mDefaultTransform;"
+	"uniform mat4 mTransform;"
 	"uniform vec2 vCustomOffset;"
 	"uniform float customAlpha;"
 	"etVertexIn vec3 Vertex;"
 	"etVertexIn vec4 TexCoord0;"
 	"etVertexIn vec4 Color;"
-	"etVertexOut etMediump vec2 vTexCoord;"
-	"etVertexOut etLowp vec4 additiveColor;"
-	"etVertexOut etLowp vec4 tintColor;"
+	"etVertexOut vec2 vTexCoord;"
+	"etVertexOut vec4 additiveColor;"
+	"etVertexOut vec4 tintColor;"
 	"void main()"
 	"{"
 	"	tintColor = Color * vec4(1.0, 1.0, 1.0, customAlpha);"
 	"	additiveColor = tintColor * TexCoord0.w;"
 	"	vTexCoord = TexCoord0.xy;"
-	"	vec4 vTransformed = mDefaultTransform * vec4(Vertex, 1.0);"
+	"	vec4 vTransformed = mTransform * vec4(Vertex, 1.0);"
 	"	gl_Position = vTransformed + vec4(vTransformed.w * vCustomOffset, 0.0, 0.0);"
 	"}";
 

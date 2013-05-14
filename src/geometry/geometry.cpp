@@ -243,7 +243,7 @@ vec3 et::circleFromPoints(const vec2& p1, const vec2& p2, const vec2& p3)
 	vec2 n1 = normalize(vec2(p2.x - p1.x, p2.y - p1.y));
 	vec2 n2 = normalize(vec2(p2.x - p3.x, p2.y - p3.y));
 	
-	if (fabsf(n1.x * n2.y - n2.x * n1.y) < std::numeric_limits<float>::epsilon())
+	if (std::abs(n1.x * n2.y - n2.x * n1.y) < std::numeric_limits<float>::epsilon())
 		return vec3(0.0f);
 	
 	vec2 c1(0.5f * (p1 + p2));

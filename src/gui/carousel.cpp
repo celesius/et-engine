@@ -24,8 +24,8 @@ const float movementScale = 1300.0f;
 const float maxVelocity = 30.0f;
 
 CarouselItem::CarouselItem(const Camera& camera, const Texture& texture,
-	const ImageDescriptor& desc, size_t aTag, Carousel* parent) : Element3D(camera, parent),
-	_texture(texture), _desc(desc), _scale(1.0f), _color(1.0f), _angle(1.0f)
+	const ImageDescriptor& desc, size_t aTag, Carousel* parent) : Element3D(camera, parent), 
+	_vertices(12, 0), _texture(texture), _desc(desc), _scale(1.0f), _color(1.0f), _angle(1.0f)
 {
 	tag = aTag;
 	_scale.y *= desc.size.y / desc.size.x;
@@ -57,9 +57,6 @@ void CarouselItem::buildVertexList(GuiRenderer& gr)
 	if (!_texture.valid()) return;
 	
 	mat4 transform = finalTransform();
-
-	_vertices.resize(12);
-	_vertices.setOffset(0);
 
 	float indexScale = 0.25f;
 
@@ -108,7 +105,7 @@ bool CarouselItem::containsPoint(const vec2&, const vec2&)
 
 bool CarouselItem::rayIntersect(const ray3d& r)
 {
-	if ((fabsf(_color.w) <= 1.0e-4) || !contentValid()) return false;
+	if ((std::abs(_color.w) <= 1.0e-4) || !contentValid()) return false;
 
 	for (size_t t = 0; t < _vertices.size(); t += 3)
 	{
@@ -126,11 +123,16 @@ bool CarouselItem::rayIntersect(const ray3d& r)
  *
  */ 
 Carousel::Carousel(const Camera& camera, Element* parent) : Element3D(camera, parent), 
-	_setItemAnimator(0), _positionAnimator(0), _alphaAnimator(0),  _selectedItem(0.0f),
-	_lastUpdateTime(0.0f), _scale(1.0f), _direction(1.0f, 0.0f), _velocity(0.0f), _clickTime(0.0f),
-	_alpha(1.0f), _type(CarouselType_Ribbon), _pointerPressed(false), _dragging(false),
-	_animating(false), _waitingClick(false), _dragOnlyItems(false)
+	_setItemAnimator(timerPool()), _alphaAnimator(timerPool()), _positionAnimator(timerPool()),
+	_selectedItem(0.0f), _lastUpdateTime(0.0f), _scale(1.0f), _direction(1.0f, 0.0f), 
+	_velocity(0.0f), _clickTime(0.0f), _alpha(1.0f), _type(CarouselType_Ribbon), 
+	_pointerPressed(false), _dragging(false), _animating(false), _waitingClick(false), 
+	_dragOnlyItems(false)
 {
+	_setItemAnimator.setDelegate(this);
+	_alphaAnimator.setDelegate(this);
+	_positionAnimator.setDelegate(this);
+
 	startUpdates();
 	_lastUpdateTime = actualTime();
 }
@@ -138,28 +140,17 @@ Carousel::Carousel(const Camera& camera, Element* parent) : Element3D(camera, pa
 Carousel::~Carousel()
 {
 	clear();
-
-	if (_setItemAnimator && !_setItemAnimator->released())
-		_setItemAnimator->destroy();
-
-	if (_alphaAnimator && !_alphaAnimator->released())
-		_alphaAnimator->destroy();
-
-	if (_positionAnimator && !_positionAnimator->released())
-		_positionAnimator->destroy();
 }
 
 void Carousel::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 {
-	for (CarouselItemList::iterator i = _sortedItems.begin(), e = _sortedItems.end(); i != e; ++i)
-		(*i)->addToRenderQueue(rc, gr);
+	ET_ITERATE(_sortedItems, auto, i, i->addToRenderQueue(rc, gr))
 }
 
 void Carousel::setScale(const vec2& s)
 {
 	_scale = s;
-	for (CarouselItemList::iterator i = _items.begin(), e = _items.end(); i != e; ++i)
-		(*i)->setScale(s);
+	ET_ITERATE(_sortedItems, auto, i, i->setScale(s))
 }
 
 CarouselItem::Pointer Carousel::addItem(int tag, const Texture& tex, const ImageDescriptor& desc)
@@ -222,28 +213,28 @@ void Carousel::buildRibbonItems()
 	float zOffset = 2.0f;
 
 	float index = 0.0f;
-	for (CarouselItemList::iterator i = _items.begin(), e = _items.end(); i != e; ++i)
+	ET_START_ITERATION(_items, CarouselItem::Pointer&, item)
 	{
-		CarouselItem::Pointer& item = *i;
-
 		float actualIndex = (index - _selectedItem) / maxItems;
 		float linear = clamp(actualIndex, -1.0f, 1.0f);
 		float fvalue = etMax(0.0f, linear * linear - 0.5f);
+
 		float angleScale =
-			((linear < 0.0f) ? -maxAngle : maxAngle) * (sqrtf(fabs(linear)) - powf(fvalue, 8.0f));
+			((linear < 0.0f) ? -maxAngle : maxAngle) * (std::sqrt(fabs(linear)) - powf(fvalue, 8.0f));
 
 		vec3 t(_direction.x * xOffset * linear + _center.x,
-			   _direction.y * yOffset * linear + _center.y, -fabsf(zOffset * linear));
+			   _direction.y * yOffset * linear + _center.y, -std::abs(zOffset * linear));
 		
 		vec3 r(_direction.y * angleScale, _direction.x * angleScale, 0.0f);
 
 		item->setActualIndex(actualIndex);
 		item->setTransform( translationRotationYXZMatrix(t, r) );
-		item->setColor(vec4(1.0f, 1.0f, 1.0f, _alpha * (1.0f - fabsf(linear))));
+		item->setColor(vec4(1.0f, 1.0f, 1.0f, _alpha * (1.0f - std::abs(linear))));
 
 		a += da;
 		index += 1.0f;
 	}
+	ET_END_ITERATION
 }
 
 void Carousel::buildRoundItems()
@@ -273,6 +264,8 @@ void Carousel::buildItems()
 		buildRibbonItems();
 		sortItems();
 	}
+
+	invalidateContent();
 }
 
 void Carousel::setSelectedItem(int item, bool animated)
@@ -282,14 +275,10 @@ void Carousel::setSelectedItem(int item, bool animated)
 		item = clamp(item, 0, static_cast<int>(_items.size()) - 1);
 		float newSelectedItem = static_cast<float>(item);
 
-		if (_setItemAnimator)
-			_setItemAnimator->destroy();
-		_setItemAnimator = 0;
-
 		if (animated)
 		{
 			_animating = true;
-			_setItemAnimator = new FloatAnimator(this, &_selectedItem, _selectedItem, newSelectedItem, 0.25f, 0, timerPool());
+			_setItemAnimator.animate(&_selectedItem, _selectedItem, newSelectedItem, 0.25f);
 		}
 		else 
 		{
@@ -326,21 +315,8 @@ void Carousel::animatorUpdated(BaseAnimator*)
 
 void Carousel::animatorFinished(BaseAnimator* a)
 {
-	if (a == _setItemAnimator)
-	{
+	if (a == &_setItemAnimator)
 		_animating = false;
-		_setItemAnimator = 0;
-	}
-	else if (a == _positionAnimator)
-	{
-		_positionAnimator = 0;
-	}
-	else if (a == _alphaAnimator)
-	{
-		_alphaAnimator = 0;
-	}
-
-	a->destroy();
 }
 
 int Carousel::selectedItem() const
@@ -356,10 +332,6 @@ bool Carousel::pointerPressed(const PointerInputInfo& p)
 
 	if (p.type == PointerType_General)
 	{
-		if (_setItemAnimator)
-			_setItemAnimator->destroy();
-		_setItemAnimator = 0;
-
 		_clickTime = actualTime();
 		_waitingClick = true;
 		_lastTouch = p;
@@ -389,7 +361,7 @@ bool Carousel::pointerMoved(const PointerInputInfo& p)
 				float ds = dot(_lastTouch.normalizedPos - p.normalizedPos, _direction) / dt;
 				_velocity += ds;
 
-				if (fabsf(_velocity) > maxVelocity)
+				if (std::abs(_velocity) > maxVelocity)
 					_velocity = signNoZero(_velocity) * maxVelocity;
 
 			}
@@ -425,7 +397,7 @@ bool Carousel::pointerReleased(const PointerInputInfo& p)
 			performClick(p);
 			processed = true;
 		}
-		else 
+		else if (!_animating)
 		{
 			alignSelectedItem(false);
 		}
@@ -486,7 +458,7 @@ void Carousel::update(float t)
 	float dt = t - _lastUpdateTime;
 	_lastUpdateTime += dt;
 
-	float fvel = fabsf(_velocity);
+	float fvel = std::abs(_velocity);
 	if (!_animating && (fvel != 0.0f))
 	{
 		float dv = etMin(1.0f, dt * slowdownCoefficient);
@@ -494,7 +466,7 @@ void Carousel::update(float t)
 		_selectedItem += dt * _velocity;
 		_velocity -= dv * _velocity;
 
-		if (fabsf(_velocity) < minUpdateVelocity)
+		if (std::abs(_velocity) < minUpdateVelocity)
 			alignSelectedItem(true);
 		else
 			buildItems();
@@ -508,7 +480,7 @@ bool Carousel::performClick(const PointerInputInfo& p)
 	CarouselItem::Pointer item = itemForInputInfo(p, &index);
 	if (item.valid())
 	{
-		if (fabsf(_selectedItem - index) > minUpdateDelta)
+		if (std::abs(_selectedItem - index) > minUpdateDelta)
 		{
 			setSelectedItem(static_cast<int>(index), true);
 		}
@@ -524,13 +496,9 @@ bool Carousel::performClick(const PointerInputInfo& p)
 
 void Carousel::setCenter(const vec2& c, float duration)
 {
-	if (_positionAnimator)
-		_positionAnimator->destroy();
-	_positionAnimator = 0;
-
 	if (duration > 0.0f)
 	{
-		_positionAnimator = new Vector2Animator(this, &_center, _center, c, duration, 0, timerPool());
+		_positionAnimator.animate(&_center, _center, c, duration);
 	}
 	else 
 	{
@@ -561,10 +529,6 @@ CarouselItem::Pointer Carousel::itemForInputInfo(const PointerInputInfo& p, int*
 
 void Carousel::setAlpha(float value, float duration)
 {
-	if (_alphaAnimator)
-		_alphaAnimator->destroy();
-	_alphaAnimator = 0;
-
 	if (value == 0.0f)
 	{
 		_dragging = false;
@@ -574,7 +538,7 @@ void Carousel::setAlpha(float value, float duration)
 
 	if (duration > 0.0f)
 	{
-		_alphaAnimator = new FloatAnimator(this, &_alpha, _alpha, value, duration, 0, timerPool());
+		_alphaAnimator.animate(&_alpha, _alpha, value, duration);
 	}
 	else
 	{

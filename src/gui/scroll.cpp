@@ -115,22 +115,22 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 
 		if (-_offset.x < scrollLeftDefaultValue())
 		{
-			float diff = fabsf(-_offset.x - scrollLeftDefaultValue());
+			float diff = std::abs(-_offset.x - scrollLeftDefaultValue());
 			offsetScale.x *= etMax(0.0f, 1.0f - diff / scrollOutOfContentXSize());
 		}
 		else if (-_offset.x > scrollRightDefaultValue())
 		{
-			float diff = fabsf(-_offset.x - scrollRightDefaultValue());
+			float diff = std::abs(-_offset.x - scrollRightDefaultValue());
 			offsetScale.x *= etMax(0.0f, 1.0f - diff / scrollOutOfContentXSize());
 		}
 		if (-_offset.y < scrollUpperDefaultValue())
 		{
-			float diff = fabsf(-_offset.y - scrollUpperDefaultValue());
+			float diff = std::abs(-_offset.y - scrollUpperDefaultValue());
 			offsetScale.y *= etMax(0.0f, 1.0f - diff / scrollOutOfContentYSize());
 		}
 		else if (-_offset.y > scrollLowerDefaultValue())
 		{
-			float diff = fabsf(-_offset.y - scrollLowerDefaultValue());
+			float diff = std::abs(-_offset.y - scrollLowerDefaultValue());
 			offsetScale.y *= etMax(0.0f, 1.0f - diff / scrollOutOfContentYSize());
 		}
 		
@@ -280,7 +280,7 @@ void Scroll::updateBouncing(float deltaTime)
 	{
 		float diff = -_offset.x - scrollLeftDefaultValue();
 		_velocity.x += 0.25f * size().x * diff * deltaTime;
-		if ((_velocity.x <= bounceStopTreshold) && (fabsf(diff) <= bounceStopTreshold))
+		if ((_velocity.x <= bounceStopTreshold) && (std::abs(diff) <= bounceStopTreshold))
 		{
 			_velocity.x = 0.0f;
 			_offset.x = -scrollLeftDefaultValue();
@@ -291,7 +291,7 @@ void Scroll::updateBouncing(float deltaTime)
 	{
 		float diff = -_offset.x - scrollRightDefaultValue();
 		_velocity.x += 0.25f * size().x * diff * deltaTime;
-		if ((_velocity.x <= bounceStopTreshold) && (fabsf(diff) <= bounceStopTreshold))
+		if ((_velocity.x <= bounceStopTreshold) && (std::abs(diff) <= bounceStopTreshold))
 		{
 			_velocity.x = 0.0f;
 			_offset.x = -scrollRightDefaultValue();
@@ -303,7 +303,7 @@ void Scroll::updateBouncing(float deltaTime)
 	{
 		float diff = -_offset.y - scrollUpperDefaultValue();
 		_velocity.y += 0.25f * size().y * diff * deltaTime;
-		if ((_velocity.y <= bounceStopTreshold) && (fabsf(diff) <= bounceStopTreshold))
+		if ((_velocity.y <= bounceStopTreshold) && (std::abs(diff) <= bounceStopTreshold))
 		{
 			_velocity.y = 0.0f;
 			_offset.y = -scrollUpperDefaultValue();
@@ -314,7 +314,7 @@ void Scroll::updateBouncing(float deltaTime)
 	{
 		float diff = -_offset.y - scrollLowerDefaultValue();
 		_velocity.y += 0.25f * size().y * diff * deltaTime;
-		if ((_velocity.y <= bounceStopTreshold) && (fabsf(diff) <= bounceStopTreshold))
+		if ((_velocity.y <= bounceStopTreshold) && (std::abs(diff) <= bounceStopTreshold))
 		{
 			_velocity.y = 0.0f;
 			_offset.y = -scrollLowerDefaultValue();
@@ -368,7 +368,7 @@ void Scroll::update(float t)
 	{
 		applyOffset(dp);
 	}
-	else if (fabsf(_scrollbarsAlpha - _scrollbarsAlphaTarget) > minAlpha)
+	else if (std::abs(_scrollbarsAlpha - _scrollbarsAlphaTarget) > minAlpha)
 	{
 		invalidateContent();
 	}
