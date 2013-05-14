@@ -96,14 +96,14 @@ namespace et
 		struct GuiVertex
 		{
 		public:
-			GuiVertex() : 
-				position(0.0f), texCoord(0.0f), color(0.0f) { }
+			GuiVertex() 
+				{ }
 
 			GuiVertex(const vec2& pos, const vec4& tc, const vec4& c = vec4(1.0f)) : 
-				position(floorv(pos), 0.0f), texCoord(tc), color(c) { }
+				position(pos, 0.0f), texCoord(tc), color(c) { }
 
 			GuiVertex(const vec3& pos, const vec4& tc, const vec4& c = vec4(1.0f)) : 
-				position(floorv(pos)), texCoord(tc), color(c) { }
+				position(pos), texCoord(tc), color(c) { }
 
 		public:
 			vec3 position;

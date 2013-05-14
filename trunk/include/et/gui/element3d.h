@@ -7,15 +7,18 @@
 
 #pragma once
 
+#include <et/camera/camera.h>
 #include <et/gui/guibase.h>
 
 namespace et
 {
 	namespace gui
 	{
-		
 		class Element3D : public Element
 		{
+		public:
+			typedef IntrusivePtr<Element3D> Pointer;
+
 		public:
 			Element3D(const Camera& camera, Element* parent);
 

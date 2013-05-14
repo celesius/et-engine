@@ -31,11 +31,12 @@ namespace et
 		public:
 			ET_DECLARE_EVENT1(selected, CarouselItem::Pointer)
 
-			inline float currentAngle() const 
+			float currentAngle() const 
 				{ return _angle; }
 
 		private:
 			friend class Carousel;
+
 			CarouselItem(const Camera& camera, const Texture& texture, const ImageDescriptor& desc, 
 				size_t tag, Carousel* parent);
 
@@ -90,7 +91,6 @@ namespace et
 			void clear();
 
 			void setScale(const vec2& s);
-			void addToRenderQueue(RenderContext* rc, GuiRenderer& gr);
 
 			void setSelectedItem(int item, bool animated);
 			int selectedItem() const;
@@ -115,13 +115,15 @@ namespace et
 			virtual bool visible() const
 				{ return _alpha > 0.0f; }
 
-			ET_DECLARE_EVENT1(didSelectItem, CarouselItem::Pointer)
-			ET_DECLARE_EVENT1(itemClicked, CarouselItem::Pointer)
-
 			void animatorUpdated(BaseAnimator*);
 			void animatorFinished(BaseAnimator*);
 
+			ET_DECLARE_EVENT1(didSelectItem, CarouselItem::Pointer)
+			ET_DECLARE_EVENT1(itemClicked, CarouselItem::Pointer)
+
 		private:
+			void addToRenderQueue(RenderContext* rc, GuiRenderer& gr);
+
 			void buildItems();
 			void buildRibbonItems();
 			void buildRoundItems();
@@ -147,18 +149,23 @@ namespace et
 		private:
 			CarouselItemList _items;
 			CarouselItemList _sortedItems;
+
 			PointerInputInfo _lastTouch;
-			FloatAnimator* _setItemAnimator;
-			FloatAnimator* _alphaAnimator;
-			Vector2Animator* _positionAnimator;
+
+			FloatAnimator _setItemAnimator;
+			FloatAnimator _alphaAnimator;
+			Vector2Animator _positionAnimator;
+
 			float _selectedItem;
 			float _lastUpdateTime;
 			float _velocity;
 			float _clickTime;
 			float _alpha;
+
 			vec2 _center;
 			vec2 _scale;
 			vec2 _direction;
+
 			CarouselType _type;
 			bool _pointerPressed;
 			bool _dragging;
@@ -166,7 +173,5 @@ namespace et
 			bool _waitingClick;
 			bool _dragOnlyItems;
 		};
-
-
 	}
 }

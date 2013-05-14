@@ -390,9 +390,9 @@ bool et::intersect::aabbAABB(const AABB& a1, const AABB& a2)
 	vec3 dc = a1.center - a2.center;
 	vec3 sd = a1.dimension + a2.dimension;
 
-	if (fabsf(dc.x) > (sd.x)) return false;
-	if (fabsf(dc.y) > (sd.y)) return false;
-	if (fabsf(dc.z) > (sd.z)) return false;
+	if (std::abs(dc.x) > (sd.x)) return false;
+	if (std::abs(dc.y) > (sd.y)) return false;
+	if (std::abs(dc.z) > (sd.z)) return false;
 
 	return true;
 }

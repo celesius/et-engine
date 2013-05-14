@@ -75,7 +75,6 @@ namespace et
 			
 			Program _guiProgram;
 			mat4 _defaultTransform;
-			int _guiDefaultTransformUniform;
 			int _guiCustomOffsetUniform;
 			int _guiCustomAlphaUniform;
 			
