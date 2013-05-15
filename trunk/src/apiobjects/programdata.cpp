@@ -14,7 +14,7 @@ using namespace et;
 
 const std::string ProgramData::emptyShaderSource("none");
 
-ProgramData::ProgramData(RenderState& rs) : APIObject(), _glID(0), _rs(rs),
+ProgramData::ProgramData(RenderState& rs) : _glID(0), _rs(rs),
 	_mModelViewLocation(-1), _mModelViewProjectionLocation(-1), _vCameraLocation(-1),
 	_vPrimaryLightLocation(-1), _mLightProjectionMatrixLocation(-1), _mTransformLocation(-1)
 {
@@ -22,8 +22,9 @@ ProgramData::ProgramData(RenderState& rs) : APIObject(), _glID(0), _rs(rs),
 
 ProgramData::ProgramData(RenderState& rs, const std::string& vertexShader, const std::string& geometryShader,
 	const std::string& fragmentShader, const std::string& objName, const std::string& origin) :
-	APIObject(objName, origin), _glID(0), _rs(rs), _mModelViewLocation(-1), _mModelViewProjectionLocation(-1), _vCameraLocation(-1),
-	_vPrimaryLightLocation(-1), _mLightProjectionMatrixLocation(-1), _mTransformLocation(-1)
+	LoadableObject(objName, origin), _glID(0), _rs(rs), _mModelViewLocation(-1),
+	_mModelViewProjectionLocation(-1), _vCameraLocation(-1), _vPrimaryLightLocation(-1),
+	_mLightProjectionMatrixLocation(-1), _mTransformLocation(-1)
 {
 	buildProgram(vertexShader, geometryShader, fragmentShader);
 }
@@ -33,7 +34,7 @@ ProgramData::~ProgramData()
 	if ((_glID != 0) && glIsProgram(_glID))
 	{
 		glDeleteProgram(_glID);
-		checkOpenGLError("glDeleteProgram: %s", objectName().c_str());
+		checkOpenGLError("glDeleteProgram: %s", name().c_str());
 	}
 
 	_rs.programDeleted(_glID);
@@ -153,43 +154,43 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 		log::info("ProgramData::buildProgram - geometry shader skipped in OpenGL ES");
 #endif
 	
-	checkOpenGLError("Ce2Render::buildProgram - %s", objectName().c_str());
+	checkOpenGLError("Ce2Render::buildProgram - %s", name().c_str());
 
 	if ((_glID == 0) || !glIsProgram(_glID))
 	{
 		_glID = glCreateProgram();
-		checkOpenGLError("glCreateProgram - %s", objectName().c_str());
+		checkOpenGLError("glCreateProgram - %s", name().c_str());
 	}
 
 	uint32_t VertexShader = glCreateShader(GL_VERTEX_SHADER);
-	checkOpenGLError("glCreateShader<VERT> - %s", objectName().c_str());
+	checkOpenGLError("glCreateShader<VERT> - %s", name().c_str());
 
 	int nLen = static_cast<int>(vertex_source.size());
 	const GLchar* src = vertex_source.c_str();
 
 	glShaderSource(VertexShader, 1, &src, &nLen);
-	checkOpenGLError("glShaderSource<VERT> - %s", objectName().c_str());
+	checkOpenGLError("glShaderSource<VERT> - %s", name().c_str());
 
 	glCompileShader(VertexShader);
-	checkOpenGLError("glCompileShader<VERT> - %s", objectName().c_str());
+	checkOpenGLError("glCompileShader<VERT> - %s", name().c_str());
 
 	int cStatus = 0;
 	GLsizei nLogLen = 0;
 	glGetShaderiv(VertexShader, GL_COMPILE_STATUS, &cStatus);
-	checkOpenGLError("glGetShaderiv<VERT> %s compile staus - %s", objectName().c_str());
+	checkOpenGLError("glGetShaderiv<VERT> %s compile staus - %s", name().c_str());
 
 	glGetShaderiv(VertexShader, GL_INFO_LOG_LENGTH, &nLogLen);
 	if (!cStatus && (nLogLen > 1))
 	{
 		DataStorage<GLchar> infoLog(nLogLen, 0);
 		glGetShaderInfoLog(VertexShader, nLogLen, &nLogLen, infoLog.data());
-		log::error("Vertex shader %s compile report:\n%s", objectName().c_str(), infoLog.data());
+		log::error("Vertex shader %s compile report:\n%s", name().c_str(), infoLog.data());
 	}
 
 	if (cStatus)
 	{
 		glAttachShader(_glID, VertexShader);
-		checkOpenGLError("glAttachShader<VERT> - %s", objectName().c_str());
+		checkOpenGLError("glAttachShader<VERT> - %s", name().c_str());
 	} 
 
 	uint32_t GeometryShader = 0;
@@ -198,79 +199,79 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 	if ((geom_source.length() > 0) && (geom_source != ProgramData::emptyShaderSource)) 
 	{
 		GeometryShader = glCreateShader(GL_GEOMETRY_SHADER);
-		checkOpenGLError("glCreateShader<GEOM> - %s", objectName().c_str());
+		checkOpenGLError("glCreateShader<GEOM> - %s", name().c_str());
 		nLen = static_cast<int>(geom_source.size());
 		src = geom_source.c_str();
 		glShaderSource(GeometryShader, 1, &src, &nLen);
-		checkOpenGLError("glShaderSource<GEOM> - %s", objectName().c_str());
+		checkOpenGLError("glShaderSource<GEOM> - %s", name().c_str());
 
 		cStatus = 0;
 		nLogLen = 0;
 		glCompileShader(GeometryShader);
-		checkOpenGLError("glCompileShader<GEOM> - %s", objectName().c_str());
+		checkOpenGLError("glCompileShader<GEOM> - %s", name().c_str());
 
 		glGetShaderiv(GeometryShader, GL_COMPILE_STATUS, &cStatus);
-		checkOpenGLError("glGetShaderiv<GEOM> %s compile staus", objectName().c_str());
+		checkOpenGLError("glGetShaderiv<GEOM> %s compile staus", name().c_str());
 		
 		glGetShaderiv(GeometryShader, GL_INFO_LOG_LENGTH, &nLogLen);
 		if (nLogLen > 1)
 		{
 			DataStorage<GLchar> infoLog(nLogLen, 0);
 			glGetShaderInfoLog(GeometryShader, nLogLen, &nLogLen, infoLog.data());
-			log::error("Geometry shader %s compile report:\n%s", objectName().c_str(), infoLog.data());
+			log::error("Geometry shader %s compile report:\n%s", name().c_str(), infoLog.data());
 		}
 		if (cStatus)
 		{
 			glAttachShader(_glID, GeometryShader);
-			checkOpenGLError("glAttachShader<GEOM> - %s", objectName().c_str());
+			checkOpenGLError("glAttachShader<GEOM> - %s", name().c_str());
 		} 
 	} 
 #endif
 
 	///////////////////////////////////////////////// FRAGMENT
 	uint32_t FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	checkOpenGLError("glCreateShader<FRAG> - %s", objectName().c_str());
+	checkOpenGLError("glCreateShader<FRAG> - %s", name().c_str());
 
 	nLen = static_cast<int>(frag_source.size());
 	src  = frag_source.c_str();
 
 	glShaderSource(FragmentShader, 1, &src, &nLen);
-	checkOpenGLError("glShaderSource<FRAG> - %s", objectName().c_str());
+	checkOpenGLError("glShaderSource<FRAG> - %s", name().c_str());
 
 	glCompileShader(FragmentShader);
-	checkOpenGLError("glCompileShader<FRAG> - %s", objectName().c_str());
+	checkOpenGLError("glCompileShader<FRAG> - %s", name().c_str());
 
 	cStatus = 0;
 	nLogLen = 0;
 	glGetShaderiv(FragmentShader, GL_COMPILE_STATUS, &cStatus);
-	checkOpenGLError("glGetShaderiv<FRAG> %s compile staus ", objectName().c_str());
+	checkOpenGLError("glGetShaderiv<FRAG> %s compile staus ", name().c_str());
 
 	glGetShaderiv(FragmentShader, GL_INFO_LOG_LENGTH, &nLogLen);
 	if (!cStatus && (nLogLen > 1))
 	{
 		DataStorage<GLchar> infoLog(nLogLen, 0);
 		glGetShaderInfoLog(FragmentShader, nLogLen, &nLogLen, infoLog.data());
-		log::error("Fragment shader %s compile report:\n%s", objectName().c_str(), infoLog.data());
+		log::error("Fragment shader %s compile report:\n%s", name().c_str(), infoLog.data());
 	}
 
 	if (cStatus)
 	{
 		glAttachShader(_glID, FragmentShader);
-		checkOpenGLError("glAttachShader<FRAG> - %s", objectName().c_str());
+		checkOpenGLError("glAttachShader<FRAG> - %s", name().c_str());
 
 #if (!ET_OPENGLES)
 		if (glBindFragDataLocation)
 		{
 			glBindFragDataLocation(_glID, 0, "FragColor");
-			checkOpenGLError("glBindFragDataLocation<color0> - %s", objectName().c_str());
+			checkOpenGLError("glBindFragDataLocation<color0> - %s", name().c_str());
 			glBindFragDataLocation(_glID, 1, "FragColor1");
-			checkOpenGLError("glBindFragDataLocation<color1> - %s", objectName().c_str());
+			checkOpenGLError("glBindFragDataLocation<color1> - %s", name().c_str());
 			glBindFragDataLocation(_glID, 2, "FragColor2");
-			checkOpenGLError("glBindFragDataLocation<color2> - %s", objectName().c_str());
+			checkOpenGLError("glBindFragDataLocation<color2> - %s", name().c_str());
 			glBindFragDataLocation(_glID, 3, "FragColor3");
-			checkOpenGLError("glBindFragDataLocation<color3> - %s", objectName().c_str());
+			checkOpenGLError("glBindFragDataLocation<color3> - %s", name().c_str());
 			glBindFragDataLocation(_glID, 4, "FragColor4");
-			checkOpenGLError("glBindFragDataLocation<color4> - %s", objectName().c_str());
+			checkOpenGLError("glBindFragDataLocation<color4> - %s", name().c_str());
 		}
 #endif
 	} 
@@ -359,20 +360,20 @@ int ProgramData::link()
 	int nLogLen = 0;
 
 	glLinkProgram(_glID);
-	checkOpenGLError("glLinkProgram - %s", objectName().c_str());
+	checkOpenGLError("glLinkProgram - %s", name().c_str());
 
 	glGetProgramiv(_glID, GL_LINK_STATUS, &cStatus);
-	checkOpenGLError("glGetProgramiv<GL_LINK_STATUS> - %s", objectName().c_str());
+	checkOpenGLError("glGetProgramiv<GL_LINK_STATUS> - %s", name().c_str());
 
 	glGetProgramiv(_glID, GL_INFO_LOG_LENGTH, &nLogLen);
-	checkOpenGLError("glGetProgramiv<GL_INFO_LOG_LENGTH> - %s", objectName().c_str());
+	checkOpenGLError("glGetProgramiv<GL_INFO_LOG_LENGTH> - %s", name().c_str());
 
 	if (!cStatus && (nLogLen > 1))
 	{
 		StringDataStorage infoLog(nLogLen + 1, 0);
 		glGetProgramInfoLog(_glID, nLogLen, &nLogLen, infoLog.data());
-		checkOpenGLError("glGetProgramInfoLog<LINK> - %s", objectName().c_str());
-		log::error("Program %s link log:\n%s", objectName().c_str(), infoLog.data());
+		checkOpenGLError("glGetProgramInfoLog<LINK> - %s", name().c_str());
+		log::error("Program %s link log:\n%s", name().c_str(), infoLog.data());
 	}
 
 	return cStatus;

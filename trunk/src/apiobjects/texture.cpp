@@ -14,7 +14,7 @@ using namespace et;
 static const int defaultBindingUnit = 7;
 
 TextureData::TextureData(RenderContext* rc, TextureDescription::Pointer desc,
-	const std::string& id, bool deferred) : APIObject(id, desc->source),
+	const std::string& id, bool deferred) : LoadableObject(id, desc->source),
 	_glID(0), _desc(desc), _own(true)
 {
 	if (deferred) return;
@@ -29,19 +29,20 @@ TextureData::TextureData(RenderContext* rc, TextureDescription::Pointer desc,
 }
 
 TextureData::TextureData(RenderContext*, uint32_t texture, const vec2i& size, const std::string& name) :
-	APIObject(name), _glID(texture), _own(false), _desc(new TextureDescription)
+	LoadableObject(name), _glID(texture), _own(false), _desc(new TextureDescription)
 {
-	if (!glIsTexture(texture))
+	if (glIsTexture(texture))
+	{
+		_desc->target = GL_TEXTURE_2D;
+		_desc->size = size;
+		_desc->mipMapCount = 1;
+		_texel.x = 1.0f / static_cast<float>(size.x);
+		_texel.y = 1.0f / static_cast<float>(size.y);
+	}
+	else
 	{
 		_glID = 0;
-		return;
 	}
-	
-	_desc->target = GL_TEXTURE_2D;
-	_desc->size = size;
-	_desc->mipMapCount = 1;
-	_texel.x = 1.0f / static_cast<float>(size.x);
-	_texel.y = 1.0f / static_cast<float>(size.y);
 }
 
 TextureData::~TextureData()
@@ -57,14 +58,14 @@ void TextureData::setWrap(RenderContext* rc, TextureWrap s, TextureWrap t, Textu
 	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
 
 	glTexParameteri(_desc->target, GL_TEXTURE_WRAP_S, textureWrapValue(_wrap.x)); 
-	checkOpenGLError("glTexParameteri<WRAP_S> - %s", objectName().c_str());
+	checkOpenGLError("glTexParameteri<WRAP_S> - %s", name().c_str());
 	
 	glTexParameteri(_desc->target, GL_TEXTURE_WRAP_T, textureWrapValue(_wrap.y));
-	checkOpenGLError("glTexParameteri<WRAP_T> - %s", objectName().c_str());
+	checkOpenGLError("glTexParameteri<WRAP_T> - %s", name().c_str());
 	
 #if defined(GL_TEXTURE_WRAP_R)
 	glTexParameteri(_desc->target, GL_TEXTURE_WRAP_R, textureWrapValue(_wrap.z));
-	checkOpenGLError("glTexParameteri<WRAP_R> - %s", objectName().c_str()); 
+	checkOpenGLError("glTexParameteri<WRAP_R> - %s", name().c_str()); 
 #endif	
 }
 
@@ -82,10 +83,10 @@ void TextureData::setFiltration(RenderContext* rc, TextureFiltration minFiltrati
 		_filtration.y = TextureFiltration_Linear;
 
 	glTexParameteri(_desc->target, GL_TEXTURE_MIN_FILTER, textureFiltrationValue(_filtration.x)); 
-	checkOpenGLError("glTexParameteri<GL_TEXTURE_MIN_FILTER> - %s", objectName().c_str());
+	checkOpenGLError("glTexParameteri<GL_TEXTURE_MIN_FILTER> - %s", name().c_str());
 	
 	glTexParameteri(_desc->target, GL_TEXTURE_MAG_FILTER, textureFiltrationValue(_filtration.y)); 
-	checkOpenGLError("glTexParameteri<GL_TEXTURE_MAG_FILTER> - %s", objectName().c_str()); 
+	checkOpenGLError("glTexParameteri<GL_TEXTURE_MAG_FILTER> - %s", name().c_str()); 
 }
 
 void TextureData::compareRefToTexture(RenderContext* rc, bool enable, uint32_t compareFunc)
@@ -103,7 +104,7 @@ void TextureData::compareRefToTexture(RenderContext* rc, bool enable, uint32_t c
 	else
 	{
 		glTexParameteri(_desc->target, GL_TEXTURE_COMPARE_MODE, GL_NONE);
-		checkOpenGLError("glTexParameteri(_target, GL_TEXTURE_COMPARE_MODE, GL_NONE) - %s", objectName().c_str()); 
+		checkOpenGLError("glTexParameteri(_target, GL_TEXTURE_COMPARE_MODE, GL_NONE) - %s", name().c_str()); 
 	}
 #else
 	assert(0 && "WARNING: GL_TEXTURE_COMPARE_MODE and GL_TEXTURE_COMPARE_FUNC are not defined.");
@@ -115,7 +116,7 @@ void TextureData::generateTexture(RenderContext*)
 	if (_glID == 0)
 		glGenTextures(1, &_glID);
 
-	checkOpenGLError("TextureData::generateTexture - %s", objectName().c_str());
+	checkOpenGLError("TextureData::generateTexture - %s", name().c_str());
 }
 
 void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
@@ -271,7 +272,7 @@ void TextureData::setMaxLod(RenderContext* rc, size_t value)
 #if defined(GL_TEXTURE_MAX_LEVEL)
     rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
 	glTexParameteri(_desc->target, GL_TEXTURE_MAX_LEVEL, value);
-	checkOpenGLError("TextureData::setMaxLod - %s", objectName().c_str());
+	checkOpenGLError("TextureData::setMaxLod - %s", name().c_str());
 #endif
 }
 

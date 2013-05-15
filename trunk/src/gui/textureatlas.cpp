@@ -15,7 +15,7 @@
 using namespace et;
 using namespace et::gui;
 
-Image TextureAtlas::_emptyImage = Image();
+static const Image _emptyImage;
 
 rect parseRectString(std::string& s)
 {

@@ -7,13 +7,13 @@
 
 #pragma once
 
-#include <et/apiobjects/apiobject.h>
+#include <et/core/object.h>
 #include <et/vertexbuffer/indexarray.h>
 
 namespace et
 {
 	class RenderState;
-	class IndexBufferData : public APIObject
+	class IndexBufferData : public Object
 	{
 	public:
 		IndexBufferData(RenderState& rs, IndexArray::Pointer i, BufferDrawType drawType,

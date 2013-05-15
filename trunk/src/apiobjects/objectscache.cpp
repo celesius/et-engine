@@ -5,8 +5,8 @@
  *
  */
 
+#include <et/core/objectscache.h>
 #include <et/app/applicationnotifier.h>
-#include <et/apiobjects/objectscache.h>
 
 using namespace et;
 
@@ -19,7 +19,7 @@ ObjectsCache::~ObjectsCache()
 	clear();
 }
 
-void ObjectsCache::manage(const APIObject::Pointer& o)
+void ObjectsCache::manage(const LoadableObject::Pointer& o)
 {
 	if (o.valid())
 	{
@@ -29,14 +29,14 @@ void ObjectsCache::manage(const APIObject::Pointer& o)
 	}
 }
 
-APIObject::Pointer ObjectsCache::find(const std::string& key)
+LoadableObject::Pointer ObjectsCache::find(const std::string& key)
 {
 	CriticalSectionScope lock(_lock);
 	auto i = _objects.find(key);
-	return (i == _objects.end()) ? APIObject::Pointer() : i->second.first;
+	return (i == _objects.end()) ? LoadableObject::Pointer() : i->second.first;
 }
 
-void ObjectsCache::discard(const APIObject::Pointer& o)
+void ObjectsCache::discard(const LoadableObject::Pointer& o)
 {
 	if (o.valid())
 	{
@@ -102,12 +102,15 @@ void ObjectsCache::performUpdate()
 {
 	ET_ITERATE(_objects, auto&, p, 
 	{
-		unsigned long newProp = getFileProperty(p.first);
-		if (newProp != p.second.second)
+		if (p.second.first->canBeReloaded())
 		{
-			log::info("Updated (%lu -> %lu): %s", p.second.second, newProp, p.first.c_str());
-			_objects[p.first].first->reload(p.first, ApplicationNotifier().accessRenderContext(), *this);
-			p.second.second = newProp;
+			unsigned long newProp = getFileProperty(p.first);
+			if (newProp != p.second.second)
+			{
+				log::info("Updated (%lu -> %lu): %s", p.second.second, newProp, p.first.c_str());
+				_objects[p.first].first->reload(p.first, ApplicationNotifier().accessRenderContext(), *this);
+				p.second.second = newProp;
+			}
 		}
 	})
 }

@@ -10,17 +10,17 @@
 
 using namespace et;
 
-VertexBufferData::VertexBufferData(RenderState& rs, const VertexArray::Description& desc, BufferDrawType vertexDrawType, 
-	const std::string& name) : APIObject(name), _rs(rs), _vertexBuffer(0), _decl(desc.declaration), 
-	_dataSize(desc.data.dataSize()), _sourceTag(0), _drawType(vertexDrawType)
+VertexBufferData::VertexBufferData(RenderState& rs, const VertexArray::Description& desc,
+	BufferDrawType vertexDrawType, const std::string& aName) : Object(aName), _rs(rs), _vertexBuffer(0),
+	_decl(desc.declaration), _dataSize(desc.data.dataSize()), _sourceTag(0), _drawType(vertexDrawType)
 {
 	glGenBuffers(1, &_vertexBuffer);
 	setData(desc.data.data(), desc.data.dataSize());
 }
 
-VertexBufferData::VertexBufferData(RenderState& rs, const VertexDeclaration& decl, const void* vertexData, size_t vertexDataSize, 
-	BufferDrawType vertexDrawType, const std::string& name) : APIObject(name), _rs(rs), _vertexBuffer(0), 
-	_decl(decl), _dataSize(vertexDataSize), _sourceTag(0), _drawType(vertexDrawType)
+VertexBufferData::VertexBufferData(RenderState& rs, const VertexDeclaration& decl, const void* vertexData,
+	size_t vertexDataSize, BufferDrawType vertexDrawType, const std::string& aName) : Object(aName), _rs(rs),
+	_vertexBuffer(0), _decl(decl), _dataSize(vertexDataSize), _sourceTag(0), _drawType(vertexDrawType)
 {
 	glGenBuffers(1, &_vertexBuffer);
 	setData(vertexData, vertexDataSize);
