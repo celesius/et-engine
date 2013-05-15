@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et/apiobjects/objects.h>
+#include <et/apiobjects/texture.h>
 #include <et/gui/charactergenerator.h>
 
 namespace et

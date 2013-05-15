@@ -15,11 +15,11 @@ using namespace et;
 extern std::string FramebufferStatusToString(uint32_t status);
 extern const uint32_t renderbufferTargets[FramebufferData::MaxRenderTargets];
 
-FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const FramebufferDescription& desc, const std::string& aName) :
-	APIObject(aName), _isCubemapBuffer(desc.isCubemap != 0), _id(0), _size(desc.size), _numTargets(0),
-	_colorRenderbuffer(0), _depthRenderbuffer(0), _rc(rc), _textureFactory(tf)
+FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const FramebufferDescription& desc,
+	const std::string& aName) : Object(aName), _isCubemapBuffer(desc.isCubemap != 0), _id(0),
+	_size(desc.size), _numTargets(0), _colorRenderbuffer(0), _depthRenderbuffer(0), _rc(rc), _textureFactory(tf)
 {
-	checkOpenGLError("Framebuffer::Framebuffer %s", objectName().c_str());
+	checkOpenGLError("Framebuffer::Framebuffer %s", name().c_str());
 
 	glGenFramebuffers(1, &_id);
 	checkOpenGLError("Framebuffer::Framebuffer -> glGenFramebuffers");
@@ -43,12 +43,12 @@ FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const Fr
 				if (_isCubemapBuffer)
 				{
 					c = tf->genCubeTexture(desc.colorInternalformat, desc.size.x, desc.colorFormat, 
-						desc.colorType, objectName() + "_color_" + intToStr(i));
+						desc.colorType, name() + "_color_" + intToStr(i));
 				}
 				else 
 				{
 					c = tf->genTexture(GL_TEXTURE_2D, desc.colorInternalformat, desc.size, 
-						desc.colorFormat, desc.colorType, BinaryDataStorage(), objectName() + "_color_" + intToStr(i));
+						desc.colorFormat, desc.colorType, BinaryDataStorage(), name() + "_color_" + intToStr(i));
 				}
 				c->setWrap(rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
 				addRenderTarget(c);
@@ -68,12 +68,12 @@ FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const Fr
 			if (_isCubemapBuffer && (openGLCapabilites().version() == OpenGLVersion_New))
 			{
 				d = tf->genCubeTexture(desc.depthInternalformat, desc.size.x, desc.depthFormat, 
-					desc.depthType, objectName() + "_depth");
+					desc.depthType, name() + "_depth");
 			}
 			else 
 			{
 				d = tf->genTexture(GL_TEXTURE_2D, desc.depthInternalformat, desc.size, 
-					desc.depthFormat, desc.depthType, BinaryDataStorage(), objectName() + "_depth");
+					desc.depthFormat, desc.depthType, BinaryDataStorage(), name() + "_depth");
 			}
 			
 			if (d.valid())
@@ -96,8 +96,9 @@ FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const Fr
 		checkStatus();
 }
 
-FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, uint32_t fboId, const std::string& aName) : APIObject(aName), 
-	_isCubemapBuffer(false), _id(fboId), _numTargets(0), _colorRenderbuffer(0), _depthRenderbuffer(0), _rc(rc), _textureFactory(tf)
+FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, uint32_t fboId,
+	const std::string& aName) : Object(aName), _isCubemapBuffer(false), _id(fboId), _numTargets(0),
+	_colorRenderbuffer(0), _depthRenderbuffer(0), _rc(rc), _textureFactory(tf)
 {
 	if (!glIsFramebuffer(fboId)) return;
 	
@@ -135,7 +136,7 @@ bool FramebufferData::checkStatus()
 	bool complete = status == GL_FRAMEBUFFER_COMPLETE;
 
 	if (!complete)
-		log::error("%s for %s", FramebufferStatusToString(status).c_str(), objectName().c_str());
+		log::error("%s for %s", FramebufferStatusToString(status).c_str(), name().c_str());
 
 	return complete;
 }
@@ -150,14 +151,14 @@ bool FramebufferData::addRenderTarget(const Texture& rt)
 	if (openGLCapabilites().version() == OpenGLVersion_New)
 	{
 		glFramebufferTexture(GL_FRAMEBUFFER, renderbufferTargets[_numTargets], rt->glID(), 0);
-		checkOpenGLError("glFramebufferTexture(...) - %s", objectName().c_str());
+		checkOpenGLError("glFramebufferTexture(...) - %s", name().c_str());
 	}
 	else
 	{
 		if (rt->target() == GL_TEXTURE_2D)
 		{
 			glFramebufferTexture2D(GL_FRAMEBUFFER, renderbufferTargets[_numTargets], GL_TEXTURE_2D, rt->glID(), 0);
-			checkOpenGLError("glFramebufferTexture2D(...) - %s", objectName().c_str());
+			checkOpenGLError("glFramebufferTexture2D(...) - %s", name().c_str());
 		}
 		else if (rt->target() == GL_TEXTURE_CUBE_MAP)
 		{
@@ -166,7 +167,7 @@ bool FramebufferData::addRenderTarget(const Texture& rt)
 				glFramebufferTexture2D(GL_FRAMEBUFFER, renderbufferTargets[_numTargets], 
 					GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, rt->glID(), 0);
 			}
-			checkOpenGLError("glFramebufferTexture2D(...) - %s", objectName().c_str());
+			checkOpenGLError("glFramebufferTexture2D(...) - %s", name().c_str());
 		}
 	}
 
@@ -186,7 +187,7 @@ bool FramebufferData::setDepthTarget(const Texture& rt)
 	else
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, rt->glID(), 0);
 
-	checkOpenGLError("glFramebufferTexture(...) - %s", objectName().c_str());
+	checkOpenGLError("glFramebufferTexture(...) - %s", name().c_str());
 
 	_depthBuffer = rt;
 	return checkStatus();
@@ -198,7 +199,7 @@ bool FramebufferData::setDepthTarget(const Texture& texture, uint32_t target)
 
 	_rc->renderState().bindFramebuffer(_id);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, target, texture->glID(), 0);
-	checkOpenGLError("glFramebufferTexture2D(...) - %s", objectName().c_str());
+	checkOpenGLError("glFramebufferTexture2D(...) - %s", name().c_str());
 
 	return checkStatus();
 }
@@ -209,7 +210,7 @@ void FramebufferData::addSameRendertarget()
 
 	Texture& prev = _renderTargets[_numTargets - 1];
 
-	std::string texName = objectName() + "_color_" + intToStr(_numTargets);
+	std::string texName = name() + "_color_" + intToStr(_numTargets);
 	
 	Texture c;
 	if (_isCubemapBuffer)
@@ -272,7 +273,7 @@ void FramebufferData::setDrawBuffersCount(int count)
 #if (!ET_OPENGLES)
 	_rc->renderState().bindFramebuffer(_id);
 	glDrawBuffers(count, renderbufferTargets);
-	checkOpenGLError("Framebuffer::setDrawBuffersCount -> glDrawBuffers - %s", objectName().c_str());
+	checkOpenGLError("Framebuffer::setDrawBuffersCount -> glDrawBuffers - %s", name().c_str());
 	checkStatus();
 #else
 	assert(0 && "glDrawBuffers is not supported in OpenGL ES");

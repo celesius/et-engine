@@ -7,6 +7,7 @@
 
 #include <et/core/stream.h>
 #include <et/imaging/ddsloader.h>
+#include <et/imaging/ddsloader.const.h>
 
 using namespace et;
 

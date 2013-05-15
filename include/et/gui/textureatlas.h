@@ -31,8 +31,8 @@ namespace et
 			Texture firstTexture() const;
 			
 		private:
-			static gui::Image _emptyImage;
-			
+			typedef std::map<std::string, Texture> TextureMap;
+
 			TextureMap _textures;
 			gui::ImageMap _images;
 			bool _loaded;

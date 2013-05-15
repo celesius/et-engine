@@ -12,6 +12,7 @@
 #include <et/camera/camera.h>
 #include <et/gui/font.h>
 #include <et/gui/renderingelement.h>
+#include <et/apiobjects/program.h>
 
 namespace et
 {

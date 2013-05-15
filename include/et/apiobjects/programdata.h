@@ -7,6 +7,10 @@
 
 #pragma once
 
+#include <map>
+#include <et/core/object.h>
+#include <et/opengl/opengl.h>
+
 namespace et
 {
 	struct ProgramUniform
@@ -23,8 +27,8 @@ namespace et
 		std::string name;
 		VertexAttributeUsage usage;
 		
-		ProgramAttrib(const std::string& a_name, VertexAttributeUsage a_usage) :
-			name(a_name), usage(a_usage) { }
+		ProgramAttrib(const std::string& aName, VertexAttributeUsage aUsage) :
+			name(aName), usage(aUsage) { }
 	};
 
 	typedef std::map<std::string, ProgramUniform> UniformMap;
@@ -34,7 +38,7 @@ namespace et
 	class Camera;
 	class RenderState;
 	
-	class ProgramData : public APIObject
+	class ProgramData : public LoadableObject
 	{
 	public:
 		static const std::string emptyShaderSource;
@@ -119,9 +123,9 @@ namespace et
 	};
 
 	template <typename T>
-	void ProgramData::setUniform(const std::string& uniform_name, const T& value, int count)
+	void ProgramData::setUniform(const std::string& uniformName, const T& value, int count)
 	{
-		auto i = findUniform(uniform_name);
+		auto i = findUniform(uniformName);
 		if (i != _uniforms.end())
 			setUniform(i->second.location, i->second.type, value, count);
 	}

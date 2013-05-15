@@ -12,13 +12,13 @@
 using namespace et;
 
 VertexArrayObjectData::VertexArrayObjectData(RenderState& rs, VertexBuffer vb, IndexBuffer ib,
-	const std::string& name) : APIObject(name), _rs(rs), _vb(vb), _ib(ib), _vao(0)
+	const std::string& aName) : Object(aName), _rs(rs), _vb(vb), _ib(ib), _vao(0)
 {
 	init();
 }
 
-VertexArrayObjectData::VertexArrayObjectData(RenderState& rs, const std::string& name) :
-	APIObject(name), _rs(rs), _vao(0)
+VertexArrayObjectData::VertexArrayObjectData(RenderState& rs, const std::string& aName) :
+	Object(aName), _rs(rs), _vao(0)
 {
 	init();
 }
@@ -41,7 +41,7 @@ void VertexArrayObjectData::init()
 	if (openGLCapabilites().supportVertexArrays())
 	{
 		glGenVertexArrays(1, &_vao);
-		checkOpenGLError("glGenVertexArrays in %s", objectName().c_str());
+		checkOpenGLError("glGenVertexArrays in %s", name().c_str());
 		_rs.bindVertexArray(_vao);
 	}
 #endif

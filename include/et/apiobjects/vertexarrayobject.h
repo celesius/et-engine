@@ -13,12 +13,15 @@ namespace et
 {
 	class VertexArrayObject : public IntrusivePtr<VertexArrayObjectData>
 	{
+	public:
+		VertexArrayObject() :
+			IntrusivePtr<VertexArrayObjectData>() { }
+
 	private:
 		friend class VertexBufferFactory;
-		VertexArrayObject(VertexArrayObjectData* data) : IntrusivePtr<VertexArrayObjectData>(data) { }
 
-	public:
-		VertexArrayObject() : IntrusivePtr<VertexArrayObjectData>() { }
+		VertexArrayObject(VertexArrayObjectData* data) :
+			IntrusivePtr<VertexArrayObjectData>(data) { }
 	};
 
 	typedef std::vector<VertexArrayObject> VertexArrayObjectList;

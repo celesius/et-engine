@@ -200,7 +200,6 @@ void ProgramFactory::parseSourceCode(ShaderType type, std::string& source, const
 			
 			source.erase(0, before.size());
 			std::string ifname = source.substr(0, source.find_first_of(char(10)));
-			std::string include_name = normalizeFilePath(ifname);
 			source.erase(0, ifname.size());
 			std::string after = source.substr();
 			

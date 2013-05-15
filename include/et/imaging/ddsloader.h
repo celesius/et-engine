@@ -8,11 +8,10 @@
 #pragma once
 
 #include <et/core/containers.h>
-#include <et/apiobjects/texturedata.h>
+#include <et/apiobjects/texture.h>
 
 namespace et
 {
-
 	class DDSLoader
 	{
 	public:
@@ -22,6 +21,4 @@ namespace et
 		static void loadInfoFromStream(std::istream& stream, TextureDescription& desc);
 		static void loadInfoFromFile(const std::string& path, TextureDescription& desc);
 	};
-
-#	include <et/imaging/ddsloader.const.h>	
 }

@@ -7,14 +7,14 @@
 
 #pragma once
 
-#include <et/apiobjects/apiobject.h>
+#include <et/core/object.h>
 #include <et/vertexbuffer/vertexarray.h>
 
 namespace et
 {
 	class RenderState;
 	
-	class VertexBufferData : public APIObject
+	class VertexBufferData : public Object
 	{
 	public:
 		VertexBufferData(RenderState& rs, const VertexArray::Description& desc,

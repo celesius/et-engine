@@ -8,10 +8,10 @@
 #pragma once
 
 #include <map>
+#include <et/core/object.h>
 #include <et/core/tools.h>
 #include <et/threading/criticalsection.h>
 #include <et/timers/timedobject.h>
-#include <et/apiobjects/apiobject.h>
 
 namespace et
 {
@@ -21,13 +21,13 @@ namespace et
 		ObjectsCache();
 		~ObjectsCache();
 
-		void manage(const APIObject::Pointer& o);
-		void discard(const APIObject::Pointer& o);
+		void manage(const LoadableObject::Pointer& o);
+		void discard(const LoadableObject::Pointer& o);
 		void clear();
 		
 		void flush();
 
-		APIObject::Pointer find(const std::string& key);
+		LoadableObject::Pointer find(const std::string& key);
 
 		void startMonitoring();
 		void stopMonitoring();
@@ -40,14 +40,11 @@ namespace et
 		void update(float t);
 
 	private:
-		typedef std::pair<APIObject::Pointer, unsigned long> ObjectProperty;
+		typedef std::pair<LoadableObject::Pointer, unsigned long> ObjectProperty;
 		typedef std::map<const std::string, ObjectProperty> ObjectMap;
 
 		CriticalSection _lock;
 		ObjectMap _objects;
 		float _updateTime;
 	};
-
-	// backward compatibility
-	typedef ObjectsCache TextureCache;
 }

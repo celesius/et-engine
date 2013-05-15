@@ -38,7 +38,7 @@ namespace et
 			colorIsRenderbuffer(false), depthIsRenderbuffer(false), isCubemap(false) { }
 	};
 
-	class FramebufferData : public APIObject
+	class FramebufferData : public Object
 	{
 	public:
 		enum
