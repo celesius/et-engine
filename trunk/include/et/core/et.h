@@ -20,7 +20,7 @@
 #include <stdint.h>
 
 #define ET_MAJOR_VERSION		0
-#define ET_MINOR_VERSION		1
+#define ET_MINOR_VERSION		2
 
 #include <et/platform/compileoptions.h>
 #include <et/platform/platform.h>

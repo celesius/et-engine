@@ -85,8 +85,8 @@ inline size_t keyToMaterialParameter(const std::string& k)
 	return MaterialParameter_Undefined;
 }
 
-MaterialData::MaterialData() :
-	APIObject("default"), _blendState(Blend_Disabled), _depthWriteEnabled(true)
+MaterialData::MaterialData() : LoadableObject("default"), _blendState(Blend_Disabled),
+	_depthWriteEnabled(true), tag(0)
 {
 	setVector(MaterialParameter_DiffuseColor, vec4(1.0f));
 }
@@ -96,7 +96,7 @@ MaterialData* MaterialData::duplicate() const
 	MaterialData* m = new MaterialData();
 	
 	m->tag = tag;
-	m->setObjectName(objectName());
+	m->setName(name());
 	m->setOrigin(origin());
 
 	m->_defaultIntParameters = _defaultIntParameters;
@@ -143,7 +143,7 @@ void MaterialData::serializeReadable(std::ostream& s) const
 	s << "<?xml version=\"1.0\" encoding='UTF-8'?>" << std::endl;
 
 	START_BLOCK(kMaterial, "",
-		keyValue(s, kName, objectName());
+		keyValue(s, kName, name());
 		keyValue(s, kVersion, MaterialCurrentVersion);
 		keyValue(s, kKey, intToStr(this));
 		keyValue(s, kBlend, blendState());
@@ -237,7 +237,7 @@ void MaterialData::serializeReadable(std::ostream& s) const
 void MaterialData::serializeBinary(std::ostream& stream) const
 {
 	serializeInt(stream, MaterialCurrentVersion);
-	serializeString(stream, objectName());
+	serializeString(stream, name());
 	serializeInt(stream, blendState());
 	serializeInt(stream, depthWriteEnabled());
 
@@ -296,7 +296,7 @@ void MaterialData::deserialize(std::istream& stream, RenderContext* rc, ObjectsC
 	{
 		int version = deserializeInt(stream);
 
-		setObjectName(deserializeString(stream));
+		setName(deserializeString(stream));
 
 		_blendState = static_cast<BlendState>(deserializeInt(stream));
 		_depthWriteEnabled = deserializeInt(stream) != 0;
@@ -455,7 +455,7 @@ void MaterialData::loadProperties(xmlNode* root)
 		const char* pName = reinterpret_cast<const char*>(prop->name);
 		const char* pValue = reinterpret_cast<const char*>(value);
 		if (strcmp(pName, kName) == 0)
-			setObjectName(std::string(pValue));
+			setName(std::string(pValue));
 		else if (strcmp(pName, kDepthWrite) == 0)
 			_depthWriteEnabled = strToBool(pValue);
 		else if (strcmp(pName, kBlend) == 0)

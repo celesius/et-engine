@@ -8,6 +8,7 @@
 #pragma once
 
 #include <deque>
+#include <et/core/objectscache.h>
 #include <et/rendering/rendercontext.h>
 #include <et/input/input.h>
 #include <et/gui/guirenderer.h>
