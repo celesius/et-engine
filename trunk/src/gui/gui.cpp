@@ -17,7 +17,7 @@ Gui::Gui(RenderContext* rc) : _rc(rc),  _renderer(rc, true),
 	_background(Texture(), 0), _backgroundValid(true)
 {
 	_background.setPivotPoint(vec2(0.5f));
-	_background.setContentMode(ImageView::ContentMode_Stretch);
+	_background.setContentMode(ImageView::ContentMode_Fit);
 	layout(rc->size());
 }
 
