@@ -273,7 +273,7 @@ void Carousel::setSelectedItem(size_t item, float duration)
 {
 	if (_type == CarouselType_Ribbon)
 	{
-		item = clamp(item, 0u, _items.size() - 1);
+		item = clamp(item, 0ul, _items.size() - 1);
 		float newSelectedItem = static_cast<float>(item);
 
 		if (duration > 0.0f)
@@ -441,7 +441,7 @@ void Carousel::alignSelectedItem(bool)
 	if (_dragging || (fvel > minUpdateVelocity)) return;
 
 	_velocity = 0.0f;
-	float f = clamp(floor(_selectedItem), 0.0f, static_cast<float>(_items.size() - 1));
+	float f = clamp(std::floor(_selectedItem), 0.0f, static_cast<float>(_items.size() - 1));
 	int newItem = static_cast<int>(f);
 	newItem += (_selectedItem - f) > 0.5f ? 1 : 0;
 
