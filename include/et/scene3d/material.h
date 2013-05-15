@@ -17,7 +17,7 @@ namespace et
 {
 	namespace s3d
 	{
-		class MaterialData : public APIObject
+		class MaterialData : public LoadableObject
 		{
 		public:
 			MaterialData();
@@ -54,6 +54,9 @@ namespace et
 		public:
 			ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(BlendState, blendState, setBlendState)
 			ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(bool, depthWriteEnabled, setDepthWriteEnabled)
+
+		public:
+			int tag;
 
 		private:
 			void serializeBinary(std::ostream& stream) const;

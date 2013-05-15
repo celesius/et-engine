@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <et/core/objectscache.h>
 #include <et/scene3d/element.h>
 #include <et/scene3d/storage.h>
 #include <et/scene3d/mesh.h>

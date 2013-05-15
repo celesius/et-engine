@@ -52,7 +52,7 @@ void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::stri
 			ET_START_ITERATION(s->materials(), auto&, mi)
 			{
 				std::string mFile;
-				std::string matName = mi->objectName();
+				std::string matName = mi->name();
 				
 				if (materialsMap.find(matName) == materialsMap.end())
 				{
@@ -341,7 +341,7 @@ VertexArrayObject Scene3d::vaoWithIdentifiers(const std::string& vbid, const std
 {
 	ET_START_ITERATION(_vaos, auto, i)
 	{
-		if ((i->vertexBuffer()->objectName() == vbid) && (i->indexBuffer()->objectName() == ibid))
+		if ((i->vertexBuffer()->name() == vbid) && (i->indexBuffer()->name() == ibid))
 			return i;
 	}
 	ET_END_ITERATION

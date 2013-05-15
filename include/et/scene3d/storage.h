@@ -20,6 +20,7 @@ namespace et
 		{
 		public:
 			typedef IntrusivePtr<Scene3dStorage> Pointer;
+			typedef std::vector<Texture> TextureList;
 
 		public:
 			Scene3dStorage(const std::string& name, Element* parent);
