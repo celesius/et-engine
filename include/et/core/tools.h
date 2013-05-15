@@ -105,22 +105,22 @@ namespace et
 	template <typename T>
 	inline std::ostream& operator << (std::ostream& stream, const vector2<T>& value)
 	{
-		stream << value.x << ET_CSV_DELIMITER << value.y;
+		stream << value.x << ET_DEFAULT_DELIMITER << value.y;
 		return stream;
 	}
 	
 	template <typename T>
 	inline std::ostream& operator << (std::ostream& stream, const vector3<T>& value)
 	{
-		stream << value.x << ET_CSV_DELIMITER << value.y << ET_CSV_DELIMITER << value.z;
+		stream << value.x << ET_DEFAULT_DELIMITER << value.y << ET_DEFAULT_DELIMITER << value.z;
 		return stream;
 	}
 	
 	template <typename T>
 	inline std::ostream& operator << (std::ostream& stream, const vector4<T>& value)
 	{
-		stream << value.x << ET_CSV_DELIMITER << value.y << ET_CSV_DELIMITER <<
-			value.z << ET_CSV_DELIMITER << value.w;
+		stream << value.x << ET_DEFAULT_DELIMITER << value.y << ET_DEFAULT_DELIMITER <<
+			value.z << ET_DEFAULT_DELIMITER << value.w;
 		return stream;
 	}
 	
@@ -223,10 +223,18 @@ namespace et
 	std::string removeWhitespace(const std::string&);
 	
 	float extractFloat(std::string& s);
+
+	StringList split(const std::string& s, const std::string& delim);
 	
-	vec4 strToVec4(const std::string& s, const std::string& delimiter = ";");
-	vec4 strToVec4(std::string& s, const std::string& delimiter = ";");
-	
+	vec2 strToVector2(const std::string& s,
+		const std::string& delimiter = std::string(ET_DEFAULT_DELIMITER_STRING));
+		
+	vec3 strToVector3(const std::string& s,
+		const std::string& delimiter = std::string(ET_DEFAULT_DELIMITER_STRING));
+
+	vec4 strToVector4(const std::string& s,
+		const std::string& delimiter = std::string(ET_DEFAULT_DELIMITER_STRING));
+
 	vec4 strHexToVec4(const std::string& s);
 	vec4 strHexToVec4(const std::wstring& s);
 }

@@ -68,10 +68,11 @@
 #define ET_Z				'Z'
 #define ET_SPACE			' '
 
-#define ET_BACKSPACE		8
-#define ET_TAB				9
-#define ET_NEWLINE			10
-#define ET_RETURN			13
-#define ET_SHIFT			16
+#define ET_BACKSPACE			8
+#define ET_TAB					9
+#define ET_NEWLINE				10
+#define ET_RETURN				13
+#define ET_SHIFT				16
 
-#define ET_CSV_DELIMITER	';'
+#define ET_DEFAULT_DELIMITER			';'
+#define ET_DEFAULT_DELIMITER_STRING		";"

@@ -217,30 +217,54 @@ namespace et
 		return hasMinus ? -value : value;
 	}
 
-	vec4 strToVec4(std::string& s, const std::string& delimiter)
+	StringList split(const std::string& s, const std::string& delim)
 	{
-		vec4 result(0.0f);
-		int index = 0;
-		while (index < 4)
+		StringList result;
+		
+		size_t startIndex = 0;
+		size_t separatorIndex = s.find_first_of(delim, startIndex);
+
+		while (separatorIndex != std::string::npos)
 		{
-			result[index++] = extractFloat(s);
-			if (s.length())
-			{
-				size_t dPos = s.find_first_of(delimiter);
-				if (dPos != std::string::npos)
-					s.erase(0, dPos + 1);
-			}
+			result.push_back(s.substr(startIndex, separatorIndex - startIndex));
+			startIndex = separatorIndex + 1;
+			separatorIndex = s.find_first_of(delim, startIndex);
 		}
+
+		if (startIndex < s.size())
+			result.push_back(s.substr(startIndex));
+
 		return result;
 	}
 
-	vec4 strToVec4(const std::string& s, const std::string& delimiter)
+	vec2 strToVector2(const std::string& s, const std::string& delimiter)
 	{
-		std::string sCopy(s);
-		return strToVec4(sCopy, delimiter);
+		vec2 result;
+		size_t index = 0;
+		StringList values = split(s, delimiter);
+		ET_ITERATE(values, auto&, i, result[index++] = strToFloat(i); if (index >= 2) break; )
+		return result;
 	}
 
-	inline int decodeHex(int c)
+	vec3 strToVector3(const std::string& s, const std::string& delimiter)
+	{
+		vec3 result;
+		size_t index = 0;
+		StringList values = split(s, delimiter);
+		ET_ITERATE(values, auto&, i, result[index++] = strToFloat(i); if (index >= 3) break; )
+		return result;
+	}
+
+	vec4 strToVector4(const std::string& s, const std::string& delimiter)
+	{
+		vec4 result;
+		size_t index = 0;
+		StringList values = split(s, delimiter);
+		ET_ITERATE(values, auto&, i, result[index++] = strToFloat(i); if (index >= 4) break; )
+		return result;
+	}
+
+	int decodeHex(int c)
 	{
 		if ((c >= '0') && (c <= '9')) 
 			return c - '0';

@@ -187,7 +187,7 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 					params.erase(0, dPos+1);
 					if (token == "offset-")
 					{
-						offset = strToVec4(params);
+						offset = strToVector4(params);
 					}
 					else 
 					{
@@ -198,9 +198,9 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 			}
 
 			descFile << "image: { name: \"" << name << "\" "
-						"texture: \"" << textureName << "\"" << " "
-						"rect: \"" << iOrigin << ";" << image.size << "\" "
-						"offset: \""  << offset <<  "\" }" << std::endl;
+				"texture: \"" << textureName << "\"" << " "
+				"rect: \"" << iOrigin << ";" << image.size << "\" "
+				"offset: \""  << offset <<  "\" }" << std::endl;
 
 			int components = 0;
 			switch (image.format)
