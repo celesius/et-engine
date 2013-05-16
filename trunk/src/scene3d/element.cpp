@@ -177,6 +177,9 @@ void Element::duplicateChildrenToObject(Element* object)
 
 void Element::duplicateBasePropertiesToObject(Element* object)
 {
+	object->setScale(scale());
+	object->setTranslation(translation());
+	object->setOrientation(orientation());
 	ET_ITERATE(properties(), auto, p, object->addPropertyString(p));
 	object->tag = tag;
 }

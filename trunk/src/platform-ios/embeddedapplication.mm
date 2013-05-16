@@ -73,6 +73,8 @@ static etApplication* _sharedInstance = nil;
 	_notifier.notifyResize(contextSize);
 	_notifier.accessRenderContext()->renderState().applyState(state);
 
+	[view addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
+	
 	_loaded = YES;
 }
 
@@ -98,6 +100,29 @@ static etApplication* _sharedInstance = nil;
 - (et::IApplicationDelegate*)applicationDelegate
 {
 	return application().delegate();
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object
+	change:(NSDictionary *)change context:(void *)context
+{
+	if ([keyPath isEqualToString:@"frame"])
+	{
+		float scaleFactor = [[UIScreen mainScreen] scale];
+		
+		CGRect frame = { };
+		NSValue* value = [change objectForKey:@"new"];
+		[value getValue:&frame];
+		
+		vec2i size(static_cast<int>(scaleFactor * frame.size.width),
+			static_cast<int>(scaleFactor * frame.size.height));
+		
+		RenderContext* rc = _notifier.accessRenderContext();
+		if (rc->sizei() != size)
+		{
+			rc->renderState().defaultFramebuffer()->forceSize(size);
+			_notifier.notifyResize(size);
+		}
+	}
 }
 
 @end
