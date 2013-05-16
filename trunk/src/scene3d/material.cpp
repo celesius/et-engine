@@ -522,9 +522,9 @@ void MaterialData::loadDefaultValue(xmlNode* node, MaterialParameters param, Ren
 	{
 		vec4 v;
 		size_t i = 0;
-		while ((value.find_first_of(ET_CSV_DELIMITER) != std::string::npos) && (i < 4))
+		while ((value.find_first_of(ET_DEFAULT_DELIMITER) != std::string::npos) && (i < 4))
 		{
-			std::string subVal = value.substr(0, value.find_first_of(ET_CSV_DELIMITER));
+			std::string subVal = value.substr(0, value.find_first_of(ET_DEFAULT_DELIMITER));
 			v[i++] = strToFloat(subVal);
 			value.erase(0, subVal.size() + 1);
 		}
