@@ -81,11 +81,13 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 		bool processed = false;
 		if (!active)
 		{
-			setActiveElement(0);
+			setActiveElement(nullptr);
 		}
 		else
 		{
-			processed = active->pointerPressed(PointerInputInfo(p.type, active->positionInElement(p.pos),
+			vec2 elementPos = active->positionInElement(p.pos);
+			
+			processed = active->pointerPressed(PointerInputInfo(p.type, elementPos,
 				p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 
 			if ((p.type == PointerType_General))
@@ -93,10 +95,11 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 				if (active->hasFlag(ElementFlag_Dragable))
 				{
 					processed = true;
-					_capturedElement = active;
+
 					_dragging = true;
+					_capturedElement = active;
 					_dragInitialPosition = active->position();
-					_dragInitialOffset = active->positionInElement(p.pos);
+					_dragInitialOffset = elementPos;
 					
 					_capturedElement->dragStarted.invoke(_capturedElement,
 						ElementDragInfo(_dragInitialPosition, _dragInitialPosition, p.normalizedPos));
@@ -126,11 +129,13 @@ bool Layout::pointerMoved(const et::PointerInputInfo& p)
 	{
 		if (!input().canGetCurrentPointerInfo() && (p.type == PointerType_General) && _dragging)
 		{
-			vec2 currentPos = _capturedElement->parent()->positionInElement(p.pos);
+			vec2 currentPos = _capturedElement->positionInElement(p.pos);
+			vec2 delta = currentPos - _dragInitialOffset;
 			
-			_capturedElement->setPosition(currentPos - _dragInitialOffset);
+			_capturedElement->setPosition(_capturedElement->position() + delta);
+			
 			_capturedElement->dragged.invoke(_capturedElement,
-				ElementDragInfo(currentPos, _dragInitialPosition, p.normalizedPos));
+				ElementDragInfo(_capturedElement->position(), _dragInitialPosition, p.normalizedPos));
 		}
 
 		_capturedElement->pointerMoved(PointerInputInfo(p.type, _capturedElement->positionInElement(p.pos),
