@@ -207,9 +207,6 @@ void TextureData::build(RenderContext* rc)
 
 	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target, true);
 
-	glTexParameteri(_desc->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	checkOpenGLError("glTexParameteri(_desc->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR)");
-
 	setFiltration(rc, _filtration.x, _filtration.y);
 	setWrap(rc, _wrap.x, _wrap.y, _wrap.z);
 
