@@ -137,16 +137,33 @@ DownloadRequest::Pointer DownloadThread::dequeRequest()
 }
 
 size_t et::writeCallback(void* ptr, size_t size, size_t nmemb, DownloadRequest* request)
-	{ return request->appendData(ptr, size, nmemb); }
+{
+	return request->appendData(ptr, size, nmemb);
+}
+
+int et::progessCallback(void* p, double dltotal, double dlnow, double, double)
+{
+	if (dltotal + dlnow > 0.0)
+	{
+		DownloadRequest* req = reinterpret_cast<DownloadRequest*>(p);
+		req->_totalSize = static_cast<uint64_t>(dltotal);
+		req->_downloaded = static_cast<uint64_t>(dlnow);
+		req->progress.invokeInMainRunLoop(DownloadRequest::Pointer(req));
+	}
+	return 0;
+}
 
 void DownloadThread::processRequest(DownloadRequest::Pointer request)
 {
     CURL* curl = curl_easy_init();
-	
+
 	curl_easy_setopt(curl, CURLOPT_URL, request->url().c_str());
-	curl_easy_setopt(curl, CURLOPT_WRITEDATA, request.ptr());
+	curl_easy_setopt(curl, CURLOPT_FILE, request.ptr());
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
-	
+	curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progessCallback);
+    curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, request.ptr());
+    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0);
+
 	CURLcode result = curl_easy_perform(curl);
 	curl_easy_cleanup(curl);
 
@@ -171,7 +188,7 @@ DownloadRequest::DownloadRequest(const std::string& u, const std::string& d) :
 }
 
 DownloadRequest::DownloadRequest(const std::string& u) :
-	_url(u), _destFile(0) { }
+	_url(u), _destFile(0), _totalSize(0), _downloaded(0) { }
 
 DownloadRequest::~DownloadRequest()
 	{ cleanup(); }
