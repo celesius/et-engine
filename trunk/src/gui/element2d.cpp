@@ -136,12 +136,13 @@ void Element2d::setColor(const vec4& color, float duration)
 
 void Element2d::setAlpha(const float alpha, float duration) 
 { 
-	if (_color.w == alpha) return;
+	if ((_color.w == alpha) && !_colorAnimator.running()) return;
 
 	if (duration == 0.0f)
 	{
-		_color.w = alpha; 
-		invalidateContent(); 
+		_color.w = alpha;
+		_colorAnimator.cancelUpdates();
+		invalidateContent();
 	}
 	else 
 	{
@@ -154,6 +155,7 @@ void Element2d::setFrame(const rect& r, float duration)
 	if (duration == 0.0f)
 	{
 		_frame = r;
+		_frameAnimator.cancelUpdates();
 		invalidateTransform();
 		invalidateContent(); 
 	}
@@ -195,7 +197,7 @@ void Element2d::setSize(float w, float h, float duration)
 
 void Element2d::setVisible(bool vis, float duration)
 {
-	if (visible() != vis) 
+	if ((visible() != vis) || _colorAnimator.running())
 		setAlpha(vis ? 1.0f : 0.0f, duration);
 }
 
