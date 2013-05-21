@@ -76,11 +76,17 @@ void Slider::buildVertices(RenderContext*, GuiRenderer& renderer)
 	float handleWidth = _handle.descriptor.size.x;
 	float halfHandleWidth = 0.5f * handleWidth;
 	float valuePoint = _value * mainRect.width;
+	
+	if (_backgroundColor.w > 0.0f)
+	{
+		renderer.createColorVertices(_backgroundVertices, mainRect, _backgroundColor,
+			transform, RenderLayer_Layer0);
+	}
 
 	if (_background.texture.valid())
 	{
-		renderer.createImageVertices(_backgroundVertices, _background.texture, _background.descriptor,
-			mainRect, vec4(1.0f), transform, RenderLayer_Layer0);
+		renderer.createImageVertices(_backgroundVertices, _background.texture,
+			_background.descriptor, mainRect, vec4(1.0f), transform, RenderLayer_Layer0);
 	}
 	
 	if (_sliderLeft.texture.valid() && (_value > 0.0f))
@@ -88,8 +94,9 @@ void Slider::buildVertices(RenderContext*, GuiRenderer& renderer)
 		rect r(vec2(halfHandleWidth, 0.0f), _sliderLeft.descriptor.size);
 		r.top = 0.5f * (mainRect.height - r.height);
 		r.width = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
-		renderer.createImageVertices(_sliderLeftVertices, _sliderLeft.texture, _sliderLeft.descriptor, r,
-			vec4(1.0f), transform, RenderLayer_Layer0);
+		
+		renderer.createImageVertices(_sliderLeftVertices, _sliderLeft.texture,
+			_sliderLeft.descriptor, r, vec4(1.0f), transform, RenderLayer_Layer0);
 	}
 
 	if (_sliderRight.texture.valid() && (_value < 1.0f))
@@ -98,8 +105,8 @@ void Slider::buildVertices(RenderContext*, GuiRenderer& renderer)
 		r.top = 0.5f * (mainRect.height - r.height);
 		r.left = clamp(valuePoint, halfHandleWidth, mainRect.width - halfHandleWidth);
 		r.width = etMax(0.0f, mainRect.width - halfHandleWidth - r.left);
-		renderer.createImageVertices(_sliderRightVertices, _sliderRight.texture, _sliderRight.descriptor, r,
-			vec4(1.0f), transform, RenderLayer_Layer0);
+		renderer.createImageVertices(_sliderRightVertices, _sliderRight.texture,
+			_sliderRight.descriptor, r, vec4(1.0f), transform, RenderLayer_Layer0);
 	}
 
 	if (_handle.texture.valid())
@@ -170,4 +177,10 @@ void Slider::updateValue(float v)
 	
 	changed.invoke(this);
 	valueChanged.invoke(value());
+}
+
+void Slider::setBackgroundColor(const vec4& c)
+{
+	_backgroundColor = c;
+	invalidateContent();
 }
