@@ -11,6 +11,10 @@
 #	include <FacebookSDK/FacebookSDK.h>
 #endif
 
+#if defined(ET_SUPPORT_GOOGLE_PLUS)
+#	include <GooglePlus/GooglePlus.h>
+#endif
+
 #include <et/app/application.h>
 #include <et/app/applicationnotifier.h>
 #include <et/platform-ios/applicationdelegate.h>
@@ -110,12 +114,28 @@ using namespace et;
 
 #endif
 
-#if defined(ET_SUPPORT_FACEBOOK_SDK)
+
 - (BOOL)application:(UIApplication*)application openURL:(NSURL*)url
 	sourceApplication:(NSString*)sourceApplication annotation:(id)annotation
 {
-    return [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
-}
+	BOOL processed = NO;
+	
+#if defined(ET_SUPPORT_FACEBOOK_SDK)
+	
+    processed = [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
+	
 #endif
+	
+#if defined(ET_SUPPORT_GOOGLE_PLUS)
+	if (!processed)
+	{
+		processed =[GPPURLHandler handleURL:url sourceApplication:sourceApplication
+			annotation:annotation];
+	}
+#endif
+	
+	return processed;
+}
+
 
 @end
