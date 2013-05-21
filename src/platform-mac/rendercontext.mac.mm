@@ -10,6 +10,7 @@
 #include <AppKit/NSOpenGLView.h>
 #include <AppKit/NSScreen.h>
 #include <AppKit/NSMenu.h>
+#include <AppKit/NSTrackingArea.h>
 #include <CoreVideo/CVDisplayLink.h>
 
 #include <et/opengl/openglcaps.h>
@@ -243,6 +244,21 @@ int RenderContextPrivate::displayLinkSynchronized()
 
 @implementation etOpenGLView
 
+- (id)initWithFrame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat *)format
+{
+	self = [super initWithFrame:frameRect pixelFormat:format];
+	if (self)
+	{
+		NSUInteger opts = NSTrackingMouseMoved | NSTrackingActiveAlways;
+
+		NSTrackingArea* area = [[NSTrackingArea alloc] initWithRect:[self bounds]
+			options:opts owner:self userInfo:nil];
+
+		[self addTrackingArea:[area autorelease]];
+	}
+	return self;
+}
+
 - (PointerInputInfo)mousePointerInfo:(NSEvent*)theEvent withType:(PointerType)type;
 {
 	NSRect ownFrame = self.frame;
@@ -257,38 +273,32 @@ int RenderContextPrivate::displayLinkSynchronized()
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_General];
-	pointerInputSource.pointerPressed(info);
+	pointerInputSource.pointerPressed([self mousePointerInfo:theEvent withType:PointerType_General]);
 }
 
-- (void)mouseDragged:(NSEvent *)theEvent
+- (void)mouseMoved:(NSEvent *)theEvent
 {
-	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_General];
-	pointerInputSource.pointerMoved(info);
+	pointerInputSource.pointerMoved([self mousePointerInfo:theEvent withType:PointerType_General]);
 }
 
 - (void)mouseUp:(NSEvent *)theEvent
 {
-	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_General];
-	pointerInputSource.pointerReleased(info);
+	pointerInputSource.pointerReleased([self mousePointerInfo:theEvent withType:PointerType_General]);
 }
 
 - (void)rightMouseDown:(NSEvent *)theEvent
 {
-	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_RightButton];
-	pointerInputSource.pointerPressed(info);
+	pointerInputSource.pointerPressed([self mousePointerInfo:theEvent withType:PointerType_RightButton]);
 }
 
 - (void)rightMouseDragged:(NSEvent *)theEvent
 {
-	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_RightButton];
-	pointerInputSource.pointerMoved(info);
+	pointerInputSource.pointerMoved([self mousePointerInfo:theEvent withType:PointerType_RightButton]);
 }
 
 - (void)rightMouseUp:(NSEvent *)theEvent
 {
-	PointerInputInfo info = [self mousePointerInfo:theEvent withType:PointerType_RightButton];
-	pointerInputSource.pointerReleased(info);
+	pointerInputSource.pointerReleased([self mousePointerInfo:theEvent withType:PointerType_RightButton]);
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent
