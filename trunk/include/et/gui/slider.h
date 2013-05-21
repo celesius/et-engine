@@ -22,6 +22,8 @@ namespace et
 			Slider(Element2d* parent);
 			
 			void setBackgroundImage(const Image&);
+			void setBackgroundColor(const vec4&);
+			
 			void setHandleImage(const Image&, float scale);
 			void setSliderImages(const Image& left, const Image& right);
 			
@@ -60,6 +62,8 @@ namespace et
 			GuiVertexList _sliderLeftVertices;
 			GuiVertexList _sliderRightVertices;
 			GuiVertexList _handleVertices;
+			
+			vec4 _backgroundColor;
 			
 			float _handleScale;
 			
