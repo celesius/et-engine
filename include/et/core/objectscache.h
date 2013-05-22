@@ -31,6 +31,8 @@ namespace et
 
 		void startMonitoring();
 		void stopMonitoring();
+		
+		void report();
 
 	private:
 		ET_DENY_COPY(ObjectsCache)

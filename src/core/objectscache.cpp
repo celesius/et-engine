@@ -107,10 +107,15 @@ void ObjectsCache::performUpdate()
 			unsigned long newProp = getFileProperty(p.first);
 			if (newProp != p.second.second)
 			{
-				log::info("Updated (%lu -> %lu): %s", p.second.second, newProp, p.first.c_str());
+				log::info("[ObjectsCache] Object updated: %s", p.second.second, newProp, p.first.c_str());
 				_objects[p.first].first->reload(p.first, ApplicationNotifier().accessRenderContext(), *this);
 				p.second.second = newProp;
 			}
 		}
 	})
+}
+
+void ObjectsCache::report()
+{
+	log::info("[ObjectsCache] Contains %lu objects", _objects.size());
 }

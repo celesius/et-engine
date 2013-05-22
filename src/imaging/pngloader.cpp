@@ -51,7 +51,7 @@ void PNGLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 	png_destroy_read_struct(&pngPtr, 0, 0);
 }
 
-void PNGLoader::loadFromStream(std::istream& source, TextureDescription& desc)
+void PNGLoader::loadFromStream(std::istream& source, TextureDescription& desc, bool flip)
 {
 	static const int PNGSIGSIZE = 8;
 
@@ -90,8 +90,16 @@ void PNGLoader::loadFromStream(std::istream& source, TextureDescription& desc)
 	png_bytepp rowPtrs = new png_bytep[desc.size.y]; 
 	png_bytep ptr0 = desc.data.data();
 	
-	for (int i = 0; i < desc.size.y; i++)
-		rowPtrs[i] = ptr0 + (desc.size.y - 1 - i) * rowBytes;   
+	if (flip)
+	{
+		for (int i = 0; i < desc.size.y; i++)
+			rowPtrs[i] = ptr0 + (desc.size.y - 1 - i) * rowBytes;
+	}
+	else
+	{
+		for (int i = 0; i < desc.size.y; i++)
+			rowPtrs[i] = ptr0 + i * rowBytes;
+	}
 
 	png_read_image(pngPtr, rowPtrs); 
 
@@ -111,13 +119,13 @@ void PNGLoader::loadFromStream(std::istream& source, TextureDescription& desc)
 	delete [] rowPtrs;
 }
 
-void PNGLoader::loadFromFile(const std::string& path, TextureDescription& desc)
+void PNGLoader::loadFromFile(const std::string& path, TextureDescription& desc, bool flip)
 {
 	InputStream file(path, StreamMode_Binary);
 	if (file.valid())
 	{
 		desc.source = path;
-		loadFromStream(file.stream(), desc);
+		loadFromStream(file.stream(), desc, flip);
 	}
 }
 
@@ -148,32 +156,19 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 	int compression = png_get_compression_type(pngPtr, infoPtr);
 	int filter = png_get_filter_type(pngPtr, infoPtr);
 	
-	switch (color_type) 
-	{        
-#if ET_OPENGLES		 
-		case PNG_COLOR_TYPE_GRAY:
-		{
-			png_set_gray_to_rgb(pngPtr);
-			desc.channels = 3;                       
-			break;
-		}
-		case PNG_COLOR_TYPE_GRAY_ALPHA:
-		{
-			png_set_gray_to_rgb(pngPtr);
-			desc.channels = 4;                       
-			break;
-		}
-#endif
-		case PNG_COLOR_TYPE_PALETTE:
-		{
-			png_set_palette_to_rgb(pngPtr);           
-			desc.channels = 3;                       
-			break;        
-		}
-			
-		default: 
-			break;
-	} 
+	if (color_type == PNG_COLOR_TYPE_PALETTE)
+	{
+		png_set_palette_to_rgb(pngPtr);
+		desc.channels = 3;
+	}
+	else if (color_type == PNG_COLOR_TYPE_GRAY)
+	{
+		desc.channels = 1;
+	}
+	else if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+	{
+		desc.channels = 2;
+	}
 	
 	if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) 
 	{        
@@ -194,23 +189,33 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 	
 	switch (desc.channels)
 	{
-#if defined(GL_R)
-		case 1: 
+		case 1:
 		{
-			desc.internalformat = (bpp == 16) ? GL_R16 : GL_R;
-			desc.format = GL_R;
+			if (bpp == 8)
+			{
+				desc.internalformat = GL_LUMINANCE;
+				desc.format = GL_LUMINANCE;
+			}
+			else
+			{
+				assert("Unsupported PNG format" && false);
+			}
 			break;
 		};
-#endif
 			
-#if defined(GL_RG) && defined(GL_RG16)
-		case 2: 
+		case 2:
 		{
-			desc.internalformat = (bpp == 16) ? GL_RG16 : GL_RG;
-			desc.format = GL_RG;
+			if (bpp == 8)
+			{
+				desc.internalformat = GL_LUMINANCE_ALPHA;
+				desc.format = GL_LUMINANCE_ALPHA;
+			}
+			else
+			{
+				assert("Unsupported PNG format" && false);
+			}
 			break;
 		}
-#endif
 			
 		case 3:
 		{
