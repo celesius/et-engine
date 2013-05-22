@@ -191,6 +191,7 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 	{
 		case 1:
 		{
+#if defined(GL_LUMINANCE)
 			if (bpp == 8)
 			{
 				desc.internalformat = GL_LUMINANCE;
@@ -200,11 +201,25 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 			{
 				assert("Unsupported PNG format" && false);
 			}
+#elif defined(GL_R8) && defined(GL_R16)
+			if (bpp == 8)
+			{
+				desc.internalformat = GL_R8;
+			}
+			else if (bpp == 16)
+			{
+				desc.internalformat = GL_R16;
+			}
+			desc.format = GL_RED;
+#else
+#			error Unable to resolve OpenGL format for 1-channel texture
+#endif
 			break;
 		};
-			
+
 		case 2:
 		{
+#if defined(GL_LUMINANCE_ALPHA)
 			if (bpp == 8)
 			{
 				desc.internalformat = GL_LUMINANCE_ALPHA;
@@ -214,9 +229,22 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 			{
 				assert("Unsupported PNG format" && false);
 			}
+#elif defined(GL_RG8) && defined(GL_RG16)
+			if (bpp == 8)
+			{
+				desc.internalformat = GL_RG8;
+			}
+			else if (bpp == 16)
+			{
+				desc.internalformat = GL_RG16;
+			}
+			desc.format = GL_RG;
+#else
+#			error Unable to resolve OpenGL format for 1-channel texture
+#endif
 			break;
 		}
-			
+
 		case 3:
 		{
 #if defined(GL_RGB16)
