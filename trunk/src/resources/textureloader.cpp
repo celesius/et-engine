@@ -171,7 +171,7 @@ TextureDescription::Pointer TextureLoader::load(const std::string& name, size_t 
 		desc = new TextureDescription;
 		desc->target = GL_TEXTURE_2D;
 		desc->source = fileName;
-		PNGLoader::loadFromFile(fileName, *desc);
+		PNGLoader::loadFromFile(fileName, *desc, true);
 	}
 	else if (ext == ".dds")
 	{
