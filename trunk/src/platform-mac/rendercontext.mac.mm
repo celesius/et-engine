@@ -278,6 +278,11 @@ int RenderContextPrivate::displayLinkSynchronized()
 
 - (void)mouseMoved:(NSEvent *)theEvent
 {
+	pointerInputSource.pointerMoved([self mousePointerInfo:theEvent withType:PointerType_None]);
+}
+
+- (void)mouseDragged:(NSEvent *)theEvent
+{
 	pointerInputSource.pointerMoved([self mousePointerInfo:theEvent withType:PointerType_General]);
 }
 
