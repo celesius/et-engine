@@ -67,7 +67,8 @@ DownloadManager::~DownloadManager()
 	delete _private;
 }
 
-DownloadRequest::Pointer DownloadManager::downloadFile(const std::string& url, const std::string& destination)
+DownloadRequest::Pointer DownloadManager::downloadFile(const std::string& url,
+	const std::string& destination)
 {
 	DownloadRequest::Pointer request(new DownloadRequest(url, destination));
 	_private->thread->pushRequest(request);
@@ -143,7 +144,7 @@ size_t et::writeCallback(void* ptr, size_t size, size_t nmemb, DownloadRequest* 
 
 int et::progessCallback(void* p, double dltotal, double dlnow, double, double)
 {
-	if (dltotal + dlnow > 0.0)
+	if (dltotal > 0.0)
 	{
 		DownloadRequest* req = reinterpret_cast<DownloadRequest*>(p);
 		req->_totalSize = static_cast<uint64_t>(dltotal);
