@@ -22,7 +22,7 @@ namespace et
 
 		public:
 			TextField(const Image& background, const std::string& text, Font font, 
-				Element* parent);
+				Element* parent, const std::string& name = std::string());
 
 			void addToRenderQueue(RenderContext*, GuiRenderer&);
 

@@ -8,6 +8,29 @@ namespace et
 	{
 		class GuiRenderer;
 
+		enum ElementRepresentation
+		{
+			ElementRepresentation_2d,
+			ElementRepresentation_3d,
+			ElementRepresentation_max
+		};
+
+		template <typename T>
+		struct ElementClass
+		{
+			static const std::string className;
+			static AtomicCounter instanceConter;
+			static std::string uniqueName(const std::string&);
+		};
+
+#		define ET_DECLARE_GUI_ELEMENT_CLASS(CLASS) template <> \
+			const std::string et::gui::ElementClass<et::gui::CLASS*>::className = std::string(#CLASS);\
+			template<>AtomicCounter et::gui::ElementClass<et::gui::CLASS*>::instanceConter = AtomicCounter();\
+			template<>std::string et::gui::ElementClass<et::gui::CLASS*>::uniqueName(const std::string& inputName)\
+			{ return (inputName.empty()) ? className + intToStr(instanceConter.retain()) : inputName; }
+
+#		define ET_GUI_PASS_NAME_TO_BASE_CLASS ElementClass<decltype(this)>::uniqueName(name)
+
 		struct AnimationDescriptor
 		{
 		public:
@@ -117,10 +140,11 @@ namespace et
 			size_t count;
 			recti clip;
 			Texture layers[RenderLayer_max];
-			ElementClass elementClass;
+			ElementRepresentation representation;
 
-			RenderChunk(size_t f, size_t cnt, const Texture& l0, const Texture& l1, const recti& aClip, ElementClass c) : 
-				first(f), count(cnt), clip(aClip), elementClass(c)
+			RenderChunk(size_t f, size_t cnt, const Texture& l0, const Texture& l1,
+				const recti& aClip, ElementRepresentation c) : first(f), count(cnt), clip(aClip),
+				representation(c)
 			{ 
 				layers[RenderLayer_Layer0] = l0;
 				layers[RenderLayer_Layer1] = l1;

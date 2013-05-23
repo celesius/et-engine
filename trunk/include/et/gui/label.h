@@ -20,7 +20,8 @@ namespace et
 			typedef IntrusivePtr<Label> Pointer;
 
 		public:
-			Label(const std::string& text, Font font, Element2d* parent);
+			Label(const std::string& text, Font font, Element2d* parent,
+				const std::string& name = std::string());
 
 			vec2 textSize();
 			

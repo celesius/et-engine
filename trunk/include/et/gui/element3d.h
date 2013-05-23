@@ -20,10 +20,10 @@ namespace et
 			typedef IntrusivePtr<Element3D> Pointer;
 
 		public:
-			Element3D(const Camera& camera, Element* parent);
+			Element3D(const Camera& camera, Element* parent, const std::string& name = std::string());
 
-			virtual ElementClass elementClass() const 
-				{ return ElementClass_3d; };
+			virtual ElementRepresentation representation() const
+				{ return ElementRepresentation_3d; };
 
 			void setTransform(const mat4& transform);
 			void applyTransform(const mat4& transform);

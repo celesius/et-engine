@@ -37,7 +37,8 @@ namespace et
 			typedef IntrusivePtr<ListboxPopup> Pointer;
 
 		public:
-			ListboxPopup(Listbox* owner);
+			ListboxPopup(Listbox* owner, const std::string& name = std::string());
+			
 			void setBackgroundImage(const Image& img);
 			void addToRenderQueue(RenderContext*, GuiRenderer&);
 
@@ -73,7 +74,7 @@ namespace et
 			typedef IntrusivePtr<Listbox> Pointer;
 
 		public:
-			Listbox(Font font, Element2d* parent);
+			Listbox(Font font, Element2d* parent, const std::string& name = std::string());
 
 			void setImage(const Image& img, ListboxState state);
 			void setBackgroundImage(const Image& img);

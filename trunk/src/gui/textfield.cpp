@@ -14,9 +14,11 @@ using namespace et::gui;
 const short caretChar = '|';
 const short securedChar = '*';
 
-TextField::TextField(const Image& background, const std::string& text, Font font, Element* parent) : 
-	Element2d(parent), _font(font), _background(background), _text(text), _secured(false),
-	_caretVisible(false)
+ET_DECLARE_GUI_ELEMENT_CLASS(TextField)
+
+TextField::TextField(const Image& background, const std::string& text, Font font,
+	Element* parent, const std::string& name) : Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS),
+	_font(font), _background(background), _text(text), _secured(false), _caretVisible(false)
 {
 	setFlag(ElementFlag_RequiresKeyboard);
 	setSize(font->measureStringSize(text));
@@ -29,13 +31,13 @@ void TextField::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 		buildVertices(rc, gr);
 	
 	if (_backgroundVertices.offset() > 0)
-		gr.addVertices(_backgroundVertices, _background.texture, ElementClass_2d, RenderLayer_Layer0);
+		gr.addVertices(_backgroundVertices, _background.texture, ElementRepresentation_2d, RenderLayer_Layer0);
 
 	if (_imageVertices.offset() > 0)
-		gr.addVertices(_imageVertices, _background.texture, ElementClass_2d, RenderLayer_Layer0);
+		gr.addVertices(_imageVertices, _background.texture, ElementRepresentation_2d, RenderLayer_Layer0);
 	
 	if (_textVertices.offset() > 0)
-		gr.addVertices(_textVertices, _font->texture(), ElementClass_2d, RenderLayer_Layer1);
+		gr.addVertices(_textVertices, _font->texture(), ElementRepresentation_2d, RenderLayer_Layer1);
 }
 
 void TextField::buildVertices(RenderContext*, GuiRenderer& gr)
@@ -75,7 +77,7 @@ void TextField::buildVertices(RenderContext*, GuiRenderer& gr)
 	if (_charList.size())
 	{
 		gr.createStringVertices(_textVertices, _charList, ElementAlignment_Near, ElementAlignment_Near,
-								0.5f * (size() - textSize), color() * alphaVector, transform, RenderLayer_Layer1);
+			0.5f * (size() - textSize), color() * alphaVector, transform, RenderLayer_Layer1);
 	}
 	
 	setContentValid();

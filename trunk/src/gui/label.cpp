@@ -12,11 +12,13 @@
 using namespace et;
 using namespace et::gui;
 
-Label::Label(const std::string& text, Font font, Element2d* parent) :
-	Element2d(parent), _text(text), _nextText(text), _font(font), _vertices(0),
-	_backgroundColor(0.0f), _shadowOffset(1.0f), _textFade(0.0f), _textFadeDuration(0.0f), _textFadeStartTime(0.0f),
-	_horizontalAlignment(ElementAlignment_Near), _verticalAlignment(ElementAlignment_Near),
-	_animatingText(false), _allowFormatting(false)
+ET_DECLARE_GUI_ELEMENT_CLASS(Label)
+
+Label::Label(const std::string& text, Font font, Element2d* parent, const std::string& name) :
+	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _text(text), _nextText(text), _font(font),
+	_vertices(0), _backgroundColor(0.0f), _shadowOffset(1.0f), _textFade(0.0f), _textFadeDuration(0.0f),
+	_textFadeStartTime(0.0f), _horizontalAlignment(ElementAlignment_Near),
+	_verticalAlignment(ElementAlignment_Near), _animatingText(false), _allowFormatting(false)
 {
 	setFlag(ElementFlag_TransparentForPointer);
 	_charListText = _font->buildString(_text);
@@ -30,7 +32,7 @@ void Label::addToRenderQueue(RenderContext* rc, GuiRenderer& guiRenderer)
 		buildVertices(rc, guiRenderer);
 
 	if (_vertices.offset() > 0)
-		guiRenderer.addVertices(_vertices, _font->texture(), ElementClass_2d, RenderLayer_Layer1);
+		guiRenderer.addVertices(_vertices, _font->texture(), ElementRepresentation_2d, RenderLayer_Layer1);
 }
 
 void Label::buildVertices(RenderContext*, GuiRenderer& renderer)

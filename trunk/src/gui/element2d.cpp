@@ -12,7 +12,10 @@ using namespace et::gui;
 
 const float minimalVisibleAlpha = 1.0f / 1000.0f;
 
-Element2d::Element2d(Element* parent) : Element(parent), _frameAnimator(timerPool()), 
+ET_DECLARE_GUI_ELEMENT_CLASS(Element2d)
+
+Element2d::Element2d(Element* parent, const std::string& name) :
+	Element(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _frameAnimator(timerPool()),
 	_colorAnimator(timerPool()), _scaleAnimator(timerPool()), _angleAnimator(timerPool()),
 	_frame(0.0f, 0.0f, 0.0f, 0.0f), _scale(1.0f), _color(1.0f), _angle(0.0f), _pivotPoint(0.0f)
 {
@@ -26,7 +29,8 @@ Element2d::Element2d(Element* parent) : Element(parent), _frameAnimator(timerPoo
 	_angleAnimator.setDelegate(this);
 }
 
-Element2d::Element2d(const rect& frame, Element* parent) : Element(parent), _frameAnimator(timerPool()), 
+Element2d::Element2d(const rect& frame, Element* parent, const std::string& name) :
+	Element(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _frameAnimator(timerPool()),
 	_colorAnimator(timerPool()), _scaleAnimator(timerPool()), _angleAnimator(timerPool()),
 	_frame(frame), _scale(1.0f), _color(1.0f), _angle(0.0f), _pivotPoint(0.0f)
 {
@@ -282,4 +286,63 @@ const mat4& Element2d::finalInverseTransform()
 vec2 Element2d::positionInElement(const vec2& p)
 {
 	return finalInverseTransform() * p;
+}
+
+void Element2d::setAutolayot(const et::gui::Element2dLayout& al)
+{
+	_autoLayout = al;
+}
+
+void Element2d::setAutolayot(const vec2& pos, ElementLayoutMode pMode, const vec2& sz,
+	ElementLayoutMode sMode, const vec2& pivot)
+{
+	_autoLayout.position = pos;
+	_autoLayout.size = sz;
+	_autoLayout.pivotPoint = pivot;
+	_autoLayout.positionMode = pMode;
+	_autoLayout.sizeMode = sMode;
+}
+
+void Element2d::setAutolayoutMask(size_t m)
+{
+	_autoLayout.mask = m;
+}
+
+void Element2d::autoLayout(const vec2& contextSize)
+{
+	Element2d* aParent = static_cast<Element2d*>(parent());
+
+	if ((_autoLayout.mask & Element2dLayoutMask_Pivot) == Element2dLayoutMask_Pivot)
+		setPivotPoint(_autoLayout.pivotPoint);
+
+	if ((_autoLayout.mask & Element2dLayoutMask_Size) == Element2dLayoutMask_Size)
+	{
+		vec2 sz;
+		
+		if (_autoLayout.sizeMode == ElementLayoutMode_RelativeToContext)
+			sz = contextSize * _autoLayout.size;
+		else if ((_autoLayout.sizeMode == ElementLayoutMode_RelativeToParent) && (aParent != nullptr))
+			sz = aParent->size() * _autoLayout.size;
+		else
+			sz = _autoLayout.size;
+
+		setSize(sz);
+	}
+
+	if ((_autoLayout.mask & Element2dLayoutMask_Position) == Element2dLayoutMask_Position)
+	{
+		vec2 pos;
+		
+		if (_autoLayout.positionMode == ElementLayoutMode_RelativeToContext)
+			pos = contextSize * _autoLayout.position;
+		else if ((_autoLayout.positionMode == ElementLayoutMode_RelativeToParent) && (aParent != nullptr))
+			pos = aParent->size() * _autoLayout.position;
+		else
+			pos = _autoLayout.position;
+		
+		setPosition(pos);
+	}
+
+	for (Element2d::Pointer aChild : children())
+		aChild->autoLayout(contextSize);
 }

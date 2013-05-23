@@ -10,20 +10,25 @@
 using namespace et;
 using namespace gui;
 
-ImageView::ImageView(const Texture& texture, Element2d* parent) : Element2d(parent),
-	_texture(texture), _descriptor(ImageDescriptor(texture)), _contentMode(ImageView::ContentMode_Stretch)
+ET_DECLARE_GUI_ELEMENT_CLASS(ImageView)
+
+ImageView::ImageView(const Texture& texture, Element2d* parent, const std::string& name) :
+	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _texture(texture),
+	_descriptor(ImageDescriptor(texture)), _contentMode(ImageView::ContentMode_Stretch)
 {
 	setSize(_descriptor.size);
 }
 
-ImageView::ImageView(const Texture& texture, const ImageDescriptor& i, Element2d* parent) : 
-	Element2d(parent), _texture(texture), _descriptor(i), _contentMode(ImageView::ContentMode_Stretch)
+ImageView::ImageView(const Texture& texture, const ImageDescriptor& i, Element2d* parent,
+	const std::string& name) : Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _texture(texture),
+	_descriptor(i), _contentMode(ImageView::ContentMode_Stretch)
 {
 	setSize(_descriptor.size, 0.0f);
 }
 
-ImageView::ImageView(const Image& img, Element2d* parent) : 
-	Element2d(parent), _texture(img.texture), _descriptor(img.descriptor), _contentMode(ImageView::ContentMode_Stretch)
+ImageView::ImageView(const Image& img, Element2d* parent, const std::string& name) : 
+	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _texture(img.texture), _descriptor(img.descriptor),
+	_contentMode(ImageView::ContentMode_Stretch)
 {
 	setSize(_descriptor.size, 0.0f);
 }
@@ -34,7 +39,7 @@ void ImageView::addToRenderQueue(RenderContext* rc, GuiRenderer& g)
 		buildVertices(rc, g);
 
 	if (_vertices.offset())
-		g.addVertices(_vertices, _texture, ElementClass_2d, RenderLayer_Layer0);
+		g.addVertices(_vertices, _texture, ElementRepresentation_2d, RenderLayer_Layer0);
 }
 
 void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
@@ -43,7 +48,10 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 	_vertices.setOffset(0);
 	
 	if (_backgroundColor.w > 0.0f)
-		g.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor, transform, RenderLayer_Layer1);
+	{
+		g.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor,
+			transform, RenderLayer_Layer1);
+	}
 	
 	if (!_texture.valid()) return;
 

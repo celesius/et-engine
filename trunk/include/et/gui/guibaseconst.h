@@ -24,13 +24,6 @@ namespace et
 			AnimationFlag_FromTop = 0x08,
 			AnimationFlag_FromBottom = 0x10
 		};
-		
-		enum ElementClass
-		{
-			ElementClass_2d,
-			ElementClass_3d,
-			ElementClass_max
-		};
 
 		enum ElementFlags
 		{
@@ -41,7 +34,24 @@ namespace et
 			ElementFlag_HandlesChildEvents = 0x0010,
 			ElementFlag_ClipToBounds = 0x0020,
 		};
-		
+
+		enum ElementAnimatedPropery
+		{
+			ElementAnimatedProperty_None,
+			ElementAnimatedProperty_Angle,
+			ElementAnimatedProperty_Scale,
+			ElementAnimatedProperty_Color,
+			ElementAnimatedProperty_Frame,
+			ElementAnimatedProperty_max
+		};
+
+		enum ElementLayoutMode
+		{
+			ElementLayoutMode_Absolute,
+			ElementLayoutMode_RelativeToParent,
+			ElementLayoutMode_RelativeToContext
+		};
+
 		enum RenderLayer 
 		{
 			RenderLayer_Layer0,

@@ -20,7 +20,10 @@ float minAlpha = 1.0f / 255.0f;
 float alphaAnimationScale = 5.0f;
 float bounceStopTreshold = 0.5f;
 
-Scroll::Scroll(Element2d* parent) : Element2d(parent), _offsetAnimator(0, 0, mainTimerPool()),
+ET_DECLARE_GUI_ELEMENT_CLASS(Scroll)
+
+Scroll::Scroll(Element2d* parent, const std::string& name) :
+	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _offsetAnimator(0, 0, mainTimerPool()),
 	_updateTime(0.0f), _scrollbarsAlpha(0.0f), _scrollbarsAlphaTarget(0.0f), _bounce(0),
 	_pointerCaptured(false), _manualScrolling(false)
 {
@@ -35,7 +38,7 @@ void Scroll::addToRenderQueue(RenderContext* rc, GuiRenderer& r)
 	if (!contentValid())
 		buildVertices(rc, r);
 	
-	r.addVertices(_backgroundVertices, Texture(), ElementClass_2d, RenderLayer_Layer0);
+	r.addVertices(_backgroundVertices, Texture(), ElementRepresentation_2d, RenderLayer_Layer0);
 }
 
 void Scroll::addToOverlayRenderQueue(RenderContext* rc, GuiRenderer& r)
@@ -43,7 +46,7 @@ void Scroll::addToOverlayRenderQueue(RenderContext* rc, GuiRenderer& r)
 	if (!contentValid())
 		buildVertices(rc, r);
 
-	r.addVertices(_scrollbarsVertices, Texture(), ElementClass_2d, RenderLayer_Layer0);
+	r.addVertices(_scrollbarsVertices, Texture(), ElementRepresentation_2d, RenderLayer_Layer0);
 }
 
 void Scroll::buildVertices(RenderContext* rc, GuiRenderer& r)

@@ -25,9 +25,10 @@ ElementState et::gui::adjustElementState(ElementState s)
 	return s;
 }
 
-Element::Element(Element* parent) : ElementHierarchy(parent), tag(0),
+Element::Element(Element* parent, const std::string& name) : ElementHierarchy(parent), tag(0), _name(name),
 	_enabled(true), _transformValid(false), _inverseTransformValid(false), _contentValid(false)
 {
+	
 }
 
 void Element::setParent(Element* element)
@@ -121,4 +122,22 @@ void Element::broardcastMessage(const GuiMessage& msg)
 		c->processMessage(msg);
 		c->broardcastMessage(msg);
 	})
+}
+
+Element* Element::baseChildWithName(const std::string& name)
+	{ return childWithNameCallback(name, this); }
+
+Element* Element::childWithNameCallback(const std::string& name, Element* root)
+{
+	if (root->name() == name)
+		return root;
+
+	for (auto c : root->children())
+	{
+		Element* aElement = childWithNameCallback(name, c.ptr());
+		if (aElement != nullptr)
+			return aElement;
+	}
+
+	return nullptr;
 }

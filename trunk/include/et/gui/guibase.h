@@ -41,7 +41,8 @@ namespace et
 			};
 
 		public:
-			Element(Element* parent);
+			Element(Element* parent, const std::string& name);
+			virtual ~Element() { }
 
 			void setParent(Element* element);
 
@@ -73,6 +74,7 @@ namespace et
 				{ return !hasFlag(ElementFlag_TransparentForPointer); }
 
 			virtual void pointerEntered(const PointerInputInfo&) { }
+			
 			virtual void pointerLeaved(const PointerInputInfo&) { }
 
 			virtual bool capturesPointer() const
@@ -113,10 +115,17 @@ namespace et
 			void bringToFront(Element* c);
 			void sendToBack(Element* c);
 
+			Element* baseChildWithName(const std::string&);
+
+			template <typename T>
+			T* childWithName(const std::string& name)
+				{ return static_cast<T*>(baseChildWithName(name)); }
+
+
 			/*
 			 * Required Methods
 			 */
-			virtual ElementClass elementClass() const = 0;
+			virtual ElementRepresentation representation() const = 0;
 			virtual const vec2& position() const = 0;
 			virtual vec2 origin() const = 0;
 			virtual const vec2& size() const = 0;
@@ -169,6 +178,10 @@ namespace et
 			const TimerPool& timerPool() const;
 
 			void layoutChildren();
+
+			Element* childWithNameCallback(const std::string&, Element*);
+
+			ET_DECLARE_PROPERTY_GET_REF_SET_REF(std::string, name, setName)
 
 		private:
 			friend class Hierarchy<Element>;

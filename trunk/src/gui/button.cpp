@@ -11,11 +11,14 @@
 using namespace et;
 using namespace et::gui;
 
-Button::Button(const std::string& title, Font font, Element2d* parent) : Element2d(parent), 
-	_title(title), _font(font), _textSize(font->measureStringSize(title, true)),
-	_textColor(vec3(0.0f), 1.0f), _textPressedColor(vec3(0.0f), 1.0f),
-	_type(Button::Type_PushButton), _state(ElementState_Default), _imageLayout(ImageLayout_Left),
-	_contentMode(ContentMode_Fit), _pressed(false), _hovered(false), _selected(false)
+ET_DECLARE_GUI_ELEMENT_CLASS(Button)
+
+Button::Button(const std::string& title, Font font, Element2d* parent, const std::string& name) :
+	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _title(title), _font(font),
+	_textSize(font->measureStringSize(title, true)), _textColor(vec3(0.0f), 1.0f),
+	_textPressedColor(vec3(0.0f), 1.0f), _type(Button::Type_PushButton), _state(ElementState_Default),
+	_imageLayout(ImageLayout_Left), _contentMode(ContentMode_Fit), _pressed(false),
+	_hovered(false), _selected(false)
 {
 	setSize(sizeForText(title));
 }
@@ -26,13 +29,13 @@ void Button::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 		buildVertices(rc, gr);
 
 	if (_bgVertices.offset() > 0)
-		gr.addVertices(_bgVertices, _background[_state].texture, ElementClass_2d, RenderLayer_Layer0);
+		gr.addVertices(_bgVertices, _background[_state].texture, ElementRepresentation_2d, RenderLayer_Layer0);
 
 	if (_textVertices.offset() > 0)
-		gr.addVertices(_textVertices, _font->texture(), ElementClass_2d, RenderLayer_Layer1);
+		gr.addVertices(_textVertices, _font->texture(), ElementRepresentation_2d, RenderLayer_Layer1);
 
 	if (_imageVertices.offset() > 0)
-		gr.addVertices(_imageVertices, _image.texture, ElementClass_2d, RenderLayer_Layer0);
+		gr.addVertices(_imageVertices, _image.texture, ElementRepresentation_2d, RenderLayer_Layer0);
 }
 
 void Button::buildVertices(RenderContext*, GuiRenderer& gr)
