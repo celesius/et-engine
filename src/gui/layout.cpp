@@ -11,8 +11,11 @@
 using namespace et;
 using namespace et::gui;
 
-Layout::Layout() : Element2d(0),
-	_currentElement(0), _focusedElement(0), _capturedElement(0), _valid(false), _dragging(false)
+ET_DECLARE_GUI_ELEMENT_CLASS(Layout)
+
+Layout::Layout() : Element2d(nullptr, ElementClass<decltype(this)>::uniqueName(std::string())),
+	_currentElement(nullptr), _focusedElement(nullptr), _capturedElement(nullptr), _valid(false),
+	_dragging(false)
 {
 }
 

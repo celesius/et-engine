@@ -39,7 +39,8 @@ namespace et
 			};
 
 		public:
-			Button(const std::string& title, Font font, Element2d* parent);
+			Button(const std::string& title, Font font, Element2d* parent,
+				const std::string& name = std::string());
 
 			void addToRenderQueue(RenderContext* rc, GuiRenderer& guiRenderer);
 			

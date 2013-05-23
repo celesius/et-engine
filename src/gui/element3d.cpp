@@ -11,7 +11,7 @@
 using namespace et;
 using namespace et::gui;
 
-Element3D::Element3D(const Camera& camera, Element* parent) : Element(parent), 
+Element3D::Element3D(const Camera& camera, Element* parent, const std::string& name) : Element(parent, name),
 	_camera(camera), _transform(identityMatrix), _finalTransform(identityMatrix), 
 	_inverseFinalTransform(identityMatrix), _finalTransformValid(true), _inverseFinalTransformValid(true)
 {

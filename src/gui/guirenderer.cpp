@@ -108,7 +108,8 @@ void GuiRenderer::alloc(size_t count)
 	}
 }
 
-GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& texture, ElementClass cls, RenderLayer layer)
+GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& texture,
+	ElementRepresentation cls, RenderLayer layer)
 {
 	if (!_renderingElement.valid()) return 0;
 
@@ -122,7 +123,7 @@ GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& text
 	{
 		RenderChunk& lastChunk = _renderingElement->_chunks.back();
 
-		if ((lastChunk.elementClass == cls) && (lastChunk.layers[layer] == texture))
+		if ((lastChunk.representation == cls) && (lastChunk.layers[layer] == texture))
 			lastChunk.count += count;
 		else 
 			shouldAdd = true;
@@ -147,7 +148,8 @@ GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& text
 	return _renderingElement->_vertexList.element_ptr(i0);
 }
 
-size_t GuiRenderer::addVertices(const GuiVertexList& vertices, const Texture& texture, ElementClass cls, RenderLayer layer)
+size_t GuiRenderer::addVertices(const GuiVertexList& vertices, const Texture& texture,
+	ElementRepresentation cls, RenderLayer layer)
 {
 	size_t current = 0;
 	size_t count = vertices.offset();
@@ -201,7 +203,7 @@ void GuiRenderer::render(RenderContext* rc)
 
 	_guiProgram->setUniform(_guiCustomOffsetUniform, GL_FLOAT_VEC2, _customOffset);
 	_guiProgram->setUniform(_guiCustomAlphaUniform, GL_FLOAT, _customAlpha);
-	ElementClass elementClass = ElementClass_max;
+	ElementRepresentation representation = ElementRepresentation_max;
 	
 	const VertexArrayObject& vao = _renderingElement->vertexArrayObject();
 	ET_START_ITERATION(_renderingElement->_chunks, const RenderChunk&, i)
@@ -210,10 +212,10 @@ void GuiRenderer::render(RenderContext* rc)
 		rs.bindTexture(1, i.layers[RenderLayer_Layer1]);
 		rs.setClip(true, i.clip + recti(_customWindowOffset.x, _customWindowOffset.y, 0, 0));
 
-		if (i.elementClass != elementClass)
+		if (i.representation != representation)
 		{
-			elementClass = i.elementClass;
-			bool is3D = i.elementClass == ElementClass_3d;
+			representation = i.representation;
+			bool is3D = (i.representation == ElementRepresentation_3d);
 			rs.setDepthTest(is3D);
 			rs.setDepthMask(is3D);
 			_guiProgram->setTransformMatrix(is3D ? _guiCamera.modelViewProjectionMatrix() : _defaultTransform);
@@ -235,8 +237,9 @@ void GuiRenderer::buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, c
 	vertices.push_back(topLeft);
 }
 
-void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescriptorList& chars, ElementAlignment hAlign, ElementAlignment vAlign, 
-									   const vec2& pos, const vec4& color, const mat4& transform, RenderLayer layer)
+void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescriptorList& chars,
+	ElementAlignment hAlign, ElementAlignment vAlign, const vec2& pos, const vec4& color,
+	const mat4& transform, RenderLayer layer)
 {
 	vec4 line;
 	std::vector<vec4> lines;

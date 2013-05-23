@@ -15,8 +15,11 @@ using namespace et::gui;
 const float popupAppearTime = 0.1f;
 const float textRevealDuration = 0.1f;
 
-ListboxPopup::ListboxPopup(Listbox* owner) : Element2d(owner),
-	_owner(owner), _textAlphaAnimator(0), _selectedIndex(-1), _textAlpha(0.0f), _pressed(false)
+ET_DECLARE_GUI_ELEMENT_CLASS(ListboxPopup)
+
+ListboxPopup::ListboxPopup(Listbox* owner, const std::string& name) :
+	Element2d(owner, ET_GUI_PASS_NAME_TO_BASE_CLASS), _owner(owner), _textAlphaAnimator(0),
+	_selectedIndex(-1), _textAlpha(0.0f), _pressed(false)
 {
 	setFlag(ElementFlag_RenderTopmost);
 }
@@ -78,7 +81,8 @@ void ListboxPopup::revealText()
 	if (_textAlphaAnimator)
 		_textAlphaAnimator->destroy();
 
-	_textAlphaAnimator = new FloatAnimator(this, &_textAlpha, _textAlpha, 1.0f, textRevealDuration, 0, timerPool());
+	_textAlphaAnimator = new FloatAnimator(this, &_textAlpha, _textAlpha, 1.0f,
+		textRevealDuration, 0, timerPool());
 }
 
 void ListboxPopup::hideText()
@@ -113,13 +117,13 @@ void ListboxPopup::addToRenderQueue(RenderContext*, GuiRenderer& gr)
 		buildVertices(gr);
 
 	if (_backgroundVertices.offset() > 0)
-		gr.addVertices(_backgroundVertices, _owner->_background.texture, ElementClass_2d, RenderLayer_Layer0);
+		gr.addVertices(_backgroundVertices, _owner->_background.texture, ElementRepresentation_2d, RenderLayer_Layer0);
 
 	if (_selectionVertices.offset() > 0)
-		gr.addVertices(_selectionVertices, _owner->_selection.texture, ElementClass_2d, RenderLayer_Layer0);
+		gr.addVertices(_selectionVertices, _owner->_selection.texture, ElementRepresentation_2d, RenderLayer_Layer0);
 
 	if (_textVertices.offset() > 0)
-		gr.addVertices(_textVertices, _owner->_font->texture(), ElementClass_2d, RenderLayer_Layer1);
+		gr.addVertices(_textVertices, _owner->_font->texture(), ElementRepresentation_2d, RenderLayer_Layer1);
 }
 
 bool ListboxPopup::pointerPressed(const PointerInputInfo&)
@@ -161,11 +165,14 @@ void ListboxPopup::pointerLeaved(const PointerInputInfo&)
 
 /*
  * Listbox
- */ 
+ */
 
-Listbox::Listbox(Font font, Element2d* parent) : Element2d(parent), _font(font), 
-	_state(ListboxState_Default), _contentOffset(0.0f), _selectedIndex(-1), 
-	_direction(ListboxPopupDirection_Bottom), _popupOpened(false), _popupOpening(false), _popupValid(false)
+ET_DECLARE_GUI_ELEMENT_CLASS(Listbox)
+
+Listbox::Listbox(Font font, Element2d* parent, const std::string& name) :
+	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _font(font), _state(ListboxState_Default),
+	_contentOffset(0.0f), _selectedIndex(-1), _direction(ListboxPopupDirection_Bottom),
+	_popupOpened(false), _popupOpening(false), _popupValid(false)
 {
 	_popup = ListboxPopup::Pointer(new ListboxPopup(this));
 	_popup->elementAnimationFinished.connect(this, &Listbox::onPopupAnimationFinished);
@@ -225,10 +232,10 @@ void Listbox::addToRenderQueue(RenderContext*, GuiRenderer& gr)
 		buildVertices(gr);
 
 	if (_images[_state].texture.valid())
-		gr.addVertices(_backgroundVertices, _images[_state].texture, ElementClass_2d, RenderLayer_Layer0);
+		gr.addVertices(_backgroundVertices, _images[_state].texture, ElementRepresentation_2d, RenderLayer_Layer0);
 
 	if (shouldDrawText())
-		gr.addVertices(_textVertices, _font->texture(),  ElementClass_2d, RenderLayer_Layer1);
+		gr.addVertices(_textVertices, _font->texture(),  ElementRepresentation_2d, RenderLayer_Layer1);
 }
 
 bool Listbox::shouldDrawText()

@@ -35,7 +35,7 @@ namespace et
 			void setRendernigElement(const RenderingElement::Pointer& r);
 
 			size_t addVertices(const GuiVertexList& vertices, const Texture& texture,
-				ElementClass cls, RenderLayer layer);
+				ElementRepresentation cls, RenderLayer layer);
 
 			int measusevertexCountForImageDescriptor(const ImageDescriptor& desc);
 			
@@ -64,7 +64,7 @@ namespace et
 			void init(RenderContext* rc);
 			void alloc(size_t count);
 			GuiVertexPointer allocateVertices(size_t count, const Texture& texture,
-				ElementClass cls, RenderLayer layer);
+				ElementRepresentation cls, RenderLayer layer);
 
 			GuiRenderer& operator = (const GuiRenderer&)
 				{ return *this; }

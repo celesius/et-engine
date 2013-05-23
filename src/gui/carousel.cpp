@@ -49,7 +49,7 @@ void CarouselItem::addToRenderQueue(RenderContext*, GuiRenderer& gr)
 	if (!contentValid())
 		buildVertexList(gr);
 
-	gr.addVertices(_vertices, _texture, ElementClass_3d, RenderLayer_Layer0);
+	gr.addVertices(_vertices, _texture, ElementRepresentation_3d, RenderLayer_Layer0);
 }
 
 void CarouselItem::buildVertexList(GuiRenderer& gr)

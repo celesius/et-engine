@@ -31,9 +31,14 @@ namespace et
 			};
 
 		public:
-			ImageView(const Texture& texture, Element2d* parent);
-			ImageView(const Texture& texture, const ImageDescriptor& i, Element2d* parent);
-			ImageView(const Image&, Element2d* parent);
+			ImageView(const Texture& texture, Element2d* parent,
+				const std::string& name = std::string());
+
+			ImageView(const Texture& texture, const ImageDescriptor& i, Element2d* parent,
+				const std::string& name = std::string());
+			
+			ImageView(const Image&, Element2d* parent,
+				const std::string& name = std::string());
 
 			void addToRenderQueue(RenderContext*, GuiRenderer&);
 
