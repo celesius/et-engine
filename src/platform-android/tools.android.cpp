@@ -5,12 +5,10 @@
  *
  */
 
-#include <jni.h>
 #include <dirent.h>
 #include <errno.h>
 #include <sys/time.h>
 #include <sys/stat.h>
-#include <libzip/zip.h>
 
 #include <et/core/tools.h>
 #include <et/core/datastorage.h>
@@ -24,11 +22,6 @@ static bool startTimeInitialized = false;
 char et::pathDelimiter = '/';
 char et::invalidPathDelimiter = '\\';
 
-namespace et
-{
-	extern android_app* sharedAndroidApplication();
-	extern zip* sharedAndroidZipArchive();
-}
 
 uint64_t queryActualTime()
 {
@@ -62,13 +55,11 @@ std::string et::applicationPath()
 
 std::string et::applicationPackagePath()
 {
-    JNIEnv* env = et::sharedAndroidApplication()->activity->env;
+	JNIEnv* env = attachToThread();
 	ANativeActivity* activity = et::sharedAndroidApplication()->activity;
 	
-	activity->vm->AttachCurrentThread(&env, nullptr);
-	
-    jmethodID methodID =
-	env->GetMethodID(env->GetObjectClass(activity->clazz), "getPackageCodePath", "()Ljava/lang/String;");
+    jmethodID methodID = env->GetMethodID(env->GetObjectClass(activity->clazz),
+		"getPackageCodePath", "()Ljava/lang/String;");
 	
     jobject codePath = env->CallObjectMethod(activity->clazz, methodID);
 	

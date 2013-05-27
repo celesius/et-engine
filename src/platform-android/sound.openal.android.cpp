@@ -7,18 +7,33 @@
 
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
+#include <et/platform-android/nativeactivity.h>
 #include <et/sound/sound.h>
 
 using namespace et;
 using namespace audio;
 
-extern ALCdevice* getSharedDevice();
-extern ALCcontext* getSharedContext();
+namespace et
+{
+	extern android_app* sharedAndroidApplication();
+	extern zip* sharedAndroidZipArchive();
+	extern ALCdevice* getSharedDevice();
+	extern ALCcontext* getSharedContext();
+}
+
+void Manager::nativePreInit()
+{
+	attachToThread();
+}
 
 void Manager::nativeInit()
 {
 }
 
 void Manager::nativeRelease()
+{
+}
+
+void Manager::nativePostRelease()
 {
 }

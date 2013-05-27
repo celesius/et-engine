@@ -23,6 +23,7 @@ LOCAL_SRC_FILES += $(SOURCE_PATH)/platform-android/rendercontext.android.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/platform-android/input.android.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/platform-android/charactergenerator.android.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/platform-android/sound.openal.android.cpp
+LOCAL_SRC_FILES += $(SOURCE_PATH)/platform-android/nativeactivity.android.cpp
 
 LOCAL_SRC_FILES += $(SOURCE_PATH)/core/debug.cpp
 LOCAL_SRC_FILES += $(SOURCE_PATH)/core/plist.cpp
