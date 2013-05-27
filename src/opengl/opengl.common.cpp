@@ -271,7 +271,22 @@ std::string et::glTypeToString(int type)
 		default:
 			return "Unknown type " + intToStr(type);
 	}
+}
 
+std::string et::glPrimitiveTypeToString(int value)
+{
+	switch (value)
+	{
+		CASE_VALUE(GL_POINTS)
+		CASE_VALUE(GL_LINES)
+		CASE_VALUE(GL_LINE_LOOP)
+		CASE_VALUE(GL_LINE_STRIP)
+		CASE_VALUE(GL_TRIANGLES)
+		CASE_VALUE(GL_TRIANGLE_STRIP)
+		CASE_VALUE(GL_TRIANGLE_FAN)
+		default:
+			return "Unknown primitive type " + intToStr(value);
+	}
 }
 
 void et::etDrawElementsBaseVertex(uint32_t mode, GLsizei count, uint32_t type, const GLvoid* indices, int base)
@@ -293,8 +308,9 @@ void et::etDrawElementsBaseVertex(uint32_t mode, GLsizei count, uint32_t type, c
 void et::etDrawElements(uint32_t mode, GLsizei count, uint32_t type, const GLvoid* indices)
 {
 	glDrawElements(mode, count, type, indices);
-	checkOpenGLError("glDrawElements(%u, %u, %s, 0x%08X)", mode, count,
-		glTypeToString(type).c_str(), indices);
+	
+	checkOpenGLError("glDrawElements(%s, %u, %s, 0x%08X)", glPrimitiveTypeToString(mode).c_str(),
+		count, glTypeToString(type).c_str(), indices);
 
 #if ET_ENABLE_OPENGL_COUNTERS
 	OpenGLCounters::primitiveCounter += primitiveCount(mode, count);
