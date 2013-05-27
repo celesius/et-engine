@@ -123,7 +123,8 @@ PointerInputInfo pointerInfoFromEvent(AInputEvent* event, int index, const vec2&
 	vec2 pos = floorv(vec2(AMotionEvent_getX(event, index), AMotionEvent_getY(event, index)));
 	vec2 normalizedPos = vec2(2.0f, -2.0f) * pos / contextSize - vec2(1.0f, -1.0f);
 
-	return PointerInputInfo(PointerType_General, pos, normalizedPos, vec2(0.0f), pid, queryTime());
+	return PointerInputInfo(PointerType_General, pos, normalizedPos, vec2(0.0f), pid,
+		queryTime(), PointerOrigin_Touchscreen);
 }
 
 int32_t handleMotionInpit(android_app* app, AInputEvent* event)
