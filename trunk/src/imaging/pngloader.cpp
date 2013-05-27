@@ -13,7 +13,11 @@
 using namespace et;
 
 void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr, png_size_t* rowBytes);
+
 void streamReadData(png_structp pngPtr, png_bytep data, png_size_t length);
+
+void handlePngError(png_structp, png_const_charp);
+void handlePngWarning(png_structp, png_const_charp);
 
 void PNGLoader::loadInfoFromStream(std::istream& source, TextureDescription& desc)
 {
@@ -28,8 +32,10 @@ void PNGLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 		return;
 	}
 
-	png_structp pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (!pngPtr)
+	png_structp pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr,
+		handlePngError, handlePngWarning);
+	
+	if (pngPtr == nullptr)
 	{
 		log::error("Couldn't initialize png read struct");
 		return;
@@ -64,8 +70,10 @@ void PNGLoader::loadFromStream(std::istream& source, TextureDescription& desc, b
 		return;
 	}
 
-	png_structp pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (!pngPtr)
+	png_structp pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr,
+		handlePngError, handlePngWarning);
+	
+	if (pngPtr == nullptr)
 	{
 		log::error("Couldn't initialize png read struct");
 		return;
@@ -275,4 +283,14 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 void streamReadData(png_structp pngPtr, png_bytep data, png_size_t length)
 {
 	reinterpret_cast<std::istream*>(png_get_io_ptr(pngPtr))->read((char*)data, length);
+}
+
+void handlePngError(png_structp, png_const_charp e)
+{
+	log::error("[PNGLoader] %s", e);
+}
+
+void handlePngWarning(png_structp, png_const_charp e)
+{
+	log::warning("[PNGLoader] %s", e);
 }

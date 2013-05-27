@@ -215,6 +215,7 @@ namespace et
 	std::string glInternalFormatToString(int format);
 	std::string glTypeToString(int type);
 	std::string glBlendFuncToString(int value);
+	std::string glPrimitiveTypeToString(int value);
 
 	void validateExtensions();
 
