@@ -273,7 +273,7 @@ void Carousel::setSelectedItem(size_t item, float duration)
 {
 	if (_type == CarouselType_Ribbon)
 	{
-		item = clamp(item, 0ul, _items.size() - 1);
+		item = clamp(item, static_cast<size_t>(item), _items.size() - 1);
 		float newSelectedItem = static_cast<float>(item);
 
 		if (duration > 0.0f)
