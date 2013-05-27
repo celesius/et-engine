@@ -48,8 +48,8 @@ using namespace et::audio;
  * Manager implementation
  */
 
-static ALCdevice* sharedDevice = 0;
-static ALCcontext* sharedContext = 0;
+static ALCdevice* sharedDevice = nullptr;
+static ALCcontext* sharedContext = nullptr;
 
 ALCdevice* getSharedDevice()
 	{ return sharedDevice; }
@@ -59,11 +59,17 @@ ALCcontext* getSharedContext()
 
 void checkOpenALErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const char* tag)
 {
+	if (sharedDevice == nullptr)
+	{
+		log::error("OpenAL AL device is not initialized.");
+		return;
+	}
+	
 	ALenum error = alcGetError(sharedDevice);
 	if (error != ALC_NO_ERROR)
 	{
 		const char* message = alcGetString(sharedDevice, error);
-        printf("OpenAL ALC error: %s\n%s [%s, %s]: %s\n", message, sourceFile, lineNumber, caller, tag);
+		log::error("OpenAL ALC error: %s\n%s [%s, %s]: %s\n", message, sourceFile, lineNumber, caller, tag);
         fflush(stdout);
 	}
     
@@ -84,14 +90,24 @@ void checkOpenALErrorEx(const char* caller, const char* sourceFile, const char* 
 
 Manager::Manager() : _private(new ManagerPrivate)
 {
-	const char* defaultDeviceSpecifier = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
-	std::cout << "OpenAL device: " << defaultDeviceSpecifier << std::endl;
+	nativePreInit();
+	
+	const char* defaultDeviceSpecifier = alcGetString(nullptr, ALC_DEFAULT_DEVICE_SPECIFIER);
+	log::info("Default OpenAL device is `%s`", defaultDeviceSpecifier);
 
 	sharedDevice = alcOpenDevice(defaultDeviceSpecifier);
-	assert(sharedDevice);
-
-	sharedContext = alcCreateContext(sharedDevice, 0);
-	assert(sharedContext);
+	if (alcOpenDevice == nullptr)
+	{
+		log::error("Unable to initialize OpenAL device");
+		return;
+	}
+	
+	sharedContext = alcCreateContext(sharedDevice, nullptr);
+	if (sharedContext == nullptr)
+	{
+		log::error("Unable to initialize OpenAL context");
+		return;
+	}
 
 	nativeInit();
     
@@ -115,14 +131,17 @@ Manager::Manager() : _private(new ManagerPrivate)
 
 Manager::~Manager()
 {
-	nativeRelease();
+	if (sharedDevice == nullptr) return;
 	
+	nativeRelease();
 	alcMakeContextCurrent(0);
 	alcDestroyContext(sharedContext);
 	alcCloseDevice(sharedDevice);
 	delete _private;
     
-    sharedDevice = 0;
+    sharedDevice = nullptr;
+	
+	nativePostRelease();
 }
 
 Track::Pointer Manager::loadTrack(const std::string& fileName)

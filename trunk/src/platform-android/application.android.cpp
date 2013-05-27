@@ -5,8 +5,6 @@
  *
  */
 
-#include <jni.h>
-#include <libzip/zip.h>
 #include <et/platform-android/nativeactivity.h>
 #include <et/input/input.h>
 #include <et/app/application.h>

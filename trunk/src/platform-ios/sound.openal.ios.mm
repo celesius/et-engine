@@ -42,6 +42,10 @@ void etInterruptListener(void *inClientData, UInt32 inInterruptionState)
 	}
 }
 
+void Manager::nativePreInit()
+{
+}
+
 void Manager::nativeInit()
 {
 	AudioSessionInitialize(nil, nil, etInterruptListener, nil);
@@ -51,4 +55,8 @@ void Manager::nativeInit()
 void Manager::nativeRelease()
 {
 	AudioSessionSetActive(false);
+}
+
+void Manager::nativePostRelease()
+{
 }

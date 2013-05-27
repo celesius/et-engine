@@ -20,16 +20,21 @@
 
 #include "config.h"
 
-#include <stdlib.h>
 #include <jni.h>
+#include <stdlib.h>
 #include <pthread.h>
+
 #include "alMain.h"
 #include "AL/al.h"
 #include "AL/alc.h"
 
-static const ALCchar android_device[] = "Android Default";
+namespace et
+{
+	extern JNIEnv* attachToThread();
+	extern void detachFromThread();
+}
 
-static JavaVM* javaVM = NULL;
+static const ALCchar android_device[] = "Android Default";
 
 static jclass cAudioTrack = NULL;
 
@@ -40,68 +45,54 @@ static jmethodID mStop;
 static jmethodID mRelease;
 static jmethodID mWrite;
 
-jint JNI_OnLoad(JavaVM* vm, void* reserved)
-{
-    javaVM = vm;
-    return JNI_VERSION_1_2;
-}
-
-static JNIEnv* GetEnv()
-{
-    JNIEnv* env = NULL;
-    if (javaVM) (*javaVM)->GetEnv(javaVM, (void**)&env, JNI_VERSION_1_2);
-    return env;
-}
-
 typedef struct
 {
     pthread_t thread;
     volatile int running;
 } AndroidData;
 
-#define STREAM_MUSIC 3
-#define CHANNEL_CONFIGURATION_MONO 2
-#define CHANNEL_CONFIGURATION_STEREO 3
-#define ENCODING_PCM_8BIT 3
-#define ENCODING_PCM_16BIT 2
-#define MODE_STREAM 1
+#define STREAM_MUSIC					3
+#define CHANNEL_CONFIGURATION_MONO		2
+#define CHANNEL_CONFIGURATION_STEREO	3
+#define ENCODING_PCM_8BIT				3
+#define ENCODING_PCM_16BIT				2
+#define MODE_STREAM						1
 
 static void* thread_function(void* arg)
 {
     ALCdevice* device = (ALCdevice*)arg;
     AndroidData* data = (AndroidData*)device->ExtraData;
 
-    JNIEnv* env;
-    (*javaVM)->AttachCurrentThread(javaVM, &env, NULL);
+    JNIEnv* env = et::attachToThread();
 
-    (*env)->PushLocalFrame(env, 2);
+    env->PushLocalFrame(2);
 
     int sampleRateInHz = device->Frequency;
     int channelConfig = aluChannelsFromFormat(device->Format) == 1 ? CHANNEL_CONFIGURATION_MONO : CHANNEL_CONFIGURATION_STEREO;
     int audioFormat = aluBytesFromFormat(device->Format) == 1 ? ENCODING_PCM_8BIT : ENCODING_PCM_16BIT;
 
-    int bufferSizeInBytes = (*env)->CallStaticIntMethod(env, cAudioTrack, 
+    int bufferSizeInBytes = env->CallStaticIntMethod(cAudioTrack,
         mGetMinBufferSize, sampleRateInHz, channelConfig, audioFormat);
 
     int bufferSizeInSamples = bufferSizeInBytes / aluFrameSizeFromFormat(device->Format);
 
-    jobject track = (*env)->NewObject(env, cAudioTrack, mAudioTrack,
+    jobject track = env->NewObject(cAudioTrack, mAudioTrack,
         STREAM_MUSIC, sampleRateInHz, channelConfig, audioFormat, device->NumUpdates * bufferSizeInBytes, MODE_STREAM);
 
-    (*env)->CallNonvirtualVoidMethod(env, track, cAudioTrack, mPlay);
+    env->CallNonvirtualVoidMethod(track, cAudioTrack, mPlay);
 
-    jarray buffer = (*env)->NewByteArray(env, bufferSizeInBytes);
+    jarray buffer = env->NewByteArray(bufferSizeInBytes);
 
     while (data->running)
     {
-        void* pBuffer = (*env)->GetPrimitiveArrayCritical(env, buffer, NULL);
+        void* pBuffer = env->GetPrimitiveArrayCritical(buffer, NULL);
 
         if (pBuffer)
         {
             aluMixData(device, pBuffer, bufferSizeInSamples);
-            (*env)->ReleasePrimitiveArrayCritical(env, buffer, pBuffer, 0);
+            env->ReleasePrimitiveArrayCritical(buffer, pBuffer, 0);
 
-            (*env)->CallNonvirtualIntMethod(env, track, cAudioTrack, mWrite, buffer, 0, bufferSizeInBytes);
+            env->CallNonvirtualIntMethod(track, cAudioTrack, mWrite, buffer, 0, bufferSizeInBytes);
         }
         else
         {
@@ -109,19 +100,19 @@ static void* thread_function(void* arg)
         }
     }
     
-    (*env)->CallNonvirtualVoidMethod(env, track, cAudioTrack, mStop);
-    (*env)->CallNonvirtualVoidMethod(env, track, cAudioTrack, mRelease);
+    env->CallNonvirtualVoidMethod(track, cAudioTrack, mStop);
+    env->CallNonvirtualVoidMethod(track, cAudioTrack, mRelease);
 
-    (*env)->PopLocalFrame(env, NULL);
+    env->PopLocalFrame(NULL);
 
-    (*javaVM)->DetachCurrentThread(javaVM);
+	et::detachFromThread();
     return NULL;
 }
 
 static ALCboolean android_open_playback(ALCdevice *device, const ALCchar *deviceName)
 {
-    JNIEnv* env = GetEnv();
-    AndroidData* data;
+    JNIEnv* env = et::attachToThread();
+    AndroidData* data = NULL;
     int channels;
     int bytes;
 
@@ -131,21 +122,21 @@ static ALCboolean android_open_playback(ALCdevice *device, const ALCchar *device
          * And do this only once!
          */
 
-        cAudioTrack = (*env)->FindClass(env, "android/media/AudioTrack");
+        cAudioTrack = env->FindClass("android/media/AudioTrack");
         if (!cAudioTrack)
         {
             AL_PRINT("android.media.AudioTrack class is not found. Are you running at least 1.5 version?");
             return ALC_FALSE;
         }
 
-        cAudioTrack = (*env)->NewGlobalRef(env, cAudioTrack);
+        cAudioTrack = (jclass)env->NewGlobalRef(cAudioTrack);
 
-        mAudioTrack = (*env)->GetMethodID(env, cAudioTrack, "<init>", "(IIIIII)V");
-        mGetMinBufferSize = (*env)->GetStaticMethodID(env, cAudioTrack, "getMinBufferSize", "(III)I");
-        mPlay = (*env)->GetMethodID(env, cAudioTrack, "play", "()V");
-        mStop = (*env)->GetMethodID(env, cAudioTrack, "stop", "()V");
-        mRelease = (*env)->GetMethodID(env, cAudioTrack, "release", "()V");
-        mWrite = (*env)->GetMethodID(env, cAudioTrack, "write", "([BII)I");
+        mAudioTrack = env->GetMethodID(cAudioTrack, "<init>", "(IIIIII)V");
+        mGetMinBufferSize = env->GetStaticMethodID(cAudioTrack, "getMinBufferSize", "(III)I");
+        mPlay = env->GetMethodID(cAudioTrack, "play", "()V");
+        mStop = env->GetMethodID(cAudioTrack, "stop", "()V");
+        mRelease = env->GetMethodID(cAudioTrack, "release", "()V");
+        mWrite = env->GetMethodID(cAudioTrack, "write", "([BII)I");
     }
 
     if (!deviceName)
@@ -260,10 +251,8 @@ void alc_android_init(BackendFuncs *func_list)
 
 void alc_android_deinit(void)
 {
-    JNIEnv* env = GetEnv();
-
-    /* release cached AudioTrack class */
-    (*env)->DeleteGlobalRef(env, cAudioTrack);
+    JNIEnv* env = et::attachToThread();
+    env->DeleteGlobalRef(cAudioTrack);
 }
 
 void alc_android_probe(int type)

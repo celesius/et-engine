@@ -112,8 +112,10 @@ namespace et
         private:
             Manager();
 			
+			void nativePreInit();
 			void nativeInit();
 			void nativeRelease();
+			void nativePostRelease();
            
         private:
             ET_SINGLETON_COPY_DENY(Manager)
