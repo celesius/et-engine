@@ -10,10 +10,18 @@
 using namespace et;
 using namespace audio;
 
+void Manager::nativePreInit()
+{
+}
+
 void Manager::nativeInit()
 {
 }
 
 void Manager::nativeRelease()
+{
+}
+
+void Manager::nativePostRelease()
 {
 }

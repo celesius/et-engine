@@ -59,11 +59,7 @@ ALCcontext* getSharedContext()
 
 void checkOpenALErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const char* tag)
 {
-	if (sharedDevice == nullptr)
-	{
-		log::error("OpenAL AL device is not initialized.");
-		return;
-	}
+	if (sharedDevice == nullptr) return;
 	
 	ALenum error = alcGetError(sharedDevice);
 	if (error != ALC_NO_ERROR)
