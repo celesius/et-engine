@@ -277,9 +277,7 @@ void et::getFolderContent(const std::string& path, std::vector<std::string>& aLi
 			{
 				std::string aName(zip_get_name(arch, i, 0));
 				if (aName.find(path) == 0)
-				{
-					log::info("Got file %s", aName.c_str());
-				}
+					aList.push_back(aName);
 			}
 		}
 	}
