@@ -50,6 +50,9 @@ namespace et
 			void setActualIndex(float i)
 				{ _actualIndex = i; }
 
+			const vec4& color() const
+				{ return _color; }
+
 			bool containsPoint(const vec2&, const vec2&);
 			void buildVertexList(GuiRenderer& gr);
 			bool rayIntersect(const ray3d& r);

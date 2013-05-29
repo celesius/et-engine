@@ -17,7 +17,7 @@ const float carouselItemScale = 1.0f / 3.0f;
 const float minUpdateVelocity = 0.01f;
 const float minUpdateTime = 0.01f;
 const float minUpdateDelta = 0.01f;
-const float clickTimeout = 0.3f;
+const float clickTimeout = std::numeric_limits<float>::infinity();
 const float minDragToNextItemVelocity = 1.0f;
 const float slowdownCoefficient = 10.0f;
 const float movementScale = 1300.0f;
@@ -345,7 +345,11 @@ bool Carousel::pointerPressed(const PointerInputInfo& p)
 		_waitingClick = false;
 	}
 
-	return itemForInputInfo(p, item).valid();
+	CarouselItem::Pointer cItem = itemForInputInfo(p, item);
+	if (cItem.valid())
+		cItem->setColor(vec4(0.5f, 0.5f, 0.5f, cItem->color().w));
+
+	return cItem.valid();
 }
 
 bool Carousel::pointerMoved(const PointerInputInfo& p)
@@ -409,6 +413,9 @@ bool Carousel::pointerReleased(const PointerInputInfo& p)
 		_waitingClick = false;
 		_pointerPressed = false;
 	}
+
+	for (CarouselItem::Pointer c : children())
+		c->setColor(vec4(1.0f, 1.0f, 1.0f, c->color().w));
 
 	return processed;
 }
