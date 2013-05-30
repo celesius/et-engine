@@ -24,12 +24,17 @@ using namespace et;
 @interface etOpenGLView()
 {
     EAGLContext* _context;
-	et::Framebuffer _defaultFramebuffer;
+	
+	et::Framebuffer _mainFramebuffer;
+	et::Framebuffer _multisampledFramebuffer;
+	
 	et::RenderContext* _rc;
 	et::RenderContextNotifier* _rcNotifier;
 	et::Input::PointerInputSource _pointerInputSource;
 	et::Input::KeyboardInputSource _keyboardInputSource;
+	
 	BOOL _keyboardAllowed;
+	BOOL _multisampled;
 }
 
 - (void)performInitializationWithParameters:(const RenderContextParameters&)params;
@@ -71,6 +76,7 @@ using namespace et;
 
 - (void)performInitializationWithParameters:(const RenderContextParameters&)params
 {
+	_multisampled = params.multisamplingQuality == MultisamplingQuality_Best;
 	_rcNotifier = new RenderContextNotifier;
 	
 	CAEAGLLayer* eaglLayer = (CAEAGLLayer*)self.layer;
@@ -116,20 +122,23 @@ using namespace et;
 - (void)endRender
 {
 	checkOpenGLError("endRender");
-	
 	_rc->renderState().bindDefaultFramebuffer();
 	
-	GLenum depthAttachment = GL_DEPTH_ATTACHMENT;
-	glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, &depthAttachment);
-	
-	glBindRenderbuffer(GL_RENDERBUFFER, _defaultFramebuffer->colorRenderbuffer());
-	checkOpenGLError("glBindRenderbuffer(GL_RENDERBUFFER, ...)");
+	if (_multisampled)
+	{
+		
+	}
+	else
+	{
+		GLenum depthAttachment = GL_DEPTH_ATTACHMENT;
+		glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, &depthAttachment);
+		
+		glBindRenderbuffer(GL_RENDERBUFFER, _mainFramebuffer->colorRenderbuffer());
+		checkOpenGLError("glBindRenderbuffer(GL_RENDERBUFFER, ...)");
 
-	BOOL done = [_context presentRenderbuffer:GL_RENDERBUFFER];
-	checkOpenGLError("[_context presentRenderbuffer:GL_RENDERBUFFER]");
-
-	if (!done)
-		log::error("presentRenderbuffer failed");
+		[_context presentRenderbuffer:GL_RENDERBUFFER];
+		checkOpenGLError("[_context presentRenderbuffer:GL_RENDERBUFFER]");
+	}
 }
 
 - (void)createFramebuffer
@@ -139,66 +148,90 @@ using namespace et;
 	CAEAGLLayer* glLayer = (CAEAGLLayer*)self.layer;
 	glLayer.contentsScale = self.contentScaleFactor;
 	CGSize layerSize = glLayer.bounds.size;
+	vec2i framebufferSize(layerSize.width, layerSize.height);
 	
-	if (_defaultFramebuffer.invalid())
+	if (_mainFramebuffer.invalid())
 	{
-		vec2i size(layerSize.width, layerSize.height);
+		_mainFramebuffer = _rc->framebufferFactory().createFramebuffer(framebufferSize,
+			"DefaultFramebuffer", 0, 0, 0, 0, 0, 0, true);
+	}
+	
+	if (_multisampled && _multisampledFramebuffer.invalid())
+	{
+		_multisampledFramebuffer = _rc->framebufferFactory().createFramebuffer(framebufferSize,
+			"DefaultMultisampledFramebuffer", 0, 0, 0, 0, 0, 0, true);
+	}
+
+	if (_mainFramebuffer->colorRenderbuffer() == 0)
+	{
+		GLuint buf = 0;
+		glGenRenderbuffers(1, &buf);
+		_mainFramebuffer->setColorRenderbuffer(buf);
+	}
+	
+	if (_mainFramebuffer->depthRenderbuffer() == 0)
+	{
+		GLuint buf = 0;
+		glGenRenderbuffers(1, &buf);
+		_mainFramebuffer->setDepthRenderbuffer(buf);
+	}
+	
+	if (_multisampled && (_multisampledFramebuffer->colorRenderbuffer() == 0))
+	{
+		GLuint buf = 0;
+		glGenRenderbuffers(1, &buf);
+		_multisampledFramebuffer->setColorRenderbuffer(buf);
+	}
+	
+	if (_multisampled && (_multisampledFramebuffer->depthRenderbuffer() == 0))
+	{
+		GLuint buf = 0;
+		glGenRenderbuffers(1, &buf);
+		_multisampledFramebuffer->setDepthRenderbuffer(buf);
+	}
+	
+	_rc->renderState().setDefaultFramebuffer([self defaultFramebuffer]);
+	
+	if (_multisampled)
+	{
 		
-		_defaultFramebuffer =
-			_rc->framebufferFactory().createFramebuffer(size, "DefaultFramebuffer",  0, 0, 0, 0, 0, 0, true);
 	}
-	
-	_rc->renderState().setDefaultFramebuffer(_defaultFramebuffer);
-	_rc->renderState().bindDefaultFramebuffer();
-	
-	if (_defaultFramebuffer->colorRenderbuffer() == 0)
+	else
 	{
-		GLuint buf = 0;
-		glGenRenderbuffers(1, &buf);
-		checkOpenGLError("glGenRenderbuffers -> color");
-		_defaultFramebuffer->setColorRenderbuffer(buf);
-	}
-	
-	glBindRenderbuffer(GL_RENDERBUFFER, _defaultFramebuffer->colorRenderbuffer());
-	checkOpenGLError("glBindRenderbuffer -> color");
-	
-	if ([_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:glLayer])
-	{
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
-			_defaultFramebuffer->colorRenderbuffer());
-		checkOpenGLError("glFramebufferRenderbuffer(...");
-	}
+		glBindRenderbuffer(GL_RENDERBUFFER, _mainFramebuffer->colorRenderbuffer());
+		checkOpenGLError("glBindRenderbuffer -> color");
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, framebufferSize.x, framebufferSize.y);
+/*
+		if ([_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:glLayer])
+		{
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+				_mainFramebuffer->colorRenderbuffer());
+			checkOpenGLError("glFramebufferRenderbuffer(...");
+		}
+*/
+		vec2i actualSize;
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &actualSize.x);
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &actualSize.y);
+		checkOpenGLError("glGetRenderbufferParameteriv");
+		
+		glBindRenderbuffer(GL_RENDERBUFFER, _mainFramebuffer->depthRenderbuffer());
+		checkOpenGLError("glBindRenderbuffer -> depth");
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, actualSize.x, actualSize.y);
+		checkOpenGLError("glRenderbufferStorage -> depth");
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+			GL_RENDERBUFFER, _mainFramebuffer->depthRenderbuffer());
 
-	vec2i size;
-	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &size.x);
-	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &size.y);
-	checkOpenGLError("glGetRenderbufferParameteriv");
-	
-	if (_defaultFramebuffer->depthRenderbuffer() == 0)
-	{
-		GLuint buf = 0;
-		glGenRenderbuffers(1, &buf);
-		checkOpenGLError("glGenRenderbuffers -> depth");
-		_defaultFramebuffer->setDepthRenderbuffer(buf);
-	}	
-	glBindRenderbuffer(GL_RENDERBUFFER, _defaultFramebuffer->depthRenderbuffer());
-	checkOpenGLError("glBindRenderbuffer -> depth");
-	
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, size.x, size.y);
-	checkOpenGLError("glRenderbufferStorage -> depth");
-	
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 
-		GL_RENDERBUFFER, _defaultFramebuffer->depthRenderbuffer());
-
-	_defaultFramebuffer->forceSize(size);
-	_rcNotifier->resized(size, _rc);
-	
-	_defaultFramebuffer->checkStatus();
+		_mainFramebuffer->checkStatus();
+		_mainFramebuffer->forceSize(actualSize);
+		
+		_rcNotifier->resized(actualSize, _rc);
+	}
 }
 
 - (void)deleteFramebuffer
 {
-	_defaultFramebuffer = Framebuffer();
+	_mainFramebuffer.reset(nullptr);
+	_multisampledFramebuffer.reset(nullptr);
 }
 
 - (void)layoutSubviews
@@ -208,7 +241,7 @@ using namespace et;
 
 - (const Framebuffer&)defaultFramebuffer
 {
-	return _defaultFramebuffer;
+	return _multisampled ? _multisampledFramebuffer : _mainFramebuffer;
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event

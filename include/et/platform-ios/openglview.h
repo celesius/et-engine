@@ -16,6 +16,7 @@
 @interface etOpenGLView : UIView <UIKeyInput>
 
 - (id)initWithFrame:(CGRect)frame parameters:(et::RenderContextParameters&)params;
+
 - (void)setRenderContext:(et::RenderContext*)rc;
 - (void)beginRender;
 - (void)endRender;
