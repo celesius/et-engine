@@ -21,14 +21,12 @@
 		A56E168716C44A2F006C86BF /* maincontroller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E167F16C44A2F006C86BF /* maincontroller.cpp */; };
 		A56E168816C44A2F006C86BF /* mainmenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E168216C44A2F006C86BF /* mainmenu.cpp */; };
 		A56E168916C44A2F006C86BF /* resourcemanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E168416C44A2F006C86BF /* resourcemanager.cpp */; };
-		A56E178F16C44B6F006C86BF /* apiobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E172A16C44B6F006C86BF /* apiobject.cpp */; };
 		A56E179016C44B6F006C86BF /* framebufferdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E172B16C44B6F006C86BF /* framebufferdata.cpp */; };
 		A56E179116C44B6F006C86BF /* framebufferfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E172C16C44B6F006C86BF /* framebufferfactory.cpp */; };
 		A56E179216C44B6F006C86BF /* indexbufferdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E172D16C44B6F006C86BF /* indexbufferdata.cpp */; };
 		A56E179316C44B6F006C86BF /* programdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E172E16C44B6F006C86BF /* programdata.cpp */; };
 		A56E179416C44B6F006C86BF /* programfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E172F16C44B6F006C86BF /* programfactory.cpp */; };
-		A56E179516C44B6F006C86BF /* texturecache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E173016C44B6F006C86BF /* texturecache.cpp */; };
-		A56E179616C44B6F006C86BF /* texturedata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E173116C44B6F006C86BF /* texturedata.cpp */; };
+		A56E179616C44B6F006C86BF /* texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E173116C44B6F006C86BF /* texture.cpp */; };
 		A56E179716C44B6F006C86BF /* texturefactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E173216C44B6F006C86BF /* texturefactory.cpp */; };
 		A56E179816C44B6F006C86BF /* textureloadingthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E173316C44B6F006C86BF /* textureloadingthread.cpp */; };
 		A56E179916C44B6F006C86BF /* vertexarrayobjectdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E173416C44B6F006C86BF /* vertexarrayobjectdata.cpp */; };
@@ -110,6 +108,8 @@
 		A5D2766216F63C5200B996AA /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5D2766016F63C5200B996AA /* log.cpp */; };
 		A5D2766316F63C5200B996AA /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5D2766116F63C5200B996AA /* stream.cpp */; };
 		A5D2766516F63C6300B996AA /* rendercontext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5D2766416F63C6300B996AA /* rendercontext.cpp */; };
+		A5E5ADD61757ED4800418167 /* objectscache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E5ADD51757ED4800418167 /* objectscache.cpp */; };
+		A5E5ADD81757ED5900418167 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A5E5ADD71757ED5900418167 /* libxml2.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -143,7 +143,6 @@
 		A56E168316C44A2F006C86BF /* mainmenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mainmenu.h; sourceTree = "<group>"; };
 		A56E168416C44A2F006C86BF /* resourcemanager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resourcemanager.cpp; sourceTree = "<group>"; };
 		A56E168516C44A2F006C86BF /* resourcemanager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resourcemanager.h; sourceTree = "<group>"; };
-		A56E168E16C44B4E006C86BF /* apiobject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apiobject.h; sourceTree = "<group>"; };
 		A56E168F16C44B4E006C86BF /* apiobjectfactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apiobjectfactory.h; sourceTree = "<group>"; };
 		A56E169016C44B4E006C86BF /* framebuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = framebuffer.h; sourceTree = "<group>"; };
 		A56E169116C44B4E006C86BF /* framebufferdata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = framebufferdata.h; sourceTree = "<group>"; };
@@ -154,8 +153,6 @@
 		A56E169616C44B4E006C86BF /* programdata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = programdata.h; sourceTree = "<group>"; };
 		A56E169716C44B4E006C86BF /* programfactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = programfactory.h; sourceTree = "<group>"; };
 		A56E169816C44B4E006C86BF /* texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = texture.h; sourceTree = "<group>"; };
-		A56E169916C44B4E006C86BF /* texturecache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = texturecache.h; sourceTree = "<group>"; };
-		A56E169A16C44B4E006C86BF /* texturedata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = texturedata.h; sourceTree = "<group>"; };
 		A56E169B16C44B4E006C86BF /* texturedescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = texturedescription.h; sourceTree = "<group>"; };
 		A56E169C16C44B4E006C86BF /* texturefactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = texturefactory.h; sourceTree = "<group>"; };
 		A56E169D16C44B4E006C86BF /* textureloadingthread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = textureloadingthread.h; sourceTree = "<group>"; };
@@ -281,14 +278,12 @@
 		A56E172616C44B4E006C86BF /* vertexarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertexarray.h; sourceTree = "<group>"; };
 		A56E172716C44B4E006C86BF /* vertexdatachunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertexdatachunk.h; sourceTree = "<group>"; };
 		A56E172816C44B4E006C86BF /* vertexdeclaration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertexdeclaration.h; sourceTree = "<group>"; };
-		A56E172A16C44B6F006C86BF /* apiobject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = apiobject.cpp; sourceTree = "<group>"; };
 		A56E172B16C44B6F006C86BF /* framebufferdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = framebufferdata.cpp; sourceTree = "<group>"; };
 		A56E172C16C44B6F006C86BF /* framebufferfactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = framebufferfactory.cpp; sourceTree = "<group>"; };
 		A56E172D16C44B6F006C86BF /* indexbufferdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = indexbufferdata.cpp; sourceTree = "<group>"; };
 		A56E172E16C44B6F006C86BF /* programdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = programdata.cpp; sourceTree = "<group>"; };
 		A56E172F16C44B6F006C86BF /* programfactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = programfactory.cpp; sourceTree = "<group>"; };
-		A56E173016C44B6F006C86BF /* texturecache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texturecache.cpp; sourceTree = "<group>"; };
-		A56E173116C44B6F006C86BF /* texturedata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texturedata.cpp; sourceTree = "<group>"; };
+		A56E173116C44B6F006C86BF /* texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texture.cpp; sourceTree = "<group>"; };
 		A56E173216C44B6F006C86BF /* texturefactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texturefactory.cpp; sourceTree = "<group>"; };
 		A56E173316C44B6F006C86BF /* textureloadingthread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = textureloadingthread.cpp; sourceTree = "<group>"; };
 		A56E173416C44B6F006C86BF /* vertexarrayobjectdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vertexarrayobjectdata.cpp; sourceTree = "<group>"; };
@@ -372,6 +367,8 @@
 		A5D2766016F63C5200B996AA /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = log.cpp; sourceTree = "<group>"; };
 		A5D2766116F63C5200B996AA /* stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stream.cpp; sourceTree = "<group>"; };
 		A5D2766416F63C6300B996AA /* rendercontext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rendercontext.cpp; sourceTree = "<group>"; };
+		A5E5ADD51757ED4800418167 /* objectscache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = objectscache.cpp; sourceTree = "<group>"; };
+		A5E5ADD71757ED5900418167 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -379,6 +376,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5E5ADD81757ED5900418167 /* libxml2.dylib in Frameworks */,
 				A56E17E716C44B9A006C86BF /* libz.dylib in Frameworks */,
 				A56E17E516C44B96006C86BF /* QuartzCore.framework in Frameworks */,
 				A56E17E316C44B92006C86BF /* OpenGL.framework in Frameworks */,
@@ -427,6 +425,7 @@
 		A56E165416C44A01006C86BF = {
 			isa = PBXGroup;
 			children = (
+				A5E5ADD71757ED5900418167 /* libxml2.dylib */,
 				A56E168A16C44B29006C86BF /* engine */,
 				A56E167D16C44A2F006C86BF /* source */,
 				A56E166716C44A01006C86BF /* Supporting Files */,
@@ -557,7 +556,6 @@
 		A56E168D16C44B4E006C86BF /* apiobjects */ = {
 			isa = PBXGroup;
 			children = (
-				A56E168E16C44B4E006C86BF /* apiobject.h */,
 				A56E168F16C44B4E006C86BF /* apiobjectfactory.h */,
 				A56E169016C44B4E006C86BF /* framebuffer.h */,
 				A56E169116C44B4E006C86BF /* framebufferdata.h */,
@@ -568,8 +566,6 @@
 				A56E169616C44B4E006C86BF /* programdata.h */,
 				A56E169716C44B4E006C86BF /* programfactory.h */,
 				A56E169816C44B4E006C86BF /* texture.h */,
-				A56E169916C44B4E006C86BF /* texturecache.h */,
-				A56E169A16C44B4E006C86BF /* texturedata.h */,
 				A56E169B16C44B4E006C86BF /* texturedescription.h */,
 				A56E169C16C44B4E006C86BF /* texturefactory.h */,
 				A56E169D16C44B4E006C86BF /* textureloadingthread.h */,
@@ -839,14 +835,12 @@
 		A56E172916C44B6F006C86BF /* apiobjects */ = {
 			isa = PBXGroup;
 			children = (
-				A56E172A16C44B6F006C86BF /* apiobject.cpp */,
 				A56E172B16C44B6F006C86BF /* framebufferdata.cpp */,
 				A56E172C16C44B6F006C86BF /* framebufferfactory.cpp */,
 				A56E172D16C44B6F006C86BF /* indexbufferdata.cpp */,
 				A56E172E16C44B6F006C86BF /* programdata.cpp */,
 				A56E172F16C44B6F006C86BF /* programfactory.cpp */,
-				A56E173016C44B6F006C86BF /* texturecache.cpp */,
-				A56E173116C44B6F006C86BF /* texturedata.cpp */,
+				A56E173116C44B6F006C86BF /* texture.cpp */,
 				A56E173216C44B6F006C86BF /* texturefactory.cpp */,
 				A56E173316C44B6F006C86BF /* textureloadingthread.cpp */,
 				A56E173416C44B6F006C86BF /* vertexarrayobjectdata.cpp */,
@@ -893,6 +887,7 @@
 		A56E174316C44B6F006C86BF /* core */ = {
 			isa = PBXGroup;
 			children = (
+				A5E5ADD51757ED4800418167 /* objectscache.cpp */,
 				A5D2766016F63C5200B996AA /* log.cpp */,
 				A5D2766116F63C5200B996AA /* stream.cpp */,
 				A56E174416C44B6F006C86BF /* debug.cpp */,
@@ -1138,14 +1133,12 @@
 				A56E168716C44A2F006C86BF /* maincontroller.cpp in Sources */,
 				A56E168816C44A2F006C86BF /* mainmenu.cpp in Sources */,
 				A56E168916C44A2F006C86BF /* resourcemanager.cpp in Sources */,
-				A56E178F16C44B6F006C86BF /* apiobject.cpp in Sources */,
 				A56E179016C44B6F006C86BF /* framebufferdata.cpp in Sources */,
 				A56E179116C44B6F006C86BF /* framebufferfactory.cpp in Sources */,
 				A56E179216C44B6F006C86BF /* indexbufferdata.cpp in Sources */,
 				A56E179316C44B6F006C86BF /* programdata.cpp in Sources */,
 				A56E179416C44B6F006C86BF /* programfactory.cpp in Sources */,
-				A56E179516C44B6F006C86BF /* texturecache.cpp in Sources */,
-				A56E179616C44B6F006C86BF /* texturedata.cpp in Sources */,
+				A56E179616C44B6F006C86BF /* texture.cpp in Sources */,
 				A56E179716C44B6F006C86BF /* texturefactory.cpp in Sources */,
 				A56E179816C44B6F006C86BF /* textureloadingthread.cpp in Sources */,
 				A56E179916C44B6F006C86BF /* vertexarrayobjectdata.cpp in Sources */,
@@ -1231,6 +1224,7 @@
 				A5D2766216F63C5200B996AA /* log.cpp in Sources */,
 				A5D2766316F63C5200B996AA /* stream.cpp in Sources */,
 				A5D2766516F63C6300B996AA /* rendercontext.cpp in Sources */,
+				A5E5ADD61757ED4800418167 /* objectscache.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

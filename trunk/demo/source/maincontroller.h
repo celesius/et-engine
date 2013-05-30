@@ -26,7 +26,7 @@ namespace demo
 	private:
 		ResourceManager _resourceManager;
 
-		et::TextureCache _mainTextureCache;
+		et::ObjectsCache _mainTextureCache;
 		et::gui::Gui::Pointer _gui;
 		MainMenuLayout::Pointer _mainMenu;
 	};
