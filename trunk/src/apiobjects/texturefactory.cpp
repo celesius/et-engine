@@ -194,20 +194,21 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 	
 	for (size_t l = 0; l < 6; ++l)
 	{
-		if (!layers[l].valid())
+		if (layers[l].valid())
+		{
+			if ((layers[l]->size.x > maxCubemapSize) || (layers[l]->size.y > maxCubemapSize))
+			{
+				log::error("Cubemap %s size of (%d x %d) is larger than allowed %dx%d", layers[l]->source.c_str(),
+					layers[l]->size.x, layers[l]->size.y, maxCubemapSize, maxCubemapSize);
+				return Texture();
+			}
+		}
+		else
 		{
 			log::error("Unable to load cubemap face.");
 			return Texture();
 		}
-		else
-		{
-			log::error("Cubemap %s size of (%d x %d) is larger than allowed %d", layers[l]->source.c_str(),
-				layers[l]->size.x, maxCubemapSize);
-			return Texture();
-		}
 	}
-
-	(void)maxCubemapSize;
 
 	std::string texId = layers[0]->source + ";";
 	for (size_t l = 1; l < 6; ++l)

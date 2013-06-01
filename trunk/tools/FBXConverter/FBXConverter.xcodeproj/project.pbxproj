@@ -10,7 +10,6 @@
 		5C5128AC1681FA2500ED9B96 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C5128AA1681FA2500ED9B96 /* libjpeg.a */; };
 		5C5128AD1681FA2500ED9B96 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C5128AB1681FA2500ED9B96 /* libpng.a */; };
 		5C72A8361759E4B900B49611 /* objectscache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C72A8351759E4B900B49611 /* objectscache.cpp */; };
-		5C72A83A1759E61300B49611 /* libfbxsdk.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C72A8391759E61300B49611 /* libfbxsdk.dylib */; };
 		A50D32DC1720AAB0001D31B3 /* atomiccounter.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50D32DB1720AAB0001D31B3 /* atomiccounter.unix.cpp */; };
 		A50D32E11720AC42001D31B3 /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50D32DF1720AC42001D31B3 /* log.cpp */; };
 		A50D32E21720AC42001D31B3 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50D32E01720AC42001D31B3 /* stream.cpp */; };
@@ -120,7 +119,6 @@
 		5C5128AA1681FA2500ED9B96 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../lib/osx/libjpeg.a; sourceTree = "<group>"; };
 		5C5128AB1681FA2500ED9B96 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = ../../lib/osx/libpng.a; sourceTree = "<group>"; };
 		5C72A8351759E4B900B49611 /* objectscache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = objectscache.cpp; sourceTree = "<group>"; };
-		5C72A8391759E61300B49611 /* libfbxsdk.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libfbxsdk.dylib; sourceTree = "<group>"; };
 		A50D32DB1720AAB0001D31B3 /* atomiccounter.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = atomiccounter.unix.cpp; sourceTree = "<group>"; };
 		A50D32DF1720AC42001D31B3 /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = log.cpp; sourceTree = "<group>"; };
 		A50D32E01720AC42001D31B3 /* stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stream.cpp; sourceTree = "<group>"; };
@@ -241,7 +239,6 @@
 				A5963FDB1739B55A00837C6C /* libxml2.dylib in Frameworks */,
 				A53B4F421681247300C6B8EC /* libz.dylib in Frameworks */,
 				A53B4F3116811FA900C6B8EC /* libiconv.dylib in Frameworks */,
-				5C72A83A1759E61300B49611 /* libfbxsdk.dylib in Frameworks */,
 				A5A23F3616811EC3001B3E98 /* OpenGL.framework in Frameworks */,
 				A5A23F3416811EBF001B3E98 /* QuartzCore.framework in Frameworks */,
 				A5A23E2F16811838001B3E98 /* Cocoa.framework in Frameworks */,
@@ -279,7 +276,6 @@
 				A53B4F411681247300C6B8EC /* libz.dylib */,
 				A53B4F3016811FA900C6B8EC /* libiconv.dylib */,
 				A5963FDA1739B55A00837C6C /* libxml2.dylib */,
-				5C72A8391759E61300B49611 /* libfbxsdk.dylib */,
 				5C5128AA1681FA2500ED9B96 /* libjpeg.a */,
 				5C5128AB1681FA2500ED9B96 /* libpng.a */,
 				A5A23E3116811838001B3E98 /* AppKit.framework */,
