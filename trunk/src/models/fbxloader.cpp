@@ -5,7 +5,6 @@
  *
  */
 
-#include <iostream>
 #include <assert.h>
 #include <fbxsdk.h>
 
@@ -105,10 +104,9 @@ bool FBXLoaderPrivate::import(const std::string& filename)
 	if (!status)
 	{
 		printf("Call to FbxImporter::Initialize() failed.\n");
-		printf("Error returned: %s\n", importer->GetLastErrorString());
+		printf("Error returned: %s\n", importer->GetStatus().GetErrorString());
 
-		if (importer->GetLastErrorID() == FbxIOBase::eFileVersionNotSupportedYet ||
-			importer->GetLastErrorID() == FbxIOBase::eFileVersionNotSupportedAnymore)
+		if (importer->GetStatus().GetCode() == FbxStatus::eInvalidFileVersion)
 		{
 			printf("FBX version number for this FBX SDK is %d.%d.%d\n", lSDKMajor,
 				lSDKMinor, lSDKRevision);
@@ -116,6 +114,7 @@ bool FBXLoaderPrivate::import(const std::string& filename)
 			printf("FBX version number for file %s is %d.%d.%d\n\n", filename.c_str(),
 				lFileMajor, lFileMinor, lFileRevision);
 		}
+		
 		importer->Destroy();
 		return false;
 	}
@@ -362,7 +361,7 @@ s3d::Material FBXLoaderPrivate::loadMaterial(FbxSurfaceMaterial* mat)
 {
 	s3d::Material m;
 
-	m->setObjectName(mat->GetName());
+	m->setName(mat->GetName());
 
 	loadMaterialTextureValue(m, MaterialParameter_DiffuseMap, mat, FbxSurfaceMaterial::sDiffuse);
 	loadMaterialTextureValue(m, MaterialParameter_AmbientMap, mat, FbxSurfaceMaterial::sAmbient);
@@ -519,8 +518,8 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 		FbxVector4 n; mesh->GetPolygonVertexNormal(lPolygonIndex, lVerticeIndex, n); \
 		nrm[vertexCount] = vec3(static_cast<float>(n[0]), static_cast<float>(n[1]), static_cast<float>(n[2])); }
 
-#define ET_FBX_LOADER_PUSH_UV if (hasUV) { FbxVector2 t; \
-		mesh->GetPolygonVertexUV(lPolygonIndex, lVerticeIndex, uvSetName.c_str(), t); \
+#define ET_FBX_LOADER_PUSH_UV if (hasUV) { FbxVector2 t; bool unmap = false; \
+		mesh->GetPolygonVertexUV(lPolygonIndex, lVerticeIndex, uvSetName.c_str(), t, unmap); \
 		uv[vertexCount] = vec2(static_cast<float>(t[0]), static_cast<float>(t[1]));	}
 
 #define ET_FBX_LOADER_PUSH_TANGENT if (hasTangents) { FbxVector4 t; \
@@ -543,7 +542,7 @@ s3d::Mesh::Pointer FBXLoaderPrivate::loadMesh(FbxMesh* mesh, s3d::Element::Point
 		for (size_t m = 0; m < materials.size(); ++m)
 		{
 			s3d::Element* aParent = (m == 0) ? parent.ptr() : element.ptr();
-			std::string aName = (m == 0) ? meshName : (meshName + "~" + materials.at(m)->objectName());
+			std::string aName = (m == 0) ? meshName : (meshName + "~" + materials.at(m)->name());
 
 			s3d::Mesh::Pointer meshElement;
 			if (m == 0)

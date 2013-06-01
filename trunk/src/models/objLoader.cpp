@@ -556,7 +556,7 @@ void OBJLoader::loadMaterials(const std::string& fileName, bool async, ObjectsCa
 					materials.push_back(lastMaterial);
 					std::string name;
 					materialFile >> name;
-					lastMaterial->setObjectName(name);
+					lastMaterial->setName(name);
 				}
 				else
 				{
@@ -647,7 +647,7 @@ void OBJLoader::processLoadedData()
 		Material m;
 		for (Material::List::iterator mi = materials.begin(), me = materials.end(); mi != me; ++mi)
 		{
-			if ((*mi)->objectName() == (*gi)->material)
+			if ((*mi)->name() == (*gi)->material)
 			{
 				m = *mi;
 				break;
