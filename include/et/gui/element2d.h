@@ -109,7 +109,7 @@ namespace et
 
 			void setAutolayoutMask(size_t);
 
-			void autoLayout(const vec2& contextSize);
+			void autoLayout(const vec2& contextSize, float duration = 0.0f);
 
 			ET_DECLARE_EVENT2(elementAnimationFinished, Element2d*, ElementAnimatedPropery)
 

@@ -308,7 +308,7 @@ void Element2d::setAutolayoutMask(size_t m)
 	_autoLayout.mask = m;
 }
 
-void Element2d::autoLayout(const vec2& contextSize)
+void Element2d::autoLayout(const vec2& contextSize, float duration)
 {
 	Element2d* aParent = static_cast<Element2d*>(parent());
 
@@ -326,7 +326,7 @@ void Element2d::autoLayout(const vec2& contextSize)
 		else
 			sz = _autoLayout.size;
 
-		setSize(sz);
+		setSize(sz, duration);
 	}
 
 	if ((_autoLayout.mask & Element2dLayoutMask_Position) == Element2dLayoutMask_Position)
@@ -340,9 +340,9 @@ void Element2d::autoLayout(const vec2& contextSize)
 		else
 			pos = _autoLayout.position;
 		
-		setPosition(pos);
+		setPosition(pos, duration);
 	}
 
 	for (Element2d::Pointer aChild : children())
-		aChild->autoLayout(contextSize);
+		aChild->autoLayout(contextSize, duration);
 }
