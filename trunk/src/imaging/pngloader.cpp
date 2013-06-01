@@ -227,26 +227,16 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 
 		case 2:
 		{
-#if defined(GL_LUMINANCE_ALPHA)
-			if (bpp == 8)
-			{
-				desc.internalformat = GL_LUMINANCE_ALPHA;
-				desc.format = GL_LUMINANCE_ALPHA;
-			}
-			else
-			{
-				assert("Unsupported PNG format" && false);
-			}
-#elif defined(GL_RG8) && defined(GL_RG16)
-			if (bpp == 8)
-			{
-				desc.internalformat = GL_RG8;
-			}
-			else if (bpp == 16)
-			{
-				desc.internalformat = GL_RG16;
-			}
+#if defined(GL_RG8) && defined(GL_RG16)
+
+			desc.internalformat = (bpp == 16) ? GL_RG16 : GL_RG8;
 			desc.format = GL_RG;
+
+#elif defined(GL_LUMINANCE_ALPHA)
+
+			desc.internalformat = GL_LUMINANCE_ALPHA;
+			desc.format = GL_LUMINANCE_ALPHA;
+
 #else
 #			error Unable to resolve OpenGL format for 1-channel texture
 #endif

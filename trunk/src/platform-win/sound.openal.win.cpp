@@ -9,3 +9,6 @@
 
 void et::audio::Manager::nativeInit() { }
 void et::audio::Manager::nativeRelease() { }
+
+void et::audio::Manager::nativePreInit() { }
+void et::audio::Manager::nativePostRelease() { }

@@ -75,6 +75,7 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 	_programFactory(0), _textureFactory(0), _framebufferFactory(0), _vertexBufferFactory(0), _renderer(0)
 {
 	_private = new RenderContextPrivate(this, params, app->parameters());
+	_params.contextSize = _private->windowSize;
 
 	if (_private->failed)
 	{
