@@ -22,7 +22,8 @@ const float minDragToNextItemVelocity = 1.0f;
 const float slowdownCoefficient = 10.0f;
 const float movementScale = 1300.0f;
 const float maxVelocity = 30.0f;
-const float defaultAnimationDuration = 0.3f;
+
+extern const float defaultAnimationDuration = 0.3f;
 
 CarouselItem::CarouselItem(const Camera& camera, const Texture& texture,
 	const ImageDescriptor& desc, size_t aTag, Carousel* parent) : Element3D(camera, parent), 
