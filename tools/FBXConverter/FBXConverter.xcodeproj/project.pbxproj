@@ -9,8 +9,9 @@
 /* Begin PBXBuildFile section */
 		5C5128AC1681FA2500ED9B96 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C5128AA1681FA2500ED9B96 /* libjpeg.a */; };
 		5C5128AD1681FA2500ED9B96 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C5128AB1681FA2500ED9B96 /* libpng.a */; };
+		5C72A8361759E4B900B49611 /* objectscache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C72A8351759E4B900B49611 /* objectscache.cpp */; };
+		5C72A83A1759E61300B49611 /* libfbxsdk.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C72A8391759E61300B49611 /* libfbxsdk.dylib */; };
 		A50D32DC1720AAB0001D31B3 /* atomiccounter.unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50D32DB1720AAB0001D31B3 /* atomiccounter.unix.cpp */; };
-		A50D32DE1720AC27001D31B3 /* libfbxsdk-2013.3-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A50D32DD1720AC27001D31B3 /* libfbxsdk-2013.3-static.a */; };
 		A50D32E11720AC42001D31B3 /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50D32DF1720AC42001D31B3 /* log.cpp */; };
 		A50D32E21720AC42001D31B3 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50D32E01720AC42001D31B3 /* stream.cpp */; };
 		A50D32E41720AC51001D31B3 /* rendercontext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50D32E31720AC51001D31B3 /* rendercontext.cpp */; };
@@ -22,13 +23,12 @@
 		A5963FDB1739B55A00837C6C /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A5963FDA1739B55A00837C6C /* libxml2.dylib */; };
 		A5A23E2F16811838001B3E98 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A23E2E16811838001B3E98 /* Cocoa.framework */; };
 		A5A23E5616811900001B3E98 /* converter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E5416811900001B3E98 /* converter.cpp */; };
-		A5A23ED216811978001B3E98 /* apiobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E5B16811978001B3E98 /* apiobject.cpp */; };
 		A5A23ED316811978001B3E98 /* framebufferdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E5C16811978001B3E98 /* framebufferdata.cpp */; };
 		A5A23ED416811978001B3E98 /* framebufferfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E5D16811978001B3E98 /* framebufferfactory.cpp */; };
 		A5A23ED516811978001B3E98 /* indexbufferdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E5E16811978001B3E98 /* indexbufferdata.cpp */; };
 		A5A23ED616811978001B3E98 /* programdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E5F16811978001B3E98 /* programdata.cpp */; };
 		A5A23ED716811978001B3E98 /* programfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E6016811978001B3E98 /* programfactory.cpp */; };
-		A5A23ED916811978001B3E98 /* texturedata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E6216811978001B3E98 /* texturedata.cpp */; };
+		A5A23ED916811978001B3E98 /* texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E6216811978001B3E98 /* texture.cpp */; };
 		A5A23EDA16811978001B3E98 /* texturefactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E6316811978001B3E98 /* texturefactory.cpp */; };
 		A5A23EDB16811978001B3E98 /* textureloadingthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E6416811978001B3E98 /* textureloadingthread.cpp */; };
 		A5A23EDC16811978001B3E98 /* vertexarrayobjectdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E6516811978001B3E98 /* vertexarrayobjectdata.cpp */; };
@@ -114,14 +114,14 @@
 		A5A23F3216811978001B3E98 /* vertexdeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23ED116811978001B3E98 /* vertexdeclaration.cpp */; };
 		A5A23F3416811EBF001B3E98 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A23F3316811EBF001B3E98 /* QuartzCore.framework */; };
 		A5A23F3616811EC3001B3E98 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A23F3516811EC3001B3E98 /* OpenGL.framework */; };
-		A5E2AB41173C448300579BC7 /* objectscache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E2AB40173C448300579BC7 /* objectscache.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		5C5128AA1681FA2500ED9B96 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../lib/osx/libjpeg.a; sourceTree = "<group>"; };
 		5C5128AB1681FA2500ED9B96 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = ../../lib/osx/libpng.a; sourceTree = "<group>"; };
+		5C72A8351759E4B900B49611 /* objectscache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = objectscache.cpp; sourceTree = "<group>"; };
+		5C72A8391759E61300B49611 /* libfbxsdk.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libfbxsdk.dylib; sourceTree = "<group>"; };
 		A50D32DB1720AAB0001D31B3 /* atomiccounter.unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = atomiccounter.unix.cpp; sourceTree = "<group>"; };
-		A50D32DD1720AC27001D31B3 /* libfbxsdk-2013.3-static.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libfbxsdk-2013.3-static.a"; path = "../../../../../SDK/FBXSDK/lib/gcc4/ub/libfbxsdk-2013.3-static.a"; sourceTree = "<group>"; };
 		A50D32DF1720AC42001D31B3 /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = log.cpp; sourceTree = "<group>"; };
 		A50D32E01720AC42001D31B3 /* stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stream.cpp; sourceTree = "<group>"; };
 		A50D32E31720AC51001D31B3 /* rendercontext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rendercontext.cpp; sourceTree = "<group>"; };
@@ -140,13 +140,12 @@
 		A5A23E51168118A4001B3E98 /* FBXConverter-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "FBXConverter-Info.plist"; sourceTree = SOURCE_ROOT; };
 		A5A23E5416811900001B3E98 /* converter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = converter.cpp; path = source/converter.cpp; sourceTree = "<group>"; };
 		A5A23E5516811900001B3E98 /* converter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = converter.h; path = source/converter.h; sourceTree = "<group>"; };
-		A5A23E5B16811978001B3E98 /* apiobject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = apiobject.cpp; sourceTree = "<group>"; };
 		A5A23E5C16811978001B3E98 /* framebufferdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = framebufferdata.cpp; sourceTree = "<group>"; };
 		A5A23E5D16811978001B3E98 /* framebufferfactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = framebufferfactory.cpp; sourceTree = "<group>"; };
 		A5A23E5E16811978001B3E98 /* indexbufferdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = indexbufferdata.cpp; sourceTree = "<group>"; };
 		A5A23E5F16811978001B3E98 /* programdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = programdata.cpp; sourceTree = "<group>"; };
 		A5A23E6016811978001B3E98 /* programfactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = programfactory.cpp; sourceTree = "<group>"; };
-		A5A23E6216811978001B3E98 /* texturedata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texturedata.cpp; sourceTree = "<group>"; };
+		A5A23E6216811978001B3E98 /* texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texture.cpp; sourceTree = "<group>"; };
 		A5A23E6316811978001B3E98 /* texturefactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texturefactory.cpp; sourceTree = "<group>"; };
 		A5A23E6416811978001B3E98 /* textureloadingthread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = textureloadingthread.cpp; sourceTree = "<group>"; };
 		A5A23E6516811978001B3E98 /* vertexarrayobjectdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vertexarrayobjectdata.cpp; sourceTree = "<group>"; };
@@ -232,7 +231,6 @@
 		A5A23ED116811978001B3E98 /* vertexdeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vertexdeclaration.cpp; sourceTree = "<group>"; };
 		A5A23F3316811EBF001B3E98 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A5A23F3516811EC3001B3E98 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		A5E2AB40173C448300579BC7 /* objectscache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = objectscache.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -243,12 +241,12 @@
 				A5963FDB1739B55A00837C6C /* libxml2.dylib in Frameworks */,
 				A53B4F421681247300C6B8EC /* libz.dylib in Frameworks */,
 				A53B4F3116811FA900C6B8EC /* libiconv.dylib in Frameworks */,
+				5C72A83A1759E61300B49611 /* libfbxsdk.dylib in Frameworks */,
 				A5A23F3616811EC3001B3E98 /* OpenGL.framework in Frameworks */,
 				A5A23F3416811EBF001B3E98 /* QuartzCore.framework in Frameworks */,
 				A5A23E2F16811838001B3E98 /* Cocoa.framework in Frameworks */,
 				5C5128AC1681FA2500ED9B96 /* libjpeg.a in Frameworks */,
 				5C5128AD1681FA2500ED9B96 /* libpng.a in Frameworks */,
-				A50D32DE1720AC27001D31B3 /* libfbxsdk-2013.3-static.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,9 +279,9 @@
 				A53B4F411681247300C6B8EC /* libz.dylib */,
 				A53B4F3016811FA900C6B8EC /* libiconv.dylib */,
 				A5963FDA1739B55A00837C6C /* libxml2.dylib */,
+				5C72A8391759E61300B49611 /* libfbxsdk.dylib */,
 				5C5128AA1681FA2500ED9B96 /* libjpeg.a */,
 				5C5128AB1681FA2500ED9B96 /* libpng.a */,
-				A50D32DD1720AC27001D31B3 /* libfbxsdk-2013.3-static.a */,
 				A5A23E3116811838001B3E98 /* AppKit.framework */,
 				A5A23E3216811838001B3E98 /* CoreData.framework */,
 				A5A23E3316811838001B3E98 /* Foundation.framework */,
@@ -362,14 +360,12 @@
 		A5A23E5A16811978001B3E98 /* apiobjects */ = {
 			isa = PBXGroup;
 			children = (
-				A5E2AB40173C448300579BC7 /* objectscache.cpp */,
-				A5A23E5B16811978001B3E98 /* apiobject.cpp */,
 				A5A23E5C16811978001B3E98 /* framebufferdata.cpp */,
 				A5A23E5D16811978001B3E98 /* framebufferfactory.cpp */,
 				A5A23E5E16811978001B3E98 /* indexbufferdata.cpp */,
 				A5A23E5F16811978001B3E98 /* programdata.cpp */,
 				A5A23E6016811978001B3E98 /* programfactory.cpp */,
-				A5A23E6216811978001B3E98 /* texturedata.cpp */,
+				A5A23E6216811978001B3E98 /* texture.cpp */,
 				A5A23E6316811978001B3E98 /* texturefactory.cpp */,
 				A5A23E6416811978001B3E98 /* textureloadingthread.cpp */,
 				A5A23E6516811978001B3E98 /* vertexarrayobjectdata.cpp */,
@@ -416,6 +412,7 @@
 		A5A23E7416811978001B3E98 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				5C72A8351759E4B900B49611 /* objectscache.cpp */,
 				A50D32DF1720AC42001D31B3 /* log.cpp */,
 				A50D32E01720AC42001D31B3 /* stream.cpp */,
 				A5A23E7516811978001B3E98 /* debug.cpp */,
@@ -694,13 +691,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5A23E5616811900001B3E98 /* converter.cpp in Sources */,
-				A5A23ED216811978001B3E98 /* apiobject.cpp in Sources */,
 				A5A23ED316811978001B3E98 /* framebufferdata.cpp in Sources */,
 				A5A23ED416811978001B3E98 /* framebufferfactory.cpp in Sources */,
 				A5A23ED516811978001B3E98 /* indexbufferdata.cpp in Sources */,
 				A5A23ED616811978001B3E98 /* programdata.cpp in Sources */,
 				A5A23ED716811978001B3E98 /* programfactory.cpp in Sources */,
-				A5A23ED916811978001B3E98 /* texturedata.cpp in Sources */,
+				A5A23ED916811978001B3E98 /* texture.cpp in Sources */,
 				A5A23EDA16811978001B3E98 /* texturefactory.cpp in Sources */,
 				A5A23EDB16811978001B3E98 /* textureloadingthread.cpp in Sources */,
 				A5A23EDC16811978001B3E98 /* vertexarrayobjectdata.cpp in Sources */,
@@ -790,7 +786,7 @@
 				A50D32E11720AC42001D31B3 /* log.cpp in Sources */,
 				A50D32E21720AC42001D31B3 /* stream.cpp in Sources */,
 				A50D32E41720AC51001D31B3 /* rendercontext.cpp in Sources */,
-				A5E2AB41173C448300579BC7 /* objectscache.cpp in Sources */,
+				5C72A8361759E4B900B49611 /* objectscache.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -864,13 +860,15 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					$PROJECT_DIR/../../include,
-					/Users/sergey/SDK/FBXSDK/include,
+					"~/SDK/FBXSDK/include",
 				);
 				INFOPLIST_FILE = "$PROJECT_DIR/FBXConverter-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../lib/osx\"",
 					"\"$(SRCROOT)/../../../../../SDK/FBXSDK/lib/gcc4/ub\"",
+					"\"$(SRCROOT)/../../../../../SDK/FBXSDK/lib/gcc4/ub/release\"",
+					"\"$(SRCROOT)\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -892,13 +890,15 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					$PROJECT_DIR/../../include,
-					/Users/sergey/SDK/FBXSDK/include,
+					"~/SDK/FBXSDK/include",
 				);
 				INFOPLIST_FILE = "$PROJECT_DIR/FBXConverter-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../lib/osx\"",
 					"\"$(SRCROOT)/../../../../../SDK/FBXSDK/lib/gcc4/ub\"",
+					"\"$(SRCROOT)/../../../../../SDK/FBXSDK/lib/gcc4/ub/release\"",
+					"\"$(SRCROOT)\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
