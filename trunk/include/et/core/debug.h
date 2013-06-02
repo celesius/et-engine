@@ -80,6 +80,7 @@
 
 #define ET_DENY_COPY(t)										private:\
 																t(const t&) { }\
+																t(t&&) { }\
 																t& operator = (const t&) { return *this; }
 
 

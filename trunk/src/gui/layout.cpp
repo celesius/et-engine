@@ -17,11 +17,13 @@ Layout::Layout() : Element2d(nullptr, ElementClass<decltype(this)>::uniqueName(s
 	_currentElement(nullptr), _focusedElement(nullptr), _capturedElement(nullptr), _valid(false),
 	_dragging(false)
 {
+	setAutolayot(vec2(0.0f), ElementLayoutMode_Absolute, vec2(1.0f),
+		ElementLayoutMode_RelativeToContext, vec2(0.0f));
 }
 
 void Layout::layout(const vec2& sz)
 {
-	setFrame(vec2(0.0f), sz);
+	autoLayout(sz);
 	layoutChildren();
 }
 

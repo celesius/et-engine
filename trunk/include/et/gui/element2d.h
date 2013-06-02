@@ -13,38 +13,6 @@ namespace et
 {
 	namespace gui
 	{
-		enum Element2dLayoutMask
-		{
-			Element2dLayoutMask_None = 0x00,
-			Element2dLayoutMask_Position = 0x01,
-			Element2dLayoutMask_Size = 0x02,
-			Element2dLayoutMask_Pivot = 0x04,
-
-			Element2dLayoutMask_PositionPivot = Element2dLayoutMask_Position | Element2dLayoutMask_Pivot,
-			Element2dLayoutMask_Frame = Element2dLayoutMask_Position | Element2dLayoutMask_Size,
-			Element2dLayoutMask_All = Element2dLayoutMask_Frame | Element2dLayoutMask_Pivot
-		};
-
-		struct Element2dLayout
-		{
-			vec2 position;
-			vec2 size;
-			vec2 scale;
-			vec2 pivotPoint;
-			float angle;
-			size_t mask;
-
-			ElementLayoutMode positionMode;
-			ElementLayoutMode sizeMode;
-
-			Element2dLayout() : scale(1.0f), angle(0.0f), mask(Element2dLayoutMask_All),
-				positionMode(ElementLayoutMode_Absolute), sizeMode(ElementLayoutMode_Absolute) { }
-
-			Element2dLayout(const vec2& pos, const vec2& sz, ElementLayoutMode pMode,
-				ElementLayoutMode sMode) : position(pos), size(sz), scale(1.0f), angle(0.0f),
-				mask(Element2dLayoutMask_All), positionMode(pMode), sizeMode(sMode) { }
-		};
-
 		class Element2d : public Element
 		{
 		public:
@@ -102,15 +70,6 @@ namespace et
 			const mat4& finalInverseTransform();
 			vec2 positionInElement(const vec2& p);
 
-			void setAutolayot(const Element2dLayout&);
-
-			void setAutolayot(const vec2& pos, ElementLayoutMode pMode, const vec2& sz,
-				ElementLayoutMode sMode, const vec2& pivot);
-
-			void setAutolayoutMask(size_t);
-
-			void autoLayout(const vec2& contextSize, float duration = 0.0f);
-
 			ET_DECLARE_EVENT2(elementAnimationFinished, Element2d*, ElementAnimatedPropery)
 
 		protected:
@@ -127,8 +86,6 @@ namespace et
 			Vector4Animator _colorAnimator;
 			Vector2Animator _scaleAnimator;
 			FloatAnimator _angleAnimator;
-
-			Element2dLayout _autoLayout;
 
 			mat4 _finalTransform;
 			mat4 _finalInverseTransform;

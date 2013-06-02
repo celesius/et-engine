@@ -21,5 +21,6 @@ FullscreenElement::FullscreenElement(Element* parent, const std::string& name) :
 void FullscreenElement::layout(const vec2& sz)
 {
 	setFrame(vec2(0.0f), sz);
+	autoLayout(sz);
 	layoutChildren();
 }

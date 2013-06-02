@@ -25,6 +25,7 @@ namespace et
 				ContentMode_Stretch,
 				ContentMode_Center,
 				ContentMode_Fit,
+				ContentMode_FitAnyway,
 				ContentMode_Fill,
 				ContentMode_Tile,
 				ContentMode_Crop,
@@ -59,6 +60,11 @@ namespace et
 			void setTexture(const Texture& t, bool updateDescriptor);
 			void setImage(const Image& img);
 			void setBackgroundColor(const vec4& color);
+
+			ImageDescriptor calculateImageFrame();
+
+			ET_DECLARE_PROPERTY_GET_REF(vec2, actualImageOrigin)
+			ET_DECLARE_PROPERTY_GET_REF(vec2, actualImageSize)
 
 		private:
 			void buildVertices(RenderContext*, GuiRenderer&);
