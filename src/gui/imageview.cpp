@@ -55,96 +55,35 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 	
 	if (!_texture.valid()) return;
 
-	float imageWidth = _descriptor.size.x;
-	float imageHeight = _descriptor.size.y;
+	if (_contentMode == ContentMode_Tile)
+	{
+		_actualImageSize = _descriptor.size;
+		_actualImageSize = vec2(0.0f);
 
-	if (_contentMode == ContentMode_Center)
-	{
-		vec2 dp = 0.5f * (size() - _descriptor.size);
-		g.createImageVertices(_vertices, _texture, _descriptor, rect(dp, _descriptor.size), 
-			color(), transform, RenderLayer_Layer0);
-	}
-	else if (_contentMode == ContentMode_Fit)
-	{
-		vec2 frameSize = size();
-		vec2 descSize = absv(_descriptor.size);
-		
-		if ((descSize.x > frameSize.x) || (descSize.y > frameSize.y))
-		{
-			float imageAspect = descSize.aspect();
-			float frameAspect = frameSize.aspect();
-			if (frameAspect > 1.0f)
-			{
-				if (imageAspect > 1.0f)
-				{
-					float resultHeight = frameSize.x / imageAspect;
-					if (resultHeight > frameSize.y)
-					{
-						float scale = frameSize.y / resultHeight;
-						frameSize.x *= scale;
-						frameSize.y = resultHeight * scale;
-					}
-					else
-					{
-						frameSize.y = resultHeight;
-					}
-				}
-				else
-				{
-					frameSize.x = frameSize.x * imageAspect / frameAspect;
-				}
-			}
-			else
-			{
-				frameSize.y = frameSize.y / imageAspect * frameAspect;
-			}
-		}
-		else
-		{
-			frameSize = descSize;
-		}
-		
-		vec2 origin = 0.5f * (size() - frameSize);
-		g.createImageVertices(_vertices, _texture, _descriptor, rect(origin, frameSize),
-			color(), transform, RenderLayer_Layer0);
-	}
-	else if (_contentMode == ContentMode_Fill)
-	{
-		log::warning("ImageView::ContentMode_Fill is not supported yet.");
-	}
-	else if (_contentMode == ContentMode_Tile)
-	{
-		int repeatsWidth = static_cast<int>(size().x / imageWidth);
-		int repeatsHeight = static_cast<int>(size().y / imageHeight);
-		
-		_vertices.fitToSize(repeatsWidth * repeatsHeight * g.measusevertexCountForImageDescriptor(_descriptor));
-		_vertices.setOffset(0);
-		
+		int repeatsWidth = static_cast<int>(size().x / _descriptor.size.x);
+		int repeatsHeight = static_cast<int>(size().y / _descriptor.size.y);
+
+		_vertices.fitToSize(repeatsWidth * repeatsHeight *
+			g.measusevertexCountForImageDescriptor(_descriptor));
+
 		for (int v = 0; v < repeatsHeight; ++v)
 		{
 			for (int u = 0; u < repeatsWidth; ++u)
 			{
-				float fx = static_cast<float>(u * imageWidth);
-				float fy = static_cast<float>(v * imageHeight);
-				g.createImageVertices(_vertices, _texture, _descriptor, rect(vec2(fx, fy), _descriptor.size), 
-					color(), transform, RenderLayer_Layer0);
+				float fx = static_cast<float>(u * _descriptor.size.x);
+				float fy = static_cast<float>(v * _descriptor.size.y);
+				g.createImageVertices(_vertices, _texture, _descriptor,
+					rect(vec2(fx, fy), _descriptor.size), color(), transform, RenderLayer_Layer0);
 			}
 		}
 	}
-	else if (_contentMode == ContentMode_Crop)
-	{
-		ImageDescriptor desc = _descriptor;
-		vec2 dSize = desc.size;
-		desc.size.x = size().x < desc.size.x ? size().x : dSize.x;
-		desc.size.y = size().y < desc.size.y ? size().y : dSize.y;
-		vec2 cropped = dSize - desc.size;
-		desc.origin += cropped * pivotPoint();
-		g.createImageVertices(_vertices, _texture, desc, rect(vec2(0.0f), size()), color(), transform, RenderLayer_Layer0);
-	}
 	else
 	{
-		g.createImageVertices(_vertices, _texture, _descriptor, rect(vec2(0.0f), size()), color(), transform, RenderLayer_Layer0);
+		ImageDescriptor desc = calculateImageFrame();
+		g.createImageVertices(_vertices, _texture, desc, rect(_actualImageOrigin, _actualImageSize),
+			color(), transform, RenderLayer_Layer0);
 	}
+
 
 	setContentValid();
 }
@@ -183,4 +122,94 @@ void ImageView::setBackgroundColor(const vec4& color)
 {
 	_backgroundColor = color;
 	invalidateContent();
+}
+
+ImageDescriptor ImageView::calculateImageFrame()
+{
+	ImageDescriptor desc = _descriptor;
+
+	switch (_contentMode)
+	{
+		case ContentMode_Center:
+		{
+			_actualImageSize = _descriptor.size;
+			_actualImageOrigin = 0.5f * (size() - _descriptor.size);
+			break;
+		}
+
+		case ContentMode_Fit:
+		case ContentMode_FitAnyway:
+		case ContentMode_Fill:
+		{
+			vec2 frameSize = size();
+			vec2 descSize = absv(_descriptor.size);
+
+			if ((_contentMode == ContentMode_FitAnyway) || (descSize.x > frameSize.x) ||
+				(descSize.y > frameSize.y))
+			{
+				float imageAspect = descSize.aspect();
+				float frameAspect = frameSize.aspect();
+				if (frameAspect > 1.0f)
+				{
+					if (imageAspect > 1.0f)
+					{
+						float resultHeight = frameSize.x / imageAspect;
+						if (resultHeight > frameSize.y)
+						{
+							float scale = frameSize.y / resultHeight;
+							frameSize.x *= scale;
+							frameSize.y = resultHeight * scale;
+						}
+						else
+						{
+							frameSize.y = resultHeight;
+						}
+					}
+					else
+					{
+						frameSize.x = frameSize.x * imageAspect / frameAspect;
+					}
+				}
+				else
+				{
+					frameSize.y = frameSize.y / imageAspect * frameAspect;
+				}
+			}
+			else
+			{
+				frameSize = descSize;
+			}
+
+			if (_contentMode == ContentMode_Fill)
+			{
+				vec2 sizeAspect = frameSize / size();
+				float minScale = etMin(sizeAspect.x, sizeAspect.y);
+				frameSize /= minScale;
+			}
+
+			_actualImageSize = frameSize;
+			_actualImageOrigin = 0.5f * (size() - _actualImageSize);
+			break;
+		}
+
+		case ContentMode_Crop:
+		{
+			vec2 dSize = desc.size;
+			desc.size.x = size().x < desc.size.x ? size().x : dSize.x;
+			desc.size.y = size().y < desc.size.y ? size().y : dSize.y;
+			vec2 cropped = dSize - desc.size;
+			desc.origin += cropped * pivotPoint();
+			_actualImageSize = desc.size;
+			_actualImageOrigin = vec2(0.0f);
+			break;
+		}
+
+		default:
+		{
+			_actualImageSize = size();
+			_actualImageOrigin = vec2(0.0f);
+		}
+	}
+
+	return desc;
 }

@@ -17,7 +17,7 @@ Gui::Gui(RenderContext* rc) : _rc(rc),  _renderer(rc, true),
 	_background(Texture(), 0), _backgroundValid(true)
 {
 	_background.setPivotPoint(vec2(0.5f));
-	_background.setContentMode(ImageView::ContentMode_Fit);
+	_background.setContentMode(ImageView::ContentMode_Fill);
 	layout(rc->size());
 }
 
@@ -417,26 +417,32 @@ void Gui::onMessageViewButtonClicked(MessageView* view, MessageViewButton)
 
 void Gui::replaceTopmostLayout(Layout::Pointer newLayout, size_t animationFlags, float duration)
 {
-	ET_INVOKE_THIS_CLASS_METHOD2(Gui, internal_replaceTopmostLayout, newLayout, AnimationDescriptor(animationFlags, duration))
+	ET_INVOKE_THIS_CLASS_METHOD2(Gui, internal_replaceTopmostLayout, newLayout,
+		AnimationDescriptor(animationFlags, duration))
 }
 
 void Gui::popTopmostLayout(size_t animationFlags, float duration)
 {
-	ET_INVOKE_THIS_CLASS_METHOD2(Gui, internal_removeLayout, topmostLayout(), AnimationDescriptor(animationFlags, duration))
+	ET_INVOKE_THIS_CLASS_METHOD2(Gui, internal_removeLayout, topmostLayout(),
+		AnimationDescriptor(animationFlags, duration))
 }
 
-void Gui::replaceLayout(Layout::Pointer oldLayout, Layout::Pointer newLayout, size_t animationFlags, float duration)
+void Gui::replaceLayout(Layout::Pointer oldLayout, Layout::Pointer newLayout,
+	size_t animationFlags, float duration)
 {
-	ET_INVOKE_THIS_CLASS_METHOD2(Gui, internal_replaceLayout, LayoutPair(oldLayout, newLayout), AnimationDescriptor(animationFlags, duration))
+	ET_INVOKE_THIS_CLASS_METHOD2(Gui, internal_replaceLayout, LayoutPair(oldLayout, newLayout),
+		AnimationDescriptor(animationFlags, duration))
 }
 
 void Gui::removeLayout(Layout::Pointer oldLayout, size_t animationFlags, float duration)
 {
-	ET_INVOKE_THIS_CLASS_METHOD2(Gui, internal_removeLayout, oldLayout, AnimationDescriptor(animationFlags, duration))
+	ET_INVOKE_THIS_CLASS_METHOD2(Gui, internal_removeLayout, oldLayout,
+		AnimationDescriptor(animationFlags, duration))
 }
 
 void Gui::pushLayout(Layout::Pointer newLayout, size_t animationFlags, float duration)
 {
-	ET_INVOKE_THIS_CLASS_METHOD2(Gui, internal_pushLayout, newLayout, AnimationDescriptor(animationFlags, duration))
+	ET_INVOKE_THIS_CLASS_METHOD2(Gui, internal_pushLayout, newLayout,
+		AnimationDescriptor(animationFlags, duration))
 }
 

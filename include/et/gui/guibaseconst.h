@@ -45,13 +45,6 @@ namespace et
 			ElementAnimatedProperty_max
 		};
 
-		enum ElementLayoutMode
-		{
-			ElementLayoutMode_Absolute,
-			ElementLayoutMode_RelativeToParent,
-			ElementLayoutMode_RelativeToContext
-		};
-
 		enum RenderLayer 
 		{
 			RenderLayer_Layer0,
@@ -65,6 +58,25 @@ namespace et
 			ElementAlignment_Center,
 			ElementAlignment_Far,
 			ElementAlignment_max,
+		};
+
+		enum ElementLayoutMode
+		{
+			ElementLayoutMode_Absolute,
+			ElementLayoutMode_RelativeToParent,
+			ElementLayoutMode_RelativeToContext
+		};
+
+		enum ElementLayoutMask
+		{
+			ElementLayoutMask_None = 0x00,
+			ElementLayoutMask_Position = 0x01,
+			ElementLayoutMask_Size = 0x02,
+			ElementLayoutMask_Pivot = 0x04,
+
+			ElementLayoutMask_PositionPivot = ElementLayoutMask_Position | ElementLayoutMask_Pivot,
+			ElementLayoutMask_Frame = ElementLayoutMask_Position | ElementLayoutMask_Size,
+			ElementLayoutMask_All = ElementLayoutMask_Frame | ElementLayoutMask_Pivot
 		};
 	}
 }

@@ -193,6 +193,27 @@ namespace et
 			}
 		};
 
+		struct ElementLayout
+		{
+			vec2 position;
+			vec2 size;
+			vec2 scale;
+			vec2 pivotPoint;
+			float angle;
+			size_t mask;
+
+			ElementLayoutMode positionMode;
+			ElementLayoutMode sizeMode;
+
+			ElementLayout() : scale(1.0f), angle(0.0f), mask(ElementLayoutMask_All),
+				positionMode(ElementLayoutMode_Absolute), sizeMode(ElementLayoutMode_Absolute) { }
+
+			ElementLayout(const vec2& pos, const vec2& sz, ElementLayoutMode pMode,
+				ElementLayoutMode sMode) : position(pos), size(sz), scale(1.0f), angle(0.0f),
+				mask(ElementLayoutMask_All), positionMode(pMode), sizeMode(sMode) { }
+		};
+
+
 		extern const recti Clip_None;
 
 		typedef GuiVertex* GuiVertexPointer;

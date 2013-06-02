@@ -17,7 +17,7 @@ namespace et
 		class Element3D : public Element
 		{
 		public:
-			typedef IntrusivePtr<Element3D> Pointer;
+			ET_DECLARE_POINTER(Element3D)
 
 		public:
 			Element3D(const Camera& camera, Element* parent, const std::string& name = std::string());
@@ -34,9 +34,18 @@ namespace et
 			const mat4& inverseFinalTransform();
 
 			const vec2& position() const 
-				{ return _center; }
+				{ return _null; }
+			
+			const vec2& pivotPoint() const
+				{ return _null; }
 
-			void setPosition(const vec2&, float)
+			void setPosition(const vec2& p, float)
+				{ }
+
+			void setSize(const vec2&, float)
+				{ }
+
+			void setPivotPoint(const vec2&, bool)
 				{ }
 
 		protected:
@@ -49,7 +58,8 @@ namespace et
 		private:
 			const Camera& _camera;
 
-			vec2 _center;
+			vec2 _null;
+			
 			mat4 _transform;
 			mat4 _finalTransform;
 			mat4 _inverseFinalTransform;

@@ -11,18 +11,16 @@
 
 namespace et
 {
+	#define ET_DECLARE_POINTER(T)	typedef et::IntrusivePtr<T> Pointer;
+	
 	class Shared : public AtomicCounter
 	{
 	public:   
-		Shared() 
+		Shared()
 			{ }
 
 	private:
-		Shared(const Shared&) 
-			{ }
-
-		Shared& operator = (const Shared&)
-			{ return *this; }
+		ET_DENY_COPY(Shared)
 	};
 
 	template <typename T>

@@ -141,3 +141,62 @@ Element* Element::childWithNameCallback(const std::string& name, Element* root)
 
 	return nullptr;
 }
+
+
+
+void Element::setAutolayot(const et::gui::ElementLayout& al)
+{
+	_autoLayout = al;
+}
+
+void Element::setAutolayot(const vec2& pos, ElementLayoutMode pMode, const vec2& sz,
+							 ElementLayoutMode sMode, const vec2& pivot)
+{
+	_autoLayout.position = pos;
+	_autoLayout.size = sz;
+	_autoLayout.pivotPoint = pivot;
+	_autoLayout.positionMode = pMode;
+	_autoLayout.sizeMode = sMode;
+}
+
+void Element::setAutolayoutMask(size_t m)
+{
+	_autoLayout.mask = m;
+}
+
+void Element::autoLayout(const vec2& contextSize, float duration)
+{
+	if ((_autoLayout.mask & ElementLayoutMask_Pivot) == ElementLayoutMask_Pivot)
+		setPivotPoint(_autoLayout.pivotPoint);
+
+	if ((_autoLayout.mask & ElementLayoutMask_Size) == ElementLayoutMask_Size)
+	{
+		vec2 sz;
+
+		if (_autoLayout.sizeMode == ElementLayoutMode_RelativeToContext)
+			sz = contextSize * _autoLayout.size;
+		else if ((_autoLayout.sizeMode == ElementLayoutMode_RelativeToParent) && (parent() != nullptr))
+			sz = parent()->size() * _autoLayout.size;
+		else
+			sz = _autoLayout.size;
+
+		setSize(sz, duration);
+	}
+
+	if ((_autoLayout.mask & ElementLayoutMask_Position) == ElementLayoutMask_Position)
+	{
+		vec2 pos;
+
+		if (_autoLayout.positionMode == ElementLayoutMode_RelativeToContext)
+			pos = contextSize * _autoLayout.position;
+		else if ((_autoLayout.positionMode == ElementLayoutMode_RelativeToParent) && (parent() != nullptr))
+			pos = parent()->size() * _autoLayout.position;
+		else
+			pos = _autoLayout.position;
+
+		setPosition(pos, duration);
+	}
+
+	for (auto aChild : children())
+		aChild->autoLayout(contextSize, duration);
+}
