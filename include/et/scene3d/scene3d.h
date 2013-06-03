@@ -28,10 +28,10 @@ namespace et
 			void serialize(const std::string& filename, StorageFormat fmt);
 
 			bool deserialize(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
-				CustomElementFactory* factory, const std::string& basePath);
+				ElementFactory* factory, const std::string& basePath);
 			
 			bool deserialize(const std::string& filename, RenderContext* rc, ObjectsCache& tc,
-				CustomElementFactory* factory);
+				ElementFactory* factory);
 
 		private:
 			Scene3dStorage::Pointer deserializeStorage(std::istream& stream, RenderContext* rc,
@@ -47,7 +47,7 @@ namespace et
 			VertexArrayObject vaoWithIdentifiers(const std::string& vbid, const std::string& ibid);
 
 		private:
-			CustomElementFactory* _externalFactory;
+			ElementFactory* _externalFactory;
 			VertexBufferList _vertexBuffers;
 			IndexBufferList _indexBuffers;
 			VertexArrayObjectList _vaos;
