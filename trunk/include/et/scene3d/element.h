@@ -178,17 +178,12 @@ namespace et
 			bool _visible;
 		};
 
-		class CustomElementFactory
-		{
-		public:
-			virtual Element::Pointer createElementOfType(size_t type, Element* parent) = 0;
-		};
-
-		class ElementFactory : public CustomElementFactory
+		class ElementFactory
 		{
 		public:
 			virtual Material materialWithId(int id) = 0;
 			virtual VertexArrayObject vaoWithIdentifiers(const std::string& vbid, const std::string& ibid) = 0;
+			virtual Element::Pointer createElementOfType(size_t type, Element* parent) = 0;
 		};
 
 	}

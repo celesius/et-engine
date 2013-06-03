@@ -101,7 +101,7 @@ void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::stri
 }
 
 bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
-	CustomElementFactory* factory, const std::string& basePath)
+	ElementFactory* factory, const std::string& basePath)
 {
 	if (stream.fail()) 
     {
@@ -285,7 +285,7 @@ void Scene3d::serialize(const std::string& filename, s3d::StorageFormat fmt)
 }
 
 bool Scene3d::deserialize(const std::string& filename, RenderContext* rc, ObjectsCache& tc,
-	CustomElementFactory* factory)
+	ElementFactory* factory)
 {
 	std::ifstream file(filename.c_str(), std::ios::binary | std::ios::in);
 	bool success = deserialize(file, rc, tc, factory, getFilePath(filename));

@@ -13,7 +13,7 @@ namespace et
 {
 	#define ET_DECLARE_POINTER(T)	typedef et::IntrusivePtr<T> Pointer;
 	
-	class Shared : public AtomicCounter
+	class Shared : virtual public AtomicCounter
 	{
 	public:   
 		Shared()
