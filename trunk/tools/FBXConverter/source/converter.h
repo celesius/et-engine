@@ -6,6 +6,11 @@
 
 namespace fbxc
 {
+	class MainLayout : public et::gui::Layout 
+	{
+		void layout(const et::vec2&) { }
+	};
+
 	class Converter : public et::IApplicationDelegate
 	{
 	public:
@@ -49,7 +54,8 @@ namespace fbxc
 		et::Program _defaultProgram;
 		et::Camera _camera;
 
-		et::gui::Layout::Pointer _mainLayout;
+		et::IntrusivePtr<MainLayout> _mainLayout;
+
 		et::gui::Font _mainFont;
 		et::gui::Label::Pointer _labStatus;
 		et::gui::Button::Pointer _btnDrawNormalMeshes;
