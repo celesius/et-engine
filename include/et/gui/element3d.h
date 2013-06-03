@@ -39,7 +39,7 @@ namespace et
 			const vec2& pivotPoint() const
 				{ return _null; }
 
-			void setPosition(const vec2& p, float)
+			void setPosition(const vec2&, float)
 				{ }
 
 			void setSize(const vec2&, float)

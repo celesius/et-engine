@@ -22,9 +22,6 @@
     <ClCompile Include="..\..\src\collision\aabb.cpp">
       <Filter>engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\apiobject.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\app\appevironment.cpp">
       <Filter>engine</Filter>
     </ClCompile>
@@ -163,9 +160,6 @@
     <ClCompile Include="..\..\src\timers\notifytimer.cpp">
       <Filter>engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\objectscache.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\models\objLoader.cpp">
       <Filter>engine</Filter>
     </ClCompile>
@@ -253,9 +247,6 @@
     <ClCompile Include="..\..\src\gui\textureatlaswriter.cpp">
       <Filter>engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\texturedata.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\apiobjects\texturefactory.cpp">
       <Filter>engine</Filter>
     </ClCompile>
@@ -311,6 +302,12 @@
       <Filter>engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\rendering\rendercontext.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\objectscache.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\texture.cpp">
       <Filter>engine</Filter>
     </ClCompile>
   </ItemGroup>
