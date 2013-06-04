@@ -13,6 +13,7 @@
 #include <et/scene3d/mesh.h>
 #include <et/scene3d/supportmesh.h>
 #include <et/scene3d/cameraelement.h>
+#include <et/scene3d/lightelement.h>
 
 namespace et
 {
