@@ -120,6 +120,8 @@ namespace et
 		int _vPrimaryLightLocation;
 		int _mLightProjectionMatrixLocation;
 		int _mTransformLocation;
+
+		mat4 _cachedTransformMatrix;
 	};
 
 	template <typename T>

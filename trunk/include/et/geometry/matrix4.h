@@ -226,6 +226,18 @@ namespace et
 			return matrix4<T>(r0, r1, r2, r3);  
 		}
 
+		bool operator == (const matrix4<T>& m) const
+		{
+			return (mat[0] == m.mat[0]) && (mat[1] == m.mat[1]) &&
+				(mat[2] == m.mat[2]) && (mat[3] == m.mat[3]);
+		}
+
+		bool operator != (const matrix4<T>& m) const
+		{
+			return (mat[0] != m.mat[0]) || (mat[1] != m.mat[1]) ||
+				(mat[2] != m.mat[2]) || (mat[3] != m.mat[3]);
+		}
+
 		T determinant() const
 		{
 			const T& a10 = mat[1].x; const T& a11 = mat[1].y; const T& a12 = mat[1].z; const T& a13 = mat[1].w;
@@ -328,7 +340,6 @@ namespace et
 			vector4<T> r3 = vector4<T>(mat[2].xyz() * p, mat[2].w);
 			return matrix4(r1, r2, r3, mat[3]);
 		}
-
 	};
-
 }
+

@@ -132,6 +132,13 @@ namespace et
 
 		T dotSelf() const
 			{ return x*x + y*y + z*z + w*w; }
+
+		bool operator == (const vector4<T>& r) const
+			{ return (x == r.x) && (y == r.y) && (z == r.z) && (w == r.w); }
+
+		bool operator != (const vector4<T>& r) const
+			{ return (x != r.x) || (y != r.y) || (z != r.z) || (w != r.w); }
+
 	};
 
 	template <typename T>
