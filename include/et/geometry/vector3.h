@@ -132,6 +132,11 @@ namespace et
 			return *this;
 		}
 
+		bool operator == (const vector3<T>& r) const
+			{ return (x == r.x) && (y == r.y) && (z == r.z); }
+		
+		bool operator != (const vector3<T>& r) const
+			{ return (x != r.x) || (y != r.y) || (z != r.z); }
 	};
 
 	template <typename T>

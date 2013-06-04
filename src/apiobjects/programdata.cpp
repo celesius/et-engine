@@ -133,8 +133,12 @@ void ProgramData::setTransformMatrix(const mat4 &m)
 
 	if (_mTransformLocation < 0) return;
 
-	glUniformMatrix4fv(_mTransformLocation, 1, false, m.data());
-	checkOpenGLError("glUniformMatrix4fv");
+	if (_cachedTransformMatrix != m)
+	{
+		_cachedTransformMatrix = m;
+		glUniformMatrix4fv(_mTransformLocation, 1, false, m.data());
+		checkOpenGLError("glUniformMatrix4fv");
+	}
 }
 
 void ProgramData::setCameraProperties(const Camera& cam)
