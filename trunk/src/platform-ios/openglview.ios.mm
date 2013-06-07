@@ -152,7 +152,9 @@ using namespace et;
 	
 	CAEAGLLayer* glLayer = (CAEAGLLayer*)self.layer;
 	glLayer.contentsScale = self.contentScaleFactor;
-	vec2i size(glLayer.bounds.size.width, glLayer.bounds.size.height);
+	
+	vec2i size(glLayer.bounds.size.width * glLayer.contentsScale,
+		glLayer.bounds.size.height * glLayer.contentsScale);
 	
 	if (_mainFramebuffer.invalid())
 	{
@@ -204,6 +206,9 @@ using namespace et;
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
 			_mainFramebuffer->colorRenderbuffer());
 		checkOpenGLError("glFramebufferRenderbuffer(...");
+		
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &size.x);
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &size.y);
 	}
 	
 	glBindRenderbuffer(GL_RENDERBUFFER, _mainFramebuffer->depthRenderbuffer());
