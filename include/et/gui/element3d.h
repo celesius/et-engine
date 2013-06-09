@@ -45,6 +45,9 @@ namespace et
 			void setSize(const vec2&, float)
 				{ }
 
+			void setFrame(const vec2&, const vec2&, float)
+				{ }
+
 			void setPivotPoint(const vec2&, bool)
 				{ }
 

@@ -140,8 +140,9 @@ namespace et
 			virtual const vec2& size() const = 0;
 			virtual const vec2& pivotPoint() const = 0;
 
-			virtual void setPosition(const vec2& p, float duration = 0.0f) = 0;
-			virtual void setSize(const vec2& p, float duration = 0.0f) = 0;
+			virtual void setPosition(const vec2&, float duration = 0.0f) = 0;
+			virtual void setSize(const vec2&, float duration = 0.0f) = 0;
+			virtual void setFrame(const vec2&, const vec2&, float duration = 0.0f) = 0;
 			virtual void setPivotPoint(const vec2& p, bool preservePosition = true) = 0;
 
 			virtual bool containsPoint(const vec2&, const vec2&) = 0;

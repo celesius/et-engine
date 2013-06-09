@@ -46,7 +46,7 @@ void OpenGLCapabilites::checkCaps()
 	glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &maxSize);
 	_maxCubemapTextureSize = static_cast<size_t>(maxSize);
 
-	log::info("OpenGL version: %s\nGLSL version: %s, (%s)",
+	log::info("[OpenGLCapabilites] Version: %s, GLSL version: %s (%s)",
 		_openGlVersion.c_str(), _glslVersionString.c_str(), _glslVersion.c_str());
 	
 #if (ET_OPENGL4_AVAILABLE)
