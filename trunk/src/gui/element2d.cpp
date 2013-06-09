@@ -156,7 +156,7 @@ void Element2d::setAlpha(const float alpha, float duration)
 
 void Element2d::setFrame(const rect& r, float duration)
 {
-	if (duration == 0.0f)
+	if (duration <= std::numeric_limits<float>::epsilon())
 	{
 		_frame = r;
 		_frameAnimator.cancelUpdates();
@@ -230,12 +230,15 @@ void Element2d::animatorUpdated(BaseAnimator* a)
 {
 	ElementAnimatedPropery prop = static_cast<ElementAnimatedPropery>(a->tag());
 
-	bool isFrame = prop == ElementAnimatedProperty_Frame;
-	
-	if (isFrame || (prop == ElementAnimatedProperty_Angle) || (prop == ElementAnimatedProperty_Scale))
+	bool isFrame = (prop & ElementAnimatedProperty_Frame) == ElementAnimatedProperty_Frame;
+	bool isAngle = (prop & ElementAnimatedProperty_Angle) == ElementAnimatedProperty_Angle;
+	bool isScale = (prop & ElementAnimatedProperty_Scale) == ElementAnimatedProperty_Scale;
+	bool isColor = (prop & ElementAnimatedProperty_Color) == ElementAnimatedProperty_Color;
+
+	if (isFrame || isAngle || isScale)
 		invalidateTransform();
 
-	if (isFrame || (prop == ElementAnimatedProperty_Color))
+	if (isFrame || isColor)
 		invalidateContent();
 }
 
@@ -256,10 +259,12 @@ bool Element2d::containLocalPoint(const vec2& p)
 
 void Element2d::setPivotPoint(const vec2& p, bool preservePosition)
 {
+	if (_pivotPoint == p) return;
+
 	_pivotPoint = p;
 
 	if (preservePosition)
-		_frame.setOrigin(_frame.origin() - offset());
+		setPosition(_frame.origin() - offset());
 }
 
 vec2 Element2d::offset() const

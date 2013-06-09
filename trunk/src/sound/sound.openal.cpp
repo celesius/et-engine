@@ -89,7 +89,7 @@ Manager::Manager() : _private(new ManagerPrivate)
 	nativePreInit();
 	
 	const char* defaultDeviceSpecifier = alcGetString(nullptr, ALC_DEFAULT_DEVICE_SPECIFIER);
-	log::info("Default OpenAL device is `%s`", defaultDeviceSpecifier);
+	log::info("[Audio::Manager] Default OpenAL device is `%s`", defaultDeviceSpecifier);
 
 	sharedDevice = alcOpenDevice(defaultDeviceSpecifier);
 	if (alcOpenDevice == nullptr)

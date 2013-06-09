@@ -6,6 +6,7 @@
  */
 
 #include <Windows.h>
+#include <Shlobj.h>
 #include <et/core/tools.h>
 #include <et/core/containers.h>
 
@@ -49,7 +50,7 @@ char et::invalidPathDelimiter = '/';
 std::string et::applicationPath()
 {
 	char ExePath[MAX_PATH] = { };
-	GetModuleFileNameA(0, ExePath, MAX_PATH);
+	GetModuleFileNameA(nullptr, ExePath, MAX_PATH);
 	return getFilePath(normalizeFilePath(ExePath));
 }
 
@@ -125,12 +126,26 @@ std::string et::applicationDataFolder()
 
 std::string et::applicationDocumentsBaseFolder()
 {
-	return applicationDataFolder();
+	wchar_t* path = nullptr;
+
+	SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &path);
+	std::string result = addTrailingSlash(unicodeToUtf8(path));
+
+	CoTaskMemFree(path);
+
+	return result;
 }
 
 std::string et::applicationLibraryBaseFolder()
 {
-	return applicationDataFolder();
+	wchar_t* path = nullptr;
+
+	SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &path);
+	std::string result = addTrailingSlash(unicodeToUtf8(path));
+
+	CoTaskMemFree(path);
+
+	return result;
 }
 
 bool et::createDirectory(const std::string& name, bool /* recursive */)
@@ -236,15 +251,19 @@ std::wstring et::utf8ToUnicode(const std::string& mbcs)
 		case ERROR_INSUFFICIENT_BUFFER:
 			std::cout << "A supplied buffer size was not large enough, or it was incorrectly set to NULL." << std::endl;
 			break;
+
 		case ERROR_INVALID_FLAGS:
 			std::cout << "The values supplied for flags were not valid." << std::endl;
 			break;
+
 		case ERROR_INVALID_PARAMETER:
 			std::cout << "Any of the parameter values was invalid." << std::endl;
 			break;
+
 		case ERROR_NO_UNICODE_TRANSLATION:
 			std::cout << "Invalid Unicode was found in a string" << std::endl;
 			break;
+
 		default:
 			std::cout << "Failed to convert utf-8 to wchar_t" << std::endl;
 		}

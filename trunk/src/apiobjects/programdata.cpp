@@ -155,10 +155,10 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 {
 #if (ET_OPENGLES)
 	if (geom_source.length() && (geom_source != ProgramData::emptyShaderSource))
-		log::info("ProgramData::buildProgram - geometry shader skipped in OpenGL ES");
+		log::info("[ProgramData] Geometry shader skipped in OpenGL ES");
 #endif
 	
-	checkOpenGLError("Ce2Render::buildProgram - %s", name().c_str());
+	checkOpenGLError("[ProgramData] buildProgram - %s", name().c_str());
 
 	if ((_glID == 0) || !glIsProgram(_glID))
 	{

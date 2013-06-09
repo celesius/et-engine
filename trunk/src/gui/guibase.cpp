@@ -169,33 +169,31 @@ void Element::autoLayout(const vec2& contextSize, float duration)
 	if ((_autoLayout.mask & ElementLayoutMask_Pivot) == ElementLayoutMask_Pivot)
 		setPivotPoint(_autoLayout.pivotPoint);
 
+	vec2 aSize = size();
+	vec2 aPos = position();
+
 	if ((_autoLayout.mask & ElementLayoutMask_Size) == ElementLayoutMask_Size)
 	{
-		vec2 sz;
-
 		if (_autoLayout.sizeMode == ElementLayoutMode_RelativeToContext)
-			sz = contextSize * _autoLayout.size;
+			aSize = contextSize * _autoLayout.size;
 		else if ((_autoLayout.sizeMode == ElementLayoutMode_RelativeToParent) && (parent() != nullptr))
-			sz = parent()->size() * _autoLayout.size;
+			aSize = parent()->size() * _autoLayout.size;
 		else
-			sz = _autoLayout.size;
-
-		setSize(sz, duration);
+			aSize = _autoLayout.size;
 	}
 
 	if ((_autoLayout.mask & ElementLayoutMask_Position) == ElementLayoutMask_Position)
 	{
-		vec2 pos;
-
 		if (_autoLayout.positionMode == ElementLayoutMode_RelativeToContext)
-			pos = contextSize * _autoLayout.position;
+			aPos = contextSize * _autoLayout.position;
 		else if ((_autoLayout.positionMode == ElementLayoutMode_RelativeToParent) && (parent() != nullptr))
-			pos = parent()->size() * _autoLayout.position;
+			aPos = parent()->size() * _autoLayout.position;
 		else
-			pos = _autoLayout.position;
-
-		setPosition(pos, duration);
+			aPos = _autoLayout.position;
 	}
+
+	if ((_autoLayout.mask & ElementLayoutMask_Frame) != 0)
+		setFrame(aPos, aSize, duration);
 
 	for (auto aChild : children())
 		aChild->autoLayout(contextSize, duration);
