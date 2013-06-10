@@ -137,13 +137,13 @@ void Gui::render(RenderContext* rc)
 		_renderer.render(rc);
 	}
 
-	ET_ITERATE(_layouts, auto&, obj,
+	for (auto& obj : _layouts)
 	{
 		buildLayoutVertices(rc, obj->layout->renderingElement(), obj->layout);
 		_renderer.setCustomAlpha(obj->offsetAlpha.z);
 		_renderer.setCustomOffset(obj->offsetAlpha.xy());
 		_renderer.render(rc);
-	})
+	}
 
 	_renderer.endRender(rc);
 }
