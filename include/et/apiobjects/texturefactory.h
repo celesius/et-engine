@@ -18,7 +18,7 @@ namespace et
 	{
 	public:
 		Texture loadTexture(const std::string& file, ObjectsCache& cache, bool async = false,
-			TextureLoaderDelegate* delegate = 0);
+			TextureLoaderDelegate* delegate = nullptr);
 
 		Texture loadTexturesToCubemap(const std::string& posx, const std::string& negx,
 			const std::string& posy, const std::string& negy, const std::string& posz,

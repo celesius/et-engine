@@ -286,11 +286,11 @@ void MaterialData::serializeBinary(std::ostream& stream) const
 }
 
 void MaterialData::deserialize(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
-	const std::string& texturesBasePath, StorageFormat format)
+	const std::string& texturesBasePath, StorageFormat format, bool async)
 {
 	if (format == StorageFormat_HumanReadableMaterials)
 	{
-		deserialize3FromXml(stream, rc, cache, texturesBasePath);
+		deserialize3FromXml(stream, rc, cache, texturesBasePath, async);
 	}
 	else if (format == StorageFormat_Binary)
 	{
@@ -302,11 +302,11 @@ void MaterialData::deserialize(std::istream& stream, RenderContext* rc, ObjectsC
 		_depthWriteEnabled = deserializeInt(stream) != 0;
 
 		if (version == MaterialVersion1_0_0)
-			deserialize1(stream, rc, cache, texturesBasePath);
+			deserialize1(stream, rc, cache, texturesBasePath, async);
 		else if (version == MaterialVersion1_0_1)
-			deserialize2(stream, rc, cache, texturesBasePath);
+			deserialize2(stream, rc, cache, texturesBasePath, async);
 		else if (version >= MaterialVersion1_0_2)
-			deserialize3(stream, rc, cache, texturesBasePath);
+			deserialize3(stream, rc, cache, texturesBasePath, async);
 	}
 	else
 	{
@@ -315,7 +315,7 @@ void MaterialData::deserialize(std::istream& stream, RenderContext* rc, ObjectsC
 }
 
 void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
-	const std::string& texturesBasePath)
+	const std::string& texturesBasePath, bool async)
 {
 	size_t count = deserializeInt(stream);
 	for (size_t i = 0; i < count; ++i)
@@ -346,7 +346,7 @@ void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, Objects
 	{
 		std::string param = deserializeString(stream);
 		std::string path = deserializeString(stream);
-		setTexture(keyToMaterialParameter(param), loadTexture(rc, path, texturesBasePath, cache));
+		setTexture(keyToMaterialParameter(param), loadTexture(rc, path, texturesBasePath, cache, async));
 	}
 
 	count = deserializeInt(stream);
@@ -359,7 +359,7 @@ void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, Objects
 }
 
 void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
-	const std::string& texturesBasePath)
+	const std::string& texturesBasePath, bool async)
 {
 	size_t count = deserializeInt(stream);
 	for (size_t i = 0; i < count; ++i)
@@ -390,7 +390,7 @@ void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, Objects
 	{
 		int param = deserializeInt(stream);
 		std::string path = deserializeString(stream);
-		setTexture(param, loadTexture(rc, path, texturesBasePath, cache));
+		setTexture(param, loadTexture(rc, path, texturesBasePath, cache, async));
 	}
 
 	count = deserializeInt(stream);
@@ -403,7 +403,7 @@ void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, Objects
 }
 
 void MaterialData::deserialize3(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
-	const std::string& texturesBasePath)
+	const std::string& texturesBasePath, bool async)
 {
 	int numParameters = deserializeInt(stream);
 	for (int i = 0; i < numParameters; ++i)
@@ -433,7 +433,7 @@ void MaterialData::deserialize3(std::istream& stream, RenderContext* rc, Objects
 		std::string path = deserializeString(stream);
 		if (has)
 		{
-			setTexture(i, loadTexture(rc, path, texturesBasePath, cache));
+			setTexture(i, loadTexture(rc, path, texturesBasePath, cache, async));
 		}
 
 		has = deserializeInt(stream);
@@ -444,7 +444,7 @@ void MaterialData::deserialize3(std::istream& stream, RenderContext* rc, Objects
 		}
 	}
 
-	deserialize2(stream, rc, cache, texturesBasePath);
+	deserialize2(stream, rc, cache, texturesBasePath, async);
 }
 
 void MaterialData::loadProperties(xmlNode* root)
@@ -469,7 +469,7 @@ void MaterialData::loadProperties(xmlNode* root)
 }
 
 void MaterialData::loadDefaultValues(xmlNode* node, RenderContext* rc, ObjectsCache& cache,
-	const std::string& basePath)
+	const std::string& basePath, bool async)
 {
 	for (xmlNode* c = node->children; c; c = c->next)
 	{
@@ -479,14 +479,14 @@ void MaterialData::loadDefaultValues(xmlNode* node, RenderContext* rc, ObjectsCa
 			for (size_t i = 0; i < MaterialParameter_max; ++i)
 			{
 				if (materialKeys[i] == cName)
-					loadDefaultValue(c, static_cast<MaterialParameters>(i), rc, cache, basePath);
+					loadDefaultValue(c, static_cast<MaterialParameters>(i), rc, cache, basePath, async);
 			}
 		}
 	}
 }
 
 void MaterialData::loadDefaultValue(xmlNode* node, MaterialParameters param, RenderContext* rc,
-	ObjectsCache& cache, const std::string& basePath)
+	ObjectsCache& cache, const std::string& basePath, bool async)
 {
 	std::string type;
 	std::string value;
@@ -539,7 +539,7 @@ void MaterialData::loadDefaultValue(xmlNode* node, MaterialParameters param, Ren
 	}
 	else if (type == kTexture)
 	{
-		setTexture(param, loadTexture(rc, source, basePath, cache));
+		setTexture(param, loadTexture(rc, source, basePath, cache, async));
 	}
 	else
 	{
@@ -548,7 +548,7 @@ void MaterialData::loadDefaultValue(xmlNode* node, MaterialParameters param, Ren
 }
 
 void MaterialData::deserialize3FromXml(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
-	const std::string& basePath)
+	const std::string& basePath, bool async)
 {
 	size_t size = streamSize(stream) - static_cast<size_t>(stream.tellg());
 	StringDataStorage data(size + 1, 0);
@@ -581,7 +581,7 @@ void MaterialData::deserialize3FromXml(std::istream& stream, RenderContext* rc, 
 			const char* cName = reinterpret_cast<const char*>(c->name);
 			if (strcmp(cName, kDefaultValues) == 0)
 			{
-				loadDefaultValues(c, rc, cache, basePath);
+				loadDefaultValues(c, rc, cache, basePath, async);
 			}
 			else if (strcmp(cName, kCustomValues) == 0)
 			{
@@ -599,15 +599,15 @@ void MaterialData::deserialize3FromXml(std::istream& stream, RenderContext* rc, 
 }
 
 Texture MaterialData::loadTexture(RenderContext* rc, const std::string& path, const std::string& basePath,
-	ObjectsCache& cache)
+	ObjectsCache& cache, bool async)
 {
 	if (path.empty()) return Texture();
 
-	Texture t = rc->textureFactory().loadTexture(normalizeFilePath(path), cache);
+	Texture t = rc->textureFactory().loadTexture(normalizeFilePath(path), cache, async);
 	if (t.invalid())
 	{
 		std::string relativePath = normalizeFilePath(basePath + getFileName(path));
-		t = rc->textureFactory().loadTexture(relativePath, cache);
+		t = rc->textureFactory().loadTexture(relativePath, cache, async);
 	}
 
 	return t;
@@ -618,8 +618,9 @@ void MaterialData::reload(const std::string& anOrigin, RenderContext* rc, Object
 	clear();
 	
 	InputStream stream(anOrigin, StreamMode_Text);
+
 	if (stream.valid())
-		deserialize3FromXml(stream.stream(), rc, cache, getFilePath(anOrigin));
+		deserialize3FromXml(stream.stream(), rc, cache, getFilePath(anOrigin), false);
 }
 
 void MaterialData::clear()

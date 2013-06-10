@@ -43,7 +43,7 @@ namespace et
 			void serialize(std::ostream& stream, StorageFormat format) const;
 
 			void deserialize(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
-				const std::string& basePath, StorageFormat format);
+				const std::string& basePath, StorageFormat format, bool async);
 
 			void reload(const std::string& anOrigin, RenderContext*, ObjectsCache&);
 
@@ -63,30 +63,30 @@ namespace et
 			void serializeReadable(std::ostream& stream) const;
 
 			void deserialize1(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
-				const std::string& texturesBasePath);
+				const std::string& texturesBasePath, bool async);
 
 			void deserialize2(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
-				const std::string& texturesBasePath);
+				const std::string& texturesBasePath, bool async);
 
 			void deserialize3(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
-				const std::string& texturesBasePath);
+				const std::string& texturesBasePath, bool async);
 
 			/*
 			 * Loading from XML
 			 */
 			void deserialize3FromXml(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
-				const std::string& texturesBasePath);
+				const std::string& texturesBasePath, bool async);
 
 			void loadProperties(xmlNode*);
 
 			void loadDefaultValues(xmlNode*, RenderContext* rc, ObjectsCache& cache,
-				const std::string& basePath);
+				const std::string& basePath, bool async);
 			
 			void loadDefaultValue(xmlNode*, MaterialParameters, RenderContext* rc, ObjectsCache& cache,
-				const std::string& basePath);
+				const std::string& basePath, bool async);
 
 			Texture loadTexture(RenderContext* rc, const std::string& path,
-				const std::string& basePath, ObjectsCache& cache);
+				const std::string& basePath, ObjectsCache& cache, bool async);
 
 		private:
 			DefaultIntParameters _defaultIntParameters;

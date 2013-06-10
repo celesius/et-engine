@@ -100,79 +100,27 @@ void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::stri
 	ElementContainer::serialize(stream, SceneVersionLatest);
 }
 
+void Scene3d::deserializeAsync(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
+				ElementFactory* factory, const std::string& basePath)
+{
+	performDeserialization(stream, rc, tc, factory, basePath, true);
+}
+
+void Scene3d::deserializeAsync(const std::string& filename, RenderContext* rc, ObjectsCache& tc, 
+	ElementFactory* factory)
+{
+	std::ifstream file(filename.c_str(), std::ios::binary | std::ios::in);
+	deserializeAsync(file, rc, tc, factory, getFilePath(filename));
+}
+
 bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
 	ElementFactory* factory, const std::string& basePath)
 {
-	if (stream.fail()) 
-    {
-		log::error("Unable to deserialize scene from stream.");
-        return false;
-    }
-    
-	ChunkId readChunk = { };
-	deserializeChunk(stream, readChunk);
-	if (!chunkEqualTo(readChunk, HeaderScene)) 
-	{
-		log::error("Data not looks like proper ETM file.");
-		return false;
-	}
-
-	_externalFactory = factory;
-
-	size_t version = deserializeInt(stream);
-	if (version > static_cast<size_t>(SceneVersionLatest))
-	{
-		log::error("Unsupported version of the ETM file.");
-		return false;
-	}
-
-	volatile bool readCompleted = false;
-	while (!readCompleted)
-	{
-		deserializeChunk(stream, readChunk);
-		if (chunkEqualTo(readChunk, HeaderData))
-		{
-			size_t storageVersion = deserializeInt(stream);
-			
-			size_t numStorages = 0;
-			StorageFormat format = StorageFormat_Binary;
-			
-			if (storageVersion == StorageVersion_1_0_0)
-			{
-				numStorages = deserializeInt(stream);
-			}
-			else if (storageVersion == StorageVersion_1_0_1)
-			{
-				format = static_cast<StorageFormat>(deserializeInt(stream));
-				numStorages = deserializeInt(stream);
-			}
-			else
-			{
-				log::error("Unsupported version of binary storage the ETM file.");
-				return false;
-			}
-
-			for (size_t i = 0; i < numStorages; ++i)
-			{
-				Scene3dStorage::Pointer ptr = deserializeStorage(stream, rc, tc, basePath, format);
-				ptr->setParent(this);
-			}
-
-		}
-		else if (chunkEqualTo(readChunk, HeaderElements))
-		{
-			ElementContainer::deserialize(stream, this, static_cast<SceneVersion>(version));
-			readCompleted = true;
-		}
-	}
-
-	_externalFactory = 0;
-	return true;
+	return performDeserialization(stream, rc, tc, factory, basePath, false);
 }
 
-
 Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, RenderContext* rc,
-	ObjectsCache& tc, const std::string& basePath, StorageFormat fmt)
+	ObjectsCache& tc, const std::string& basePath, StorageFormat fmt, bool async)
 {
 	Scene3dStorage::Pointer result(new Scene3dStorage("storage", 0));
 
@@ -195,7 +143,7 @@ Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, Render
 				{
 					Material m;
 					m->tag = deserializeInt(stream);
-					m->deserialize(stream, rc, tc, basePath, StorageFormat_Binary);
+					m->deserialize(stream, rc, tc, basePath, StorageFormat_Binary, async);
 					result->addMaterial(m);
 				}
 			}
@@ -210,7 +158,7 @@ Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, Render
 					InputStream mStream(m->origin(), StreamMode_Text);
 					
 					if (mStream.valid())
-						m->deserialize(mStream.stream(), rc, tc, basePath, fmt);
+						m->deserialize(mStream.stream(), rc, tc, basePath, fmt, async);
 
 					result->addMaterial(m);
 					tc.manage(m);
@@ -349,3 +297,75 @@ VertexArrayObject Scene3d::vaoWithIdentifiers(const std::string& vbid, const std
 	return VertexArrayObject();
 }
 
+#define INVOKE_FAIL		{ if (async) { deserializationFinished.invoke(false); } return false; }
+#define INVOKE_SUCCESS	{ return true; }
+
+bool Scene3d::performDeserialization(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
+		ElementFactory* factory, const std::string& basePath, bool async)
+{
+	if (stream.fail()) 
+    {
+		log::error("Unable to deserialize scene from stream.");
+		INVOKE_FAIL
+    }
+
+	ChunkId readChunk = { };
+	deserializeChunk(stream, readChunk);
+	if (!chunkEqualTo(readChunk, HeaderScene)) 
+	{
+		log::error("Data not looks like proper ETM file.");
+		INVOKE_FAIL
+	}
+
+	_externalFactory = factory;
+
+	size_t version = deserializeInt(stream);
+	if (version > static_cast<size_t>(SceneVersionLatest))
+	{
+		log::error("Unsupported version of the ETM file.");
+		INVOKE_FAIL
+	}
+
+	volatile bool readCompleted = false;
+	while (!readCompleted)
+	{
+		deserializeChunk(stream, readChunk);
+		if (chunkEqualTo(readChunk, HeaderData))
+		{
+			size_t storageVersion = deserializeInt(stream);
+			
+			size_t numStorages = 0;
+			StorageFormat format = StorageFormat_Binary;
+			
+			if (storageVersion == StorageVersion_1_0_0)
+			{
+				numStorages = deserializeInt(stream);
+			}
+			else if (storageVersion == StorageVersion_1_0_1)
+			{
+				format = static_cast<StorageFormat>(deserializeInt(stream));
+				numStorages = deserializeInt(stream);
+			}
+			else
+			{
+				log::error("Unsupported version of binary storage the ETM file.");
+				INVOKE_FAIL
+			}
+
+			for (size_t i = 0; i < numStorages; ++i)
+			{
+				Scene3dStorage::Pointer ptr = deserializeStorage(stream, rc, tc, basePath, format, async);
+				ptr->setParent(this);
+			}
+
+		}
+		else if (chunkEqualTo(readChunk, HeaderElements))
+		{
+			ElementContainer::deserialize(stream, this, static_cast<SceneVersion>(version));
+			readCompleted = true;
+		}
+	}
+
+	_externalFactory = nullptr;
+	INVOKE_SUCCESS
+}
