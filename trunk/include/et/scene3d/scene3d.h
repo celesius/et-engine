@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <et/app/events.h>
 #include <et/core/objectscache.h>
 #include <et/scene3d/element.h>
 #include <et/scene3d/storage.h>
@@ -24,22 +25,40 @@ namespace et
 		public:
 			Scene3d(const std::string& name = "scene");
 
+			/*
+			 * Synchronous serializing
+			 */
 			void serialize(std::ostream& stream, StorageFormat fmt, const std::string& basePath);
-			
 			void serialize(const std::string& filename, StorageFormat fmt);
 
+			/*
+			 * Synchronous deserializing
+			 */
 			bool deserialize(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
 				ElementFactory* factory, const std::string& basePath);
-			
 			bool deserialize(const std::string& filename, RenderContext* rc, ObjectsCache& tc,
 				ElementFactory* factory);
 
+			/*
+			 * Asynchronous deserializing
+			 */
+			void deserializeAsync(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
+				ElementFactory* factory, const std::string& basePath);
+			void deserializeAsync(const std::string& filename, RenderContext* rc, ObjectsCache& tc,
+				ElementFactory* factory);
+
+		public:
+			ET_DECLARE_EVENT1(deserializationFinished, size_t)
+
 		private:
-			Scene3dStorage::Pointer deserializeStorage(std::istream& stream, RenderContext* rc,
-				ObjectsCache& tc, const std::string& basePath, StorageFormat fmt);
-			
+			bool performDeserialization(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
+				ElementFactory* factory, const std::string& basePath, bool async);
+
 			void buildAPIObjects(Scene3dStorage::Pointer p, RenderContext* rc);
 
+			Scene3dStorage::Pointer deserializeStorage(std::istream& stream, RenderContext* rc,
+				ObjectsCache& tc, const std::string& basePath, StorageFormat fmt, bool async);
+			
 			Element::Pointer createElementOfType(size_t type, Element* parent);
 			Material materialWithId(int id);
 
