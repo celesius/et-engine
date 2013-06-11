@@ -155,7 +155,7 @@ namespace et
 		{
 			if (_size == size) return;
 			
-			T* new_data = 0;
+			T* new_data = nullptr;
 			size_t min_size = (size < _size) ? size : _size;
 			_size = size;
 			_dataSize = _size * sizeof(T);
@@ -172,7 +172,7 @@ namespace et
 			}
 			
 			if (ownsData())
-				delete _mutableData;
+				delete [] _mutableData;
 			
 			_flags |= DataStorageFlag_Mutable;
 			_mutableData = new_data;
@@ -208,7 +208,7 @@ namespace et
 		T* extract()
 		{
 			T* value = _mutableData;
-			_mutableData = 0;
+			_mutableData = nullptr;
 			_size = 0;
 			_dataSize = 0;
 			_offset = 0;
