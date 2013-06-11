@@ -9,12 +9,8 @@
 
 using namespace et;
 
-inline FrustumPlane& operator ++(FrustumPlane& p)
-{
-	p = static_cast<FrustumPlane>(p + 1);
-	return p;
-}
-
+inline FrustumPlane operator ++(FrustumPlane p)
+	{ return static_cast<FrustumPlane>(p + 1); }
 
 Frustum::Frustum()
 {
