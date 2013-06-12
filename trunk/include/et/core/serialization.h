@@ -17,10 +17,14 @@ namespace et
 	inline void serializeInt(std::ostream& stream, int value)
 	{
 		assert(stream.good());
-
 		stream.write(reinterpret_cast<const char*>(&value), sizeof(value));
 	}
 
+	inline void serializeInt(std::ostream& stream, size_t value)
+	{
+        serializeInt(stream, static_cast<int>(value & 0xffffffff));
+	}
+    
 	inline int deserializeInt(std::istream& stream)
 	{
 		assert(stream.good());

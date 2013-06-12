@@ -28,7 +28,7 @@ namespace et
 				{ return _generator.valid() ? _generator->texture() : _texture; }
 			const std::string& face() const
 				{ return _generator.valid() ? _generator->face() : _face; }
-			int size() const
+			size_t size() const
 				{ return _generator.valid() ? _generator->size() : _size; }
 
 			CharDescriptor charDescription(int c);
@@ -58,7 +58,7 @@ namespace et
 			std::string _face;
 			et::vec2 _biggestChar;
 			et::vec2 _biggestBoldChar;
-			int _size;
+			size_t _size;
 		};
 
 		class Font : public IntrusivePtr<FontData>
