@@ -39,7 +39,7 @@ namespace et
 		void updatePartialDataDirectly(RenderContext* rc, const vec2i& offset, const vec2i& size,
 			char* data, size_t dataSize);
 
-		int glID() const
+		uint32_t glID() const
 			{ return _glID; }
 
 		int internalFormat() const

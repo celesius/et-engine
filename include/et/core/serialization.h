@@ -35,6 +35,7 @@ namespace et
 		assert(stream.good());
 
 		serializeInt(stream, s.size());
+        
 		if (s.size())
 			stream.write(s.c_str(), s.size());
 	}

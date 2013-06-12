@@ -40,8 +40,8 @@ VertexArray::Description VertexArray::generateDescription() const
 
 	ET_START_ITERATION(_chunks, auto&, chunk)
 	{
-		size_t t_stride = _decl.interleaved() ? static_cast<int>(_decl.dataSize()) : 0;
-		size_t t_offset = _decl.interleaved() ? offset : static_cast<int>(dataSize);
+		size_t t_stride = _decl.interleaved() ? static_cast<size_t>(_decl.dataSize()) : 0;
+		size_t t_offset = _decl.interleaved() ? offset : static_cast<size_t>(dataSize);
 		desc.declaration.push_back(VertexElement(chunk->usage(), chunk->type(), t_stride, t_offset));
 		dataSize += chunk->dataSize();
 		offset += chunk->typeSize();

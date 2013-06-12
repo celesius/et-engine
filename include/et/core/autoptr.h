@@ -79,10 +79,10 @@ namespace et
 			{ return _data != nullptr; }
 
 	private:
-		AutoPtr(const AutoPtr<T>& r) : _data(0)
+		AutoPtr(const AutoPtr<T>&) : _data(0)
 			{ }
 
-		AutoPtr& operator = (const AutoPtr<T>& r)
+		AutoPtr& operator = (const AutoPtr<T>&)
 			{ return *this; }
 
 	private:

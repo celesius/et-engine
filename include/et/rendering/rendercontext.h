@@ -75,7 +75,7 @@ namespace et
 		VertexBufferFactory& vertexBufferFactory()
 			{ return _vertexBufferFactory.reference(); }
 
-		int lastFPSValue() const 
+		size_t lastFPSValue() const
 			{ return _info.averageFramePerSecond; }
 
 		void beginRender();
