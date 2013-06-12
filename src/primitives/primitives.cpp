@@ -126,17 +126,17 @@ void primitives::createTorus(VertexArray::Pointer data, float centralRadius, flo
 		{
 			if (hasPos)
 			{
-				vec3 angleScale(cos(phi), sin(theta), sin(phi));
+				vec3 angleScale(std::cos(phi), std::sin(theta), std::sin(phi));
 				vec3 offset(centralRadius, 0.0f, centralRadius);
-				pos[counter] = (sizeRadius * vec3(cos(theta), 1.0f, cos(theta)) + offset) * angleScale;
+				pos[counter] = (sizeRadius * vec3(std::cos(theta), 1.0f, std::cos(theta)) + offset) * angleScale;
 			}
 
 			if (hasNorm)
 			{
 				vec3 n;
-				n.x = cos(phi) * cos(theta);
-				n.y = sin(theta);
-				n.z = sin(phi) * cos(theta);
+				n.x = std::cos(phi) * std::cos(theta);
+				n.y = std::sin(theta);
+				n.z = std::sin(phi) * std::cos(theta);
 				norm[counter] = normalize( n );
 			}
 
@@ -183,7 +183,7 @@ void primitives::createCylinder(VertexArray::Pointer data, float radius, float h
 		float phi = 0.0f;
 		for (int j = 0; j < density.x; ++j)
 		{
-			vec3 p = vec3(cos(phi) * radius, y, sin(phi) * radius);
+			vec3 p = vec3(std::cos(phi) * radius, y, std::sin(phi) * radius);
 
 			if (hasPos)
 				pos[counter] = center + p;

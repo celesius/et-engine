@@ -124,7 +124,7 @@ namespace et
 			T lenSquare = dotSelf();
 			if (lenSquare > 0)
 			{
-				lenSquare = sqrt(lenSquare);
+				lenSquare = std::sqrt(lenSquare);
 				x /= lenSquare;
 				y /= lenSquare;
 				z /= lenSquare;

@@ -35,7 +35,7 @@ const mat4& Camera::perspectiveProjection(float fov, float aspect, float zNear, 
 	_projectionMatrix = identityMatrix;
 
 	float fHalfFOV = 0.5f * fov;
-	float cotan = cos(fHalfFOV) / sin(fHalfFOV);
+	float cotan = std::cos(fHalfFOV) / std::sin(fHalfFOV);
 	float dz = zFar - zNear;
 
 	_projectionMatrix[0][0] = cotan / aspect;
@@ -54,8 +54,8 @@ const mat4& Camera::customPerspectiveProjection(const vec2& fullFov, float zNear
 	_projectionMatrix = identityMatrix;
 	
 	vec2 fov = 0.5f * fullFov;
-	float cotanX = cos(fov.x) / sin(fov.x);
-	float cotanY = cos(fov.y) / sin(fov.y);
+	float cotanX = std::cos(fov.x) / std::sin(fov.x);
+	float cotanY = std::cos(fov.y) / std::sin(fov.y);
 	float dz = zFar - zNear;
 	
 	_projectionMatrix[0][0] = cotanX;
@@ -164,7 +164,7 @@ vec3 Camera::invSide() const
 
 float Camera::heading() const
 {
-	return -asin(_modelViewMatrix[1][2]);
+	return -std::asin(_modelViewMatrix[1][2]);
 }
 
 void Camera::move(const vec3& dp)

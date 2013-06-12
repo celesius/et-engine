@@ -268,7 +268,7 @@ int RenderContextPrivate::displayLinkSynchronized()
 	vec2 np(2.0f * p.x / ownFrame.size.width - 1.0f, 1.0f - 2.0f * p.y / ownFrame.size.height);
 
 	return PointerInputInfo(type, p, np, vec2(0.0f), [theEvent eventNumber],
-		[theEvent timestamp], PointerOrigin_Any);
+		static_cast<float>([theEvent timestamp]), PointerOrigin_Any);
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
@@ -319,12 +319,12 @@ int RenderContextPrivate::displayLinkSynchronized()
 		([theEvent phase] != NSEventPhaseNone)) ? PointerOrigin_Trackpad : PointerOrigin_Mouse;
 
 	pointerInputSource.pointerScrolled(PointerInputInfo(PointerType_General, p, np,
-		scroll, [theEvent hash], [theEvent timestamp], origin));
+		scroll, [theEvent hash], static_cast<float>([theEvent timestamp]), origin));
 }
 
 - (void)beginGestureWithEvent:(NSEvent *)event
 {
-	
+    (void)event;
 }
 
 - (void)magnifyWithEvent:(NSEvent *)event
@@ -347,16 +347,17 @@ int RenderContextPrivate::displayLinkSynchronized()
 
 - (void)endGestureWithEvent:(NSEvent *)event
 {
+    (void)event;
 }
 
-- (void)keyDown:(NSEvent *)theEvent
+- (void)keyDown:(NSEvent *)event
 {
-	
+    (void)event;
 }
 
-- (void)keyUp:(NSEvent *)theEvent
+- (void)keyUp:(NSEvent *)event
 {
-	
+    (void)event;
 }
 
 @end
@@ -365,6 +366,7 @@ int RenderContextPrivate::displayLinkSynchronized()
 
 - (BOOL)windowShouldClose:(id)sender
 {
+    (void)sender;
 	applicationNotifier.notifySuspended();
 	rcPrivate->stop();
 	return YES;

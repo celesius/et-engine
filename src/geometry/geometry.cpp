@@ -59,10 +59,10 @@ quaternion et::matrixToQuaternion(const mat3& r)
 	float q2 = (-r[0][0] + r[1][1] - r[2][2] + 1.0f) / 4.0f;
 	float q3 = (-r[0][0] - r[1][1] + r[2][2] + 1.0f) / 4.0f;
 	
-	q0 = (q0 < 0.0f) ? 0.0f : sqrt(q0);
-	q1 = (q1 < 0.0f) ? 0.0f : sqrt(q1);
-	q2 = (q2 < 0.0f) ? 0.0f : sqrt(q2);
-	q3 = (q3 < 0.0f) ? 0.0f : sqrt(q3);
+	q0 = (q0 < 0.0f) ? 0.0f : std::sqrt(q0);
+	q1 = (q1 < 0.0f) ? 0.0f : std::sqrt(q1);
+	q2 = (q2 < 0.0f) ? 0.0f : std::sqrt(q2);
+	q3 = (q3 < 0.0f) ? 0.0f : std::sqrt(q3);
 	
 	if ((q0 >= q1) && (q0 >= q2) && (q0 >= q3))
 	{

@@ -51,7 +51,7 @@ CharacterGenerator::~CharacterGenerator()
 	delete _private;
 }
 
-CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTexture)
+CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 {
 	wchar_t string[2] = { value, 0 };
 	
@@ -65,7 +65,8 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTextu
 	[attrString addAttribute:NSForegroundColorAttributeName value:_private->whiteColor range:wholeString];
 
 	NSSize characterSize = [attrString size];
-	vec2i charSize = vec2i(characterSize.width, characterSize.height);
+	vec2i charSize = vec2i(static_cast<int>(characterSize.width),
+        static_cast<int>(characterSize.height));
 		
 	BinaryDataStorage data(charSize.square() * 4, 0);
 	
@@ -88,7 +89,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTextu
 	return desc;
 }
 
-CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateTexture)
+CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 {
 	wchar_t string[2] = { value, 0 };
 
@@ -102,7 +103,8 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateT
 	[attrString addAttribute:NSForegroundColorAttributeName value:_private->whiteColor range:wholeString];
 
 	NSSize characterSize = [attrString size];
-	vec2i charSize = vec2i(characterSize.width, characterSize.height);
+	vec2i charSize = vec2i(static_cast<int>(characterSize.width),
+        static_cast<int>(characterSize.height));
 
 	BinaryDataStorage data(charSize.square() * 4, 0);
 
@@ -130,7 +132,7 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateT
  */
 
 CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
-	const std::string& boldFace, size_t size) : fontFace(face), fontSize(size),
+	const std::string&, size_t size) : fontFace(face), fontSize(size),
 	_placer(vec2i(defaultTextureSize), true)
 {
     NSString* cFace = [NSString stringWithCString:face.c_str() encoding:NSUTF8StringEncoding];
@@ -166,8 +168,8 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& po
 	texture->updatePartialDataDirectly(rc, dest, size, data.binary(), data.dataSize());
 }
 
-void CharacterGeneratorPrivate::renderCharacter(NSAttributedString* value, const vec2i& position,
-	const vec2i& size, NSFont* font, BinaryDataStorage& data)
+void CharacterGeneratorPrivate::renderCharacter(NSAttributedString* value, const vec2i&,
+	const vec2i& size, NSFont*, BinaryDataStorage& data)
 {
 	CGContextRef context = CGBitmapContextCreateWithData(data.data(), size.x, size.y, 8, 4 * size.x,
 		colorSpace, kCGImageAlphaPremultipliedLast, nil, nil);
