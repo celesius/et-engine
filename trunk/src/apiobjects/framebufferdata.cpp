@@ -37,7 +37,7 @@ FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const Fr
 		}
 		else 
 		{
-			for (int i = 0; i < desc.numColorRenderTargets; ++i)
+			for (size_t i = 0; i < desc.numColorRenderTargets; ++i)
 			{ 
 				Texture c;
 				if (_isCubemapBuffer)

@@ -345,7 +345,7 @@ bool et::intersect::sphereSphere(const Sphere& s1, const Sphere& s2, vec3* amoun
 	bool collised = (distance <= sqr(radiusSum));
 
 	if (amount && collised)
-		*amount = dv.normalize() * (radiusSum - sqrt(distance));
+		*amount = dv.normalize() * (radiusSum - std::sqrt(distance));
 
 	return collised;
 }

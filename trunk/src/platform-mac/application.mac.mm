@@ -62,7 +62,7 @@ void Application::enterRunLoop()
 	_renderContext->init();
 }
 
-void Application::quit(int exitCode)
+void Application::quit(int)
 {
 	[[NSApplication sharedApplication] terminate:nil];
 }
@@ -124,36 +124,43 @@ void Application::platformResume()
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
+    (void)notification;
 	_notifier.notifyLoaded();
 }
 
 - (void)applicationWillBecomeActive:(NSNotification *)notification
 {
+    (void)notification;
 	_notifier.notifyActivated();
 }
 
 - (void)applicationWillResignActive:(NSNotification *)notification
 {
+    (void)notification;
 	_notifier.notifyDeactivated();
 }
 
 - (void)applicationDidHide:(NSNotification *)notification
 {
+    (void)notification;
 	_notifier.notifyDeactivated();
 }
 
 - (void)applicationDidUnhide:(NSNotification *)notification
 {
+    (void)notification;
 	_notifier.notifyActivated();
 }
 
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
+    (void)notification;
 	_notifier.notifyDeactivated();
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
 {
+    (void)sender;
 	return YES;
 }
 

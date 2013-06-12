@@ -120,7 +120,7 @@ void PNGLoader::loadFromStream(std::istream& source, TextureDescription& desc, b
 		for (size_t i = 0; i < desc.data.dataSize() / 2; ++i)
 		{
 			unsigned short value = data_ptr[i];
-			data_ptr[i] = (static_cast<unsigned char>(value >> 8)) + (static_cast<unsigned char>(value) << 8);
+			data_ptr[i] = static_cast<unsigned short>(((value >> 8) & 0xff) + ((value << 8) & 0xff));
 		}
 	}
 

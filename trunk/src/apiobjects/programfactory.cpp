@@ -203,7 +203,7 @@ void ProgramFactory::parseSourceCode(ShaderType type, std::string& source, const
 			source.erase(0, ifname.size());
 			std::string after = source.substr();
 			
-			if (ifname.find_first_of('"') != -1)
+			if (ifname.find_first_of('"') != std::string::npos)
 			{
 				ifname.erase(0, ifname.find_first_of('"') + 1);
 				ifname.erase(ifname.find_last_of('"'));

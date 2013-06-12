@@ -67,7 +67,7 @@ namespace et
 		};
 
 		T length() const
-			{ return sqrt(scalar*scalar + vector.dotSelf()); }
+			{ return std::sqrt(scalar*scalar + vector.dotSelf()); }
 
 		void normalize() 
 		{ 

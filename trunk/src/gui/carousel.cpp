@@ -221,8 +221,8 @@ void Carousel::buildRibbonItems()
 		float linear = clamp(actualIndex, -1.0f, 1.0f);
 		float fvalue = etMax(0.0f, linear * linear - 0.5f);
 
-		float angleScale =
-			((linear < 0.0f) ? -maxAngle : maxAngle) * (std::sqrt(fabs(linear)) - powf(fvalue, 8.0f));
+		float angleScale = ((linear < 0.0f) ? -maxAngle : maxAngle) *
+            (std::sqrt(std::abs(linear)) - std::pow(fvalue, 8.0f));
 
 		vec3 t(_direction.x * xOffset * linear + _center.x,
 			   _direction.y * yOffset * linear + _center.y, -std::abs(zOffset * linear));
@@ -250,7 +250,7 @@ void Carousel::buildRoundItems()
 
 	for (CarouselItemList::iterator i = _items.begin(), e = _items.end(); i != e; ++i)
 	{
-		float alpha = 0.5f + 0.5f * cos(selectedItemAlpha + a);
+		float alpha = 0.5f + 0.5f * std::cos(selectedItemAlpha + a);
 		(*i)->setTransform(translationMatrix(0.0f, 0.0f, z_distance) * rotationYXZMatrix(0.0f, a, 0.0f));
 		(*i)->setAngle(a);
 		(*i)->setColor(vec4(1.0f, 1.0f, 1.0f, alpha));
@@ -445,7 +445,7 @@ bool Carousel::containsPoint(const vec2& p, const vec2& np)
 
 void Carousel::alignSelectedItem(bool)
 {
-	float fvel = fabs(_velocity);
+	float fvel = std::abs(_velocity);
 	if (_dragging || (fvel > minUpdateVelocity)) return;
 
 	_velocity = 0.0f;

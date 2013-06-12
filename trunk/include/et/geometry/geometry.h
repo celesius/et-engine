@@ -74,15 +74,15 @@ namespace et
 
 	template<typename T>
 	inline vector2<T> absv(const vector2<T>& value) 
-		{ return vector2<T>(std::fabs(value.x), std::fabs(value.y)); }
+		{ return vector2<T>(std::abs(value.x), std::abs(value.y)); }
 
 	template<typename T>
 	inline vector3<T> absv(const vector3<T>& value) 
-		{ return vector3<T>(std::fabs(value.x), std::fabs(value.y), std::fabs(value.z)); }
+		{ return vector3<T>(std::abs(value.x), std::abs(value.y), std::abs(value.z)); }
 
 	template<typename T>
 	inline vector4<T> absv(const vector4<T>& value) 
-		{ return vector4<T>(std::fabs(value.x), std::fabs(value.y), std::fabs(value.z), std::fabs(value.w)); }
+		{ return vector4<T>(std::abs(value.x), std::abs(value.y), std::abs(value.z), std::abs(value.w)); }
 
 	inline vector2<int> absv(const vector2<int>& value) 
 		{ return vector2<int>(std::abs(value.x), std::abs(value.y)); }

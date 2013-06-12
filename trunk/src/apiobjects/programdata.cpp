@@ -264,7 +264,7 @@ void ProgramData::buildProgram(const std::string& vertex_source, const std::stri
 		checkOpenGLError("glAttachShader<FRAG> - %s", name().c_str());
 
 #if (!ET_OPENGLES)
-		if (glBindFragDataLocation)
+		if (&glBindFragDataLocation)
 		{
 			glBindFragDataLocation(_glID, 0, "FragColor");
 			checkOpenGLError("glBindFragDataLocation<color0> - %s", name().c_str());
