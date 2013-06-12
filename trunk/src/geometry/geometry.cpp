@@ -176,8 +176,8 @@ vec4ub et::vec4f_to_4ub(const vec4 &fv)
 
 mat4 et::rotation2DMatrix(float angle)
 {	
-	float ca = cos(angle);
-	float sa = sin(angle);
+	float ca = std::cos(angle);
+	float sa = std::sin(angle);
 	mat4 m;
 	m[0][0] = ca; m[0][1] = -sa;
 	m[1][0] = sa; m[1][1] =  ca;
@@ -187,8 +187,8 @@ mat4 et::rotation2DMatrix(float angle)
 
 mat4 et::transform2DMatrix(float a, const vec2& scale, const vec2& translate)
 {
-	float ca = cos(a);
-	float sa = sin(a);
+	float ca = std::cos(a);
+	float sa = std::sin(a);
 	mat4 m;
 	m[0][0] = ca * scale.x; m[0][1] = -sa * scale.y;
 	m[1][0] = sa * scale.x; m[1][1] =  ca * scale.y;
@@ -201,8 +201,8 @@ mat4 et::transform2DMatrix(float a, const vec2& scale, const vec2& translate)
 
 mat3 et::rotation2DMatrix3(float angle)
 {	
-	float ca = cos(angle);
-	float sa = sin(angle);
+	float ca = std::cos(angle);
+	float sa = std::sin(angle);
 	mat3 m;
 	m[0][0] = ca; m[0][1] = -sa;
 	m[1][0] = sa; m[1][1] =  ca;

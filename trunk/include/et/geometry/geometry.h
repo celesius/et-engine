@@ -201,22 +201,22 @@ namespace et
 	template<typename T>
 	inline vector3<T>fromSpherical(T theta, T phi)
 	{
-		T fCosTheta = cos(theta);
-		return vec3(fCosTheta * cos(phi), sin(theta), fCosTheta * sin(phi));
+		T fCosTheta = std::cos(theta);
+		return vec3(fCosTheta * std::cos(phi), std::sin(theta), fCosTheta * std::sin(phi));
 	}
 
 	template<typename T>
 	inline vector3<T>fromSphericalRotated(T theta, T phi)
 	{
-		T fSinTheta = sin(theta);
-		return vec3(fSinTheta * cos(phi), cos(theta), fSinTheta * sin(phi));
+		T fSinTheta = std::sin(theta);
+		return vec3(fSinTheta * std::cos(phi), std::cos(theta), fSinTheta * std::sin(phi));
 	}
 
 	template <typename T>
 	inline vector3<T> toSpherical(const vector3<T>& vec)
 	{
 		vector3<T> normalized_v = normalize(vec);
-		return vector3<T>(atan2(normalized_v.z, normalized_v.x), asin(normalized_v.y), vec.length());
+		return vector3<T>(std::atan2(normalized_v.z, normalized_v.x), std::asin(normalized_v.y), vec.length());
 	}
 
 	template <typename T>
@@ -318,12 +318,12 @@ namespace et
 	{
 		matrix4<T> m(static_cast<T>(1));
 
-		float sx = sin(x);
-		float cx = cos(x);
-		float sy = sin(y);
-		float cy = cos(y);
-		float sz = sin(z);
-		float cz = cos(z);
+		float sx = std::sin(x);
+		float cx = std::cos(x);
+		float sy = std::sin(y);
+		float cy = std::cos(y);
+		float sz = std::sin(z);
+		float cz = std::cos(z);
 
 		m[0][0] =  cz*cy - sz*sx*sy; m[0][1] = -cx*sz; m[0][2] = cz*sy + sz*sx*cy;
 		m[1][0] =  sz*cy + cz*sx*sy; m[1][1] =  cx*cz; m[1][2] = sz*sy - cz*sx*cy;
@@ -337,12 +337,12 @@ namespace et
 	{
 		matrix4<T> m;
 
-		float sx = sin(rx);
-		float cx = cos(rx);
-		float sy = sin(ry);
-		float cy = cos(ry);
-		float sz = sin(rz);
-		float cz = cos(rz);
+		float sx = std::sin(rx);
+		float cx = std::cos(rx);
+		float sy = std::sin(ry);
+		float cy = std::cos(ry);
+		float sz = std::sin(rz);
+		float cz = std::cos(rz);
 
 		m[0][0] =  cz*cy - sz*sx*sy; m[0][1] = -cx*sz; m[0][2] = cz*sy + sz*sx*cy;
 		m[1][0] =  sz*cy + cz*sx*sy; m[1][1] =  cx*cz; m[1][2] = sz*sy - cz*sx*cy;
@@ -358,12 +358,12 @@ namespace et
 	{
 		matrix4<T> m;
 
-		float sx = sin(rx);
-		float cx = cos(rx);
-		float sy = sin(ry);
-		float cy = cos(ry);
-		float sz = sin(rz);
-		float cz = cos(rz);
+		float sx = std::sin(rx);
+		float cx = std::cos(rx);
+		float sy = std::sin(ry);
+		float cy = std::cos(ry);
+		float sz = std::sin(rz);
+		float cz = std::cos(rz);
 
 		m[0][0] = scx * (cz*cy - sz*sx*sy); 
 		m[0][1] = scy * (-cx*sz); 
@@ -386,12 +386,12 @@ namespace et
 	{
 		matrix4<T> m;
 
-		float sx = sin(rx);
-		float cx = cos(rx);
-		float sy = sin(ry);
-		float cy = cos(ry);
-		float sz = sin(rz);
-		float cz = cos(rz);
+		float sx = std::sin(rx);
+		float cx = std::cos(rx);
+		float sy = std::sin(ry);
+		float cy = std::cos(ry);
+		float sz = std::sin(rz);
+		float cz = std::cos(rz);
 
 		m[0][0] =  cz*cy - sz*sx*sy; m[0][1] = -cx*sz; m[0][2] = cz*sy + sz*sx*cy;
 		m[1][0] =  sz*cy + cz*sx*sy; m[1][1] =  cx*cz; m[1][2] = sz*sy - cz*sx*cy;
@@ -459,10 +459,10 @@ namespace et
 	}
 	
 	template <typename T>
-	inline T intPower(T value, int power)
+	inline T intPower(T value, size_t power)
 	{
 		T result = static_cast<T>(1);
-		for (int i = 1; i <= power; ++i)
+		for (size_t i = 1; i <= power; ++i)
 			result *= value;
 		return result;
 	}

@@ -25,10 +25,10 @@ namespace et
 		void fill(int value)
 			{ etFillMemory(data, value, dataSize()); }
 
-		T& operator [](int i)
+		T& operator [](size_t i)
 			{ assert(i < count); return data[i]; }
 		
-		const T& operator [](int i) const
+		const T& operator [](size_t i) const
 			{ assert(i < count); return data[i]; }
 
 		char* binary()

@@ -69,7 +69,7 @@ namespace et
 			normalizedPos(r.normalizedPos), scroll(r.scroll), type(r.type), origin(r.origin), tag(r.tag) { }
 		
 		PointerInputInfo(PointerType t, const vec2& p, const vec2& np, const vec2& aScroll,
-			long aId, float time, PointerOrigin o) : id(aId), timestamp(time), pos(p), normalizedPos(np),
+			size_t aId, float time, PointerOrigin o) : id(aId), timestamp(time), pos(p), normalizedPos(np),
 			scroll(aScroll), type(t), origin(o), tag(0) { }
 
 		PointerInputInfo& operator = (const PointerInputInfo& p)

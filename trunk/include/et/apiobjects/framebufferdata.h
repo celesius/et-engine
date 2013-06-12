@@ -18,14 +18,14 @@ namespace et
 	{
 		vec2i size;
 
-		int numColorRenderTargets;
+		size_t numColorRenderTargets;
 		int includeDepthRenderTarget;
 
-		int colorInternalformat;
+		uint32_t colorInternalformat;
 		uint32_t colorFormat;
 		uint32_t colorType;
 
-		int depthInternalformat;
+		uint32_t depthInternalformat;
 		uint32_t depthFormat;
 		uint32_t depthType;
 		

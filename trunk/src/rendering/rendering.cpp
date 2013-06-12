@@ -37,7 +37,7 @@ namespace et
 		return ((va > Usage_Undefined) && (va < Usage_max)) ? VertexAttributeUsageNames[va] : "";
 	}
 
-	int vertexAttributeTypeComponents(VertexAttributeType t)
+	size_t vertexAttributeTypeComponents(VertexAttributeType t)
 	{
 		switch (t)
 		{ 

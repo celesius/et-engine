@@ -97,7 +97,7 @@ namespace et
 			{ return x * v.x + y * v.y; }
 
 		T length() const
-			{ return sqrt(dotSelf()); }
+            { return std::sqrt(dotSelf()); }
 
 		T square() const
 			{ return x * y; }

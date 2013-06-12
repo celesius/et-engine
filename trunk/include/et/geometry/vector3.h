@@ -108,7 +108,7 @@ namespace et
 			{ return x*x + y*y + z*z; }
 
 		T length() const 
-			{ return sqrt( dotSelf() ); }
+			{ return std::sqrt( dotSelf() ); }
 
 		vector3 cross(const vector3 &vec) const
 			{ return vector3(y * vec.z - z * vec.y, z * vec.x - x * vec.z, 	x * vec.y - y * vec.x ); 	}
