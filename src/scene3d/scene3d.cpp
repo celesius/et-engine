@@ -42,7 +42,8 @@ void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::stri
 		{
 			ET_ITERATE(s->materials(), auto&, mi,
 			{
-				serializeInt(stream, reinterpret_cast<int>(mi.ptr()));
+                size_t miPtr = reinterpret_cast<size_t>(mi.ptr());
+				serializeInt(stream, static_cast<int>(miPtr & 0xffffffff));
 				mi->serialize(stream, fmt);
 			})
 		}
@@ -65,7 +66,8 @@ void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::stri
 					materialsMap[matName] = materialsMap[matName] + 1;
 				}
 
-				serializeInt(stream, reinterpret_cast<int>(mi.ptr()));
+                size_t miPtr = reinterpret_cast<size_t>(mi.ptr()) & 0xffffffff;
+				serializeInt(stream, static_cast<int>(miPtr));
 				serializeString(stream, mFile);
 
 				std::ofstream mStream(mFile.c_str());
@@ -83,7 +85,8 @@ void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::stri
 		serializeInt(stream, s->vertexArrays().size());
 		ET_ITERATE(s->vertexArrays(), auto&, vi,
 		{
-			serializeInt(stream, reinterpret_cast<int>(vi.ptr()));
+            size_t viPtr = reinterpret_cast<size_t>(vi.ptr()) & 0xffffffff;
+            serializeInt(stream, static_cast<int>(viPtr));
 			vi->serialize(stream);
 		})
 
@@ -91,7 +94,8 @@ void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::stri
 
 		serializeChunk(stream, HeaderIndexArrays);
 		serializeInt(stream, 1);
-		serializeInt(stream, reinterpret_cast<int>(ia.ptr()));
+        size_t iaPtr = reinterpret_cast<size_t>(ia.ptr()) & 0xffffffff;
+        serializeInt(stream, static_cast<int>(iaPtr));
 		ia->serialize(stream);
 	}
 	ET_END_ITERATION

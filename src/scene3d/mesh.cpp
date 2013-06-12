@@ -68,7 +68,8 @@ void Mesh::serialize(std::ostream& stream, SceneVersion version)
 	serializeString(stream, vaoName);
 	serializeString(stream, vbName);
 	serializeString(stream, ibName);
-	serializeInt(stream, reinterpret_cast<int>(material().ptr()));
+    size_t mPtr = reinterpret_cast<size_t>(material().ptr()) & 0xffffffff;
+	serializeInt(stream, static_cast<int>(mPtr));
 
 	serializeInt(stream, _startIndex);
 	serializeInt(stream, _numIndexes);

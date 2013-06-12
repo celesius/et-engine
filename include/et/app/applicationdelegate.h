@@ -11,6 +11,8 @@ namespace et
 {
 	class RenderContext;
 	struct RenderContextParameters;
+	template <typename T> struct vector2;
+	typedef vector2<int> vec2i;
 	
 	struct ApplicationIdentifier
 	{
@@ -47,9 +49,6 @@ namespace et
 #endif
 							  ) : windowStyle(ws) { }
 	};
-
-	template <typename T> struct vector2;
-	typedef vector2<int> vec2i;
 	
 	class IApplicationDelegate : virtual public EventReceiver
 	{

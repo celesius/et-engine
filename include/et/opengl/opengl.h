@@ -27,6 +27,12 @@
 #
 #		define ET_OPENGL3_AVAILABLE					1
 #
+#   if defined(__MAC_10_9)
+#		define ET_OPENGL4_AVAILABLE					1
+#   else
+#		define ET_OPENGL3_AVAILABLE					0
+#   endif
+#
 #	elif defined(CGL_VERSION_1_2)
 #
 #		define glBindFragDataLocation				glBindFragDataLocationEXT
@@ -37,6 +43,7 @@
 #		define GL_VERTEX_ARRAY_BINDING				GL_VERTEX_ARRAY_BINDING_APPLE
 #
 #		define ET_OPENGL3_AVAILABLE					0
+#       define ET_OPENGL4_AVAILABLE					0
 #
 #	else
 #
@@ -45,7 +52,6 @@
 #	endif
 #
 #	define ET_OPENGLES								0
-#	define ET_OPENGL4_AVAILABLE						0
 #
 #elif ET_PLATFORM_IOS
 #
