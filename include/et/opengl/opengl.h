@@ -14,8 +14,6 @@
 #	include <et/platform-win/opengl.win.h>
 #
 #	define ET_OPENGLES								0
-#	define ET_OPENGL3_AVAILABLE						1
-#	define ET_OPENGL4_AVAILABLE						1
 #
 #elif ET_PLATFORM_MAC
 #
@@ -25,14 +23,6 @@
 #		include <OpenGL/gl3.h>
 #		include <OpenGL/gl3ext.h>
 #
-#		define ET_OPENGL3_AVAILABLE					1
-#
-#   if defined(__MAC_10_9)
-#		define ET_OPENGL4_AVAILABLE					1
-#   else
-#		define ET_OPENGL3_AVAILABLE					0
-#   endif
-#
 #	elif defined(CGL_VERSION_1_2)
 #
 #		define glBindFragDataLocation				glBindFragDataLocationEXT
@@ -41,9 +31,6 @@
 #		define glIsVertexArray						glIsVertexArrayAPPLE
 #		define glDeleteVertexArrays					glDeleteVertexArraysAPPLE
 #		define GL_VERTEX_ARRAY_BINDING				GL_VERTEX_ARRAY_BINDING_APPLE
-#
-#		define ET_OPENGL3_AVAILABLE					0
-#       define ET_OPENGL4_AVAILABLE					0
 #
 #	else
 #
@@ -69,8 +56,6 @@
 #	define glDeleteVertexArrays						glDeleteVertexArraysOES
 #	define glClearDepth								glClearDepthf
 #
-#	define ET_OPENGL3_AVAILABLE						1
-#	define ET_OPENGL4_AVAILABLE						0
 #	define GL_TEXTURE_MAX_LEVEL						GL_TEXTURE_MAX_LEVEL_APPLE
 #	define GL_VERTEX_ARRAY_BINDING					GL_VERTEX_ARRAY_BINDING_OES
 #
@@ -81,8 +66,6 @@
 #	include <GLES2/gl2ext.h>
 #
 #	define ET_OPENGLES								1
-#	define ET_OPENGL3_AVAILABLE						0
-#	define ET_OPENGL4_AVAILABLE						0
 #
 #	define GL_DEPTH_COMPONENT24						GL_DEPTH_COMPONENT24_OES
 #	define GL_HALF_FLOAT							GL_HALF_FLOAT_OES

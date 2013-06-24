@@ -84,8 +84,8 @@ void Application::loaded()
 	
 	RenderContextParameters params;
 	params.contextSize = vec2i(static_cast<int>(mainWindow.frame.size.width * scaleFactor),
-							   static_cast<int>(mainWindow.frame.size.height * scaleFactor));
-	
+		static_cast<int>(mainWindow.frame.size.height * scaleFactor));
+
 	delegate()->setRenderContextParameters(params);
 	
 	_renderContext = new RenderContext(params, this);

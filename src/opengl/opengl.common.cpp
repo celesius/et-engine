@@ -289,9 +289,9 @@ std::string et::glPrimitiveTypeToString(uint32_t value)
 	}
 }
 
+#if defined(GL_ARB_draw_elements_base_vertex)
 void et::etDrawElementsBaseVertex(uint32_t mode, GLsizei count, uint32_t type, const GLvoid* indices, int base)
 {
-#if (ET_OPENGL4_AVAILABLE)
 	glDrawElementsBaseVertex(mode, count, type, indices, base);
 	checkOpenGLError("glDrawElementsBaseVertex(mode, count, type, indices, base)");
 
@@ -299,11 +299,13 @@ void et::etDrawElementsBaseVertex(uint32_t mode, GLsizei count, uint32_t type, c
 	OpenGLCounters::primitiveCounter += primitiveCount(mode, count);
 	++OpenGLCounters::DIPCounter;
 #	endif
-
-#else
-	log::warning("Call to unavailable function: glDrawElementsBaseVertex");
-#endif
 }
+#else
+void et::etDrawElementsBaseVertex(uint32_t, GLsizei, uint32_t, const GLvoid*, int)
+{
+	log::warning("Call to glDrawElementsBaseVertex without defined GL_ARB_draw_elements_base_vertex");
+}
+#endif
 
 void et::etDrawElements(uint32_t mode, GLsizei count, uint32_t type, const GLvoid* indices)
 {
@@ -364,18 +366,22 @@ void et::etUseProgram(uint32_t program)
 #endif
 }
 
+#if defined(GL_ARB_vertex_array_object)
 void et::etBindVertexArray(uint32_t arr)
 {
-#if (ET_OPENGL3_AVAILABLE)
 	glBindVertexArray(arr);
 	checkOpenGLError("glBindVertexArray(%u)", arr);
 
 #	if ET_ENABLE_OPENGL_COUNTERS
 	++OpenGLCounters::bindVertexArrayObjectCounter;
 #	endif
-
-#endif
 }
+#else
+void et::etBindVertexArray(uint32_t arr)
+{
+	log::warning("Call to glBindVertexArray without defined GL_ARB_vertex_array_object");
+}
+#endif
 
 uint32_t et::textureWrapValue(TextureWrap w)
 {

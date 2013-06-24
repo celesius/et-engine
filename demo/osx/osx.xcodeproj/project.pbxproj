@@ -1110,7 +1110,7 @@
 		A56E165516C44A01006C86BF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Sergey Reznik";
 			};
 			buildConfigurationList = A56E165816C44A01006C86BF /* Build configuration list for PBXProject "osx" */;

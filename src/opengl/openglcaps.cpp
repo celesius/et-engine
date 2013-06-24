@@ -49,15 +49,15 @@ void OpenGLCapabilites::checkCaps()
 	log::info("[OpenGLCapabilites] Version: %s, GLSL version: %s (%s)",
 		_openGlVersion.c_str(), _glslVersionString.c_str(), _glslVersion.c_str());
 	
-#if (ET_OPENGL4_AVAILABLE)
-	_drawelements_basevertex = glDrawElementsBaseVertex != nullptr;
+#if (GL_ARB_draw_elements_base_vertex)
+	_drawelements_basevertex = (glDrawElementsBaseVertex != nullptr);
 #else
 	_drawelements_basevertex = false;
 #endif
 	
 	_mipmap_generation = glGenerateMipmap != nullptr;
 	
-#if (ET_OPENGL3_AVAILABLE)
+#if defined(GL_ARB_vertex_array_object)
 	_vertex_arrays = (glGenVertexArrays != nullptr) && (glDeleteVertexArrays != nullptr)
 		&& (glBindVertexArray != nullptr) && (glIsVertexArray != nullptr);
 	
