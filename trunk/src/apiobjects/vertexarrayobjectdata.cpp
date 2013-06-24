@@ -25,7 +25,7 @@ VertexArrayObjectData::VertexArrayObjectData(RenderState& rs, const std::string&
 
 VertexArrayObjectData::~VertexArrayObjectData()
 {
-#if (ET_OPENGL3_AVAILABLE)
+#if defined(GL_ARB_vertex_array_object)
 	if (openGLCapabilites().supportVertexArrays())
 	{
 		if (_vao && glIsVertexArray(_vao))
@@ -37,7 +37,7 @@ VertexArrayObjectData::~VertexArrayObjectData()
 
 void VertexArrayObjectData::init()
 {
-#if (ET_OPENGL3_AVAILABLE)
+#if defined(GL_ARB_vertex_array_object)
 	if (openGLCapabilites().supportVertexArrays())
 	{
 		glGenVertexArrays(1, &_vao);

@@ -594,7 +594,7 @@ RenderState::State RenderState::currentState()
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &value);
 	s.boundFramebuffer = value;
 
-#if (ET_OPENGL3_AVAILABLE)
+#if defined(GL_ARB_vertex_array_object)
 	value = 0;
 	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &value);
 	s.boundVertexArrayObject = value;
