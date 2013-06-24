@@ -10,7 +10,7 @@
 using namespace et;
 
 Framebuffer FramebufferFactory::createFramebuffer(const vec2i& size, const std::string& id,
-	int colorInternalformat, uint32_t colorFormat, uint32_t colorType, int depthInternalformat,
+	uint32_t colorInternalformat, uint32_t colorFormat, uint32_t colorType, uint32_t depthInternalformat,
 	uint32_t depthFormat, uint32_t depthType, bool useRenderbuffers)
 {
 	FramebufferDescription desc;
@@ -29,7 +29,7 @@ Framebuffer FramebufferFactory::createFramebuffer(const vec2i& size, const std::
 }
 
 Framebuffer FramebufferFactory::createCubemapFramebuffer(size_t size, const std::string& id,
-	int colorInternalformat, uint32_t colorFormat, uint32_t colorType, int depthInternalformat,
+	uint32_t colorInternalformat, uint32_t colorFormat, uint32_t colorType, uint32_t depthInternalformat,
 	uint32_t depthFormat, uint32_t depthType)
 {
 	FramebufferDescription desc;

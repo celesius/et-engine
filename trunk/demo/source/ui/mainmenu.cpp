@@ -11,7 +11,7 @@
 using namespace et;
 using namespace demo;
 
-MainMenuLayout::MainMenuLayout(et::RenderContext* rc, ResourceManager& resourceManager)
+MainMenuLayout::MainMenuLayout(et::RenderContext*, ResourceManager& resourceManager)
 {
 	_title = resourceManager.label("Hello World!", this);
 	_title->setPivotPoint(vec2(0.5f));

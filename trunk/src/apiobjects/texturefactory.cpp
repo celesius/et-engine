@@ -70,8 +70,8 @@ Texture TextureFactory::loadTexture(const std::string& file, ObjectsCache& cache
 	return texture;
 }
 
-Texture TextureFactory::genTexture(uint32_t target, int internalformat, const vec2i& size, uint32_t format, 
-	uint32_t type, const BinaryDataStorage& data, const std::string& id)
+Texture TextureFactory::genTexture(uint32_t target, uint32_t internalformat, const vec2i& size,
+	uint32_t format, uint32_t type, const BinaryDataStorage& data, const std::string& id)
 {
 	TextureDescription::Pointer desc(new TextureDescription);
 	desc->target = target;
@@ -109,7 +109,7 @@ Texture TextureFactory::genTexture(uint32_t target, int internalformat, const ve
 	return Texture(new TextureData(renderContext(), desc, id, false));
 }
 
-Texture TextureFactory::genCubeTexture(int internalformat, GLsizei size, uint32_t format, uint32_t type,
+Texture TextureFactory::genCubeTexture(uint32_t internalformat, GLsizei size, uint32_t format, uint32_t type,
 	const std::string& id)
 {
 	TextureDescription::Pointer desc(new TextureDescription);

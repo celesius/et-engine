@@ -217,11 +217,11 @@ namespace et
 	void checkOpenGLErrorEx(const char* caller, const char* fileName, const char* line, const char* tag, ...);
 
 	std::string glErrorToString(uint32_t error);
-	std::string glTexTargetToString(int target);
-	std::string glInternalFormatToString(int format);
-	std::string glTypeToString(int type);
-	std::string glBlendFuncToString(int value);
-	std::string glPrimitiveTypeToString(int value);
+	std::string glTexTargetToString(uint32_t target);
+	std::string glInternalFormatToString(uint32_t format);
+	std::string glTypeToString(uint32_t type);
+	std::string glBlendFuncToString(uint32_t value);
+	std::string glPrimitiveTypeToString(uint32_t value);
 
 	void validateExtensions();
 
@@ -230,7 +230,7 @@ namespace et
 	void etViewport(int x, int y, GLsizei width, GLsizei height);
 	void etDrawElements(uint32_t mode, GLsizei count, uint32_t type, const GLvoid* indices);
 	void etDrawElementsBaseVertex(uint32_t mode, GLsizei count, uint32_t type, const GLvoid* indices, int base);
-	void etBindTexture(uint32_t target, int texture);
+	void etBindTexture(uint32_t target, uint32_t texture);
 	void etBindBuffer(uint32_t target, uint32_t buffer);
 	void etBindFramebuffer(uint32_t target, uint32_t framebuffer);
 	void etUseProgram(uint32_t program);
@@ -248,8 +248,8 @@ namespace et
 	void etTexImage2D(uint32_t target, int level, int internalformat, GLsizei width, GLsizei height,
 		int border, uint32_t format, uint32_t type, const GLvoid * pixels);
 
-	int textureWrapValue(TextureWrap);
-	int textureFiltrationValue(TextureFiltration);
-	int drawTypeValue(BufferDrawType);
-	int primitiveTypeValue(PrimitiveType);
+	uint32_t textureWrapValue(TextureWrap);
+	uint32_t textureFiltrationValue(TextureFiltration);
+	uint32_t drawTypeValue(BufferDrawType);
+	uint32_t primitiveTypeValue(PrimitiveType);
 }

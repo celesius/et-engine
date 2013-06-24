@@ -177,16 +177,16 @@ namespace et
 		PointerInputInfoList _pointers;
 	};
 
-	class Input::KeyboardInputSource 
+	class Input::KeyboardInputSource
 	{
 	public:
-		virtual void keyPressed(unsigned char key)
+		void keyPressed(unsigned char key)
 			{ Input::instance().pushKeyboardInputAction(key, InputAction_KeyDown); }
 
-		virtual void charEntered(unsigned char key)
+		void charEntered(unsigned char key)
 			{ Input::instance().pushKeyboardInputAction(key, InputAction_Char); }
 
-		virtual void keyReleased(unsigned char key )
+		void keyReleased(unsigned char key )
 			{ Input::instance().pushKeyboardInputAction(key, InputAction_KeyUp); }
 	};
 

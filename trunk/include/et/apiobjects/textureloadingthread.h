@@ -61,6 +61,7 @@ namespace et
 	class TextureLoadingThreadDelegate
 	{
 	public:
+		virtual ~TextureLoadingThreadDelegate() { }
 		virtual void textureLoadingThreadDidLoadTextureData(TextureLoadingRequest* request) = 0;
 	};
 

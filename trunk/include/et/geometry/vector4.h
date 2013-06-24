@@ -67,6 +67,12 @@ namespace et
 		const T& operator[](int i) const 
 			{ return c[i] ;}
 
+		T& operator[](size_t i)
+			{ return c[i] ;}
+
+		const T& operator[](size_t i) const
+			{ return c[i] ;}
+
 		vector4 operator -()
 			{ return vector4<T>(-x, -y, -z, -w); }
 

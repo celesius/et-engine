@@ -257,6 +257,16 @@ Camera Camera::reflected(const plane& pl)
 	return result;
 }
 
+vec4 Camera::project(const vec3& v)
+{
+	return modelViewProjectionMatrix() * vec4(v, 1.0f);
+}
+
+vec4 Camera::unproject(const vec3& v)
+{
+	return inverseModelViewProjectionMatrix() * vec4(v, 1.0f);
+}
+
 CubemapProjectionMatrixArray et::cubemapMatrixProjectionArray(const mat4& proj, const vec3& point)
 {
 	CubemapProjectionMatrixArray result;

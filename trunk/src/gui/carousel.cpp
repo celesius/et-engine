@@ -25,6 +25,9 @@ const float maxVelocity = 30.0f;
 
 extern const float defaultAnimationDuration = 0.3f;
 
+bool roundDistanceFunc(const CarouselItem::Pointer& i1, const CarouselItem::Pointer& i2);
+bool ribbonDistanceFunc(const CarouselItem::Pointer& i1, const CarouselItem::Pointer& i2);
+
 CarouselItem::CarouselItem(const Camera& camera, const Texture& texture,
 	const ImageDescriptor& desc, size_t aTag, Carousel* parent) : Element3D(camera, parent), 
 	_vertices(12, 0), _texture(texture), _desc(desc), _scale(1.0f), _color(1.0f), _angle(1.0f)
@@ -292,16 +295,6 @@ void Carousel::setSelectedItem(size_t item, float duration)
 		std::advance(i, item);
 		didSelectItem.invoke(*i);
 	}
-}
-
-bool roundDistanceFunc(const CarouselItem::Pointer& i1, const CarouselItem::Pointer& i2)
-{
-	return cos(i1->currentAngle()) < cos(i2->currentAngle());
-}
-
-bool ribbonDistanceFunc(const CarouselItem::Pointer& i1, const CarouselItem::Pointer& i2)
-{
-	return i1->transform()[3][2] < i2->transform()[3][2];
 }
 
 void Carousel::sortItems()
@@ -575,3 +568,11 @@ void Carousel::setDirection(const vec2& d)
 	_direction = d;
 	buildItems();
 }
+
+/*
+ * Helper functions
+ */
+bool roundDistanceFunc(const CarouselItem::Pointer& i1, const CarouselItem::Pointer& i2)
+	{ return cos(i1->currentAngle()) < cos(i2->currentAngle()); }
+bool ribbonDistanceFunc(const CarouselItem::Pointer& i1, const CarouselItem::Pointer& i2)
+	{ return i1->transform()[3][2] < i2->transform()[3][2]; }

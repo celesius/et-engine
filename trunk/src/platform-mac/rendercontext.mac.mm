@@ -126,13 +126,7 @@ void RenderContext::endRender()
  *
  */
 CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*,
-	CVOptionFlags, CVOptionFlags*, void *displayLinkContext)
-{
-	@autoreleasepool
-	{
-		return reinterpret_cast<RenderContextPrivate*>(displayLinkContext)->displayLinkSynchronized();
-	}
-}
+	CVOptionFlags, CVOptionFlags*, void *displayLinkContext);
 
 RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params) :
 	_rc(rc), _mainWindow(0), _pixelFormat(0), _openGlContext(0), _openGlView(0),
@@ -242,6 +236,21 @@ int RenderContextPrivate::displayLinkSynchronized()
 	return kCVReturnSuccess;
 }
 
+/*
+ * Display link callback
+ */
+CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*,
+	CVOptionFlags, CVOptionFlags*, void *displayLinkContext)
+{
+	@autoreleasepool
+	{
+		return reinterpret_cast<RenderContextPrivate*>(displayLinkContext)->displayLinkSynchronized();
+	}
+}
+
+/*
+ * OpenGL View implementation
+ */
 @implementation etOpenGLView
 
 - (id)initWithFrame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat *)format

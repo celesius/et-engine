@@ -237,34 +237,30 @@ namespace et
 		return result;
 	}
 
-	vec2 strToVector2(const std::string& s, const std::string& delimiter)
+	template <typename R, int C>
+	R strToVector(const std::string& s, const std::string& delimiter)
 	{
-		vec2 result;
+		R result;
 		size_t index = 0;
 		StringList values = split(s, delimiter);
-		ET_ITERATE(values, auto&, i, result[index++] = strToFloat(i); if (index >= 2) break; )
+		for (auto& i : values)
+		{
+			result[index++] = strToFloat(i);
+			if (index >= C) break;
+		}
 		return result;
 	}
+
+	vec2 strToVector2(const std::string& s, const std::string& delimiter)
+		{ return strToVector<vec2, 2>(s, delimiter); }
 
 	vec3 strToVector3(const std::string& s, const std::string& delimiter)
-	{
-		vec3 result;
-		size_t index = 0;
-		StringList values = split(s, delimiter);
-		ET_ITERATE(values, auto&, i, result[index++] = strToFloat(i); if (index >= 3) break; )
-		return result;
-	}
+		{ return strToVector<vec3, 3>(s, delimiter); }
 
 	vec4 strToVector4(const std::string& s, const std::string& delimiter)
-	{
-		vec4 result;
-		size_t index = 0;
-		StringList values = split(s, delimiter);
-		ET_ITERATE(values, auto&, i, result[index++] = strToFloat(i); if (index >= 4) break; )
-		return result;
-	}
+		{ return strToVector<vec4, 4>(s, delimiter); }
 
-	int decodeHex(int c)
+	int hexCharacterToInt(int c)
 	{
 		if ((c >= '0') && (c <= '9')) 
 			return c - '0';
@@ -277,14 +273,14 @@ namespace et
 	vec4 strHexToVec4(const std::string& s)
 	{
 		vec4 result;
-		size_t value = 0;
-		size_t l = etMin<size_t>(8, s.size());
+		int value = 0;
+		int l = etMin(8, static_cast<int>(s.size()));
 
-		size_t scale = 1;
+		int scale = 1;
 		const char* cstr = s.c_str();
 		for (int i = l - 1; i >= 0; --i)
 		{
-			value += scale * decodeHex(tolower(cstr[i]));
+			value += scale * hexCharacterToInt(tolower(cstr[i]));
 			scale *= 16;
 		}
 
@@ -304,14 +300,14 @@ namespace et
 	vec4 strHexToVec4(const std::wstring& s)
 	{
 		vec4 result;
-		size_t value = 0;
-		size_t l = etMin<size_t>(8, s.size());
+		int value = 0;
+		int l = etMin(8, static_cast<int>(s.size()));
 
-		size_t scale = 1;
+		int scale = 1;
 		const wchar_t* cstr = s.c_str();
 		for (int i = l - 1; i >= 0; --i)
 		{
-			value += scale * decodeHex(tolower(cstr[i]));
+			value += scale * hexCharacterToInt(::tolower(cstr[i]));
 			scale *= 16;
 		}
 		

@@ -21,14 +21,14 @@ namespace et
 			APIObjectFactory(rc), _tf(tf) { }
 
 		Framebuffer createFramebuffer(const vec2i& size, const std::string& id = "", 
-			int colorInternalformat = GL_RGBA, uint32_t colorFormat = GL_RGBA,
-			uint32_t colorType = GL_UNSIGNED_BYTE, int depthInternalformat = GL_DEPTH_COMPONENT,
+			uint32_t colorInternalformat = GL_RGBA, uint32_t colorFormat = GL_RGBA,
+			uint32_t colorType = GL_UNSIGNED_BYTE, uint32_t depthInternalformat = GL_DEPTH_COMPONENT,
 			uint32_t depthFormat = GL_DEPTH_COMPONENT, uint32_t depthType = GL_UNSIGNED_INT,
 			bool useRenderbuffers = false);
 
 		Framebuffer createCubemapFramebuffer(size_t size, const std::string& id = "",
-			int colorInternalformat = GL_RGBA, uint32_t colorFormat = GL_RGBA,
-			uint32_t colorType = GL_UNSIGNED_BYTE, int depthInternalformat = GL_DEPTH_COMPONENT,
+			uint32_t colorInternalformat = GL_RGBA, uint32_t colorFormat = GL_RGBA,
+			uint32_t colorType = GL_UNSIGNED_BYTE, uint32_t depthInternalformat = GL_DEPTH_COMPONENT,
 			uint32_t depthFormat = GL_DEPTH_COMPONENT, uint32_t depthType = GL_UNSIGNED_INT);
 
 		Framebuffer createFramebufferWrapper(uint32_t fbo, const std::string& id = "");

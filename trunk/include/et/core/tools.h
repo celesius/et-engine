@@ -197,7 +197,6 @@ namespace et
 		return (s == "true") || (s == "1");
 	}
 
-
 	inline bool isPowerOfTwo(int value)
 		{ return (value & (value - 1)) == 0; }
 	
@@ -212,7 +211,9 @@ namespace et
 	
 	inline bool isWhitespaceChar(wchar_t c)
 		{ return (c == ET_SPACE) || (c == ET_RETURN) || (c == ET_NEWLINE) || (c == ET_TAB); }
-	
+
+	int hexCharacterToInt(int c);
+
 	std::ostream& operator << (std::ostream& stream, const StringList& list);
 	
 	std::string getFilePath(const std::string& name);
