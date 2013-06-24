@@ -1,6 +1,7 @@
 #pragma once
 
 #include <et/app/application.h>
+#include <et/input/gestures.h>
 #include "ui/mainmenu.h"
 #include "sample/sample.h"
 
@@ -24,13 +25,18 @@ namespace demo
 		void render(et::RenderContext*);
 		void idle(float);
 
+		void onDrag(et::vec2, et::PointerType);
+		void onPointerPressed(et::vec2, et::PointerType);
+		void onZoom(float);
+
 	private:
 		ResourceManager _resourceManager;
 
 		et::ObjectsCache _mainTextureCache;
 		et::gui::Gui::Pointer _gui;
-		MainMenuLayout::Pointer _mainMenu;
+		et::GesturesRecognizer _gestures;
 
+		MainMenuLayout::Pointer _mainMenu;
 		Sample _sample;
 	};
 }

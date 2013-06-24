@@ -18,7 +18,7 @@ ResourceManager::ResourceManager()
 void ResourceManager::load(et::RenderContext* rc)
 {
 	gui::CharacterGenerator::Pointer mainChars(
-		new gui::CharacterGenerator(rc, "Arial", "Arial", 12 * rc->screenScaleFactor()));
+		new gui::CharacterGenerator(rc, "Arial", "Arial", 14 * rc->screenScaleFactor()));
 
 	fonts.main = gui::Font(mainChars);
 }

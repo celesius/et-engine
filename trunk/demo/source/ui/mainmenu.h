@@ -19,7 +19,6 @@ namespace demo
 
 	public:
 		MainMenuLayout(et::RenderContext* rc, ResourceManager& resourceManager);
-		void layout(const et::vec2&);
 
 	private:
 		et::gui::Label::Pointer _title;

@@ -13,11 +13,8 @@ using namespace demo;
 
 MainMenuLayout::MainMenuLayout(et::RenderContext*, ResourceManager& resourceManager)
 {
-	_title = resourceManager.label("Hello World!", this);
-	_title->setPivotPoint(vec2(0.5f));
-}
-
-void MainMenuLayout::layout(const et::vec2& sz)
-{
-	_title->setPosition(0.5f * sz);
+	_title = resourceManager.label("Projected grid sample.", this);
+	_title->setAutolayoutMask(gui::ElementLayoutMask_PositionPivot);
+	_title->setAutolayot(vec2(0.5f, 0.0f), gui::ElementLayoutMode_RelativeToParent, vec2(0.0f),
+		gui::ElementLayoutMode_RelativeToParent, vec2(0.5f, 0.0f));
 }

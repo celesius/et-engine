@@ -23,6 +23,10 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 	_gui->pushLayout(_mainMenu);
 
 	_sample.prepare(rc);
+
+	ET_CONNECT_EVENT(_gestures.pressed, MainController::onPointerPressed)
+	ET_CONNECT_EVENT(_gestures.drag, MainController::onDrag)
+	ET_CONNECT_EVENT(_gestures.zoom, MainController::onZoom)
 }
 
 void MainController::applicationWillTerminate()
@@ -56,6 +60,24 @@ void MainController::render(et::RenderContext* rc)
 void MainController::idle(float)
 {
 	
+}
+
+void MainController::onPointerPressed(et::vec2, et::PointerType)
+{
+	_sample.stopCamera();
+}
+
+void MainController::onDrag(vec2 p, PointerType t)
+{
+	if (t == PointerType_General)
+		_sample.panCamera(5.0f * p);
+	else
+		_sample.dragCamera(p);
+}
+
+void MainController::onZoom(float v)
+{
+	_sample.zoom(v);
 }
 
 ApplicationIdentifier MainController::applicationIdentifier() const
