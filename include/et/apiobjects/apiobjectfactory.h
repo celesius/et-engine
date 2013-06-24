@@ -14,7 +14,10 @@ namespace et
 	class APIObjectFactory
 	{
 	protected:
-		APIObjectFactory(RenderContext* rc) : _rc(rc) 
+		APIObjectFactory(RenderContext* rc) : _rc(rc)
+			{ }
+
+		virtual ~APIObjectFactory()
 			{ }
 
 		RenderContext* renderContext()

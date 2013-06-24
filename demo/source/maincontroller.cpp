@@ -21,6 +21,8 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 
 	_mainMenu = MainMenuLayout::Pointer(new MainMenuLayout(rc, _resourceManager));
 	_gui->pushLayout(_mainMenu);
+
+	_sample.prepare(rc);
 }
 
 void MainController::applicationWillTerminate()
@@ -47,6 +49,7 @@ void MainController::applicationWillDeactivate()
 void MainController::render(et::RenderContext* rc)
 {
 	rc->renderer()->clear();
+	_sample.render(rc);
 	_gui->render(rc);
 }
 

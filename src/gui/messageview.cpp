@@ -142,7 +142,7 @@ void MessageView::layout(const vec2& sz)
 	}
 	else if (hasImage)
 	{
-		vec2 imageSize(contentSize.x - 2.0f * edgeOffset.x, contentSize.y - yPosition - gap);
+		imageSize = vec2(contentSize.x - 2.0f * edgeOffset.x, contentSize.y - yPosition - gap);
 		
 		if (hasButtons)
 			imageSize.y -= gap + buttonsSize.y;

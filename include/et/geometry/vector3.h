@@ -53,6 +53,12 @@ namespace et
 		const char* binary() const
 			{ return reinterpret_cast<const char*>(c); }
 
+		T& operator [] (size_t i)
+			{ return c[i]; }
+
+		const T& operator [] (size_t i) const
+			{ return c[i]; }
+
 		T& operator [] (int i)
 			{ return c[i]; }
 

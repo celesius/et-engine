@@ -110,6 +110,8 @@
 		A5D2766516F63C6300B996AA /* rendercontext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5D2766416F63C6300B996AA /* rendercontext.cpp */; };
 		A5E5ADD61757ED4800418167 /* objectscache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E5ADD51757ED4800418167 /* objectscache.cpp */; };
 		A5E5ADD81757ED5900418167 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A5E5ADD71757ED5900418167 /* libxml2.dylib */; };
+		A5E5ADDC1757F12700418167 /* sample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E5ADDA1757F12700418167 /* sample.cpp */; };
+		A5E5ADDE1757F72A00418167 /* data in Resources */ = {isa = PBXBuildFile; fileRef = A5E5ADDD1757F72A00418167 /* data */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -369,6 +371,9 @@
 		A5D2766416F63C6300B996AA /* rendercontext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rendercontext.cpp; sourceTree = "<group>"; };
 		A5E5ADD51757ED4800418167 /* objectscache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = objectscache.cpp; sourceTree = "<group>"; };
 		A5E5ADD71757ED5900418167 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
+		A5E5ADDA1757F12700418167 /* sample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sample.cpp; path = sample/sample.cpp; sourceTree = "<group>"; };
+		A5E5ADDB1757F12700418167 /* sample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sample.h; path = sample/sample.h; sourceTree = "<group>"; };
+		A5E5ADDD1757F72A00418167 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../data; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -425,7 +430,7 @@
 		A56E165416C44A01006C86BF = {
 			isa = PBXGroup;
 			children = (
-				A5E5ADD71757ED5900418167 /* libxml2.dylib */,
+				A5E5ADDD1757F72A00418167 /* data */,
 				A56E168A16C44B29006C86BF /* engine */,
 				A56E167D16C44A2F006C86BF /* source */,
 				A56E166716C44A01006C86BF /* Supporting Files */,
@@ -445,6 +450,7 @@
 		A56E165F16C44A01006C86BF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A5E5ADD71757ED5900418167 /* libxml2.dylib */,
 				A56E17E816C44BBB006C86BF /* libjpeg.a */,
 				A56E17E916C44BBB006C86BF /* libpng.a */,
 				A56E17E616C44B9A006C86BF /* libz.dylib */,
@@ -471,6 +477,7 @@
 		A56E167D16C44A2F006C86BF /* source */ = {
 			isa = PBXGroup;
 			children = (
+				A5E5ADD91757F11700418167 /* sample */,
 				A56E168116C44A2F006C86BF /* ui */,
 				A56E167E16C44A2F006C86BF /* main.cpp */,
 				A56E167F16C44A2F006C86BF /* maincontroller.cpp */,
@@ -1068,6 +1075,15 @@
 			path = ../../src/vertexbuffer;
 			sourceTree = "<group>";
 		};
+		A5E5ADD91757F11700418167 /* sample */ = {
+			isa = PBXGroup;
+			children = (
+				A5E5ADDA1757F12700418167 /* sample.cpp */,
+				A5E5ADDB1757F12700418167 /* sample.h */,
+			);
+			name = sample;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1119,6 +1135,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5E5ADDE1757F72A00418167 /* data in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1225,6 +1242,7 @@
 				A5D2766316F63C5200B996AA /* stream.cpp in Sources */,
 				A5D2766516F63C6300B996AA /* rendercontext.cpp in Sources */,
 				A5E5ADD61757ED4800418167 /* objectscache.cpp in Sources */,
+				A5E5ADDC1757F12700418167 /* sample.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1294,9 +1312,35 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_RECEIVER_WEAK = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "osx-Prefix.pch";
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/osx-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1311,9 +1355,35 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_RECEIVER_WEAK = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "osx-Prefix.pch";
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/osx-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

@@ -92,7 +92,7 @@ size_t et::primitiveCount(uint32_t mode, GLsizei count)
 	};
 }
 
-std::string et::glBlendFuncToString(int value)
+std::string et::glBlendFuncToString(uint32_t value)
 {
 	switch (value)
 	{
@@ -113,7 +113,7 @@ std::string et::glBlendFuncToString(int value)
 	}
 }
 
-std::string et::glTexTargetToString(int target)
+std::string et::glTexTargetToString(uint32_t target)
 {
 	switch (target)
 	{
@@ -154,7 +154,7 @@ std::string et::glTexTargetToString(int target)
 	}
 }
 
-std::string et::glInternalFormatToString(int format)
+std::string et::glInternalFormatToString(uint32_t format)
 {
 	switch (format)
 	{
@@ -253,7 +253,7 @@ std::string et::glInternalFormatToString(int format)
 	}
 }
 
-std::string et::glTypeToString(int type)
+std::string et::glTypeToString(uint32_t type)
 {
 	switch (type)
 	{
@@ -273,7 +273,7 @@ std::string et::glTypeToString(int type)
 	}
 }
 
-std::string et::glPrimitiveTypeToString(int value)
+std::string et::glPrimitiveTypeToString(uint32_t value)
 {
 	switch (value)
 	{
@@ -318,7 +318,7 @@ void et::etDrawElements(uint32_t mode, GLsizei count, uint32_t type, const GLvoi
 #endif
 }
 
-void et::etBindTexture(uint32_t target, int texture)
+void et::etBindTexture(uint32_t target, uint32_t texture)
 {
 	glBindTexture(target, texture);
 	checkOpenGLError("glBindTexture(%u, %d)", target, texture);
@@ -377,7 +377,7 @@ void et::etBindVertexArray(uint32_t arr)
 #endif
 }
 
-int et::textureWrapValue(TextureWrap w)
+uint32_t et::textureWrapValue(TextureWrap w)
 {
 	switch (w)
 	{
@@ -394,7 +394,7 @@ int et::textureWrapValue(TextureWrap w)
 	return 0;
 }
 
-int et::textureFiltrationValue(TextureFiltration f)
+uint32_t et::textureFiltrationValue(TextureFiltration f)
 {
 	switch (f)
 	{
@@ -417,7 +417,7 @@ int et::textureFiltrationValue(TextureFiltration f)
 	return 0;
 }
 
-int et::drawTypeValue(BufferDrawType t)
+uint32_t et::drawTypeValue(BufferDrawType t)
 {
 	switch (t)
 	{
@@ -434,7 +434,7 @@ int et::drawTypeValue(BufferDrawType t)
 	return 0;
 }
 
-int et::primitiveTypeValue(PrimitiveType t)
+uint32_t et::primitiveTypeValue(PrimitiveType t)
 {
 	switch (t)
 	{
@@ -455,8 +455,8 @@ int et::primitiveTypeValue(PrimitiveType t)
 	return 0;
 }
 
-void et::etCompressedTexImage1D(uint32_t target, int level, uint32_t internalformat, GLsizei width, int border,
-	GLsizei imageSize, const GLvoid * data)
+void et::etCompressedTexImage1D(uint32_t target, int level, uint32_t internalformat,
+	GLsizei width, int border, GLsizei imageSize, const GLvoid * data)
 {
 #if (!ET_OPENGLES)
 	glCompressedTexImage1D(target, level, internalformat, width, border, imageSize, data);
@@ -467,8 +467,8 @@ void et::etCompressedTexImage1D(uint32_t target, int level, uint32_t internalfor
 #endif
 }
 
-void et::etCompressedTexImage2D(uint32_t target, int level, uint32_t internalformat, GLsizei width, GLsizei height,
-	int border, GLsizei imageSize, const GLvoid * data)
+void et::etCompressedTexImage2D(uint32_t target, int level, uint32_t internalformat,
+	GLsizei width, GLsizei height, int border, GLsizei imageSize, const GLvoid * data)
 {
 	glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
 
@@ -479,8 +479,8 @@ void et::etCompressedTexImage2D(uint32_t target, int level, uint32_t internalfor
 #endif
 }
 
-void et::etTexImage1D(uint32_t target, int level, int internalformat, GLsizei width, int border, uint32_t format,
-	uint32_t type, const GLvoid * pixels)
+void et::etTexImage1D(uint32_t target, int level, int internalformat, GLsizei width, int border,
+	uint32_t format, uint32_t type, const GLvoid * pixels)
 {
 #if (!ET_OPENGLES)
 	glTexImage1D(target, level, internalformat, width, border, format, type, pixels);

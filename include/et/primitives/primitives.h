@@ -19,9 +19,15 @@ namespace et
 	{
 		size_t indexCountForRegularMesh(const vec2i& meshSize, PrimitiveType geometryType);
 
+		/*
+		 * Index array stuff
+		 */
+		IndexType buildTrianglesIndexes(IndexArray& buffer, const vec2i& dim,
+			IndexType vertexOffset, size_t indexOffset);
+		IndexType buildTriangleStripIndexes(IndexArray& buffer, const vec2i& dim,
+			IndexType vertexOffset, size_t indexOffset);
 		IndexType buildTrianglesIndexes(IndexArray::Pointer buffer, const vec2i& dim,
 			IndexType vertexOffset, size_t indexOffset);
-		
 		IndexType buildTriangleStripIndexes(IndexArray::Pointer buffer, const vec2i& dim,
 			IndexType vertexOffset, size_t indexOffset);
 

@@ -42,16 +42,16 @@ namespace et
 		uint32_t glID() const
 			{ return _glID; }
 
-		int internalFormat() const
+		uint32_t internalFormat() const
 			{ return _desc->internalformat; }
 
-		int format() const
+		uint32_t format() const
 			{ return _desc->format; }
 
-		int dataType() const
+		uint32_t dataType() const
 			{ return _desc->type; }
 
-		int target() const
+		uint32_t target() const
 			{ return _desc->target; }
 
 		int width() const

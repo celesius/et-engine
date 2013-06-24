@@ -2,6 +2,7 @@
 
 #include <et/app/application.h>
 #include "ui/mainmenu.h"
+#include "sample/sample.h"
 
 namespace demo
 {
@@ -29,5 +30,7 @@ namespace demo
 		et::ObjectsCache _mainTextureCache;
 		et::gui::Gui::Pointer _gui;
 		MainMenuLayout::Pointer _mainMenu;
+
+		Sample _sample;
 	};
 }

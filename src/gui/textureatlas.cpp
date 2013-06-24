@@ -17,41 +17,7 @@ using namespace et::gui;
 
 static const Image _emptyImage;
 
-rect parseRectString(std::string& s)
-{
-	rect result;
-	int values[4] = { };
-	int vIndex = 0;
-
-	if (*s.begin() == '"')
-		s.erase(0, 1);
-
-	if (*s.rbegin() == '"')
-		s.erase(s.length() - 1);
-
-	while (s.length())
-	{
-		std::string::size_type dpos = s.find_first_of(";");
-		if (dpos == std::string::npos)
-		{
-			values[vIndex++] = strToInt(s);
-			break;
-		}
-		else 
-		{
-			std::string value = s.substr(0, dpos);
-			values[vIndex++] = strToInt(value);
-			s.erase(0, dpos+1);
-		}
-	}
-
-	result.left = static_cast<float>(values[0]);
-	result.top = static_cast<float>(values[1]);
-	result.width = static_cast<float>(values[2]);
-	result.height = static_cast<float>(values[3]);
-
-	return result;
-}
+rect parseRectString(std::string& s);
 
 TextureAtlas::TextureAtlas() : _loaded(false)
 {
@@ -196,4 +162,43 @@ void TextureAtlas::unload()
 Texture TextureAtlas::firstTexture() const
 {
 	return _textures.size() ? _textures.begin()->second : Texture();
+}
+
+/*
+ * Helper funcitons
+ */
+rect parseRectString(std::string& s)
+{
+	rect result;
+	int values[4] = { };
+	int vIndex = 0;
+
+	if (*s.begin() == '"')
+		s.erase(0, 1);
+
+	if (*s.rbegin() == '"')
+		s.erase(s.length() - 1);
+
+	while (s.length())
+	{
+		std::string::size_type dpos = s.find_first_of(";");
+		if (dpos == std::string::npos)
+		{
+			values[vIndex++] = strToInt(s);
+			break;
+		}
+		else
+		{
+			std::string value = s.substr(0, dpos);
+			values[vIndex++] = strToInt(value);
+			s.erase(0, dpos+1);
+		}
+	}
+
+	result.left = static_cast<float>(values[0]);
+	result.top = static_cast<float>(values[1]);
+	result.width = static_cast<float>(values[2]);
+	result.height = static_cast<float>(values[3]);
+
+	return result;
 }

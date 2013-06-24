@@ -25,11 +25,11 @@ namespace et
 			const std::string& negz, ObjectsCache& cache);
 
 		Texture genNoiseTexture(const vec2i& size, bool normalize, const std::string& aName);
-		Texture genCubeTexture(int internalformat, GLsizei size, uint32_t format, uint32_t type,
+		Texture genCubeTexture(uint32_t internalformat, GLsizei size, uint32_t format, uint32_t type,
 			const std::string& aName);
 		
 		Texture genTexture(TextureDescription::Pointer desc);
-		Texture genTexture(uint32_t target, int internalformat, const vec2i& size, uint32_t format,
+		Texture genTexture(uint32_t target, uint32_t internalformat, const vec2i& size, uint32_t format,
 			uint32_t type, const BinaryDataStorage& data, const std::string& aName);
 		
 		Texture createTextureWrapper(uint32_t texture, const vec2i& size, const std::string& aName);

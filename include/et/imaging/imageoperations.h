@@ -16,6 +16,7 @@ namespace et
 	{
 	public:
 		virtual void applyRGBA(vec4ub& pixel, void* context) = 0;
+		virtual ~PixelFilter() { }
 	};
 
 	enum ImageBlendType

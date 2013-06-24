@@ -301,8 +301,7 @@ void primitives::createPlane(VertexArray::Pointer data, const vec3& normal, cons
 	{
 		for (int u = 0; u < dv.x; u++)
 		{
-			vec3 n = 
-				1.0f * norm[getIndex(u-1, v-1, dv.x, dv.y)] + 
+			n = 1.0f * norm[getIndex(u-1, v-1, dv.x, dv.y)] + 
 				2.0f * norm[getIndex(  u, v-1, dv.x, dv.y)] + 
 				1.0f * norm[getIndex(u+1, v-1, dv.x, dv.y)] + 
 				2.0f * norm[getIndex(u-1,   v, dv.x, dv.y)] + 
@@ -311,13 +310,12 @@ void primitives::createPlane(VertexArray::Pointer data, const vec3& normal, cons
 				1.0f * norm[getIndex(u-1, v+1, dv.x, dv.y)] +
 				2.0f * norm[getIndex(  u, v+1, dv.x, dv.y)] +
 				1.0f * norm[getIndex(u+1, v+1, dv.x, dv.y)];
-
 			norm[getIndex(u, v, dv.x, dv.y)] = normalize(n);
 		}
 	}
 }
 
-IndexType primitives::buildTriangleStripIndexes(IndexArray::Pointer buffer, const vec2i& dim,
+IndexType primitives::buildTriangleStripIndexes(IndexArray& buffer, const vec2i& dim,
 	IndexType index0, size_t offset)
 {
 	size_t k = offset;
@@ -333,30 +331,30 @@ IndexType primitives::buildTriangleStripIndexes(IndexArray::Pointer buffer, cons
 		{
 			for (IndexType u = 0; u < rowSize; ++u)
 			{
-				buffer->setIndex(u + thisRow, k++);
-				buffer->setIndex(u + nextRow, k++);
+				buffer.setIndex(u + thisRow, k++);
+				buffer.setIndex(u + nextRow, k++);
 			}
 			if (v != colSize - 2)
-				buffer->setIndex((rowSize - 1) + nextRow, k++);
+				buffer.setIndex((rowSize - 1) + nextRow, k++);
 		}
 		else
 		{
 			for (IndexType u = rowSize - 1; ; --u)
 			{
-				buffer->setIndex(u + thisRow, k++);
-				buffer->setIndex(u + nextRow, k++);
+				buffer.setIndex(u + thisRow, k++);
+				buffer.setIndex(u + nextRow, k++);
 				if (u == 0)	break;
 			}
 
 			if (v != colSize - 2)
-				buffer->setIndex(nextRow, k++);
+				buffer.setIndex(nextRow, k++);
 		}
 	}
 
 	return k; 
 }
 
-IndexType primitives::buildTrianglesIndexes(IndexArray::Pointer buffer, const vec2i& dim,
+IndexType primitives::buildTrianglesIndexes(IndexArray& buffer, const vec2i& dim,
 	IndexType vertexOffset, size_t indexOffset)
 {
 	size_t k = indexOffset;
@@ -369,17 +367,31 @@ IndexType primitives::buildTrianglesIndexes(IndexArray::Pointer buffer, const ve
 		{
 			IndexType value = vertexOffset + j + i * rowSize;
 
-			buffer->setIndex(value, k);
-			buffer->setIndex(value + rowSize, k+1);
-			buffer->setIndex(value + 1, k+2);
-			buffer->setIndex(value + rowSize, k+3);
-			buffer->setIndex(value + rowSize + 1, k+4);
-			buffer->setIndex(value + 1, k+5);
+			buffer.setIndex(value, k);
+			buffer.setIndex(value + rowSize, k+1);
+			buffer.setIndex(value + 1, k+2);
+			buffer.setIndex(value + rowSize, k+3);
+			buffer.setIndex(value + rowSize + 1, k+4);
+			buffer.setIndex(value + 1, k+5);
 			k += 6;
 		} 
 	}
 	
 	return k;
+}
+
+IndexType primitives::buildTrianglesIndexes(IndexArray::Pointer buffer, const vec2i& dim,
+	IndexType vertexOffset, size_t indexOffset)
+{
+	assert(buffer.valid());
+	return buildTrianglesIndexes(buffer.reference(), dim, vertexOffset, indexOffset);
+}
+
+IndexType primitives::buildTriangleStripIndexes(IndexArray::Pointer buffer, const vec2i& dim,
+	IndexType vertexOffset, size_t indexOffset)
+{
+	assert(buffer.valid());
+	return buildTriangleStripIndexes(buffer.reference(), dim, vertexOffset, indexOffset);
 }
 
 void primitives::calculateNormals(VertexArray::Pointer data, const IndexArray::Pointer& buffer,
