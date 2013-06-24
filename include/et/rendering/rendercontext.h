@@ -8,6 +8,7 @@
 #pragma once
 
 #include <et/core/et.h>
+#include <et/core/objectscache.h>
 
 #include <et/timers/notifytimer.h>
 #include <et/app/events.h>

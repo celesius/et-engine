@@ -80,7 +80,7 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 
 	_renderer = new Renderer(this);
 	
-	_fpsTimer.expired.connect(this, &RenderContext::onFPSTimerExpired);
+	ET_CONNECT_EVENT(_fpsTimer.expired, RenderContext::onFPSTimerExpired)
 }
 
 RenderContext::~RenderContext()

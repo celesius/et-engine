@@ -259,8 +259,9 @@ void Gui::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntryObject* n
 
 	layoutWillAppear.invoke(newLayout);
 	newLayout->willAppear();
-	newLayout->layoutRequiresKeyboard.connect(this, &Gui::onKeyboardNeeded);
-	newLayout->layoutDoesntNeedKeyboard.connect(this, &Gui::onKeyboardResigned);
+
+	ET_CONNECT_EVENT(newLayout->layoutRequiresKeyboard, Gui::onKeyboardNeeded)
+	ET_CONNECT_EVENT(newLayout->layoutDoesntNeedKeyboard, Gui::onKeyboardResigned)
 
 	bool smallDuration = std::abs(duration) < std::numeric_limits<float>::epsilon();
 	if ((animationFlags == AnimationFlag_None) || smallDuration)
@@ -406,7 +407,7 @@ void Gui::LayoutEntryObject::animatorFinished(BaseAnimator*)
 
 void Gui::showMessageView(MessageView::Pointer mv, size_t animationFlags, float duration)
 {
-	mv->messageViewButtonSelected.connect(this, &Gui::onMessageViewButtonClicked);
+	ET_CONNECT_EVENT(mv->messageViewButtonSelected, Gui::onMessageViewButtonClicked)
 	pushLayout(mv, animationFlags, duration);
 }
 

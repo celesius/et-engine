@@ -175,8 +175,9 @@ Listbox::Listbox(Font font, Element2d* parent, const std::string& name) :
 	_popupOpened(false), _popupOpening(false), _popupValid(false)
 {
 	_popup = ListboxPopup::Pointer(new ListboxPopup(this));
-	_popup->elementAnimationFinished.connect(this, &Listbox::onPopupAnimationFinished);
 	_popup->setVisible(false);
+	
+	ET_CONNECT_EVENT(_popup->elementAnimationFinished, Listbox::onPopupAnimationFinished)
 }
 
 void Listbox::setImage(const Image& img, ListboxState state)

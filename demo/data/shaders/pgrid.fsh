@@ -1,6 +1,6 @@
-etFragmentIn vec2 vVertex;
+etFragmentIn vec4 vVertex;
 
 void main()
 {
-	etFragmentOut = vec4(vVertex, 0.0, 1.0);
+	etFragmentOut = vVertex;
 }

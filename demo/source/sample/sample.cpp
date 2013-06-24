@@ -14,69 +14,43 @@
 using namespace demo;
 using namespace et;
 
+vec4 getPosition(const vec2& p, const mat4& invProj, const mat4& proj);
+
 void Sample::prepare(et::RenderContext* rc)
 {
-//	loadPrograms(rc);
+	_texture = rc->textureFactory().loadTexture("data/textures/clouds.png", _cache);
+
+	_cameraAngles.setValue(vec2(0.0f, 0.0f));
+	_cameraPosition.setValue(vec3(50.0f));
+
+	ET_CONNECT_EVENT(_cameraAngles.updated, Sample::updateCamera)
+	ET_CONNECT_EVENT(_cameraPosition.updated, Sample::updateCamera)
+
+	_cameraAngles.run();
+	_cameraPosition.run();
+
+	loadPrograms(rc);
 	initCamera(rc);
 	createGeometry(rc);
 
-	mat4 mvp = _camera.modelViewProjectionMatrix();
-	mat4 imvp = _camera.inverseModelViewProjectionMatrix();
-
-	FrustumVec3Points corners;
-	corners[AABBCorner_LeftUpFar]     = imvp * vec3(-1.0f, -1.0f,  1.0f);
-	corners[AABBCorner_RightUpFar]    = imvp * vec3( 1.0f, -1.0f,  1.0f);
-	corners[AABBCorner_LeftDownFar]   = imvp * vec3(-1.0f,  1.0f,  1.0f);
-	corners[AABBCorner_RightDownFar]  = imvp * vec3( 1.0f,  1.0f,  1.0f);
-	corners[AABBCorner_LeftUpNear]    = imvp * vec3(-1.0f, -1.0f, -1.0f);
-	corners[AABBCorner_RightUpNear]   = imvp * vec3( 1.0f, -1.0f, -1.0f);
-	corners[AABBCorner_LeftDownNear]  = imvp * vec3(-1.0f,  1.0f, -1.0f);
-	corners[AABBCorner_RightDownNear] = imvp * vec3( 1.0f,  1.0f, -1.0f);
-
-	vec3 pNormal = unitY;
-	plane pUpper(pNormal, 1.0f);
-	plane pLower(pNormal, -1.0f);
-
-	FrustumVec4Points projected;
-	for (size_t i = AABBCorner_First; i < AABBCorner_LeftUpNear; ++i)
-	{
-		vec3 origin = corners[i + 4];
-		vec3 end = corners[i];
-		vec3 direction = normalize(end - origin);
-
-		vec3 ipUpper;
-		vec3 ipLower;
-		intersect::rayPlane(ray3d(origin, direction), pUpper, &ipUpper);
-		intersect::rayPlane(ray3d(origin, direction), pLower, &ipLower);
-
-		vec3 ipUpperProj = ipUpper - pNormal * dot(pNormal, ipUpper);
-		vec3 ipLowerProj = ipLower - pNormal * dot(pNormal, ipLower);
-		projected[i] = mvp * vec4(ipLowerProj, 1.0f);
-		projected[i+4] = mvp * vec4(ipUpperProj, 1.0f);
-
-		std::cout << "{" << std::endl << "\tR: " << origin << " -> " << end << std::endl <<
-			"\tD: " << direction << std::endl <<
-			"\tU: " << ipUpper << std::endl <<
-			"\tL: " << ipLower << std::endl <<
-			"\tPU: " << projected[i+4] << std::endl <<
-			"\tPL: " << projected[i] << std::endl << "}" << std::endl;
-	}
+	updateCamera();
 }
 
 void Sample::loadPrograms(et::RenderContext* rc)
 {
 	_program = rc->programFactory().loadProgram("data/shaders/pgrid.program");
+	_program->setUniform("cloudsTexture", 0);
 }
 
 void Sample::initCamera(et::RenderContext* rc)
 {
 	_camera.perspectiveProjection(QUARTER_PI, rc->size().aspect(), 1.0f, 1000.0f);
-	_camera.lookAt(vec3(50.0f));
+	_camera.lookAt(vec3(50.0f, 15.0f, 50.0f));
 }
 
 void Sample::createGeometry(et::RenderContext* rc)
 {
-	vec2i gridSize(100);
+	vec2i gridSize(225);
 	VertexArray va(VertexDeclaration(false, Usage_Position, Type_Vec2), gridSize.square());
 	va.retain();
 
@@ -89,8 +63,8 @@ void Sample::createGeometry(et::RenderContext* rc)
 	{
 		for (int x = 0; x < gridSize.x; ++x)
 		{
-			pos[k++] = vec2(static_cast<float>(x) / static_cast<float>(gridSize.x - 1),
-				static_cast<float>(y) / static_cast<float>(gridSize.y - 1));
+			pos[k++] = vec2(-1.0f + 2.0f * static_cast<float>(x) / static_cast<float>(gridSize.x - 1),
+				-1.0f + 2.0f * static_cast<float>(y) / static_cast<float>(gridSize.y - 1));
 		}
 	}
 
@@ -102,12 +76,50 @@ void Sample::createGeometry(et::RenderContext* rc)
 
 void Sample::render(et::RenderContext* rc)
 {
-	if (_program.invalid())
-		loadPrograms(rc);
-
 	rc->renderState().bindProgram(_program);
+	_program->setCameraProperties(_camera);
+	_program->setUniform("mInverseMVPMatrix", _projectorCamera);
+
+	rc->renderState().bindTexture(0, _texture);
 	rc->renderState().bindVertexArray(_vao);
-	rc->renderState().setWireframeRendering(true);
+//	rc->renderState().setWireframeRendering(true);
 	rc->renderer()->drawAllElements(_vao->indexBuffer());
-	rc->renderState().setWireframeRendering(false);
+//	rc->renderState().setWireframeRendering(false);
+}
+
+void Sample::dragCamera(const et::vec2& v)
+{
+	_cameraAngles.addVelocity(0.1f * v);
+}
+
+void Sample::updateCamera()
+{
+	vec3 pos = _cameraPosition.value();
+	vec3 dir = fromSpherical(_cameraAngles.value().y, _cameraAngles.value().x);
+
+	_camera.lookAt(pos, pos + dir);
+	updateProjectorMatrix();
+}
+
+void Sample::panCamera(const et::vec2& v)
+{
+	vec3 forward = _camera.direction() * vec3(1.0f, 0.0f, 1.0f);
+	vec3 side = _camera.side() * vec3(1.0f, 0.0f, 1.0f);
+	_cameraPosition.addVelocity(v.x * side - v.y * forward);
+}
+
+void Sample::stopCamera()
+{
+	_cameraPosition.setVelocity(vec3(0.0f));
+	_cameraAngles.setVelocity(vec2(0.0f));
+}
+
+void Sample::zoom(float v)
+{
+	_cameraPosition.addVelocity(0.25f * _camera.position().length() * _camera.direction() * (v - 1.0f));
+}
+
+void Sample::updateProjectorMatrix()
+{
+	_projectorCamera = _camera.inverseModelViewProjectionMatrix();
 }

@@ -36,10 +36,10 @@ MessageView::MessageView(const std::string& title, const std::string& text, Font
 	_title->setHorizontalAlignment(ElementAlignment_Center);
 	_title->setAllowFormatting(true);
 	_title->setShadowColor(vec4(0.0f, 0.0f, 0.0f, 0.75f));
-	
-	_button2->clicked.connect(this, &MessageView::buttonClicked);
-	_button1->clicked.connect(this, &MessageView::buttonClicked);
-	_buttonCommon->clicked.connect(this, &MessageView::buttonClicked);
+
+	ET_CONNECT_EVENT(_button2->clicked, MessageView::buttonClicked)
+	ET_CONNECT_EVENT(_button1->clicked, MessageView::buttonClicked)
+	ET_CONNECT_EVENT(_buttonCommon->clicked, MessageView::buttonClicked)
 }
 
 void MessageView::layout(const vec2& sz)

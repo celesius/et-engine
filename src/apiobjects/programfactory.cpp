@@ -38,7 +38,10 @@ ProgramFactory::ProgramFactory(RenderContext* rc) : APIObjectFactory(rc)
 			"#define etFragmentOut	gl_FragColor\n"
 			;
 
-		_vertShaderHeader = 
+		_vertShaderHeader =
+			"#define etTexture2D	texture2D\n"
+			"#define etTextureCube	textureCube\n"
+			"#define etShadow2D		shadow2D\n"
 			"#define etVertexIn		attribute\n"
 			"#define etVertexOut	varying\n"
 			;
@@ -55,6 +58,9 @@ ProgramFactory::ProgramFactory(RenderContext* rc) : APIObjectFactory(rc)
 			;
 
 		_vertShaderHeader = 
+			"#define etTexture2D	texture\n"
+			"#define etTextureCube	texture\n"
+			"#define etShadow2D		texture\n"
 			"#define etVertexIn		in\n"
 			"#define etVertexOut	out\n"
 			;

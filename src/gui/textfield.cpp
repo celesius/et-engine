@@ -22,7 +22,8 @@ TextField::TextField(const Image& background, const std::string& text, Font font
 {
 	setFlag(ElementFlag_RequiresKeyboard);
 	setSize(font->measureStringSize(text));
-	_caretBlinkTimer.expired.connect(this, &TextField::onCreateBlinkTimerExpired);
+	
+	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
 }
 
 void TextField::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
