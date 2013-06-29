@@ -28,24 +28,37 @@ namespace demo
 		void loadPrograms(et::RenderContext*);
 		void initCamera(et::RenderContext*);
 		void createGeometry(et::RenderContext*);
-		
+
+		void createFrustumGeometry(et::RenderContext*);
+
 		void updateCamera();
 		void updateProjectorMatrix();
+		void updateFrustumGeometry(bool projector);
 
 	private:
 		typedef et::StaticDataStorage<et::vec4, 4> PlanePoints;
 
 	private:
 		et::ObjectsCache _cache;
-		
+
 		et::VertexArrayObject _vao;
+		et::VertexArrayObject _frustumGeometry;
+
 		et::Camera _camera;
+		et::Camera _observingCamera;
+		et::Camera _projectorCamera;
+
 		et::Program _program;
+		et::Program _frustumProgram;
 		et::Texture _texture;
 
 		et::InertialValue<et::vec2> _cameraAngles;
 		et::InertialValue<et::vec3> _cameraPosition;
 
-		et::mat4 _projectorCamera;
+		et::StaticDataStorage<et::vec3, 8> _frustumLines;
+		et::VertexArray::Pointer _frustumLinesData;
+
+		et::mat4 _projectorMatrix;
+		bool _shouldRenderGrid = false;
 	};
 }

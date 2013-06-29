@@ -93,9 +93,12 @@ namespace et
 
 		Camera reflected(const plane&);
 
-		vec4 project(const vec3&);
-		vec4 unproject(const vec3&);
-		
+		vec3 project(const vec3&) const;
+		vec3 unproject(const vec3&) const;
+
+		vec4 project(const vec4&) const;
+		vec4 unproject(const vec4&) const;
+
 	private:
 		void modelViewUpdated();
 		void projectionUpdated();

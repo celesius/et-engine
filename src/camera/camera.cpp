@@ -109,7 +109,7 @@ void Camera::setPosition(const vec3& p)
 void Camera::setDirection(const vec3& d)
 {
 	vec3 u = up();
-	vec3 s = d.cross(u);
+	vec3 s = normalize(d.cross(u));
 	vec3 p = position();
 	vec3 e(-dot(s, p), -dot(u, p), dot(d, p));
 	_modelViewMatrix[0] = vec4(s.x, u.x, -d.x, 0.0);
@@ -122,7 +122,7 @@ void Camera::setDirection(const vec3& d)
 void Camera::setSide(const vec3& s)
 {
 	vec3 u = up();
-	vec3 d = s.cross(u);
+	vec3 d = normalize(s.cross(u));
 	vec3 p = position();
 	vec3 e(-dot(s, p), -dot(u, p), dot(d, p));
 	_modelViewMatrix[0] = vec4(s.x, u.x, -d.x, 0.0);
@@ -188,7 +188,7 @@ void Camera::rotate(const quaternion& q)
 ray3d Camera::castRay(const vec2& pt) const
 {
 	vec3 pos = position();
-	return ray3d(pos, normalize(_inverseMVPMatrix * vec3(pt, 1.0) - pos));
+	return ray3d(pos, normalize(unproject(vec3(pt, 1.0)) - pos));
 }
 
 void Camera::modelViewUpdated()
@@ -257,14 +257,24 @@ Camera Camera::reflected(const plane& pl)
 	return result;
 }
 
-vec4 Camera::project(const vec3& v)
+vec3 Camera::project(const vec3& v) const
 {
-	return modelViewProjectionMatrix() * vec4(v, 1.0f);
+	return modelViewProjectionMatrix() * v;
 }
 
-vec4 Camera::unproject(const vec3& v)
+vec3 Camera::unproject(const vec3& v) const
 {
-	return inverseModelViewProjectionMatrix() * vec4(v, 1.0f);
+	return inverseModelViewProjectionMatrix() * v;
+}
+
+vec4 Camera::project(const vec4& v) const
+{
+	return modelViewProjectionMatrix() * v;
+}
+
+vec4 Camera::unproject(const vec4& v) const
+{
+	return inverseModelViewProjectionMatrix() * v;
 }
 
 CubemapProjectionMatrixArray et::cubemapMatrixProjectionArray(const mat4& proj, const vec3& point)
