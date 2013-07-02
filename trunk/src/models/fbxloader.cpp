@@ -244,7 +244,7 @@ void FBXLoaderPrivate::loadNode(FbxNode* node, s3d::Element::Pointer parent)
 			{
 				log::info("Triangulating %s ...", node->GetName());
 				FbxGeometryConverter lConverter(node->GetFbxManager());
-				lConverter.TriangulateInPlace(node);
+				lConverter.Triangulate(node->GetScene(), true);
 				mesh = node->GetMesh();
 			}
 		

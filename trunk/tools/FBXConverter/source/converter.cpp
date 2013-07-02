@@ -165,9 +165,9 @@ void Converter::performSceneRendering()
 void Converter::render(RenderContext* rc)
 {
 	rc->renderer()->clear();
-	performSceneRendering();
 
-	rc->renderer()->clear(false, true);
+	performSceneRendering();
+	
 	_gui->render(rc);
 }
 

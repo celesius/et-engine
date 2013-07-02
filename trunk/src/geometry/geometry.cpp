@@ -58,37 +58,37 @@ quaternion et::matrixToQuaternion(const mat3& r)
 	float q1 = ( r[0][0] - r[1][1] - r[2][2] + 1.0f) / 4.0f;
 	float q2 = (-r[0][0] + r[1][1] - r[2][2] + 1.0f) / 4.0f;
 	float q3 = (-r[0][0] - r[1][1] + r[2][2] + 1.0f) / 4.0f;
-	
+
 	q0 = (q0 < 0.0f) ? 0.0f : std::sqrt(q0);
 	q1 = (q1 < 0.0f) ? 0.0f : std::sqrt(q1);
 	q2 = (q2 < 0.0f) ? 0.0f : std::sqrt(q2);
 	q3 = (q3 < 0.0f) ? 0.0f : std::sqrt(q3);
-	
+
 	if ((q0 >= q1) && (q0 >= q2) && (q0 >= q3))
 	{
 		q1 *= signNoZero(r[2][1] - r[1][2]);
 		q2 *= signNoZero(r[0][2] - r[2][0]);
 		q3 *= signNoZero(r[1][0] - r[0][1]);
-	} 
+	}
 	else if ((q1 >= q0) && (q1 >= q2) && (q1 >= q3))
 	{
 		q0 *= signNoZero(r[2][1] - r[1][2]);
 		q2 *= signNoZero(r[1][0] + r[0][1]);
 		q3 *= signNoZero(r[0][2] + r[2][0]);
-	} 
+	}
 	else if ((q2 >= q0) && (q2 >= q1) && (q2 >= q3))
 	{
 		q0 *= signNoZero(r[0][2] - r[2][0]);
 		q1 *= signNoZero(r[1][0] + r[0][1]);
 		q3 *= signNoZero(r[2][1] + r[1][2]);
-	} 
+	}
 	else if ((q3 >= q0) && (q3 >= q1) && (q3 >= q2))
 	{
 		q0 *= signNoZero(r[1][0] - r[0][1]);
 		q1 *= signNoZero(r[2][0] + r[0][2]);
 		q2 *= signNoZero(r[2][1] + r[1][2]);
-	} 
-	else 
+	}
+	else
 	{
 		assert(0 && "Unable to convert matrix to quaternion");
 	}
@@ -96,55 +96,51 @@ quaternion et::matrixToQuaternion(const mat3& r)
 	return normalize(quaternion(q0, q1, q2, q3));
 }
 
-void et::decomposeMatrix(mat4 mat, vec3& translation, quaternion& rotation, vec3& scale)
+quaternion et::matrixToQuaternion(const mat4& r)
 {
-	translation = mat[3].xyz();
-	scale = removeMatrixScale(mat);
-	rotation = matrixToQuaternion(mat.mat3());
+	return matrixToQuaternion(r.mat3());
 }
 
-vec3 et::removeMatrixScaleRowMajor(mat3& mat)
+void et::decomposeMatrix(mat4 mat, vec3& translation, quaternion& rotation, vec3& scale)
 {
-	vec3& r0 = mat[0];
-	vec3& r1 = mat[1];
-	vec3& r2 = mat[2];
-
-	vec3 scale(r0.length(), r1.length(), r2.length());
-	
-	r0 /= scale.x;
-	r1 /= scale.y;
-	r2 /= scale.z;
-	return scale;
+	mat3 rot = mat.mat3();
+	translation = mat[3].xyz();
+	scale = removeMatrixScale(rot);
+	rotation = matrixToQuaternion(rot);
 }
 
 vec3 et::removeMatrixScale(mat3& mat)
 {
-	vec3& r0 = mat[0];
-	vec3& r1 = mat[1];
-	vec3& r2 = mat[2];
+	vec3 c0 = mat.column(0);
+	vec3 c1 = mat.column(1);
+	vec3 c2 = mat.column(2);
 
-	vec3 scale(length(vec3(r0.x, r1.x, r2.x)), length(vec3(r0.y, r1.y, r2.y)), length(vec3(r0.z, r1.z, r2.z)));
-
-	r0 /= scale.x;
-	r1 /= scale.y;
-	r2 /= scale.z;
+	float lengths[3] = { c0.length(), c1.length(), c2.length() };
 	
-	return scale;
-}
+	assert(lengths[0] > 0.0f);
+	assert(lengths[1] > 0.0f);
+	assert(lengths[2] > 0.0f);
 
-vec3 et::removeMatrixScale(mat4& mat)
-{
-	vec3& r0 = mat[0].xyz();
-	vec3& r1 = mat[1].xyz();
-	vec3& r2 = mat[2].xyz();
-	
-	vec3 scale(length(vec3(r0.x, r1.x, r2.x)), length(vec3(r0.y, r1.y, r2.y)), length(vec3(r0.z, r1.z, r2.z)));
+	if (mat.determinant() < 0.0f)
+	{
+		float minValues[3] =
+		{
+			etMin(c0.x, etMin(c0.y, c0.z)),
+			etMin(c1.x, etMin(c1.y, c1.z)),
+			etMin(c2.x, etMin(c2.y, c2.z))
+		};
+		int offset = std::min_element(minValues, minValues + 3) - minValues;
+		lengths[offset] = -lengths[offset];
+	}
 
-	r0 /= scale.x;
-	r1 /= scale.y;
-	r2 /= scale.z;
+	for (size_t i = 0; i < 3; ++i)
+	{
+		mat[0][i] /= lengths[i];
+		mat[1][i] /= lengths[i];
+		mat[2][i] /= lengths[i];
+	}
 	
-	return scale;
+	return vec3(lengths[0], lengths[1], lengths[2]);
 }
 
 vec3ub et::vec3fto3ubscaled(const vec3 &fv)
