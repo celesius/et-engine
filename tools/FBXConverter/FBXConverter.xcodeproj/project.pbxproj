@@ -14,6 +14,7 @@
 		A50D32E11720AC42001D31B3 /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50D32DF1720AC42001D31B3 /* log.cpp */; };
 		A50D32E21720AC42001D31B3 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50D32E01720AC42001D31B3 /* stream.cpp */; };
 		A50D32E41720AC51001D31B3 /* rendercontext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A50D32E31720AC51001D31B3 /* rendercontext.cpp */; };
+		A5225D5D1782E20200C880BB /* libfbxsdk.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A5225D5C1782E20200C880BB /* libfbxsdk.dylib */; };
 		A53B4F3116811FA900C6B8EC /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A53B4F3016811FA900C6B8EC /* libiconv.dylib */; };
 		A53B4F331681212F00C6B8EC /* platformtools.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A53B4F321681212F00C6B8EC /* platformtools.mac.mm */; };
 		A53B4F351681220500C6B8EC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53B4F341681220500C6B8EC /* main.cpp */; };
@@ -123,6 +124,7 @@
 		A50D32DF1720AC42001D31B3 /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = log.cpp; sourceTree = "<group>"; };
 		A50D32E01720AC42001D31B3 /* stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stream.cpp; sourceTree = "<group>"; };
 		A50D32E31720AC51001D31B3 /* rendercontext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rendercontext.cpp; sourceTree = "<group>"; };
+		A5225D5C1782E20200C880BB /* libfbxsdk.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfbxsdk.dylib; path = ../../../../SDK/FBXSDK/lib/gcc4/ub/release/libfbxsdk.dylib; sourceTree = "<group>"; };
 		A53B4F3016811FA900C6B8EC /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		A53B4F321681212F00C6B8EC /* platformtools.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = platformtools.mac.mm; sourceTree = "<group>"; };
 		A53B4F341681220500C6B8EC /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -244,6 +246,7 @@
 				A5A23E2F16811838001B3E98 /* Cocoa.framework in Frameworks */,
 				5C5128AC1681FA2500ED9B96 /* libjpeg.a in Frameworks */,
 				5C5128AD1681FA2500ED9B96 /* libpng.a in Frameworks */,
+				A5225D5D1782E20200C880BB /* libfbxsdk.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,6 +276,7 @@
 		A5A23E2D16811838001B3E98 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A5225D5C1782E20200C880BB /* libfbxsdk.dylib */,
 				A53B4F411681247300C6B8EC /* libz.dylib */,
 				A53B4F3016811FA900C6B8EC /* libiconv.dylib */,
 				A5963FDA1739B55A00837C6C /* libxml2.dylib */,
@@ -862,9 +866,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../lib/osx\"",
-					"\"$(SRCROOT)/../../../../../SDK/FBXSDK/lib/gcc4/ub\"",
-					"\"$(SRCROOT)/../../../../../SDK/FBXSDK/lib/gcc4/ub/release\"",
 					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/../../../../SDK/FBXSDK/lib/gcc4/ub/release\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -892,9 +895,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../lib/osx\"",
-					"\"$(SRCROOT)/../../../../../SDK/FBXSDK/lib/gcc4/ub\"",
-					"\"$(SRCROOT)/../../../../../SDK/FBXSDK/lib/gcc4/ub/release\"",
 					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/../../../../SDK/FBXSDK/lib/gcc4/ub/release\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

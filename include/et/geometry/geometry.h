@@ -476,9 +476,9 @@ namespace et
 		{ return vec2(static_cast<float>(v.x), static_cast<float>(v.y)); }
 
 	quaternion matrixToQuaternion(const mat3& m);
+	quaternion matrixToQuaternion(const mat4& m);
+
 	vec3 removeMatrixScale(mat3& m);
-	vec3 removeMatrixScale(mat4& m);
-	vec3 removeMatrixScaleRowMajor(mat3& mat);
 	void decomposeMatrix(mat4 mat, vec3& translation, quaternion& rotation, vec3& scale);
 	
 	vec3 randVector(float sx = 1.0f, float sy = 1.0f, float sz = 1.0f);

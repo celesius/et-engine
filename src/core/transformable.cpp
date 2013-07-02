@@ -101,13 +101,8 @@ const mat4& ComponentTransformable::cachedTransform() const
 
 void ComponentTransformable::setTransform(const mat4& originalMatrix)
 {
-	mat3 rotationMatrix = originalMatrix.mat3();
-	
-	_scale = removeMatrixScaleRowMajor(rotationMatrix);
-	_orientation = matrixToQuaternion(rotationMatrix);
-	_translation = originalMatrix[3].xyz();
 	_flags &= ~Flag_ShouldDecompose;
-
+	decomposeMatrix(originalMatrix, _translation, _orientation, _scale);
 	invalidateTransform();
 
 #if (ET_DEBUG)
@@ -120,10 +115,27 @@ void ComponentTransformable::setTransform(const mat4& originalMatrix)
 
 	if (deviation > 0.01f)
 	{
-		log::warning("Failed to decompose matrix\n{\n\tscale: (%f %f %f)\n\torientation: (%f %f %f %f)\n\t"
-			"translation: (%f %f %f)\n\tdeviation: %f\n}", _scale.x, _scale.y, _scale.z, _orientation.scalar,
+		log::warning("Failed to decompose matrix\n{\n"
+			"\tscale: (%f %f %f)\n"
+			"\torientation: (%f %f %f %f)\n"
+			"\ttranslation: (%f %f %f)\n"
+			"\tdeviation: %f\n"
+			"\toriginal matrix and result matrices:\n"
+			 "\t\t(%3.5f\t%3.5f\t%3.5f\t%3.5f)\t(%3.5f\t%3.5f\t%3.5f\t%3.5f)\n"
+			 "\t\t(%3.5f\t%3.5f\t%3.5f\t%3.5f)\t(%3.5f\t%3.5f\t%3.5f\t%3.5f)\n"
+			 "\t\t(%3.5f\t%3.5f\t%3.5f\t%3.5f)\t(%3.5f\t%3.5f\t%3.5f\t%3.5f)\n"
+			 "\t\t(%3.5f\t%3.5f\t%3.5f\t%3.5f)\t(%3.5f\t%3.5f\t%3.5f\t%3.5f)\n"
+			"}", _scale.x, _scale.y, _scale.z, _orientation.scalar,
 			_orientation.vector.x, _orientation.vector.y, _orientation.vector.z,
-			_translation.x, _translation.y, _translation.z, deviation);
+			_translation.x, _translation.y, _translation.z, deviation,
+			 originalMatrix[0][0], originalMatrix[0][1], originalMatrix[0][2], originalMatrix[0][3],
+			 _cachedTransform[0][0], _cachedTransform[0][1], _cachedTransform[0][2], _cachedTransform[0][3],
+			 originalMatrix[1][0], originalMatrix[1][1], originalMatrix[1][2], originalMatrix[1][3],
+			 _cachedTransform[1][0], _cachedTransform[1][1], _cachedTransform[1][2], _cachedTransform[1][3],
+			 originalMatrix[2][0], originalMatrix[2][1], originalMatrix[2][2], originalMatrix[2][3],
+			 _cachedTransform[2][0], _cachedTransform[2][1], _cachedTransform[2][2], _cachedTransform[2][3],
+			 originalMatrix[3][0], originalMatrix[3][1], originalMatrix[3][2], originalMatrix[3][3],
+			 _cachedTransform[3][0], _cachedTransform[3][1], _cachedTransform[3][2], _cachedTransform[3][3]);
 	}
 #endif
 }
