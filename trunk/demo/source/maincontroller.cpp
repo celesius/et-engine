@@ -24,9 +24,11 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 
 	_sample.prepare(rc);
 
+	ET_CONNECT_EVENT(input().keyPressed, MainController::onKeyPressed)
 	ET_CONNECT_EVENT(_gestures.pressed, MainController::onPointerPressed)
 	ET_CONNECT_EVENT(_gestures.drag, MainController::onDrag)
 	ET_CONNECT_EVENT(_gestures.zoom, MainController::onZoom)
+	ET_CONNECT_EVENT(_gestures.scroll, MainController::onScroll)
 }
 
 void MainController::applicationWillTerminate()
@@ -75,9 +77,25 @@ void MainController::onDrag(vec2 p, PointerType t)
 		_sample.dragCamera(p);
 }
 
+void MainController::onScroll(vec2 p, PointerOrigin)
+{
+	_sample.panCamera(300.0f * vec2(p.x, -p.y));
+}
+
 void MainController::onZoom(float v)
 {
 	_sample.zoom(v);
+}
+
+void MainController::onKeyPressed(size_t key)
+{
+	int upCase = ::toupper(key);
+
+	if (upCase == ET_O)
+		_sample.toggleObserving();
+
+	if (upCase == ET_W)
+		_sample.toggleWireframe();
 }
 
 ApplicationIdentifier MainController::applicationIdentifier() const

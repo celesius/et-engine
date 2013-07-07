@@ -29,6 +29,10 @@ using namespace et;
 }
 @end
 
+@interface etOpenGLWindow : NSWindow
+
+@end
+
 @interface etOpenGLView : NSOpenGLView
 {
 @public
@@ -55,7 +59,7 @@ public:
 	etWindowDelegate* _windowDelegate;
 	etOpenGLView* _openGlView;
 	
-	NSWindow* _mainWindow;
+	etOpenGLWindow* _mainWindow;
 	NSOpenGLPixelFormat* _pixelFormat;
 	NSOpenGLContext* _openGlContext;
 	CVDisplayLinkRef _displayLink;
@@ -168,7 +172,7 @@ RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContex
 	_pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes] autorelease];
 	assert(_pixelFormat != nil);
 	
-	_mainWindow = [[NSWindow alloc] initWithContentRect:contentRect
+	_mainWindow = [[etOpenGLWindow alloc] initWithContentRect:contentRect
 		styleMask:NSTitledWindowMask | NSClosableWindowMask backing:NSBackingStoreBuffered defer:YES];
 	
 	_windowDelegate = [[etWindowDelegate alloc] init];
@@ -367,6 +371,16 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 - (void)keyUp:(NSEvent *)event
 {
     (void)event;
+}
+
+@end
+
+@implementation etOpenGLWindow : NSWindow
+
+- (void)keyDown:(NSEvent*)theEvent
+{
+	unichar key = [theEvent.characters length] ? [theEvent.characters characterAtIndex:0] : 0;
+	Input::KeyboardInputSource().keyPressed(static_cast<unsigned char>(key & 0xff));
 }
 
 @end

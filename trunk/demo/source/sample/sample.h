@@ -24,6 +24,9 @@ namespace demo
 		void panCamera(const et::vec2&);
 		void zoom(float);
 
+		void toggleObserving();
+		void toggleWireframe();
+
 	private:
 		void loadPrograms(et::RenderContext*);
 		void initCamera(et::RenderContext*);
@@ -59,6 +62,10 @@ namespace demo
 		et::VertexArray::Pointer _frustumLinesData;
 
 		et::mat4 _projectorMatrix;
+		float _contextAspect;
 		bool _shouldRenderGrid = false;
+		bool _observing = false;
+		bool _wireframe = false;
+		bool _belowSurface = false;
 	};
 }
