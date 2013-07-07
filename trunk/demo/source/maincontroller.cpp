@@ -77,9 +77,12 @@ void MainController::onDrag(vec2 p, PointerType t)
 		_sample.dragCamera(p);
 }
 
-void MainController::onScroll(vec2 p, PointerOrigin)
+void MainController::onScroll(vec2 p, PointerOrigin o)
 {
-	_sample.panCamera(300.0f * vec2(p.x, -p.y));
+	if (o == PointerOrigin_Mouse)
+		_sample.zoom(1.0f + 0.25f * p.y);
+	else
+		_sample.panCamera(300.0f * vec2(p.x, -p.y));
 }
 
 void MainController::onZoom(float v)

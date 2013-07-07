@@ -63,9 +63,9 @@ namespace demo
 
 		et::mat4 _projectorMatrix;
 		float _contextAspect;
-		bool _shouldRenderGrid = false;
-		bool _observing = false;
-		bool _wireframe = false;
-		bool _belowSurface = false;
+		bool _shouldRenderGrid;
+		bool _observing;
+		bool _wireframe;
+		bool _belowSurface;
 	};
 }

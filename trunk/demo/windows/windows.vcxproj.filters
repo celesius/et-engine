@@ -18,6 +18,9 @@
     <Filter Include="Engine\source">
       <UniqueIdentifier>{545f6ff6-67c1-442b-8012-2154c8730ed6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Sample">
+      <UniqueIdentifier>{331909ea-f393-4860-936f-d68fc44ad86f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\main.cpp">
@@ -32,9 +35,6 @@
     <ClCompile Include="..\source\ui\resourcemanager.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\apiobject.cpp">
-      <Filter>Engine\source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\apiobjects\framebufferdata.cpp">
       <Filter>Engine\source</Filter>
     </ClCompile>
@@ -48,9 +48,6 @@
       <Filter>Engine\source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\apiobjects\programfactory.cpp">
-      <Filter>Engine\source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\texturedata.cpp">
       <Filter>Engine\source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\apiobjects\texturefactory.cpp">
@@ -93,9 +90,6 @@
       <Filter>Engine\source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\collision\collision.cpp">
-      <Filter>Engine\source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\core\debug.cpp">
       <Filter>Engine\source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\core\plist.cpp">
@@ -290,9 +284,6 @@
     <ClCompile Include="..\..\src\vertexbuffer\vertexdeclaration.cpp">
       <Filter>Engine\source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\objectscache.cpp">
-      <Filter>Engine\source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\platform-win\atomiccounter.win.cpp">
       <Filter>Engine\source</Filter>
     </ClCompile>
@@ -303,6 +294,15 @@
       <Filter>Engine\source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\core\stream.cpp">
+      <Filter>Engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\sample\sample.cpp">
+      <Filter>Source Files\Sample</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\texture.cpp">
+      <Filter>Engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\objectscache.cpp">
       <Filter>Engine\source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -738,6 +738,9 @@
     </ClInclude>
     <ClInclude Include="..\..\include\et\vertexbuffer\vertexdeclaration.h">
       <Filter>Engine\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\sample\sample.h">
+      <Filter>Source Files\Sample</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

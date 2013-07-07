@@ -21,7 +21,13 @@ size_t numFrustumLines = numFrustumPoints / 2;
 
 void Sample::prepare(et::RenderContext* rc)
 {
+	_shouldRenderGrid = false;
+	_observing = false;
+	_wireframe = false;
+	_belowSurface = false;
+
 	_texture = rc->textureFactory().loadTexture("data/textures/clouds.png", _cache);
+	_texture->setWrap(rc, TextureWrap_Repeat, TextureWrap_Repeat);
 
 	_cameraAngles.setValue(vec2(0.0f, 0.0f));
 	_cameraPosition.setValue(vec3(50.0f));
