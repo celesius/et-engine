@@ -7,7 +7,7 @@
 
 namespace demo
 {
-	class MainController : public et::IApplicationDelegate
+	class MainController : public et::IApplicationDelegate, public et::InputHandler
 	{
 	private:
 		et::ApplicationIdentifier applicationIdentifier() const;
@@ -26,8 +26,11 @@ namespace demo
 		void idle(float);
 
 		void onDrag(et::vec2, et::PointerType);
+		void onScroll(et::vec2, et::PointerOrigin);
 		void onPointerPressed(et::vec2, et::PointerType);
 		void onZoom(float);
+
+		void onKeyPressed(size_t);
 
 	private:
 		ResourceManager _resourceManager;
