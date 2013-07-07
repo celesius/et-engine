@@ -71,14 +71,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\apiobjects\apiobject.cpp" />
     <ClCompile Include="..\..\src\apiobjects\framebufferdata.cpp" />
     <ClCompile Include="..\..\src\apiobjects\framebufferfactory.cpp" />
     <ClCompile Include="..\..\src\apiobjects\indexbufferdata.cpp" />
-    <ClCompile Include="..\..\src\apiobjects\objectscache.cpp" />
     <ClCompile Include="..\..\src\apiobjects\programdata.cpp" />
     <ClCompile Include="..\..\src\apiobjects\programfactory.cpp" />
-    <ClCompile Include="..\..\src\apiobjects\texturedata.cpp" />
+    <ClCompile Include="..\..\src\apiobjects\texture.cpp" />
     <ClCompile Include="..\..\src\apiobjects\texturefactory.cpp" />
     <ClCompile Include="..\..\src\apiobjects\textureloadingthread.cpp" />
     <ClCompile Include="..\..\src\apiobjects\vertexarrayobjectdata.cpp" />
@@ -93,8 +91,8 @@
     <ClCompile Include="..\..\src\camera\frustum.cpp" />
     <ClCompile Include="..\..\src\collision\aabb.cpp" />
     <ClCompile Include="..\..\src\collision\collision.cpp" />
-    <ClCompile Include="..\..\src\core\debug.cpp" />
     <ClCompile Include="..\..\src\core\log.cpp" />
+    <ClCompile Include="..\..\src\core\objectscache.cpp" />
     <ClCompile Include="..\..\src\core\plist.cpp" />
     <ClCompile Include="..\..\src\core\stream.cpp" />
     <ClCompile Include="..\..\src\core\tools.cpp" />
@@ -164,6 +162,7 @@
     <ClCompile Include="..\..\src\vertexbuffer\vertexdeclaration.cpp" />
     <ClCompile Include="..\source\main.cpp" />
     <ClCompile Include="..\source\maincontroller.cpp" />
+    <ClCompile Include="..\source\sample\sample.cpp" />
     <ClCompile Include="..\source\ui\mainmenu.cpp" />
     <ClCompile Include="..\source\ui\resourcemanager.cpp" />
   </ItemGroup>
@@ -310,6 +309,7 @@
     <ClInclude Include="..\..\include\et\vertexbuffer\vertexdatachunk.h" />
     <ClInclude Include="..\..\include\et\vertexbuffer\vertexdeclaration.h" />
     <ClInclude Include="..\source\maincontroller.h" />
+    <ClInclude Include="..\source\sample\sample.h" />
     <ClInclude Include="..\source\ui\mainmenu.h" />
     <ClInclude Include="..\source\ui\resourcemanager.h" />
   </ItemGroup>

@@ -49,7 +49,7 @@ void OpenGLCapabilites::checkCaps()
 	log::info("[OpenGLCapabilites] Version: %s, GLSL version: %s (%s)",
 		_openGlVersion.c_str(), _glslVersionString.c_str(), _glslVersion.c_str());
 	
-#if (GL_ARB_draw_elements_base_vertex)
+#if defined(GL_ARB_draw_elements_base_vertex)
 	_drawelements_basevertex = (glDrawElementsBaseVertex != nullptr);
 #else
 	_drawelements_basevertex = false;
