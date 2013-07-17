@@ -103,7 +103,10 @@ void swapEndiannes(unsigned char* data, size_t dataSize)
 {
 	uint32_t* ptr = reinterpret_cast<uint32_t*>(data);
 	for (size_t i = 0; i < dataSize / 4; ++i)
-		*ptr++ = swapEndiannes(*ptr);
+    {
+        uint32_t val = *ptr;
+		*ptr++ = swapEndiannes(val);
+    }
 }
 
 #pragma pack()
