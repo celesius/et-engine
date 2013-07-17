@@ -7,14 +7,16 @@
 
 #pragma once
 
+#include <et/core/et.h>
+
 namespace et
 {
 	namespace log
 	{
-		void debug(const char*, ...);
-		void info(const char*, ...);
-		void warning(const char*, ...);
-		void error(const char*, ...);
+		void debug(const char*, ...) ET_FORMAT_FUNCTION;
+		void info(const char*, ...) ET_FORMAT_FUNCTION;
+		void warning(const char*, ...) ET_FORMAT_FUNCTION;
+		void error(const char*, ...) ET_FORMAT_FUNCTION;
 
 		void debug(const wchar_t*, ...);
 		void info(const wchar_t*, ...);
