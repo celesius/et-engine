@@ -26,7 +26,8 @@
 #		define ET_SUPPORT_RANGE_BASED_FOR	0
 #	endif
 #
-#	define ET_DEPRECATED(FUNC)				__declspec(deprecated) FUNC
+#	define ET_DEPRECATED					__declspec(deprecated)
+#	define ET_FORMAT_FUNCTION
 #
 #elif (ET_PLATFORM_APPLE)
 #
@@ -37,7 +38,8 @@
 #		define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #	endif
 #
-#	define ET_DEPRECATED(FUNC)				FUNC __attribute__((deprecated))
+#	define ET_DEPRECATED					__attribute__((deprecated))
+#	define ET_FORMAT_FUNCTION				__attribute__((format(printf, 1, 2)))
 #
 #elif (ET_PLATFORM_ANDROID)
 #
