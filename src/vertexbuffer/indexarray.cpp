@@ -159,7 +159,7 @@ IndexArray::PrimitiveIterator IndexArray::primitive(size_t index) const
 
 IndexArray::Primitive::Primitive()
 {
-	for (size_t i = 0; i < IndexArray::Primitive::MaxVertexCount; ++i)
+	for (size_t i = 0; i < IndexArray::Primitive::VertexCount_max; ++i)
 		index[i] = InvalidIndex;
 }
 

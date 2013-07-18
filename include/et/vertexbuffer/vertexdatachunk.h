@@ -43,6 +43,8 @@ namespace et
 			{ return _type; }
 
 		void serialize(std::ostream& stream);
+		
+		void copyTo(VertexDataChunkData&);
 
 	private:
 		VertexAttributeUsage _usage;

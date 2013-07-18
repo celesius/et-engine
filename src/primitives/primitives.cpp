@@ -22,10 +22,10 @@ size_t primitives::indexCountForRegularMesh(const vec2i& meshSize, PrimitiveType
 			return meshSize.square();
 
 		case PrimitiveType_Triangles:
-			return ( (meshSize.x > 1) ? meshSize.x - 1 : 1 ) * ( (meshSize.y > 1) ? meshSize.y - 1 : 1) * 6;
+			return ((meshSize.x > 1) ? meshSize.x - 1 : 1) * ((meshSize.y > 1) ? meshSize.y - 1 : 1) * 6;
 
 		case PrimitiveType_TriangleStrips:
-			return ( (meshSize.y > 1) ? meshSize.y - 1 : 1) * (2 * meshSize.x + 1) - 1;
+			return ((meshSize.y > 1) ? meshSize.y - 1 : 1) * (2 * meshSize.x + 1) - 1;
 			
 		default:
 			assert("Unimplemented" && 0);
@@ -137,7 +137,7 @@ void primitives::createTorus(VertexArray::Pointer data, float centralRadius, flo
 				n.x = std::cos(phi) * std::cos(theta);
 				n.y = std::sin(theta);
 				n.z = std::sin(phi) * std::cos(theta);
-				norm[counter] = normalize( n );
+				norm[counter] = normalize(n);
 			}
 
 			if (hasTex)
@@ -231,8 +231,8 @@ void primitives::createPlane(VertexArray::Pointer data, const vec3& normal, cons
 
 	vec3 v00 = -size.x * o1 - size.y * o2;
 	vec3 v01 = -size.x * o1 + size.y * o2;
-	vec3 v10 =  size.x * o1 - size.y * o2;
-	vec3 v11 =  size.x * o1 + size.y * o2;
+	vec3 v10 = size.x * o1 - size.y * o2;
+	vec3 v11 = size.x * o1 + size.y * o2;
 
 	vec3 n = plane(triangle(v00, v01, v10)).normal();
 	vec2i dv(density.x < 2 ? 2 : density.x, density.y < 2 ? 2 : density.y);
@@ -275,22 +275,22 @@ void primitives::createPlane(VertexArray::Pointer data, const vec3& normal, cons
 
 			if (u == dv.x - 1)
 			{
-				n01 = getIndex(u - 1,   v  , dv.x, dv.y);
+				n01 = getIndex(u - 1, v , dv.x, dv.y);
 				p01 = p00 + (p00 - pos[n01]);
 			}
 			else
 			{
-				n01 = getIndex(u + 1,   v  , dv.x, dv.y);
+				n01 = getIndex(u + 1, v , dv.x, dv.y);
 				p01 = pos[n01];
 			} 
-			if (v == dv.y -1 )
+			if (v == dv.y -1)
 			{
-				n10 = getIndex(  u,   v - 1, dv.x, dv.y);
+				n10 = getIndex(u, v - 1, dv.x, dv.y);
 				p10 = p00 + (p00 - pos[n10]); 
 			}
 			else
 			{
-				n10 = getIndex(  u,   v + 1, dv.x, dv.y);
+				n10 = getIndex(u, v + 1, dv.x, dv.y);
 				p10 = pos[n10];
 			}
 			norm[n00] = plane(triangle(p00, p10, p01)).normal();
@@ -302,13 +302,13 @@ void primitives::createPlane(VertexArray::Pointer data, const vec3& normal, cons
 		for (int u = 0; u < dv.x; u++)
 		{
 			n = 1.0f * norm[getIndex(u-1, v-1, dv.x, dv.y)] + 
-				2.0f * norm[getIndex(  u, v-1, dv.x, dv.y)] + 
+				2.0f * norm[getIndex(u, v-1, dv.x, dv.y)] + 
 				1.0f * norm[getIndex(u+1, v-1, dv.x, dv.y)] + 
-				2.0f * norm[getIndex(u-1,   v, dv.x, dv.y)] + 
-				4.0f * norm[getIndex(  u,   v, dv.x, dv.y)] + 
-				2.0f * norm[getIndex(u+1,   v, dv.x, dv.y)] + 
+				2.0f * norm[getIndex(u-1, v, dv.x, dv.y)] + 
+				4.0f * norm[getIndex(u, v, dv.x, dv.y)] + 
+				2.0f * norm[getIndex(u+1, v, dv.x, dv.y)] + 
 				1.0f * norm[getIndex(u-1, v+1, dv.x, dv.y)] +
-				2.0f * norm[getIndex(  u, v+1, dv.x, dv.y)] +
+				2.0f * norm[getIndex(u, v+1, dv.x, dv.y)] +
 				1.0f * norm[getIndex(u+1, v+1, dv.x, dv.y)];
 			norm[getIndex(u, v, dv.x, dv.y)] = normalize(n);
 		}
@@ -544,4 +544,132 @@ void primitives::smoothTangents(VertexArray::Pointer data, const IndexArray::Poi
 
 	for (size_t i = 0; i < len; ++i)
 		tan[i] = normalize(tanSmooth[i]);
+}
+
+void primitives::createIcosahedron(VertexArray::Pointer data, float radius)
+{
+	VertexDataChunk posChunk = data->chunk(Usage_Position);
+	VertexDataChunk nrmChunk = data->chunk(Usage_Normal);
+	bool hasPosition = posChunk.valid() && (posChunk->type() == Type_Vec3);
+	bool hasNormals = nrmChunk.valid() && (nrmChunk->type() == Type_Vec3);
+
+	assert(hasPosition);
+	
+	size_t offset = data->size();
+	data->fitToSize(60);
+	
+	RawDataAcessor<vec3> nrm;
+	RawDataAcessor<vec3> pos = posChunk.accessData<vec3>(offset);
+	
+	if (hasNormals)
+		nrm = nrmChunk.accessData<vec3>(offset);
+		
+	float u = radius;
+	float v = radius * (1.0f + std::sqrt(5.0f)) / 2.0f;
+	
+	vec3 corners[12] =
+	{
+		vec3(-u,  v, 0.0f),
+		vec3( u,  v, 0.0f),
+		vec3(-u, -v, 0.0f),
+		vec3( u, -v, 0.0f),
+		vec3(0.0f, -u,  v),
+		vec3(0.0f,  u,  v),
+		vec3(0.0f, -u, -v),
+		vec3(0.0f,  u, -v),
+		vec3( v, 0.0f, -u),
+		vec3( v, 0.0f,  u),
+		vec3(-v, 0.0f, -u),
+		vec3(-v, 0.0f,  u)
+	};
+	
+	size_t k = 0;
+	
+#define ET_ADD_IH_TRIANGLE(c1, c2, c3) { \
+		pos[k] = corners[c1]; pos[k+1] = corners[c2]; pos[k+2] = corners[c3]; \
+		if (hasNormals) nrm[k+0] = nrm[k+1] = nrm[k+2] = \
+			triangle(corners[c1], corners[c2], corners[c3]).normalizedNormal(); \
+		k += 3; } \
+
+	ET_ADD_IH_TRIANGLE(0, 11, 5);
+	ET_ADD_IH_TRIANGLE(0, 5, 1);
+	ET_ADD_IH_TRIANGLE(0, 1, 7);
+	ET_ADD_IH_TRIANGLE(0, 7, 10);
+	ET_ADD_IH_TRIANGLE(0, 10, 11);
+	ET_ADD_IH_TRIANGLE(1, 5, 9);
+	ET_ADD_IH_TRIANGLE(5, 11, 4);
+	ET_ADD_IH_TRIANGLE(11, 10, 2);
+	ET_ADD_IH_TRIANGLE(10, 7, 6);
+	ET_ADD_IH_TRIANGLE(7, 1, 8);
+	ET_ADD_IH_TRIANGLE(3, 9, 4);
+	ET_ADD_IH_TRIANGLE(3, 4, 2);
+	ET_ADD_IH_TRIANGLE(3, 2, 6);
+	ET_ADD_IH_TRIANGLE(3, 6, 8);
+	ET_ADD_IH_TRIANGLE(3, 8, 9);
+	ET_ADD_IH_TRIANGLE(4, 9, 5);
+	ET_ADD_IH_TRIANGLE(2, 4, 11);
+	ET_ADD_IH_TRIANGLE(6, 2, 10);
+	ET_ADD_IH_TRIANGLE(8, 6, 7);
+	ET_ADD_IH_TRIANGLE(9, 8, 1);
+	
+#undef ET_ADD_IH_TRIANGLE
+}
+
+void primitives::tesselateTriangles(VertexArray::Pointer data)
+{
+	assert((data->size() % 3 == 0) && "VertexArray should have integer number of triangles.");
+	
+	bool hasPosition = data->chunk(Usage_Position).valid() &&
+		(data->chunk(Usage_Position)->type() == Type_Vec3);
+	
+	bool hasNormals = data->chunk(Usage_Normal).valid() &&
+		(data->chunk(Usage_Normal)->type() == Type_Vec3);
+	
+	assert(hasPosition);
+	
+	VertexArray::Pointer oldData(data->duplicate());
+	
+	VertexDataChunk oldPos = oldData->chunk(Usage_Position);
+	VertexDataChunk oldNrm = oldData->chunk(Usage_Normal);
+	VertexDataChunk newPos = data->chunk(Usage_Position);
+	VertexDataChunk newNrm = data->chunk(Usage_Normal);
+	
+	size_t numVertices = data->size();
+	size_t numTriangles = numVertices / 3;
+
+	data->fitToSize(12 * numTriangles);
+	RawDataAcessor<vec3> opos = oldPos.accessData<vec3>(0);
+	RawDataAcessor<vec3> npos = newPos.accessData<vec3>(0);
+	RawDataAcessor<vec3> onrm = hasNormals ? oldNrm.accessData<vec3>(0) : RawDataAcessor<vec3>();
+	RawDataAcessor<vec3> nnrm = hasNormals ? newNrm.accessData<vec3>(0) : RawDataAcessor<vec3>();
+	
+	size_t i = 0;
+	size_t np = 0;
+	size_t nn = 0;
+	while (i < numVertices)
+	{
+		const vec3& a = opos[i++];
+		const vec3& b = opos[i++];
+		const vec3& c = opos[i++];
+		vec3 u = 0.5f * (a + b);
+		vec3 v = 0.5f * (b + c);
+		vec3 w = 0.5f * (c + a);
+		npos[np++] = a; npos[np++] = u; npos[np++] = w;
+		npos[np++] = u; npos[np++] = b; npos[np++] = v;
+		npos[np++] = w; npos[np++] = v; npos[np++] = c;
+		npos[np++] = w; npos[np++] = u; npos[np++] = v;
+		if (hasNormals)
+		{
+			const vec3& na = onrm[i-3];
+			const vec3& nb = onrm[i-2];
+			const vec3& nc = onrm[i-1];
+			vec3 nu = normalize(na + nb);
+			vec3 nv = normalize(nb + nc);
+			vec3 nw = normalize(nc + na);
+			nnrm[nn++] = na; nnrm[nn++] = nu; nnrm[nn++] = nw;
+			nnrm[nn++] = nu; nnrm[nn++] = nb; nnrm[nn++] = nv;
+			nnrm[nn++] = nw; nnrm[nn++] = nv; nnrm[nn++] = nc;
+			nnrm[nn++] = nw; nnrm[nn++] = nu; nnrm[nn++] = nv;
+		}
+	}
 }
