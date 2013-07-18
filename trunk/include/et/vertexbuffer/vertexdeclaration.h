@@ -96,6 +96,7 @@ namespace et
 			{ return _interleaved; }
 
 		bool operator == (const VertexDeclaration& r) const;
+		
 		bool operator != (const VertexDeclaration& r) const
 			{ return !(operator == (r)); }
 

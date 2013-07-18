@@ -38,3 +38,10 @@ void VertexDataChunkData::fitToSize(size_t count)
 {
 	_data.fitToSize(typeSize() * count);
 }
+
+void VertexDataChunkData::copyTo(VertexDataChunkData& c)
+{
+	c._usage = _usage;
+	c._type = _type;
+	c._data = _data;
+}

@@ -50,6 +50,8 @@ namespace et
 		void serialize(std::ostream& stream);
 		void deserialize(std::istream& stream);
 		
+		VertexArray* duplicate();
+		
 	private:
 		size_t _size;
 		VertexDeclaration _decl;

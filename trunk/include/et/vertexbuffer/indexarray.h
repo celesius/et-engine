@@ -17,7 +17,8 @@ namespace et
 	typedef unsigned short ShortIndexType;
 	typedef unsigned char SmallIndexType;
 	
-	static const IndexType InvalidIndex = static_cast<IndexType>(-1);	
+	static const IndexType InvalidIndex = static_cast<IndexType>(-1);
+	
 	enum IndexArrayFormat
 	{
 		IndexArrayFormat_Undefined  = 0,
@@ -76,20 +77,28 @@ namespace et
 		void serialize(std::ostream& stream);
 		void deserialize(std::istream& stream);
 
-		struct Primitive
+		class Primitive
 		{
-			static const size_t MaxVertexCount = 3;
-			IndexType index[MaxVertexCount];
+		public:
+			enum
+			{
+				VertexCount_max = 3
+			};
 
-			IndexType& operator [] (size_t i) 
-				{ return index[i]; }
+			IndexType index[VertexCount_max];
+			
+		public:
+			Primitive();
+			
+			IndexType& operator [] (size_t i)
+				{ assert(i < VertexCount_max); return index[i]; }
 
 			const IndexType& operator [] (size_t i) const
-				{ return index[i]; }
+				{ assert(i < VertexCount_max); return index[i]; }
 
-			Primitive();
 			bool operator == (const Primitive& p) const;
 			bool operator != (const Primitive& p) const;
+			
 		};
 
 		class PrimitiveIterator
@@ -115,6 +124,12 @@ namespace et
 
 			size_t pos() const
 				{ return _pos; }
+			
+			IndexType& operator [] (size_t i)
+				{ return _primitive[i]; }
+			
+			const IndexType& operator [] (size_t i) const
+				{ return _primitive[i]; }
 
 		private:
 			friend class IndexArray;

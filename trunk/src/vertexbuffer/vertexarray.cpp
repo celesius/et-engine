@@ -83,7 +83,11 @@ VertexArray::Description VertexArray::generateDescription() const
 
 VertexDataChunk VertexArray::chunk(VertexAttributeUsage usage)
 {
-	ET_ITERATE(_chunks, auto&, i, if (i.ptr()->usage() == usage) return i);
+	for (auto& i : _chunks)
+	{
+		if (i->usage() == usage)
+			return i;
+	}
 	
 	return VertexDataChunk();
 }
@@ -132,4 +136,14 @@ void VertexArray::deserialize(std::istream& stream)
 			_chunks.push_back(VertexDataChunk(stream));
 		_smoothing = VertexDataChunk(stream);
 	}
+}
+
+VertexArray* VertexArray::duplicate()
+{
+	VertexArray* result = new VertexArray(_decl, _size);
+	
+	for (auto& c : _chunks)
+		c->copyTo(result->chunk(c->usage()).reference());
+
+	return result;
 }
