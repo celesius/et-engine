@@ -11,7 +11,7 @@
 using namespace et;
 using namespace demo;
 
-MainMenuLayout::MainMenuLayout(et::RenderContext*, ResourceManager& resourceManager)
+MainMenuLayout::MainMenuLayout(et::RenderContext*, ResourceManager&)
 {
 /*
 	_title = resourceManager.label("Projected grid sample.", this);

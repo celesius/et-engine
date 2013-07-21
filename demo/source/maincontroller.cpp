@@ -24,8 +24,9 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 
 	_sample.prepare(rc);
 
+	ET_CONNECT_EVENT(_gestures.pressed, MainController::pointerPressed)
+	
 	ET_CONNECT_EVENT(input().keyPressed, MainController::onKeyPressed)
-	ET_CONNECT_EVENT(_gestures.pressed, MainController::onPointerPressed)
 	ET_CONNECT_EVENT(_gestures.drag, MainController::onDrag)
 	ET_CONNECT_EVENT(_gestures.zoom, MainController::onZoom)
 	ET_CONNECT_EVENT(_gestures.scroll, MainController::onScroll)
@@ -64,7 +65,7 @@ void MainController::idle(float)
 	
 }
 
-void MainController::onPointerPressed(et::vec2, et::PointerType)
+void MainController::pointerPressed(et::vec2, et::PointerType)
 {
 	_sample.stopCamera();
 }
