@@ -27,11 +27,11 @@ namespace demo
 
 		void onDrag(et::vec2, et::PointerType);
 		void onScroll(et::vec2, et::PointerOrigin);
-		void onPointerPressed(et::vec2, et::PointerType);
 		void onZoom(float);
-
 		void onKeyPressed(size_t);
 
+		void pointerPressed(et::vec2, et::PointerType);
+		
 	private:
 		ResourceManager _resourceManager;
 
