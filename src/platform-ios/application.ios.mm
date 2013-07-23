@@ -159,6 +159,6 @@ size_t Application::memoryUsage() const
 	return (kerr == KERN_SUCCESS) ? info.resident_size : 0;
 }
 
-void Application::setTitle(const std::string &s)
+void Application::setTitle(const std::string&)
 {
 }

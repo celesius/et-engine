@@ -96,7 +96,8 @@ void VertexArray::increase(size_t count)
 {
 	_size += count;
 	
-	ET_ITERATE(_chunks, auto&, i, i->fitToSize(_size));
+	for (auto& i :_chunks)
+		i->fitToSize(_size);
 
 	_smoothing->fitToSize(_size);
 }
@@ -107,7 +108,8 @@ void VertexArray::fitToSize(size_t count)
 
 	_size = count;
 	
-	ET_ITERATE(_chunks, auto&, i, i->fitToSize(count));
+	for (auto& i :_chunks)
+		i->fitToSize(count);
 
 	_smoothing->fitToSize(_size);
 }
@@ -119,7 +121,9 @@ void VertexArray::serialize(std::ostream& stream)
 
 	serializeInt(stream, static_cast<int>(_size));
 	serializeInt(stream, static_cast<int>(_chunks.size()));
-	ET_ITERATE(_chunks, auto&, i, i->serialize(stream));
+	
+	for (auto& i :_chunks)
+		i->serialize(stream);
 	
 	_smoothing->serialize(stream);
 }

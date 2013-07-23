@@ -153,8 +153,8 @@ using namespace et;
 	CAEAGLLayer* glLayer = (CAEAGLLayer*)self.layer;
 	glLayer.contentsScale = self.contentScaleFactor;
 	
-	vec2i size(glLayer.bounds.size.width * glLayer.contentsScale,
-		glLayer.bounds.size.height * glLayer.contentsScale);
+	vec2i size(static_cast<int>(glLayer.bounds.size.width * glLayer.contentsScale),
+		static_cast<int>(glLayer.bounds.size.height * glLayer.contentsScale));
 	
 	if (_mainFramebuffer.invalid())
 	{
@@ -289,7 +289,7 @@ using namespace et;
 		pt.id = [touch hash];
 		pt.pos = vec2(touchPoint.x, touchPoint.y);
 		pt.scroll = vec2(0.0f);
-		pt.timestamp = touch.timestamp;
+		pt.timestamp = static_cast<float>(touch.timestamp);
 		pt.type = PointerType_General;
 		
 		float nx = 2.0f * pt.pos.x / ownSize.width - 1.0f;
@@ -317,7 +317,7 @@ using namespace et;
 		pt.id = [touch hash];
 		pt.pos = vec2(touchPoint.x, touchPoint.y);
 		pt.scroll = vec2(0.0f);
-		pt.timestamp = touch.timestamp;
+		pt.timestamp = static_cast<float>(touch.timestamp);
 		pt.type = PointerType_General;
 		
 		float nx = 2.0f * pt.pos.x / ownSize.width - 1.0f;
@@ -345,7 +345,7 @@ using namespace et;
 		pt.id = [touch hash];
 		pt.pos = vec2(touchPoint.x, touchPoint.y);
 		pt.scroll = vec2(0.0f);
-		pt.timestamp = touch.timestamp;
+		pt.timestamp = static_cast<float>(touch.timestamp);
 		pt.type = PointerType_General;
 		
 		float nx = 2.0f * pt.pos.x / ownSize.width - 1.0f;
@@ -373,7 +373,7 @@ using namespace et;
 		pt.id = [touch hash];
 		pt.pos = vec2(touchPoint.x, touchPoint.y);
 		pt.scroll = vec2(0.0f);
-		pt.timestamp = touch.timestamp;
+		pt.timestamp = static_cast<float>(touch.timestamp);
 		pt.type = PointerType_General;
 		
 		float nx = 2.0f * pt.pos.x / ownSize.width - 1.0f;

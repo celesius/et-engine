@@ -120,17 +120,17 @@ void Locale::parseLanguageFile(const std::string& fileName)
 	inQuote = false;
 	size_t sourceLength = keyValues.offset();
 	StringDataStorage source(sourceLength + 1, 0);
-	for (size_t i = 0; i < sourceLength; ++i)
+	for (size_t j = 0; j < sourceLength; ++j)
 	{
-		char c = keyValues[i];
+		char c = keyValues[j];
 
 		if (c == KeyChar) 
 			inQuote = !inQuote;
 
 		bool isWhiteSpace = !inQuote && ((c == 0x20) || (c == 0x09));
 		bool isNewLine = (c == 0x0a) || (c == 0x0d);
-		bool hasNextQuoteMark = (i + 1 < sourceLength) && (keyValues[i+1] == KeyChar);
-		bool hasPrevQuoteMark = (i > 0) && (keyValues[i-1] == KeyChar);
+		bool hasNextQuoteMark = (j + 1 < sourceLength) && (keyValues[j+1] == KeyChar);
+		bool hasPrevQuoteMark = (j > 0) && (keyValues[j-1] == KeyChar);
 		
 		bool shouldConcatMultiline =
 			((c == KeyChar) && hasNextQuoteMark) || ((c == KeyChar) && hasPrevQuoteMark);
@@ -142,9 +142,7 @@ void Locale::parseLanguageFile(const std::string& fileName)
 	
 	i = 0;
 	while (source[i] && (i < source.size()) && source[i+1])
-	{
 		i = (source[i] == KeyChar) ? parseKey(source, i+1) : ++i;
-	}
 }
 
 size_t Locale::parseKey(const StringDataStorage& data, size_t index)
@@ -170,26 +168,26 @@ size_t Locale::parseKey(const StringDataStorage& data, size_t index)
 	size_t valueLenght = i - valueStart - 1;
 	
 	std::string key(keyLenght, 0);
-	for (size_t i = 0; i < keyLenght; ++i)
-		key[i] = data[index+i];
+	for (size_t j = 0; j < keyLenght; ++j)
+		key[j] = data[index+j];
 	
 	index = 0;
 	std::string value(valueLenght, 0);
-	for (size_t i = 0; i < valueLenght; ++i)
+	for (size_t j = 0; j < valueLenght; ++j)
 	{
-		if ((data[valueStart+i] == '\\') && (i+1 < valueLenght))
+		if ((data[valueStart+j] == '\\') && (i+1 < valueLenght))
 		{
-			++i;
-			if (data[valueStart+i] == 'n')
+			++j;
+			if (data[valueStart+j] == 'n')
 				value[index] = 0x0a;
-			else if (data[valueStart+i] == '\\')
+			else if (data[valueStart+j] == '\\')
 				value[index] = '\\';
 			else
-				std::cout << "Unsupported sequence: \\" << data[valueStart+i] << std::endl;
+				std::cout << "Unsupported sequence: \\" << data[valueStart+j] << std::endl;
 		}
 		else
 		{
-			value[index] = data[valueStart+i];
+			value[index] = data[valueStart+j];
 		}
 		
 		++index;
@@ -198,7 +196,7 @@ size_t Locale::parseKey(const StringDataStorage& data, size_t index)
 	
 	_localeMap[key] = value;
 	
-	return i+1;
+	return i + 1;
 }
 
 size_t Locale::parseComment(const StringDataStorage& data, size_t index)

@@ -149,13 +149,15 @@ Carousel::~Carousel()
 
 void Carousel::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 {
-	ET_ITERATE(_sortedItems, auto, i, i->addToRenderQueue(rc, gr))
+	for (auto& i : _sortedItems)
+		i->addToRenderQueue(rc, gr);
 }
 
 void Carousel::setScale(const vec2& s)
 {
 	_scale = s;
-	ET_ITERATE(_sortedItems, auto, i, i->setScale(s))
+	for (auto& i : _sortedItems)
+		i->setScale(s);
 }
 
 CarouselItem::Pointer Carousel::addItem(int tag, const Texture& tex, const ImageDescriptor& desc)
@@ -300,7 +302,7 @@ void Carousel::setSelectedItem(size_t item, float duration)
 void Carousel::sortItems()
 {
 	_sortedItems = CarouselItemList(_items.begin(), _items.end());
-	_sortedItems.sort(_type == CarouselType_Round ? roundDistanceFunc : ribbonDistanceFunc );
+	_sortedItems.sort(_type == CarouselType_Round ? roundDistanceFunc : ribbonDistanceFunc);
 }
 
 void Carousel::animatorUpdated(BaseAnimator*)
@@ -340,6 +342,7 @@ bool Carousel::pointerPressed(const PointerInputInfo& p)
 	}
 
 	CarouselItem::Pointer cItem = itemForInputInfo(p, item);
+	
 	if (cItem.valid())
 		cItem->setColor(vec4(0.5f, 0.5f, 0.5f, cItem->color().w));
 
@@ -574,5 +577,6 @@ void Carousel::setDirection(const vec2& d)
  */
 bool roundDistanceFunc(const CarouselItem::Pointer& i1, const CarouselItem::Pointer& i2)
 	{ return cos(i1->currentAngle()) < cos(i2->currentAngle()); }
+
 bool ribbonDistanceFunc(const CarouselItem::Pointer& i1, const CarouselItem::Pointer& i2)
 	{ return i1->transform()[3][2] < i2->transform()[3][2]; }

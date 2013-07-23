@@ -132,7 +132,7 @@ Element* Element::childWithNameCallback(const std::string& name, Element* root)
 	if (root->name() == name)
 		return root;
 
-	for (auto c : root->children())
+	for (auto& c : root->children())
 	{
 		Element* aElement = childWithNameCallback(name, c.ptr());
 		if (aElement != nullptr)

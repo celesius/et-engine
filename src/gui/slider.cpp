@@ -158,13 +158,13 @@ bool Slider::pointerMoved(const PointerInputInfo& p)
 	return true;
 }
 
-bool Slider::pointerReleased(const PointerInputInfo& p)
+bool Slider::pointerReleased(const PointerInputInfo&)
 {
 	_drag = false;
 	return true;
 }
 
-bool Slider::pointerCancelled(const PointerInputInfo& p)
+bool Slider::pointerCancelled(const PointerInputInfo&)
 {
 	_drag = false;
 	return true;

@@ -16,7 +16,31 @@ using namespace audio;
 extern ALCdevice* getSharedDevice();
 extern ALCcontext* getSharedContext();
 
-void etInterruptListener(void *inClientData, UInt32 inInterruptionState)
+void etInterruptListener(void*, UInt32 inInterruptionState);
+
+void Manager::nativePreInit()
+{
+}
+
+void Manager::nativeInit()
+{
+	AudioSessionInitialize(nil, nil, etInterruptListener, nil);
+	AudioSessionSetActive(true);
+}
+
+void Manager::nativeRelease()
+{
+	AudioSessionSetActive(false);
+}
+
+void Manager::nativePostRelease()
+{
+}
+
+/*
+ * Service functions
+ */
+void etInterruptListener(void*, UInt32 inInterruptionState)
 {
 	if (inInterruptionState == kAudioSessionBeginInterruption)
 	{
@@ -40,23 +64,4 @@ void etInterruptListener(void *inClientData, UInt32 inInterruptionState)
 			alcProcessContext(getSharedContext());
 		}
 	}
-}
-
-void Manager::nativePreInit()
-{
-}
-
-void Manager::nativeInit()
-{
-	AudioSessionInitialize(nil, nil, etInterruptListener, nil);
-	AudioSessionSetActive(true);
-}
-
-void Manager::nativeRelease()
-{
-	AudioSessionSetActive(false);
-}
-
-void Manager::nativePostRelease()
-{
 }

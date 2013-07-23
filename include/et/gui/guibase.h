@@ -12,9 +12,8 @@
 #include <et/core/et.h>
 #include <et/core/flags.h>
 #include <et/core/hierarchy.h>
-#include <et/app/events.h>
-#include <et/timers/animator.h>
 #include <et/input/input.h>
+#include <et/timers/animator.h>
 #include <et/gui/guibaseconst.h>
 #include <et/gui/guibaseclasses.h>
 

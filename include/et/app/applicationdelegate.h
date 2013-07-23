@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <et/app/events.h>
+
 namespace et
 {
 	class RenderContext;

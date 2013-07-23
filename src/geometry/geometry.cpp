@@ -91,7 +91,7 @@ quaternion et::matrixToQuaternion(const mat3& r)
 	}
 	else
 	{
-		assert(0 && "Unable to convert matrix to quaternion");
+		assert(false && "Unable to convert matrix to quaternion");
 	}
 
 	return normalize(quaternion(q0, q1, q2, q3));

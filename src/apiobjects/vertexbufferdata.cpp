@@ -48,10 +48,10 @@ void VertexBufferData::setData(const void* data, size_t dataSize)
 
 void VertexBufferData::serialize(std::ostream&)
 {
-	assert(0 && "Unsupported");
+	assert(false && "Unsupported");
 }
 
 void VertexBufferData::deserialize(std::istream&)
 {
-	assert(0 && "Unsupported");
+	assert(false && "Unsupported");
 }

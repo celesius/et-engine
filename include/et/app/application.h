@@ -9,7 +9,6 @@
 
 #include <et/core/singleton.h>
 #include <et/core/tools.h>
-#include <et/app/events.h>
 #include <et/app/runloop.h>
 #include <et/app/appevironment.h>
 #include <et/app/applicationdelegate.h>

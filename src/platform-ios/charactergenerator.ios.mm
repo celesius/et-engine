@@ -47,13 +47,13 @@ CharacterGenerator::~CharacterGenerator()
 	delete _private;
 }
 
-CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTexture)
+CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 {
 	wchar_t string[2] = { value, 0 };
     NSString* wString = [[NSString alloc] initWithBytes:string length:sizeof(string)
 											   encoding:NSUTF32LittleEndianStringEncoding];
     CGSize characterSize = [wString sizeWithFont:_private->_font];
-	vec2i charSize = vec2i(characterSize.width, characterSize.height);
+	vec2i charSize = vec2i(static_cast<int>(characterSize.width), static_cast<int>(characterSize.height));
 	
 	BinaryDataStorage data(charSize.square() * 4, 0);
 	
@@ -76,14 +76,14 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTextu
 	return desc;
 }
 
-CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateTexture)
+CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 {
 	wchar_t string[2] = { value, 0 };
     NSString* wString = [[NSString alloc] initWithBytes:string length:sizeof(string)
 											   encoding:NSUTF32LittleEndianStringEncoding];
 	
     CGSize characterSize = [wString sizeWithFont:_private->_boldFont];
-	vec2i charSize = vec2i(characterSize.width, characterSize.height);
+	vec2i charSize = vec2i(static_cast<int>(characterSize.width), static_cast<int>(characterSize.height));
 	
 	BinaryDataStorage data(charSize.square() * 4, 0);
 
@@ -137,7 +137,7 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& po
 	texture->updatePartialDataDirectly(rc, dest, size, data.binary(), data.dataSize());
 }
 
-void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i& position,
+void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i&,
 	const vec2i& size, bool bold, BinaryDataStorage& data)
 {
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();

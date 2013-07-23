@@ -17,13 +17,13 @@ namespace et
     public:
         virtual ~PurchasesManagerDelegate() { }
         
-        virtual void purchasesManagerDidCheckAvailableProducts(const StringList& products) { }
+        virtual void purchasesManagerDidCheckAvailableProducts(const StringList&) { }
         virtual void purchasesManagerDidFailToCheckAvailableProducts() { }
         
-        virtual void purchasesManagerDidPurchaseProduct(const std::string& product) { }
-        virtual void purchasesManagerDidFailToPurchaseProduct(const std::string& product) { }
+        virtual void purchasesManagerDidPurchaseProduct(const std::string&) { }
+        virtual void purchasesManagerDidFailToPurchaseProduct(const std::string&) { }
         
-        virtual void purchasesManagerDidRestorePurchasedProduct(const std::string& product) { }
+        virtual void purchasesManagerDidRestorePurchasedProduct(const std::string&) { }
         virtual void purchasesManagerDidFinishRestoringPurchases() { }
         virtual void purchasesManagerDidFailToRestorePurchases() { }
     };

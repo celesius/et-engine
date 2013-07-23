@@ -91,7 +91,7 @@ FramebufferData::FramebufferData(RenderContext* rc, TextureFactory* tf, const Fr
 		glDrawBuffer(GL_NONE);
 	}
 #endif
-
+	
 	if (hasColor || hasDepth)
 		checkStatus();
 }
@@ -268,17 +268,20 @@ bool FramebufferData::setCurrentRenderTarget(size_t index)
 	return setCurrentRenderTarget(_renderTargets[index]);
 }
 
+#if (ET_OPENGLES)
+void FramebufferData::setDrawBuffersCount(int)
+{
+	assert(false && "glDrawBuffers is not supported in OpenGL ES");
+}
+#else
 void FramebufferData::setDrawBuffersCount(int count)
 {
-#if (!ET_OPENGLES)
 	_rc->renderState().bindFramebuffer(_id);
 	glDrawBuffers(count, renderbufferTargets);
 	checkOpenGLError("Framebuffer::setDrawBuffersCount -> glDrawBuffers - %s", name().c_str());
 	checkStatus();
-#else
-	assert(0 && "glDrawBuffers is not supported in OpenGL ES");
-#endif
 }
+#endif
 
 bool FramebufferData::setCurrentCubemapFace(size_t faceIndex)
 {

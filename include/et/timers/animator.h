@@ -8,7 +8,6 @@
 #pragma once
 
 #include <et/core/properties.h>
-#include <et/app/events.h>
 #include <et/timers/timedobject.h>
 
 namespace et

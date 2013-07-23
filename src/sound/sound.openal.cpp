@@ -7,11 +7,10 @@
 
 #include <iostream>
 #include <assert.h>
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
 #include <et/geometry/geometry.h>
 #include <et/core/tools.h>
 #include <et/core/containers.h>
+#include <et/sound/openal.h>
 #include <et/sound/sound.h>
 
 namespace et
@@ -51,32 +50,9 @@ using namespace et::audio;
 static ALCdevice* sharedDevice = nullptr;
 static ALCcontext* sharedContext = nullptr;
 
-ALCdevice* getSharedDevice()
-	{ return sharedDevice; }
-
-ALCcontext* getSharedContext()
-	{ return sharedContext; }
-
-void checkOpenALErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const char* tag)
-{
-	if (sharedDevice == nullptr) return;
-	
-	ALenum error = alcGetError(sharedDevice);
-	if (error != ALC_NO_ERROR)
-	{
-		const char* message = alcGetString(sharedDevice, error);
-		log::error("OpenAL ALC error: %s\n%s [%s, %s]: %s\n", message, sourceFile, lineNumber, caller, tag);
-        fflush(stdout);
-	}
-    
-	error = alGetError();
-	if (error != AL_NO_ERROR)
-	{
-		const char* message = alGetString(error);
-        printf("OpenAL error: %s\n%s[%s]: %s\n", message, sourceFile, lineNumber, tag);
-        fflush(stdout);
-	}
-}
+ALCdevice* getSharedDevice();
+ALCcontext* getSharedContext();
+void checkOpenALErrorEx(const char* caller, const char* file, const char* line, const char* tag);
 
 #if (ET_DEBUG)
 #   define checkOpenALError(tag) checkOpenALErrorEx(ET_CALL_FUNCTION, __FILE__, ET_TOCONSTCHAR(__LINE__), tag)
@@ -357,4 +333,34 @@ void Player::setPan(float pan)
 
 	alSource3f(_private->source, AL_POSITION, pan, 0.0f, 0.0f);
 	checkOpenALError("alSource3f(..., AL_POSITION, ");
+}
+
+/*
+ * Service functions
+ */
+extern ALCdevice* getSharedDevice()
+	{ return sharedDevice; }
+
+extern ALCcontext* getSharedContext()
+	{ return sharedContext; }
+
+void checkOpenALErrorEx(const char* caller, const char* sourceFile, const char* lineNumber, const char* tag)
+{
+	if (sharedDevice == nullptr) return;
+	
+	ALenum error = alcGetError(sharedDevice);
+	if (error != ALC_NO_ERROR)
+	{
+		const char* message = alcGetString(sharedDevice, error);
+		log::error("OpenAL ALC error: %s\n%s [%s, %s]: %s\n", message, sourceFile, lineNumber, caller, tag);
+        fflush(stdout);
+	}
+    
+	error = alGetError();
+	if (error != AL_NO_ERROR)
+	{
+		const char* message = alGetString(error);
+        printf("OpenAL error: %s\n%s[%s]: %s\n", message, sourceFile, lineNumber, tag);
+        fflush(stdout);
+	}
 }

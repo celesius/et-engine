@@ -138,11 +138,23 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
     NSString* cFace = [NSString stringWithCString:face.c_str() encoding:NSUTF8StringEncoding];
 	
 	font = [[[NSFontManager sharedFontManager] fontWithFamily:cFace
-		traits:0 weight:2 size:size] retain];
+		traits:0 weight:0 size:size] retain];
+	
+	if (font == nil)
+	{
+		log::error("Font %s not found. Using default font (Arial)", face.c_str());
+		font = [[NSFontManager sharedFontManager] fontWithFamily:@"Arial" traits:0 weight:0 size:size];
+	}
 	assert(font);
 	
 	boldFont = [[[NSFontManager sharedFontManager] fontWithFamily:cFace
-		traits:NSBoldFontMask weight:2 size:size] retain];
+		traits:NSBoldFontMask weight:0 size:size] retain];
+	
+	if (boldFont == nil)
+	{
+		log::error("Font %s not found. Using default font (Arial)", face.c_str());
+		boldFont = [[NSFontManager sharedFontManager] fontWithFamily:@"Arial" traits:0 weight:0 size:size];
+	}
 	assert(boldFont);
 	
 	whiteColor = [[NSColor whiteColor] retain];

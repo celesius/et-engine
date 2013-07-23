@@ -48,7 +48,7 @@ void IndexBufferData::setProperties(const IndexArray::Pointer& i)
 			break;
 		}
 		default:
-			assert(0 && "Invalud IndexArrayFormat value");
+			assert(false && "Invalud IndexArrayFormat value");
 	}
 
 	_primitiveType = primitiveTypeValue(i->primitiveType());
