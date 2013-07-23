@@ -12,13 +12,23 @@
 namespace et
 {
 	template <typename T, size_t count>
-	struct StaticDataStorage : public ContainerBase<T>
+	class StaticDataStorage : public ContainerBase<T>
 	{
-		StaticDataStorage() 
+	public:
+		StaticDataStorage()
 			{ }
 		
 		StaticDataStorage(int initialize) 
 			{ etFillMemory(data, initialize, sizeof(data)); }
+		
+		StaticDataStorage(StaticDataStorage&& r)
+			{ std::swap(data, r.data); }
+
+		StaticDataStorage(const StaticDataStorage& r)
+			{ copyFrom(r); }
+		
+		StaticDataStorage& operator = (const StaticDataStorage& r)
+			{ copyFrom(r); return *this; }
 
 		T data[count];
 
@@ -42,5 +52,14 @@ namespace et
 		
 		const size_t dataSize() const 
 			{ return count * sizeof(T); }
+		
+		void copyFrom(const StaticDataStorage& r)
+		{
+			assert(r.size() == size() && "Can not copy from array with different size");
+			
+			size_t i = 0;
+			for (auto& value : r.data)
+				data[i++] = value;
+		}
 	};
 }

@@ -9,7 +9,6 @@
 
 #include <et/geometry/geometry.h>
 #include <et/timers/timedobject.h>
-#include <et/app/events.h>
 
 namespace et
 {

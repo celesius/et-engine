@@ -52,9 +52,15 @@ void* ThreadPrivate::threadProc(void* context)
 	return reinterpret_cast<void*>(thread->main());
 }
 
-Thread::Thread(bool runImmediately) : _private(new ThreadPrivate)
+Thread::Thread() :
+	_private(new ThreadPrivate)
 {
-	if (runImmediately)
+}
+
+Thread::Thread(bool start) :
+	_private(new ThreadPrivate)
+{
+	if (start)
 		run();
 }
 

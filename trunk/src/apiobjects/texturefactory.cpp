@@ -51,7 +51,7 @@ Texture TextureFactory::loadTexture(const std::string& file, ObjectsCache& cache
 			}
 			else if (calledFromAnotherThread)
 			{
-				assert(0 && "ERROR: Unable to load texture synchronously from non-rendering thread.");
+				assert(false && "ERROR: Unable to load texture synchronously from non-rendering thread.");
 			}
 		}
 		
@@ -103,7 +103,7 @@ Texture TextureFactory::genTexture(uint32_t target, uint32_t internalformat, con
 #endif
 	else
 	{
-		assert(0 && "Unsupported format for TextureFactory::genTexture method.");
+		assert(false && "Unsupported format for TextureFactory::genTexture method.");
 	}
 
 	return Texture(new TextureData(renderContext(), desc, id, false));

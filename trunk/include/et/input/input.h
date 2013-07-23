@@ -180,13 +180,13 @@ namespace et
 	class Input::KeyboardInputSource
 	{
 	public:
-		void keyPressed(unsigned char key)
+		void keyPressed(size_t key)
 			{ Input::instance().pushKeyboardInputAction(key, InputAction_KeyDown); }
 
-		void charEntered(unsigned char key)
+		void charEntered(size_t key)
 			{ Input::instance().pushKeyboardInputAction(key, InputAction_Char); }
 
-		void keyReleased(unsigned char key )
+		void keyReleased(size_t key )
 			{ Input::instance().pushKeyboardInputAction(key, InputAction_KeyUp); }
 	};
 

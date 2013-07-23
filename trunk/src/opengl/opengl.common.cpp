@@ -63,7 +63,7 @@ void et::checkOpenGLErrorEx(const char* caller, const char* fileName, const char
 			buffer, glErrorToString(error).c_str());
 
 #if defined(ET_STOP_ON_OPENGL_ERROR)
-		assert(0 && "Check stdout for details.");
+		assert(false && "Check stdout for details.");
 #endif
 	}
 }
@@ -377,7 +377,7 @@ void et::etBindVertexArray(uint32_t arr)
 #	endif
 }
 #else
-void et::etBindVertexArray(uint32_t arr)
+void et::etBindVertexArray(uint32_t)
 {
 	log::warning("Call to glBindVertexArray without defined GL_ARB_vertex_array_object");
 }
@@ -394,7 +394,7 @@ uint32_t et::textureWrapValue(TextureWrap w)
 		case TextureWrap_MirrorRepeat:
 			return GL_MIRRORED_REPEAT;
 		default:
-			assert(0 && "Unrecognized texture wrap.");
+			assert(false && "Unrecognized texture wrap.");
 	}
 	
 	return 0;
@@ -417,7 +417,7 @@ uint32_t et::textureFiltrationValue(TextureFiltration f)
 		case TextureFiltration_LinearMipMapLinear:
 			return GL_LINEAR_MIPMAP_LINEAR;
 		default:
-			assert(0 && "Unrecognized texture filtration.");
+			assert(false && "Unrecognized texture filtration.");
 	}
 	
 	return 0;
@@ -434,7 +434,7 @@ uint32_t et::drawTypeValue(BufferDrawType t)
 		case BufferDrawType_Stream:
 			return GL_STREAM_DRAW;
 		default:
-			assert(0 && "Unrecognized draw type");
+			assert(false && "Unrecognized draw type");
 	}
 	
 	return 0;
@@ -455,23 +455,42 @@ uint32_t et::primitiveTypeValue(PrimitiveType t)
 		case PrimitiveType_TriangleStrips:
 			return GL_TRIANGLE_STRIP;
 		default:
-			assert(0 && "Invalid PrimitiveType value");
+			assert(false && "Invalid PrimitiveType value");
 	}
 	
 	return 0;
 }
 
+#if (ET_OPENGLES)
+
+void et::etTexImage1D(uint32_t, int, int, GLsizei, int, uint32_t, uint32_t, const GLvoid*)
+	{ assert(false && "Call to glTexImage1D in OpenGL ES"); }
+
+void et::etCompressedTexImage1D(uint32_t, int, uint32_t, GLsizei, int, GLsizei, const GLvoid*)
+	{ assert(false && "Call to glCompressedTexImage1D in OpenGL ES"); }
+
+#else
+
+void et::etTexImage1D(uint32_t target, int level, int internalformat, GLsizei width, int border,
+	uint32_t format, uint32_t type, const GLvoid * pixels)
+{
+	glTexImage1D(target, level, internalformat, width, border, format, type, pixels);
+	
+	checkOpenGLError("glTexImage2D(%s, %d, %s, %d, %d, %s, %s, %, 0x%8X)",
+		glTexTargetToString(target).c_str(), level, glInternalFormatToString(internalformat).c_str(),
+		width, border, glInternalFormatToString(format).c_str(), glTypeToString(type).c_str(), pixels);
+}
+
 void et::etCompressedTexImage1D(uint32_t target, int level, uint32_t internalformat,
 	GLsizei width, int border, GLsizei imageSize, const GLvoid * data)
 {
-#if (!ET_OPENGLES)
 	glCompressedTexImage1D(target, level, internalformat, width, border, imageSize, data);
-	
 	checkOpenGLError("glCompressedTexImage1D(%s, %d, %s, %d, %d, %d, 0x%8X)",
 		glTexTargetToString(target).c_str(), level, glInternalFormatToString(internalformat).c_str(),
 		width, border, imageSize, data);
-#endif
 }
+
+#endif
 
 void et::etCompressedTexImage2D(uint32_t target, int level, uint32_t internalformat,
 	GLsizei width, GLsizei height, int border, GLsizei imageSize, const GLvoid * data)
@@ -482,18 +501,6 @@ void et::etCompressedTexImage2D(uint32_t target, int level, uint32_t internalfor
 	checkOpenGLError("glCompressedTexImage2D(%s, %d, %s, %d, %d, %d, %d, 0x%8X)",
 		glTexTargetToString(target).c_str(), level, glInternalFormatToString(internalformat).c_str(),
 		width, height, border, imageSize, data);
-#endif
-}
-
-void et::etTexImage1D(uint32_t target, int level, int internalformat, GLsizei width, int border,
-	uint32_t format, uint32_t type, const GLvoid * pixels)
-{
-#if (!ET_OPENGLES)
-	glTexImage1D(target, level, internalformat, width, border, format, type, pixels);
-
-	checkOpenGLError("glTexImage2D(%s, %d, %s, %d, %d, %s, %s, %, 0x%8X)",
-		glTexTargetToString(target).c_str(), level, glInternalFormatToString(internalformat).c_str(),
-		width, border, glInternalFormatToString(format).c_str(), glTypeToString(type).c_str(), pixels);
 #endif
 }
 

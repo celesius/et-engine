@@ -179,6 +179,7 @@ extern NSString* etKeyboardNotRequiredNotification;
 		Input::GestureInputSource gestureInput;
 		gestureInput.gesturePerformed(GestureInputInfo(GestureTypeMask_Shake));
 	}
+	(void)event;
 }
 
 - (void)onNotificationRecevied:(NSNotification*)notification

@@ -38,6 +38,9 @@ using namespace et;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+	(void)application;
+	(void)launchOptions;
+	
 	self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
 	
 	_updating = NO;
@@ -54,26 +57,31 @@ using namespace et;
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
+	(void)application;
 	_notifier.notifyDeactivated();
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+	(void)application;
 	_notifier.notifyActivated();
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
+	(void)application;
 	et::application().quit(0);
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
+	(void)application;
 	_notifier.notifySuspended();
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
+	(void)application;
 	_notifier.notifyResumed();
 }
 
@@ -106,8 +114,10 @@ using namespace et;
 
 #if defined(__IPHONE_6_0)
 
-- (NSUInteger)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window
+- (NSUInteger)application:(UIApplication*)application supportedInterfaceOrientationsForWindow:(UIWindow *)window
 {
+	(void)application;
+	(void)window;
 	UIViewController* vc = reinterpret_cast<UIViewController*>(et::application().renderingContextHandle());
 	return [vc supportedInterfaceOrientations];
 }
@@ -133,6 +143,11 @@ using namespace et;
 			annotation:annotation];
 	}
 #endif
+	
+	(void)sourceApplication;
+	(void)application;
+	(void)annotation;
+	(void)url;
 	
 	return processed;
 }

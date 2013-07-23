@@ -26,7 +26,9 @@ namespace et
 		static void sleepMSec(uint64_t msec);
 		
 	public:
-		Thread(bool start = true);
+		Thread();
+		Thread(bool start);
+		
 		virtual ~Thread();
 
 		bool run();

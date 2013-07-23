@@ -97,7 +97,7 @@ void TimerPoolObject::update(float t)
 		}
 		else
 		{
-			assert(0 && "Unresolved state for TimerPool QueueEntry");
+			assert(false && "Unresolved state for TimerPool QueueEntry");
 		}
 	} 
 

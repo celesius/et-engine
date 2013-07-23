@@ -79,12 +79,12 @@ Element::Pointer Element::childWithNameCallback(const std::string& name, Element
 {
 	if (root->isKindOf(ofType) && (root->name() == name)) return root;
 
-	ET_ITERATE(root->children(), const Element::Pointer&, i,  
+	for (auto& i : root->children())
 	{
 		Element::Pointer element = childWithNameCallback(name, i, ofType);
 		if (element.valid() && element->isKindOf(ofType))
 			return element;
-	})
+	}
 
 	return Element::Pointer();
 }

@@ -34,23 +34,23 @@ void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::stri
 	serializeInt(stream, fmt);
 
 	serializeInt(stream, storages.size());
-	ET_START_ITERATION(storages, Scene3dStorage::Pointer, s)
+	for (Scene3dStorage::Pointer s : storages)
 	{
 		serializeChunk(stream, HeaderMaterials);
 		serializeInt(stream, s->materials().size());
 		if (fmt == StorageFormat_Binary)
 		{
-			ET_ITERATE(s->materials(), auto&, mi,
+			for (auto& mi : s->materials())
 			{
                 size_t miPtr = reinterpret_cast<size_t>(mi.ptr());
 				serializeInt(stream, static_cast<int>(miPtr & 0xffffffff));
 				mi->serialize(stream, fmt);
-			})
+			}
 		}
 		else if (fmt == StorageFormat_HumanReadableMaterials)
 		{
 			std::map<std::string, int> materialsMap;
-			ET_START_ITERATION(s->materials(), auto&, mi)
+			for (auto& mi : s->materials())
 			{
 				std::string mFile;
 				std::string matName = mi->name();
@@ -74,7 +74,6 @@ void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::stri
 				mi->serialize(mStream, fmt);
 				mStream.close();
 			}
-			ET_END_ITERATION
 		}
 		else
 		{
@@ -83,12 +82,12 @@ void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::stri
 
 		serializeChunk(stream, HeaderVertexArrays);
 		serializeInt(stream, s->vertexArrays().size());
-		ET_ITERATE(s->vertexArrays(), auto&, vi,
+		for (auto& vi : s->vertexArrays())
 		{
             size_t viPtr = reinterpret_cast<size_t>(vi.ptr()) & 0xffffffff;
             serializeInt(stream, static_cast<int>(viPtr));
 			vi->serialize(stream);
-		})
+		}
 
 		IndexArray::Pointer ia = s->indexArray();
 
@@ -98,7 +97,6 @@ void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::stri
         serializeInt(stream, static_cast<int>(iaPtr));
 		ia->serialize(stream);
 	}
-	ET_END_ITERATION
 
 	serializeChunk(stream, HeaderElements);
 	ElementContainer::serialize(stream, SceneVersionLatest);
@@ -207,7 +205,7 @@ void Scene3d::buildAPIObjects(Scene3dStorage::Pointer p, RenderContext* rc)
 {
 	IndexBuffer ib;
 	VertexArrayList& vertexArrays = p->vertexArrays();
-	ET_START_ITERATION(vertexArrays, auto&, i)
+	for (auto& i : vertexArrays)
 	{
 		std::string vbName = "vb-" + intToStr(static_cast<size_t>(i->tag));
 		std::string ibName = "ib-" + intToStr(static_cast<size_t>(p->indexArray()->tag));
@@ -225,7 +223,6 @@ void Scene3d::buildAPIObjects(Scene3dStorage::Pointer p, RenderContext* rc)
 		_vaos.push_back(vao);
 		_vertexBuffers.push_back(vb);
 	}
-	ET_END_ITERATION
 
 	rc->renderState().resetBufferBindings();
 }

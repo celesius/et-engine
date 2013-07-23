@@ -89,9 +89,10 @@ void TextureData::setFiltration(RenderContext* rc, TextureFiltration minFiltrati
 	checkOpenGLError("glTexParameteri<GL_TEXTURE_MAG_FILTER> - %s", name().c_str()); 
 }
 
+#if defined(GL_TEXTURE_COMPARE_MODE) && defined(GL_TEXTURE_COMPARE_FUNC)
+
 void TextureData::compareRefToTexture(RenderContext* rc, bool enable, uint32_t compareFunc)
 {
-#if defined(GL_TEXTURE_COMPARE_MODE) && defined(GL_TEXTURE_COMPARE_FUNC)
 	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
 	if (enable)
 	{
@@ -104,12 +105,16 @@ void TextureData::compareRefToTexture(RenderContext* rc, bool enable, uint32_t c
 	else
 	{
 		glTexParameteri(_desc->target, GL_TEXTURE_COMPARE_MODE, GL_NONE);
-		checkOpenGLError("glTexParameteri(_target, GL_TEXTURE_COMPARE_MODE, GL_NONE) - %s", name().c_str()); 
+		checkOpenGLError("glTexParameteri(_target, GL_TEXTURE_COMPARE_MODE, GL_NONE) - %s", name().c_str());
 	}
-#else
-	assert(0 && "WARNING: GL_TEXTURE_COMPARE_MODE and GL_TEXTURE_COMPARE_FUNC are not defined.");
-#endif	
 }
+
+#else
+
+void TextureData::compareRefToTexture(RenderContext*, bool, uint32_t)
+	{ assert(false && "WARNING: GL_TEXTURE_COMPARE_MODE and GL_TEXTURE_COMPARE_FUNC are not defined."); }
+
+#endif
 
 void TextureData::generateTexture(RenderContext*)
 {

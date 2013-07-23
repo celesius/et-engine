@@ -21,7 +21,7 @@ namespace et
 		class CharacterGenerator : public Shared
 		{
 		public:
-			typedef et::IntrusivePtr<CharacterGenerator> Pointer;
+			ET_DECLARE_POINTER(CharacterGenerator)
 
 		public:
 			CharacterGenerator(RenderContext* _rc, const std::string& face,

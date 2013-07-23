@@ -10,9 +10,8 @@
 using namespace et;
 
 /*
-* EventReceiver
-*/
-
+ * EventReceiver
+ */
 void EventReceiver::eventConnected(Event* e)
 {
 	_events.push_back(e); 
