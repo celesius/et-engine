@@ -20,7 +20,7 @@ public:
 	void updateTexture(RenderContext* rc, const vec2i& position, const vec2i& size,
 		Texture texture, BinaryDataStorage& data);
 	
-	void renderCharacter(NSAttributedString* value, const vec2i& position, const vec2i& size,
+	void renderCharacter(NSAttributedString* value, const vec2i& size,
 		NSFont* font, BinaryDataStorage& data);
 	
 public:
@@ -67,23 +67,28 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 	NSSize characterSize = [attrString size];
 	vec2i charSize = vec2i(static_cast<int>(characterSize.width),
         static_cast<int>(characterSize.height));
-		
-	BinaryDataStorage data(charSize.square() * 4, 0);
-	
-	rect textureRect;
-	_private->_placer.place(charSize + vec2i(2), textureRect);
-	vec2i position = vec2i(static_cast<int>(textureRect.left + 1.0f), static_cast<int>(textureRect.top + 1.0f));
-	_private->renderCharacter(attrString, position, charSize, _private->font, data);
-	_private->updateTexture(_rc, position, charSize, _texture, data);
-
-	[attrString release];
-	[wString release];
 	
 	CharDescriptor desc(value);
-	desc.origin = textureRect.origin() + vec2(1.0f);
-	desc.size = textureRect.size() - vec2(2.0f);
-	desc.uvOrigin = _texture->getTexCoord(desc.origin);
-	desc.uvSize = desc.size / _texture->sizeFloat();
+	
+	if (charSize.square() > 0)
+	{
+		BinaryDataStorage data(charSize.square() * 4, 0);
+		
+		rect textureRect;
+		_private->_placer.place(charSize + vec2i(2), textureRect);
+		_private->renderCharacter(attrString, charSize, _private->font, data);
+		_private->updateTexture(_rc, vec2i(static_cast<int>(textureRect.left + 1.0f),
+			static_cast<int>(textureRect.top + 1.0f)), charSize, _texture, data);
+
+		[attrString release];
+		[wString release];
+		
+		desc.origin = textureRect.origin() + vec2(1.0f);
+		desc.size = textureRect.size() - vec2(2.0f);
+		desc.uvOrigin = _texture->getTexCoord(desc.origin);
+		desc.uvSize = desc.size / _texture->sizeFloat();
+		
+	}
 	
 	_chars[value] = desc;
 	return desc;
@@ -105,23 +110,27 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 	NSSize characterSize = [attrString size];
 	vec2i charSize = vec2i(static_cast<int>(characterSize.width),
         static_cast<int>(characterSize.height));
-
-	BinaryDataStorage data(charSize.square() * 4, 0);
-
-	rect textureRect;
-	_private->_placer.place(charSize + vec2i(2), textureRect);
-	vec2i position = vec2i(static_cast<int>(textureRect.left + 1.0f), static_cast<int>(textureRect.top + 1.0f));
-	_private->renderCharacter(attrString, position, charSize, _private->font, data);
-	_private->updateTexture(_rc, position, charSize, _texture, data);
-
-	[attrString release];
-	[wString release];
 	
 	CharDescriptor desc(value, CharParameter_Bold);
-	desc.origin = textureRect.origin() + vec2(1.0f);
-	desc.size = textureRect.size() - vec2(2.0f);
-	desc.uvOrigin = _texture->getTexCoord(desc.origin);
-	desc.uvSize = desc.size / _texture->sizeFloat();
+	if (charSize.square() > 0)
+	{
+		BinaryDataStorage data(charSize.square() * 4, 0);
+
+		rect textureRect;
+		
+		_private->_placer.place(charSize + vec2i(2), textureRect);
+		_private->renderCharacter(attrString, charSize, _private->font, data);
+		_private->updateTexture(_rc, vec2i(static_cast<int>(textureRect.left + 1.0f),
+			static_cast<int>(textureRect.top + 1.0f)), charSize, _texture, data);
+
+		[attrString release];
+		[wString release];
+		
+		desc.origin = textureRect.origin() + vec2(1.0f);
+		desc.size = textureRect.size() - vec2(2.0f);
+		desc.uvOrigin = _texture->getTexCoord(desc.origin);
+		desc.uvSize = desc.size / _texture->sizeFloat();
+	}
 	
 	_boldChars[value] = desc;
 	return desc;
@@ -180,11 +189,12 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& po
 	texture->updatePartialDataDirectly(rc, dest, size, data.binary(), data.dataSize());
 }
 
-void CharacterGeneratorPrivate::renderCharacter(NSAttributedString* value, const vec2i&,
+void CharacterGeneratorPrivate::renderCharacter(NSAttributedString* value,
 	const vec2i& size, NSFont*, BinaryDataStorage& data)
 {
 	CGContextRef context = CGBitmapContextCreateWithData(data.data(), size.x, size.y, 8, 4 * size.x,
 		colorSpace, kCGImageAlphaPremultipliedLast, nil, nil);
+	assert(context);
 
 	NSGraphicsContext* aContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:YES];
 	[NSGraphicsContext setCurrentContext:aContext];
