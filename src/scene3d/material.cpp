@@ -21,23 +21,23 @@ static const Texture _emptyTexture;
 static const std::string _emptyString;
 static const vec4 _emptyVector;
 
-const char* kMaterial = "material";
-const char* kDefaultValues = "default_values";
-const char* kCustomValues = "custom_values";
-const char* kType = "type";
-const char* kValue = "value";
-const char* kSource = "source";
-const char* kKey = "key";
-const char* kCapacity = "capacity";
-const char* kInt = "int";
-const char* kFloat = "float";
-const char* kVector = "vector";
-const char* kTexture = "texture";
-const char* kString = "string";
-const char* kName = "name";
-const char* kVersion = "version";
-const char* kDepthWrite = "depth_write";
-const char* kBlend = "blend";
+static const char* kMaterial = "material";
+static const char* kDefaultValues = "default_values";
+static const char* kCustomValues = "custom_values";
+static const char* kType = "type";
+static const char* kValue = "value";
+static const char* kSource = "source";
+static const char* kKey = "key";
+static const char* kCapacity = "capacity";
+static const char* kInt = "int";
+static const char* kFloat = "float";
+static const char* kVector = "vector";
+static const char* kTexture = "texture";
+static const char* kString = "string";
+static const char* kName = "name";
+static const char* kVersion = "version";
+static const char* kDepthWrite = "depth_write";
+static const char* kBlend = "blend";
 
 const std::string materialKeys[MaterialParameter_max] =
 {

@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <map>
+
 namespace et
 {
 	enum DictionaryEntryType
@@ -28,12 +30,16 @@ namespace et
 		
 	public:
 		virtual ~DictionaryEntryBase() { };
-		virtual DictionaryEntryType type() const = 0;
+		virtual DictionaryEntryType dictionaryEntryType() const = 0;
 	};
 
 	template <typename T>
 	class DictionaryTypedEntry : public DictionaryEntryBase
 	{
+	public:
+		const T& value() const
+			{ return _value; }
+		
 	protected:
 		T _value;
 	};
@@ -57,11 +63,8 @@ namespace et
 		DictionaryEntry(const std::string& s)
 			{ _value = s; }
 
-		DictionaryEntryType type() const
+		DictionaryEntryType dictionaryEntryType() const
 			{ return DictionaryEntryType_String; }
-
-		const std::string& value() const
-			{ return _value; }
 	};
 
 	template <>
@@ -74,11 +77,8 @@ namespace et
 		DictionaryEntry(double v)
 			{ _value = v; }
 
-		DictionaryEntryType type() const
+		DictionaryEntryType dictionaryEntryType() const
 			{ return DictionaryEntryType_Numeric; }
-
-		double value() const
-			{ return _value; }
 	};
 
 	template <>
@@ -90,25 +90,22 @@ namespace et
 		DictionaryEntry(bool b)
 			{ _value = b; }
 
-		DictionaryEntryType type() const
+		DictionaryEntryType dictionaryEntryType() const
 			{ return DictionaryEntryType_Bool; }
-
-		bool value() const
-			{ return _value; }
 	};
 
 	template <>
 	class DictionaryEntry<Array> : public DictionaryTypedEntry<Array>
 	{
 	public:
-		DictionaryEntryType type() const
+		DictionaryEntryType dictionaryEntryType() const
 			{ return DictionaryEntryType_Array; }
 
 		void push_back(const DictionaryEntryBase::Pointer& value)
 			{ _value.push_back(value); }
 
 		DictionaryEntryBase::Pointer objectAtIndex(size_t index)
-		{ return index < _value.size() ? _value.at(index) : DictionaryEntryBase::Pointer(); }
+			{ return index < _value.size() ? _value.at(index) : DictionaryEntryBase::Pointer(); }
 
 		size_t size() const
 			{ return _value.size(); }
@@ -121,7 +118,7 @@ namespace et
 		typedef IntrusivePtr< DictionaryEntry<Dictionary> > Pointer;
 
 	public:
-		DictionaryEntryType type() const
+		DictionaryEntryType dictionaryEntryType() const
 			{ return DictionaryEntryType_Dictionary; }
 
 		void setValueForKey(const DictionaryEntryBase::Pointer& value, const std::string& key)
@@ -137,7 +134,7 @@ namespace et
 		{
 			auto i = _value.find(key);
 
-			if ((i == _value.end()) || (i->second->type() != DictionaryEntryType_Dictionary))
+			if ((i == _value.end()) || (i->second->dictionaryEntryType() != DictionaryEntryType_Dictionary))
 				return DictionaryEntry<Dictionary>::Pointer();
 			
 			return i->second;
@@ -147,7 +144,7 @@ namespace et
 		{
 			auto i = _value.find(key);
 
-			if ((i == _value.end()) || (i->second->type() != DictionaryEntryType_Array))
+			if ((i == _value.end()) || (i->second->dictionaryEntryType() != DictionaryEntryType_Array))
 				return DictionaryEntry<Array>::Pointer();
 
 			return i->second;
@@ -157,7 +154,7 @@ namespace et
 		{
 			auto i = _value.find(key);
 			
-			if ((i == _value.end()) || (i->second->type() != DictionaryEntryType_Numeric))
+			if ((i == _value.end()) || (i->second->dictionaryEntryType() != DictionaryEntryType_Numeric))
 				return DictionaryEntry<double>::Pointer();
 
 			return i->second;
@@ -167,7 +164,7 @@ namespace et
 		{
 			auto i = _value.find(key);
 
-			if ((i == _value.end()) || (i->second->type() != DictionaryEntryType_Bool))
+			if ((i == _value.end()) || (i->second->dictionaryEntryType() != DictionaryEntryType_Bool))
 				return DictionaryEntry<bool>::Pointer();
 			
 			return i->second;
@@ -177,7 +174,7 @@ namespace et
 		{
 			auto i = _value.find(key);
 			
-			if ((i == _value.end()) || (i->second->type() != DictionaryEntryType_String))
+			if ((i == _value.end()) || (i->second->dictionaryEntryType() != DictionaryEntryType_String))
 				return DictionaryEntry<std::string>::Pointer();
 
 			return i->second;
@@ -186,4 +183,7 @@ namespace et
 		const Dictionary& dictionary() const
 			{ return _value; }
 	};
+	
+	inline DictionaryEntry<std::string>::Pointer dictionaryStringEntry(const std::string& value)
+		{ return DictionaryEntry<std::string>::Pointer(new DictionaryEntry<std::string>(value)); }
 }
