@@ -94,7 +94,7 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 	
 	if (_backgroundColor.w > 0.0f)
 	{
-		gr.createColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor,
+		gr.createColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor * alphaScaleColor,
 			transform, RenderLayer_Layer0);
 	}
 
