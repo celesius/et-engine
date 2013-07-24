@@ -8,182 +8,139 @@
 #pragma once
 
 #include <map>
+#include <et/core/intrusiveptr.h>
 
 namespace et
 {
-	enum DictionaryEntryType
-	{
-		DictionaryEntryType_String,
-		DictionaryEntryType_Numeric,
-		DictionaryEntryType_Bool,
-		DictionaryEntryType_Array,
-		DictionaryEntryType_Dictionary,
-	};
-
-	/*
-	 * Base classes
-	 */
-	class DictionaryEntryBase : public Shared
+	class ValueBase : public Shared
 	{
 	public:
-		typedef IntrusivePtr<DictionaryEntryBase> Pointer;
+		ET_DECLARE_POINTER(ValueBase)
+						   
+ 	public:
+		virtual ~ValueBase() { }
 		
-	public:
-		virtual ~DictionaryEntryBase() { };
-		virtual DictionaryEntryType dictionaryEntryType() const = 0;
-	};
-
-	template <typename T>
-	class DictionaryTypedEntry : public DictionaryEntryBase
-	{
-	public:
-		const T& value() const
-			{ return _value; }
-		
-	protected:
-		T _value;
-	};
-
-	template <typename T>
-	class DictionaryEntry : public DictionaryTypedEntry<T> { };
-
-	typedef std::vector<DictionaryEntryBase::Pointer> Array;
-	typedef std::map<std::string, DictionaryEntryBase::Pointer> Dictionary;
-
-	/*
-	 * Specialized classes
-	 */
-	template <>
-	class DictionaryEntry<std::string> : public DictionaryTypedEntry<std::string>
-	{
-	public:
-		typedef IntrusivePtr<DictionaryEntry<std::string>> Pointer;
-
-	public:
-		DictionaryEntry(const std::string& s)
-			{ _value = s; }
-
-		DictionaryEntryType dictionaryEntryType() const
-			{ return DictionaryEntryType_String; }
-	};
-
-	template <>
-	class DictionaryEntry<double> : public DictionaryTypedEntry<double>
-	{
-	public:
-		typedef IntrusivePtr<DictionaryEntry<double>> Pointer;
-		
-	public:
-		DictionaryEntry(double v)
-			{ _value = v; }
-
-		DictionaryEntryType dictionaryEntryType() const
-			{ return DictionaryEntryType_Numeric; }
-	};
-
-	template <>
-	class DictionaryEntry<bool> : public DictionaryTypedEntry<bool>
-	{
-	public:
-		typedef IntrusivePtr<DictionaryEntry<bool>> Pointer;
-	public:
-		DictionaryEntry(bool b)
-			{ _value = b; }
-
-		DictionaryEntryType dictionaryEntryType() const
-			{ return DictionaryEntryType_Bool; }
-	};
-
-	template <>
-	class DictionaryEntry<Array> : public DictionaryTypedEntry<Array>
-	{
-	public:
-		DictionaryEntryType dictionaryEntryType() const
-			{ return DictionaryEntryType_Array; }
-
-		void push_back(const DictionaryEntryBase::Pointer& value)
-			{ _value.push_back(value); }
-
-		DictionaryEntryBase::Pointer objectAtIndex(size_t index)
-			{ return index < _value.size() ? _value.at(index) : DictionaryEntryBase::Pointer(); }
-
-		size_t size() const
-			{ return _value.size(); }
-	};
-
-	template <>
-	class DictionaryEntry<Dictionary> : public DictionaryTypedEntry<Dictionary>
-	{
-	public:
-		typedef IntrusivePtr< DictionaryEntry<Dictionary> > Pointer;
-
-	public:
-		DictionaryEntryType dictionaryEntryType() const
-			{ return DictionaryEntryType_Dictionary; }
-
-		void setValueForKey(const DictionaryEntryBase::Pointer& value, const std::string& key)
-			{ _value[key] = value; }
-
-		DictionaryEntryBase::Pointer valueForKey(const std::string& key)
-		{
-			auto i = _value.find(key);
-			return i == _value.end() ? DictionaryEntryBase::Pointer() : i->second;
-		}
-
-		DictionaryEntry<Dictionary>::Pointer dictionaryForKey(const std::string& key)
-		{
-			auto i = _value.find(key);
-
-			if ((i == _value.end()) || (i->second->dictionaryEntryType() != DictionaryEntryType_Dictionary))
-				return DictionaryEntry<Dictionary>::Pointer();
-			
-			return i->second;
-		}
-
-		DictionaryEntry<Array>::Pointer arrayForKey(const std::string& key)
-		{
-			auto i = _value.find(key);
-
-			if ((i == _value.end()) || (i->second->dictionaryEntryType() != DictionaryEntryType_Array))
-				return DictionaryEntry<Array>::Pointer();
-
-			return i->second;
-		}
-
-		DictionaryEntry<double>::Pointer numberForKey(const std::string& key)
-		{
-			auto i = _value.find(key);
-			
-			if ((i == _value.end()) || (i->second->dictionaryEntryType() != DictionaryEntryType_Numeric))
-				return DictionaryEntry<double>::Pointer();
-
-			return i->second;
-		}
-
-		DictionaryEntry<bool>::Pointer boolForKey(const std::string& key)
-		{
-			auto i = _value.find(key);
-
-			if ((i == _value.end()) || (i->second->dictionaryEntryType() != DictionaryEntryType_Bool))
-				return DictionaryEntry<bool>::Pointer();
-			
-			return i->second;
-		}
-
-		DictionaryEntry<std::string>::Pointer stringForKey(const std::string& key)
-		{
-			auto i = _value.find(key);
-			
-			if ((i == _value.end()) || (i->second->dictionaryEntryType() != DictionaryEntryType_String))
-				return DictionaryEntry<std::string>::Pointer();
-
-			return i->second;
-		}
-
-		const Dictionary& dictionary() const
-			{ return _value; }
+		virtual int valueClass() const = 0;
 	};
 	
-	inline DictionaryEntry<std::string>::Pointer dictionaryStringEntry(const std::string& value)
-		{ return DictionaryEntry<std::string>::Pointer(new DictionaryEntry<std::string>(value)); }
+	enum ValueClass
+	{
+		ValueClass_Numeric,
+		ValueClass_String,
+		ValueClass_Array,
+		ValueClass_Dictionary,
+	};
+	
+	template <typename T, ValueClass C>
+	class Value : public ValueBase
+	{
+	public:
+		typedef et::IntrusivePtr<Value<T, C>> Pointer;
+		
+	public:
+		T content;
+		
+	public:
+		Value() :
+			content(T()) { }
+		
+		Value(const T& r) :
+			content(r) { }
+
+		int valueClass() const
+			{ return C; }
+	};
+		
+	template <typename T, ValueClass C>
+	class ValuePointer : public Value<T, C>::Pointer
+	{
+	public:
+		typedef T ValueType;
+		
+	public:
+		ValuePointer() :
+			Value<T, C>::Pointer(new Value<T, C>()) { }
+		
+		ValuePointer(const T& r) :
+			Value<T, C>::Pointer(new Value<T, C>(r)) { }
+
+		ValuePointer(const typename Value<T, C>::Pointer& p) :
+			Value<T, C>::Pointer(p) { }
+
+		ValuePointer(Value<T, C>* p) :
+			Value<T, C>::Pointer(p) { }
+
+		ValuePointer(ValueBase::Pointer p) :
+			Value<T, C>::Pointer(p) { }
+		
+		const T& value() const
+			{ return this->reference().content; }
+	};
+	
+	typedef ValuePointer<double, ValueClass_Numeric> NumericValue;
+	typedef ValuePointer<std::string, ValueClass_String> StringValue;
+	typedef ValuePointer<std::vector<ValueBase::Pointer>, ValueClass_Array> ArrayValue;
+	
+	class Dictionary : public ValuePointer<std::map<std::string, ValueBase::Pointer>, ValueClass_Dictionary>
+	{
+	public:
+		Dictionary() :
+			ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>(
+			new Value<Dictionary::ValueType, ValueClass_Dictionary>) { }
+		
+		Dictionary(const ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>& r) :
+			ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>(r) { }
+		
+		Dictionary(ValueBase::Pointer p) :
+			ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>(p) { }
+		
+	public:
+		void setStringForKey(const std::string& key, const std::string& value)
+			{ setValueForKey<std::string, ValueClass_String>(key, value); }
+
+		void setNumberForKey(const std::string& key, double value)
+			{ setValueForKey<double, ValueClass_Numeric>(key, value); }
+		
+		NumericValue numberForKey(const std::string& key)
+			{ return valueForKey<NumericValue::ValueType, ValueClass_Numeric>(key); }
+
+		StringValue stringForKey(const std::string& key)
+			{ return valueForKey<StringValue::ValueType, ValueClass_String>(key); }
+
+		ArrayValue arrayForKey(const std::string& key)
+			{ return valueForKey<ArrayValue::ValueType, ValueClass_Array>(key); }
+		
+		Dictionary dictionaryForKey(const std::string& key)
+			{ return Dictionary(valueForKey<Dictionary::ValueType, ValueClass_Dictionary>(key)); }
+
+	private:
+		template <typename T, ValueClass C>
+		void setValueForKey(const std::string& key, const ValuePointer<T, C>& value)
+			{ this->reference().content[key] = value; }
+		
+		template <typename V, ValueClass C>
+		void setValueForKey(const std::string& key, const V& value)
+			{ setValueForKey(key, ValuePointer<V, C>(value)); }
+		
+		template <typename T, ValueClass C>
+		ValuePointer<T, C> valueForKey(const std::string& key)
+		{
+			auto i = reference().content.find(key);
+			if (i == reference().content.end())
+			{
+				ValuePointer<T, C> newInstance;
+				setValueForKey(key, newInstance);
+				return newInstance;
+			}
+			else
+			{
+				typename Value<T, C>::Pointer ptr = i->second;
+				int requestedClass = C;
+				int receivedClass = i->second->valueClass();
+				assert(requestedClass == receivedClass);
+				return ValuePointer<T, C>(ptr.ptr());
+			}
+		}
+		
+	};
 }

@@ -14,20 +14,19 @@
 
 namespace et
 {
-	namespace plist
+/*
+	class Reader
 	{
-		class Reader
-		{
-		public:
-			DictionaryEntry<Dictionary>::Pointer load(const std::string& filename);
+	public:
+		DictionaryEntry<Dictionary>::Pointer load(const std::string& filename);
 
-		private:
-			void parseBuffer(BinaryDataStorage& buffer, DictionaryEntry<Dictionary>* root);
-			bool parseDictionary(char*& ptr, DictionaryEntry<Dictionary>* owner);
-			bool parseString(char*& ptr, DictionaryEntryBase** value);
-			bool parseInteger(char*& ptr, DictionaryEntryBase** value);
-			bool parseArray(char*& ptr, DictionaryEntryBase** value);
-			bool parseValue(char*& ptr, DictionaryEntryBase** value);
-		};
-	}
+	private:
+		void parseBuffer(BinaryDataStorage& buffer, DictionaryEntry<Dictionary>* root);
+		bool parseDictionary(char*& ptr, DictionaryEntry<Dictionary>* owner);
+		bool parseString(char*& ptr, DictionaryEntryBase** value);
+		bool parseInteger(char*& ptr, DictionaryEntryBase** value);
+		bool parseArray(char*& ptr, DictionaryEntryBase** value);
+		bool parseValue(char*& ptr, DictionaryEntryBase** value);
+	};
+*/
 }
