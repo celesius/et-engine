@@ -95,7 +95,7 @@ namespace et
 			ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>(r) { }
 
 		Dictionary(Dictionary&& r) :
-			ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>(r) { r->content.clear();	}
+			ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>(r) {	}
 		
 		Dictionary(ValueBase::Pointer p) :
 			ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>(p) { }

@@ -11,7 +11,9 @@ using namespace et;
 
 void Dictionary::printContent() const
 {
-	printDictionary(*this, std::string());
+	log::info("<");
+	printDictionary(*this, "\t");
+	log::info(">");
 }
 
 void Dictionary::printArray(ArrayValue arr, const std::string& tabs) const
