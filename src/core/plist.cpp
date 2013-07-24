@@ -10,7 +10,7 @@
 #include <et/core/stream.h>
 
 using namespace et;
-using namespace et::plist;
+// using namespace et::plist;
 
 const char charOpeningTag = '<';
 const char charClosingTag = '>';
@@ -27,7 +27,7 @@ static const std::string keyBoolTrue = "<true/>";
 static const std::string keyBoolFalse = "<false/>";
 static const std::string keyIntegerOpen = "<integer>";
 static const std::string keyIntegerClose = "</integer>";
-
+/*
 DictionaryEntry<Dictionary>::Pointer Reader::load(const std::string& filename)
 {
 	DictionaryEntry<Dictionary>::Pointer result(new DictionaryEntry<Dictionary>);
@@ -271,3 +271,4 @@ bool Reader::parseArray(char*& ptr, DictionaryEntryBase** value)
 
 	return true;
 }
+*/
