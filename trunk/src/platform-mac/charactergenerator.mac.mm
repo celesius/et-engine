@@ -80,15 +80,14 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 		_private->updateTexture(_rc, vec2i(static_cast<int>(textureRect.left + 1.0f),
 			static_cast<int>(textureRect.top + 1.0f)), charSize, _texture, data);
 
-		[attrString release];
-		[wString release];
-		
 		desc.origin = textureRect.origin() + vec2(1.0f);
 		desc.size = textureRect.size() - vec2(2.0f);
 		desc.uvOrigin = _texture->getTexCoord(desc.origin);
 		desc.uvSize = desc.size / _texture->sizeFloat();
-		
 	}
+
+	[attrString release];
+	[wString release];
 	
 	_chars[value] = desc;
 	return desc;
@@ -123,14 +122,14 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 		_private->updateTexture(_rc, vec2i(static_cast<int>(textureRect.left + 1.0f),
 			static_cast<int>(textureRect.top + 1.0f)), charSize, _texture, data);
 
-		[attrString release];
-		[wString release];
-		
 		desc.origin = textureRect.origin() + vec2(1.0f);
 		desc.size = textureRect.size() - vec2(2.0f);
 		desc.uvOrigin = _texture->getTexCoord(desc.origin);
 		desc.uvSize = desc.size / _texture->sizeFloat();
 	}
+
+	[attrString release];
+	[wString release];
 	
 	_boldChars[value] = desc;
 	return desc;
