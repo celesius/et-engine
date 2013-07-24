@@ -90,57 +90,68 @@ namespace et
 		
 		Dictionary(const ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>& r) :
 			ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>(r) { }
+
+		Dictionary(const Dictionary& r) :
+			ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>(r) { }
+
+		Dictionary(Dictionary&& r) :
+			ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>(r) { r->content.clear();	}
 		
 		Dictionary(ValueBase::Pointer p) :
 			ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>(p) { }
 		
-	public:
-		void setStringForKey(const std::string& key, const std::string& value)
-			{ setValueForKey<std::string, ValueClass_String>(key, value); }
-
-		void setNumberForKey(const std::string& key, double value)
-			{ setValueForKey<double, ValueClass_Numeric>(key, value); }
+		Dictionary& operator = (const Dictionary& r)
+			{ reference().content = r->content; return *this; }
 		
-		NumericValue numberForKey(const std::string& key)
+	public:
+		void setStringForKey(const std::string& key, StringValue value)
+			{ setValueForKey<StringValue, ValueClass_String>(key, value); }
+
+		void setNumberForKey(const std::string& key, NumericValue value)
+			{ setValueForKey<NumericValue, ValueClass_Numeric>(key, value); }
+		
+		void setArrayForKey(const std::string& key, ArrayValue value)
+			{ setValueForKey<ArrayValue, ValueClass_Array>(key, value); }
+
+		void setDictionaryForKey(const std::string& key, Dictionary value)
+			{ setValueForKey<Dictionary, ValueClass_Dictionary>(key, value); }
+		
+	public:
+		NumericValue numberForKey(const std::string& key) const
 			{ return valueForKey<NumericValue::ValueType, ValueClass_Numeric>(key); }
 
-		StringValue stringForKey(const std::string& key)
+		StringValue stringForKey(const std::string& key) const
 			{ return valueForKey<StringValue::ValueType, ValueClass_String>(key); }
 
-		ArrayValue arrayForKey(const std::string& key)
+		ArrayValue arrayForKey(const std::string& key) const
 			{ return valueForKey<ArrayValue::ValueType, ValueClass_Array>(key); }
 		
-		Dictionary dictionaryForKey(const std::string& key)
+		Dictionary dictionaryForKey(const std::string& key) const
 			{ return Dictionary(valueForKey<Dictionary::ValueType, ValueClass_Dictionary>(key)); }
+		
+	public:
+		void printContent() const;
 
 	private:
 		template <typename T, ValueClass C>
-		void setValueForKey(const std::string& key, const ValuePointer<T, C>& value)
+		void setValueForKey(const std::string& key, const T& value)
 			{ this->reference().content[key] = value; }
-		
-		template <typename V, ValueClass C>
-		void setValueForKey(const std::string& key, const V& value)
-			{ setValueForKey(key, ValuePointer<V, C>(value)); }
-		
+				
 		template <typename T, ValueClass C>
-		ValuePointer<T, C> valueForKey(const std::string& key)
+		ValuePointer<T, C> valueForKey(const std::string& key) const
 		{
 			auto i = reference().content.find(key);
+			
 			if (i == reference().content.end())
-			{
-				ValuePointer<T, C> newInstance;
-				setValueForKey(key, newInstance);
-				return newInstance;
-			}
-			else
-			{
-				typename Value<T, C>::Pointer ptr = i->second;
-				int requestedClass = C;
-				int receivedClass = i->second->valueClass();
-				assert(requestedClass == receivedClass);
-				return ValuePointer<T, C>(ptr.ptr());
-			}
+				return ValuePointer<T, C>();
+			
+			typename Value<T, C>::Pointer ptr = i->second;
+			assert(i->second->valueClass() == C);
+			return ValuePointer<T, C>(ptr.ptr());
 		}
 		
+	private:
+		void printArray(ArrayValue, const std::string&) const;
+		void printDictionary(Dictionary, const std::string&) const;
 	};
 }
