@@ -9,9 +9,11 @@
 
 #include <et/core/et.h>
 
+#define ET_SINGLETON_CONSTRUCTORS(t)	ET_DENY_COPY(t) friend class et::Singleton<t>; t() { }
+#define ET_SINGLETON_COPY_DENY(t)		ET_DENY_COPY(t) friend class et::Singleton<t>;
+
 namespace et
 { 
-
 	template <class t_class>
 	class Singleton
 	{
@@ -22,20 +24,8 @@ namespace et
 			return _instance;
 		}
 
-	protected: 
+	protected:
 		Singleton() { };
-		Singleton(const Singleton&) { };
-		Singleton& operator = (const Singleton&) { };
+		ET_DENY_COPY(Singleton)
 	};
-
-#define ET_SINGLETON_CONSTRUCTORS(t) private:	\
-	t() { }										\
-	t(const t&) { }								\
-	t& operator = (const t&) { return *this; }	\
-	friend class et::Singleton<t>;
-
-#define ET_SINGLETON_COPY_DENY(t) private:		\
-	ET_DENY_COPY(t)								\
-	friend class et::Singleton<t>;
-
 }
