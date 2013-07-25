@@ -214,7 +214,7 @@ void Label::fitToWidth(float w)
 	std::string latestLine;
 	
 	const std::string dividers(" \n\t\r");
-	
+		
 	while (oldText.size())
 	{
 		size_t wsPos = oldText.find_first_of(dividers);
