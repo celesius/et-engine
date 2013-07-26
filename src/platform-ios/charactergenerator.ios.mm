@@ -118,9 +118,19 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
     NSString* cBoldFace = [NSString stringWithCString:boldFace.c_str() encoding:NSASCIIStringEncoding];
 	
     _font = [[UIFont fontWithName:cFace size:static_cast<float>(size)] retain];
+	if (_font == nil)
+	{
+		log::warning("Font %s not found, using system font.", face.c_str());
+		_font = [[UIFont systemFontOfSize:static_cast<float>(size)] retain];
+	}
 	assert(_font);
 	
     _boldFont = [[UIFont fontWithName:cBoldFace size:static_cast<float>(size)] retain];
+	if (_boldFont == nil)
+	{
+		log::warning("Font %s not found, using system bold font.", boldFace.c_str());
+		_boldFont = [[UIFont boldSystemFontOfSize:static_cast<float>(size)] retain];
+	}
 	assert(_boldFont);
 }
 
