@@ -78,7 +78,6 @@ namespace et
 	};
 	
 	typedef ValuePointer<double, ValueClass_Numeric> NumericValue;
-	typedef ValuePointer<std::vector<ValueBase::Pointer>, ValueClass_Array> ArrayValue;
 	
 	class StringValue : public ValuePointer<std::string, ValueClass_String>
 	{
@@ -102,12 +101,36 @@ namespace et
 			ValuePointer<std::string, ValueClass_String>(p) { }
 	};
 	
+	class ArrayValue : public ValuePointer<std::vector<ValueBase::Pointer>, ValueClass_Array>
+	{
+	public:
+		ArrayValue() :
+			ValuePointer<ArrayValue::ValueType, ValueClass_Array>( ) { }
+		
+		ArrayValue(const ValuePointer<ArrayValue::ValueType, ValueClass_Array>& r) :
+			ValuePointer<ArrayValue::ValueType, ValueClass_Array>(r) { }
+		
+		ArrayValue(const ArrayValue& r) :
+			ValuePointer<ArrayValue::ValueType, ValueClass_Array>(r) { }
+		
+		ArrayValue(ArrayValue&& r) :
+			ValuePointer<ArrayValue::ValueType, ValueClass_Array>(r) {	}
+		
+		ArrayValue(ValueBase::Pointer p) :
+			ValuePointer<ArrayValue::ValueType, ValueClass_Array>(p) { }
+		
+		ArrayValue& operator = (const ArrayValue& r)
+			{ reference().content = r->content; return *this; }
+		
+	public:
+		void printContent() const;
+	};
+	
 	class Dictionary : public ValuePointer<std::map<std::string, ValueBase::Pointer>, ValueClass_Dictionary>
 	{
 	public:
 		Dictionary() :
-			ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>(
-			new Value<Dictionary::ValueType, ValueClass_Dictionary>) { }
+			ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>( ) { }
 		
 		Dictionary(const ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>& r) :
 			ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>(r) { }
@@ -140,22 +163,26 @@ namespace et
 	public:
 		NumericValue numberForKey(const std::string& key, NumericValue def = NumericValue()) const
 			{ return valueForKey<NumericValue::ValueType, ValueClass_Numeric>(key, def); }
-		NumericValue numberForKey(const std::vector<std::string>& key, NumericValue def = NumericValue()) const
+		
+		NumericValue numberForKeyPath(const std::vector<std::string>& key, NumericValue def = NumericValue()) const
 			{ return valueForKeyPath<NumericValue::ValueType, ValueClass_Numeric>(key, def); }
 		
 		StringValue stringForKey(const std::string& key, StringValue def = StringValue()) const
 			{ return valueForKey<StringValue::ValueType, ValueClass_String>(key, def); }
-		StringValue stringForKey(const std::vector<std::string>& key, StringValue def = StringValue()) const
+		
+		StringValue stringForKeyPath(const std::vector<std::string>& key, StringValue def = StringValue()) const
 			{ return valueForKeyPath<StringValue::ValueType, ValueClass_String>(key, def); }
 		
 		ArrayValue arrayForKey(const std::string& key, ArrayValue def = ArrayValue()) const
 			{ return valueForKey<ArrayValue::ValueType, ValueClass_Array>(key, def); }
-		ArrayValue arrayForKey(const std::vector<std::string>& key, ArrayValue def = ArrayValue()) const
+		
+		ArrayValue arrayForKeyPath(const std::vector<std::string>& key, ArrayValue def = ArrayValue()) const
 			{ return valueForKeyPath<ArrayValue::ValueType, ValueClass_Array>(key, def); }
 		
 		Dictionary dictionaryForKey(const std::string& key, Dictionary def = Dictionary()) const
 			{ return Dictionary(valueForKey<Dictionary::ValueType, ValueClass_Dictionary>(key, def)); }
-		Dictionary dictionaryForKey(const std::vector<std::string>& key, Dictionary def = Dictionary()) const
+		
+		Dictionary dictionaryForKeyPath(const std::vector<std::string>& key, Dictionary def = Dictionary()) const
 			{ return Dictionary(valueForKeyPath<Dictionary::ValueType, ValueClass_Dictionary>(key, def)); }
 		
 		bool emptry() const
@@ -189,10 +216,5 @@ namespace et
 		template <typename T, ValueClass C>
 		ValuePointer<T, C> valueForKey(const std::string& key, ValuePointer<T, C> def) const
 			{ return valueForKeyPath({key}, def); }
-		
-		
-	private:
-		void printArray(ArrayValue, const std::string&) const;
-		void printDictionary(Dictionary, const std::string&) const;
 	};
 }
