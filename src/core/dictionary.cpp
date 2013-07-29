@@ -11,6 +11,9 @@
 
 using namespace et;
 
+void printDictionary(Dictionary dict, const std::string& tabs);
+void printArray(ArrayValue arr, const std::string& tabs);
+
 void Dictionary::printContent() const
 {
 	log::info("<");
@@ -18,7 +21,76 @@ void Dictionary::printContent() const
 	log::info(">");
 }
 
-void Dictionary::printArray(ArrayValue arr, const std::string& tabs) const
+void ArrayValue::printContent() const
+{
+	log::info("{");
+	printArray(*this, "\t");
+	log::info("}");
+}
+
+ValueBase::Pointer Dictionary::baseValueForKeyPathInHolder(const std::vector<std::string>& path,
+	ValueBase::Pointer holder) const
+{
+	if (holder->valueClass() == ValueClass_Dictionary)
+	{
+		Dictionary dictionary(holder);
+		auto value = dictionary->content.find(path.front());
+		
+		if (value == dictionary->content.end())
+			return ValueBase::Pointer();
+		
+		return (path.size() == 1) ? value->second : baseValueForKeyPathInHolder(
+			std::vector<std::string>(path.begin() + 1, path.end()), value->second);
+	}
+	else if (holder->valueClass() == ValueClass_Array)
+	{
+		size_t index = strToInt(path.front());
+		ArrayValue array(holder);
+		
+		if (index >= array->content.size())
+			return ValueBase::Pointer();
+		
+		ValueBase::Pointer value = array->content.at(index);
+		
+		return (path.size() == 1) ? value : baseValueForKeyPathInHolder(
+			std::vector<std::string>(path.begin() + 1, path.end()), value);
+	}
+	else if (holder->valueClass() == ValueClass_String)
+	{
+		StringValue string(holder);
+		log::warning("Trying to extract subvalue `%s` from string `%s`", path.front().c_str(),
+			string->content.c_str());
+	}
+	else if (holder->valueClass() == ValueClass_Numeric)
+	{
+		NumericValue number(holder);
+		log::warning("Trying to extract subvalue `%s` from number %g.", path.front().c_str(),
+			number->content);
+	}
+	else
+	{
+		assert(false);
+	}
+	
+	return ValueBase::Pointer();
+}
+
+ValueBase::Pointer Dictionary::baseValueForKeyPath(const std::vector<std::string>& path) const
+{
+	assert(path.size() > 0);
+	return baseValueForKeyPathInHolder(path, *this);
+}
+
+bool Dictionary::valueForKeyPathIsClassOf(const std::vector<std::string>& key, ValueClass c) const
+{
+	auto v = baseValueForKeyPath(key);
+	return v.valid() && (v->valueClass() == c);
+}
+
+/*
+ * Service functions
+ */
+void printArray(ArrayValue arr, const std::string& tabs)
 {
 	for (auto i : arr->content)
 	{
@@ -48,7 +120,7 @@ void Dictionary::printArray(ArrayValue arr, const std::string& tabs) const
 	}
 }
 
-void Dictionary::printDictionary(Dictionary dict, const std::string& tabs) const
+void printDictionary(Dictionary dict, const std::string& tabs)
 {
 	for (auto i : dict->content)
 	{
@@ -79,46 +151,3 @@ void Dictionary::printDictionary(Dictionary dict, const std::string& tabs) const
 	}
 }
 
-ValueBase::Pointer Dictionary::baseValueForKeyPathInHolder(const std::vector<std::string>& path,
-	ValueBase::Pointer holder) const
-{
-	if (holder->valueClass() == ValueClass_Dictionary)
-	{
-		Dictionary dictionary(holder);
-		auto value = dictionary->content.find(path.front());
-		
-		if (value == dictionary->content.end())
-			return ValueBase::Pointer();
-		
-		return (path.size() == 1) ? value->second : baseValueForKeyPathInHolder(
-			std::vector<std::string>(path.begin() + 1, path.end()), value->second);
-	}
-	else if (holder->valueClass() == ValueClass_Array)
-	{
-		size_t index = strToInt(path.front());
-		ArrayValue array(holder);
-		
-		if (index >= array->content.size())
-			return ValueBase::Pointer();
-		
-		ValueBase::Pointer value = array->content.at(index);
-		
-		return (path.size() == 1) ? value : baseValueForKeyPathInHolder(
-			std::vector<std::string>(path.begin() + 1, path.end()), value);
-	}
-	
-	log::warning("Trying to extract subvalue from string or number.");
-	return holder;
-}
-
-ValueBase::Pointer Dictionary::baseValueForKeyPath(const std::vector<std::string>& path) const
-{
-	assert(path.size() > 0);
-	return baseValueForKeyPathInHolder(path, *this);
-}
-
-bool Dictionary::valueForKeyPathIsClassOf(const std::vector<std::string>& key, ValueClass c) const
-{
-	auto v = baseValueForKeyPath(key);
-	return v.valid() && (v->valueClass() == c);
-}
