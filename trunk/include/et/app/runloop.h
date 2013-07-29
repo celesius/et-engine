@@ -30,6 +30,9 @@ namespace et
 		float time() const
 			{ return _time; }
 
+		uint64_t timeMSec() const
+			{ return _actualTimeMSec; }
+		
 		void attachTimerPool(TimerPool pool);
 		void detachTimerPool(TimerPool pool);
 		void detachAllTimerPools();

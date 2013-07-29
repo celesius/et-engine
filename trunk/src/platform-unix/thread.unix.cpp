@@ -114,6 +114,9 @@ void Thread::resume()
 bool Thread::stop()
 {
 	if (_private->running.atomicCounterValue() == 0) return false;
+	
+	resume();
+	
 	_private->running.release();
 
 	return true;
