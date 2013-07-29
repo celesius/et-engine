@@ -5,6 +5,8 @@
  *
  */
 
+#include <typeinfo>
+#include <et/core/tools.h>
 #include <et/core/dictionary.h>
 
 using namespace et;
@@ -75,4 +77,48 @@ void Dictionary::printDictionary(Dictionary dict, const std::string& tabs) const
 			log::info("%s>", tabs.c_str());
 		}
 	}
+}
+
+ValueBase::Pointer Dictionary::baseValueForKeyPathInHolder(const std::vector<std::string>& path,
+	ValueBase::Pointer holder) const
+{
+	if (holder->valueClass() == ValueClass_Dictionary)
+	{
+		Dictionary dictionary(holder);
+		auto value = dictionary->content.find(path.front());
+		
+		if (value == dictionary->content.end())
+			return ValueBase::Pointer();
+		
+		return (path.size() == 1) ? value->second : baseValueForKeyPathInHolder(
+			std::vector<std::string>(path.begin() + 1, path.end()), value->second);
+	}
+	else if (holder->valueClass() == ValueClass_Array)
+	{
+		size_t index = strToInt(path.front());
+		ArrayValue array(holder);
+		
+		if (index >= array->content.size())
+			return ValueBase::Pointer();
+		
+		ValueBase::Pointer value = array->content.at(index);
+		
+		return (path.size() == 1) ? value : baseValueForKeyPathInHolder(
+			std::vector<std::string>(path.begin() + 1, path.end()), value);
+	}
+	
+	log::warning("Trying to extract subvalue from string or number.");
+	return holder;
+}
+
+ValueBase::Pointer Dictionary::baseValueForKeyPath(const std::vector<std::string>& path) const
+{
+	assert(path.size() > 0);
+	return baseValueForKeyPathInHolder(path, *this);
+}
+
+bool Dictionary::valueForKeyPathIsClassOf(const std::vector<std::string>& key, ValueClass c) const
+{
+	auto v = baseValueForKeyPath(key);
+	return v.valid() && (v->valueClass() == c);
 }

@@ -78,8 +78,29 @@ namespace et
 	};
 	
 	typedef ValuePointer<double, ValueClass_Numeric> NumericValue;
-	typedef ValuePointer<std::string, ValueClass_String> StringValue;
 	typedef ValuePointer<std::vector<ValueBase::Pointer>, ValueClass_Array> ArrayValue;
+	
+	class StringValue : public ValuePointer<std::string, ValueClass_String>
+	{
+	public:
+		StringValue() :
+			ValuePointer<std::string, ValueClass_String>() { }
+		
+		StringValue(const std::string& r) :
+			ValuePointer<std::string, ValueClass_String>(r) { }
+
+		StringValue(const char* r) :
+			ValuePointer<std::string, ValueClass_String>(r) { }
+		
+		StringValue(const typename Value<std::string, ValueClass_String>::Pointer& p) :
+			ValuePointer<std::string, ValueClass_String>(p) { }
+		
+		StringValue(Value<std::string, ValueClass_String>* p) :
+			ValuePointer<std::string, ValueClass_String>(p) { }
+		
+		StringValue(ValueBase::Pointer p) :
+			ValuePointer<std::string, ValueClass_String>(p) { }
+	};
 	
 	class Dictionary : public ValuePointer<std::map<std::string, ValueBase::Pointer>, ValueClass_Dictionary>
 	{
@@ -117,38 +138,58 @@ namespace et
 			{ setValueForKey<Dictionary, ValueClass_Dictionary>(key, value); }
 		
 	public:
-		NumericValue numberForKey(const std::string& key) const
-			{ return valueForKey<NumericValue::ValueType, ValueClass_Numeric>(key); }
-
-		StringValue stringForKey(const std::string& key) const
-			{ return valueForKey<StringValue::ValueType, ValueClass_String>(key); }
-
-		ArrayValue arrayForKey(const std::string& key) const
-			{ return valueForKey<ArrayValue::ValueType, ValueClass_Array>(key); }
+		NumericValue numberForKey(const std::string& key, NumericValue def = NumericValue()) const
+			{ return valueForKey<NumericValue::ValueType, ValueClass_Numeric>(key, def); }
+		NumericValue numberForKey(const std::vector<std::string>& key, NumericValue def = NumericValue()) const
+			{ return valueForKeyPath<NumericValue::ValueType, ValueClass_Numeric>(key, def); }
 		
-		Dictionary dictionaryForKey(const std::string& key) const
-			{ return Dictionary(valueForKey<Dictionary::ValueType, ValueClass_Dictionary>(key)); }
+		StringValue stringForKey(const std::string& key, StringValue def = StringValue()) const
+			{ return valueForKey<StringValue::ValueType, ValueClass_String>(key, def); }
+		StringValue stringForKey(const std::vector<std::string>& key, StringValue def = StringValue()) const
+			{ return valueForKeyPath<StringValue::ValueType, ValueClass_String>(key, def); }
+		
+		ArrayValue arrayForKey(const std::string& key, ArrayValue def = ArrayValue()) const
+			{ return valueForKey<ArrayValue::ValueType, ValueClass_Array>(key, def); }
+		ArrayValue arrayForKey(const std::vector<std::string>& key, ArrayValue def = ArrayValue()) const
+			{ return valueForKeyPath<ArrayValue::ValueType, ValueClass_Array>(key, def); }
+		
+		Dictionary dictionaryForKey(const std::string& key, Dictionary def = Dictionary()) const
+			{ return Dictionary(valueForKey<Dictionary::ValueType, ValueClass_Dictionary>(key, def)); }
+		Dictionary dictionaryForKey(const std::vector<std::string>& key, Dictionary def = Dictionary()) const
+			{ return Dictionary(valueForKeyPath<Dictionary::ValueType, ValueClass_Dictionary>(key, def)); }
+		
+		bool emptry() const
+			{ return reference().content.empty(); }
+		
+		void removeObjectForKey(const std::string& key)
+			{ reference().content.erase(key); }
 		
 	public:
 		void printContent() const;
 
 	private:
+		bool valueForKeyPathIsClassOf(const std::vector<std::string>& key, ValueClass) const;
+		
+		ValueBase::Pointer baseValueForKeyPath(const std::vector<std::string>& key) const;
+		
+		ValueBase::Pointer baseValueForKeyPathInHolder(const std::vector<std::string>& key,
+			ValueBase::Pointer holder) const;
+		
 		template <typename T, ValueClass C>
 		void setValueForKey(const std::string& key, const T& value)
 			{ this->reference().content[key] = value; }
-				
+								
 		template <typename T, ValueClass C>
-		ValuePointer<T, C> valueForKey(const std::string& key) const
+		ValuePointer<T, C> valueForKeyPath(const std::vector<std::string>& key, ValuePointer<T, C> def) const
 		{
-			auto i = reference().content.find(key);
-			
-			if (i == reference().content.end())
-				return ValuePointer<T, C>();
-			
-			typename Value<T, C>::Pointer ptr = i->second;
-			assert(i->second->valueClass() == C);
-			return ValuePointer<T, C>(ptr.ptr());
+			auto i = baseValueForKeyPath(key);
+			return (i.valid() && (i->valueClass() == C)) ? ValuePointer<T, C>(i) : ValuePointer<T, C>(def);
 		}
+		
+		template <typename T, ValueClass C>
+		ValuePointer<T, C> valueForKey(const std::string& key, ValuePointer<T, C> def) const
+			{ return valueForKeyPath({key}, def); }
+		
 		
 	private:
 		void printArray(ArrayValue, const std::string&) const;

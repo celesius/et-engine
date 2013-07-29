@@ -19,8 +19,7 @@ class et::gui::CharacterGeneratorPrivate
 		void updateTexture(RenderContext* rc, const vec2i& position, const vec2i& size,
 			Texture texture, BinaryDataStorage& data);
 	
-		void renderCharacter(NSString* value, const vec2i& position, const vec2i& size,
-			bool bold, BinaryDataStorage& data);
+		void renderCharacter(NSString* value, const vec2i& size, bool bold, BinaryDataStorage& data);
 
 	public:
 		std::string _fontFace;
@@ -50,30 +49,32 @@ CharacterGenerator::~CharacterGenerator()
 CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 {
 	wchar_t string[2] = { value, 0 };
+	
     NSString* wString = [[NSString alloc] initWithBytes:string length:sizeof(string)
-											   encoding:NSUTF32LittleEndianStringEncoding];
+		encoding:NSUTF32LittleEndianStringEncoding];
+	
     CGSize characterSize = [wString sizeWithFont:_private->_font];
 	vec2i charSize = vec2i(static_cast<int>(characterSize.width), static_cast<int>(characterSize.height));
 	
-	BinaryDataStorage data(charSize.square() * 4, 0);
-	
-	rect textureRect;
-	_private->_placer.place(charSize + vec2i(2), textureRect);
-	vec2i position = vec2i(static_cast<int>(textureRect.left + 1.0f), static_cast<int>(textureRect.top + 1.0f));
-	_private->renderCharacter(wString, position, charSize, false, data);
-	_private->updateTexture(_rc, position, charSize, _texture, data);
-	
-	[wString release];
-	
 	CharDescriptor desc(value);
-	
-	desc.origin = textureRect.origin() + vec2(1.0f);
-	desc.size = textureRect.size() - vec2(2.0f);
-	desc.uvOrigin = _texture->getTexCoord(desc.origin);
-	desc.uvSize = desc.size / _texture->sizeFloat();
-	
-	_chars[value] = desc;
-	return desc;
+	if (charSize.square() > 0)
+	{
+		rect textureRect;
+		
+		BinaryDataStorage data(charSize.square() * 4, 0);
+		_private->_placer.place(charSize + vec2i(2), textureRect);
+		_private->renderCharacter(wString, charSize, false, data);
+		_private->updateTexture(_rc, vec2i(static_cast<int>(textureRect.left + 1.0f),
+			static_cast<int>(textureRect.top + 1.0f)), charSize, _texture, data);
+		
+		desc.origin = textureRect.origin() + vec2(1.0f);
+		desc.size = textureRect.size() - vec2(2.0f);
+		desc.uvOrigin = _texture->getTexCoord(desc.origin);
+		desc.uvSize = desc.size / _texture->sizeFloat();
+	}
+	[wString release];
+		
+	return (_chars[value] = desc);
 }
 
 CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
@@ -85,25 +86,26 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
     CGSize characterSize = [wString sizeWithFont:_private->_boldFont];
 	vec2i charSize = vec2i(static_cast<int>(characterSize.width), static_cast<int>(characterSize.height));
 	
-	BinaryDataStorage data(charSize.square() * 4, 0);
-
-	rect textureRect;
-	_private->_placer.place(charSize + vec2i(2), textureRect);
-	vec2i position = vec2i(static_cast<int>(textureRect.left + 1.0f), static_cast<int>(textureRect.top + 1.0f));
-	_private->renderCharacter(wString, position, charSize, true, data);
-	_private->updateTexture(_rc, position, charSize, _texture, data);
+	CharDescriptor desc(value, CharParameter_Bold);
+	if (charSize.square() > 0)
+	{
+		rect textureRect;
+		
+		BinaryDataStorage data(charSize.square() * 4, 0);
+		_private->_placer.place(charSize + vec2i(2), textureRect);
+		_private->renderCharacter(wString, charSize, true, data);
+		_private->updateTexture(_rc, vec2i(static_cast<int>(textureRect.left + 1.0f),
+			static_cast<int>(textureRect.top + 1.0f)), charSize, _texture, data);
+		
+		desc.origin = textureRect.origin() + vec2(1.0f);
+		desc.size = textureRect.size() - vec2(2.0f);
+		desc.uvOrigin = _texture->getTexCoord(desc.origin);
+		desc.uvSize = desc.size / _texture->sizeFloat();
+	}
 	
 	[wString release];
 	
-	CharDescriptor desc(value, CharParameter_Bold);
-	
-	desc.origin = textureRect.origin() + vec2(1.0f);
-	desc.size = textureRect.size() - vec2(2.0f);
-	desc.uvOrigin = _texture->getTexCoord(desc.origin);
-	desc.uvSize = desc.size / _texture->sizeFloat();
-	
-	_boldChars[value] = desc;
-	return desc;
+	return (_boldChars[value] = desc);
 }
 
 /*
@@ -147,8 +149,8 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& po
 	texture->updatePartialDataDirectly(rc, dest, size, data.binary(), data.dataSize());
 }
 
-void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i&,
-	const vec2i& size, bool bold, BinaryDataStorage& data)
+void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i& size,
+	bool bold, BinaryDataStorage& data)
 {
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 	assert(colorSpace);
