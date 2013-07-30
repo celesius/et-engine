@@ -106,6 +106,9 @@ namespace et
 				ElementLayoutMode sMode, const vec2& pivot);
 
 			void setAutolayoutMask(size_t);
+			
+			void fillParent();
+			void centerInParent();
 
 			virtual void autoLayout(const vec2& contextSize, float duration = 0.0f);
 

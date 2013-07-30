@@ -363,6 +363,7 @@ ModalLayout::ModalLayout()
 {
 	_backgroundFade = ImageView::Pointer(new ImageView(Texture(), this));
 	_backgroundFade->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.25f));
+	_backgroundFade->fillParent();
 }
 
 bool ModalLayout::pointerPressed(const et::PointerInputInfo& p)

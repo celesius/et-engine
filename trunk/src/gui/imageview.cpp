@@ -12,6 +12,11 @@ using namespace gui;
 
 ET_DECLARE_GUI_ELEMENT_CLASS(ImageView)
 
+ImageView::ImageView(Element2d* parent, const std::string& name) :
+	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _contentMode(ImageView::ContentMode_Stretch)
+{
+}
+
 ImageView::ImageView(const Texture& texture, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _texture(texture),
 	_descriptor(ImageDescriptor(texture)), _contentMode(ImageView::ContentMode_Stretch)

@@ -32,6 +32,9 @@ namespace et
 			};
 
 		public:
+			ImageView(Element2d* parent,
+				const std::string& name = std::string());
+			
 			ImageView(const Texture& texture, Element2d* parent,
 				const std::string& name = std::string());
 

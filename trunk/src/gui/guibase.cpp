@@ -198,3 +198,16 @@ void Element::autoLayout(const vec2& contextSize, float duration)
 	for (auto aChild : children())
 		aChild->autoLayout(contextSize, duration);
 }
+
+void Element::fillParent()
+{
+	setAutolayot(vec2(0.0f), ElementLayoutMode_RelativeToParent, vec2(1.0f),
+		ElementLayoutMode_RelativeToParent, vec2(0.0f));
+}
+
+void Element::centerInParent()
+{
+	setAutolayot(vec2(0.5f), ElementLayoutMode_RelativeToParent, vec2(1.0f),
+		ElementLayoutMode_RelativeToParent, vec2(0.5f));
+	setAutolayoutMask(ElementLayoutMask_PositionPivot);
+}
