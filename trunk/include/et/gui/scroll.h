@@ -45,6 +45,8 @@ namespace et
 			const vec2& offset() const
 				{ return _offset; }
 			
+			void scrollToBottom(float delay = 0.0f);
+			
 		private:
 			void buildVertices(RenderContext* rc, GuiRenderer& r);
 			

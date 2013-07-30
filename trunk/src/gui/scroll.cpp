@@ -353,7 +353,6 @@ void Scroll::update(float t)
 		invalidateContent();
 		return;
 	}
-	
 
 	updateBouncing(deltaTime);
 	
@@ -508,4 +507,9 @@ void Scroll::setScrollbarsColor(const vec4& c)
 void Scroll::setBounce(size_t b)
 {
 	_bounce = b;
+}
+
+void Scroll::scrollToBottom(float delay)
+{
+	setOffset(vec2(_offset.x, etMin(0.0f, size().y - _contentSize.y)), delay);
 }
