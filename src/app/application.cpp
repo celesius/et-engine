@@ -26,6 +26,8 @@ Application::Application() : _renderContext(0), _exitCode(0), _lastQueuedTimeMSe
 Application::~Application()
 {
 	_running = false;
+	
+	delegate()->applicationWillTerminate();
 
 	platformDeactivate();
 	platformFinalize();
