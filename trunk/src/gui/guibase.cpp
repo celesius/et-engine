@@ -19,7 +19,7 @@ float et::gui::alignmentFactor(ElementAlignment a)
 
 ElementState et::gui::adjustElementState(ElementState s)
 {
-	if (!input().canGetCurrentPointerInfo() && ((s == ElementState_Hovered) || (s == ElementState_SelectedHovered)))
+	if (!Input::canGetCurrentPointerInfo() && ((s == ElementState_Hovered) || (s == ElementState_SelectedHovered)))
 		return static_cast<ElementState>(s - 1);
 	
 	return s;

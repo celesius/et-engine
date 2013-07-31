@@ -125,6 +125,10 @@ namespace et
 	class Input : public Singleton<Input>
 	{
 	public:
+		static bool canGetCurrentPointerInfo();
+		static PointerInputInfo currentPointer();
+		
+	public:
 		class KeyboardInputSource;
 		class PointerInputSource;
 		class GestureInputSource;
@@ -134,9 +138,6 @@ namespace et
 				
 		bool isPointerPressed(PointerType type) const;
 
-		bool canGetCurrentPointerInfo() const;
-		PointerInputInfo currentPointer() const;
-		
 		void activateSoftwareKeyboard();
 		void deactivateSoftwareKeyboard();
 

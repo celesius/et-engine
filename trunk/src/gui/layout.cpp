@@ -109,7 +109,7 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 					_capturedElement->dragStarted.invoke(_capturedElement,
 						ElementDragInfo(_dragInitialPosition, _dragInitialPosition, p.normalizedPos));
 
-					if (input().canGetCurrentPointerInfo())
+					if (Input::canGetCurrentPointerInfo())
 						startUpdates();
 				}
 				else
@@ -127,21 +127,13 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 }
 
 bool Layout::pointerMoved(const et::PointerInputInfo& p)
-{ 
+{
 	if (hasFlag(ElementFlag_TransparentForPointer)) return false;
 
 	if (_capturedElement)
 	{
-		if (!input().canGetCurrentPointerInfo() && (p.type == PointerType_General) && _dragging)
-		{
-			vec2 currentPos = _capturedElement->positionInElement(p.pos);
-			vec2 delta = currentPos - _dragInitialOffset;
-			
-			_capturedElement->setPosition(_capturedElement->position() + delta);
-			
-			_capturedElement->dragged.invoke(_capturedElement,
-				ElementDragInfo(_capturedElement->position(), _dragInitialPosition, p.normalizedPos));
-		}
+		if (!Input::canGetCurrentPointerInfo() && (p.type == PointerType_General) && _dragging)
+			performDragging(p);
 
 		_capturedElement->pointerMoved(PointerInputInfo(p.type, _capturedElement->positionInElement(p.pos),
 			p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
@@ -174,7 +166,7 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 
 		if ((p.type == PointerType_General) && _dragging)
 		{
-			if (input().canGetCurrentPointerInfo())
+			if (Input::canGetCurrentPointerInfo())
 				cancelUpdates();
 
 			_capturedElement->dragFinished.invoke(_capturedElement,
@@ -287,19 +279,23 @@ void Layout::setCurrentElement(const PointerInputInfo& p, Element* e)
 		_currentElement->pointerEntered(p);
 }
 
+void Layout::performDragging(const PointerInputInfo& p)
+{
+	assert(_dragging);
+	
+	vec2 currentPos = _capturedElement->positionInElement(p.pos);
+	vec2 delta = currentPos - _dragInitialOffset;
+	
+	_capturedElement->setPosition(_capturedElement->position() + delta);
+	
+	_capturedElement->dragged.invoke(_capturedElement,
+		ElementDragInfo(_capturedElement->position(), _dragInitialPosition, p.normalizedPos));
+}
+
 void Layout::update(float)
 {
-	if (_dragging && input().canGetCurrentPointerInfo())
-	{
-		PointerInputInfo pi = input().currentPointer();
-		vec2 currentPos = _capturedElement->parent()->positionInElement(pi.pos);
-		if ((currentPos - _capturedElement->position()).dotSelf() > 0.01f)
-		{
-			_capturedElement->setPosition(0.5f * (currentPos + _capturedElement->position()));
-			_capturedElement->dragged.invoke(_capturedElement,
-				ElementDragInfo(currentPos, _dragInitialPosition, pi.normalizedPos));
-		}
-	}
+	if (_dragging && Input::canGetCurrentPointerInfo())
+		performDragging(Input::currentPointer());
 }
 
 void Layout::cancelDragging(float returnDuration)
