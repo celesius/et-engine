@@ -155,6 +155,9 @@ namespace et
 			ET_DECLARE_EVENT2(dragStarted, Element*, const ElementDragInfo&)
 			ET_DECLARE_EVENT2(dragged, Element*, const ElementDragInfo&)
 			ET_DECLARE_EVENT2(dragFinished, Element*, const ElementDragInfo&)
+			
+			ET_DECLARE_EVENT1(hoverStarted, Element*)
+			ET_DECLARE_EVENT1(hoverEnded, Element*)
 
 		protected:
 			void setContentValid()
