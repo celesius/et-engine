@@ -121,7 +121,8 @@ void Gui::layout(const vec2& size)
 	_background.setFrame(0.5f * size, size);
 	_backgroundValid = false;
 
-	ET_ITERATE(_layouts, auto&, i, i->layout->layout(size))
+	for (auto& i : _layouts)
+		i->layout->layout(size);
 }
 
 void Gui::render(RenderContext* rc)
@@ -323,24 +324,36 @@ bool Gui::hasLayout(Layout::Pointer aLayout)
 {
 	if (aLayout.invalid()) return false;
 
-	ET_ITERATE(_layouts, auto&, i, if (i->layout == aLayout) return true)
+	for (auto& i : _layouts)
+	{
+		if (i->layout == aLayout)
+			return true;
+	}
 
 	return false;
 }
 
 Gui::LayoutEntryObject* Gui::entryForLayout(Layout::Pointer ptr)
 {
-	if (ptr.invalid()) return 0;
+	if (ptr.invalid()) return nullptr;
 
-	ET_ITERATE(_layouts, auto&, i, if (i->layout == ptr) return i.ptr())
+	for (auto& i : _layouts)
+	{
+		if (i->layout == ptr)
+			return i.ptr();
+	}
 
-	return 0;
+	return nullptr;
 }
 
 bool Gui::animatingTransition()
 {
-	ET_ITERATE(_layouts, auto&, i, if (i.ptr()->state != Gui::LayoutEntryObject::State_Still) return true)
-
+	for (auto& i : _layouts)
+	{
+		if (i.ptr()->state != Gui::LayoutEntryObject::State_Still)
+			return true;
+	}
+	
 	return false;
 }
 
