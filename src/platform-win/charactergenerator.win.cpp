@@ -17,22 +17,22 @@ class et::gui::CharacterGeneratorPrivate
 		CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size);
 		~CharacterGeneratorPrivate();
 
-		void updateTexture(RenderContext* rc, Texture texture);
-		void renderCharacter(int value, const vec2i& position);
-		void renderBoldCharacter(int value, const vec2i& position);
+		void updateTexture(RenderContext* rc, const vec2i& position, const vec2i& size,
+			Texture texture, BinaryDataStorage& data);
+
+		void renderCharacter(int value, bool bold, const vec2i& size, BinaryDataStorage&);
 
 	public:
 		size_t _size;		
 		std::string _face;
 		std::string _boldFace;
 
-		RectPlacer _placer;
+		RectPlacer placer;
 		BinaryDataStorage _textureData;
 
-		HDC _dc;
+		HDC commonDC;
 		HFONT _font;
 		HFONT _boldFont;
-		HBITMAP _bitmap;
 };
 
 CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face, const std::string& boldFace, size_t size) : _rc(rc),
@@ -40,14 +40,6 @@ CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& fac
 {
 	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(defaultTextureSize), GL_RGBA, 
 		GL_UNSIGNED_BYTE, BinaryDataStorage(), face + "font");
-
-	for (size_t i = 32; i < 128; ++i)
-		generateCharacter(i, false);
-
-	for (size_t i = 32; i < 128; ++i)
-		generateBoldCharacter(i, false);
-
-	_private->updateTexture(rc, _texture);
 }
 
 CharacterGenerator::~CharacterGenerator()
@@ -60,21 +52,28 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTextu
 	SIZE characterSize = { };
 	wchar_t string[2] = { static_cast<wchar_t>(value), 0 };
 
-	SelectObject(_private->_dc, _private->_font);
-	GetTextExtentPointW(_private->_dc, string, 1, &characterSize);
-
-	rect textureRect;
-	_private->_placer.place(vec2i(characterSize.cx + 2, characterSize.cy + 2), textureRect);
-	_private->renderCharacter(value, vec2i(static_cast<int>(textureRect.left + 1), static_cast<int>(textureRect.top + 1)));
-
-	if (updateTexture)
-		_private->updateTexture(_rc, _texture);
+	SelectObject(_private->commonDC, _private->_font);
+	GetTextExtentPointW(_private->commonDC, string, 1, &characterSize);
+	vec2i charSize(characterSize.cx, characterSize.cy);
 
 	CharDescriptor desc(value);
-	desc.origin = textureRect.origin() + vec2(1.0f);
-	desc.size = textureRect.size() - vec2(2.0f);
-	desc.uvOrigin = _texture->getTexCoord(desc.origin);
-	desc.uvSize = desc.size / _texture->sizeFloat();
+	if (charSize.square() > 0)
+	{
+		rect textureRect;
+
+		BinaryDataStorage data(charSize.square() * 4, 0);
+		_private->placer.place(charSize + vec2i(2), textureRect);
+		_private->renderCharacter(value, false, charSize, data);
+
+		_private->updateTexture(_rc, vec2i(static_cast<int>(textureRect.left + 1.0f),
+			static_cast<int>(textureRect.top + 1.0f)), charSize, _texture, data);
+
+		desc.origin = textureRect.origin() + vec2(1.0f);
+		desc.size = textureRect.size() - vec2(2.0f);
+		desc.uvOrigin = _texture->getTexCoord(desc.origin);
+		desc.uvSize = desc.size / _texture->sizeFloat();
+	}
+
 	_chars[value] = desc;
 	return desc;
 }
@@ -84,21 +83,29 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateT
 	SIZE characterSize = { };
 	wchar_t string[2] = { static_cast<wchar_t>(value), 0 };
 
-	SelectObject(_private->_dc, _private->_boldFont);
-	GetTextExtentPointW(_private->_dc, string, 1, &characterSize);
+	SelectObject(_private->commonDC, _private->_boldFont);
+	GetTextExtentPointW(_private->commonDC, string, 1, &characterSize);
 
-	rect textureRect;
-	_private->_placer.place(vec2i(characterSize.cx + 2, characterSize.cy + 2), textureRect);
-	_private->renderBoldCharacter(value, vec2i(static_cast<int>(textureRect.left + 1), static_cast<int>(textureRect.top + 1)));
-
-	if (updateTexture)
-		_private->updateTexture(_rc, _texture);
+	vec2i charSize(characterSize.cx, characterSize.cy);
 
 	CharDescriptor desc(value, CharParameter_Bold);
-	desc.origin = textureRect.origin() + vec2(1.0f);
-	desc.size = textureRect.size() - vec2(2.0f);
-	desc.uvOrigin = _texture->getTexCoord(desc.origin);
-	desc.uvSize = desc.size / _texture->sizeFloat();
+	if (charSize.square() > 0)
+	{
+		rect textureRect;
+
+		BinaryDataStorage data(charSize.square() * 4, 0);
+		_private->placer.place(charSize + vec2i(2), textureRect);
+		_private->renderCharacter(value, true, charSize, data);
+
+		_private->updateTexture(_rc, vec2i(static_cast<int>(textureRect.left + 1.0f),
+			static_cast<int>(textureRect.top + 1.0f)), charSize, _texture, data);
+
+		desc.origin = textureRect.origin() + vec2(1.0f);
+		desc.size = textureRect.size() - vec2(2.0f);
+		desc.uvOrigin = _texture->getTexCoord(desc.origin);
+		desc.uvSize = desc.size / _texture->sizeFloat();
+	}
+
 	_boldChars[value] = desc;
 	return desc;
 }
@@ -108,61 +115,68 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateT
  */
 
 CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size) : 
-	_size(size), _face(face), _boldFace(boldFace), _placer(vec2i(defaultTextureSize), true), _textureData(sqr(defaultTextureSize) * 4)
+	_size(size), _face(face), _boldFace(boldFace), placer(vec2i(defaultTextureSize), true), _textureData(sqr(defaultTextureSize) * 4)
 {
-	_dc = CreateCompatibleDC(0);
-	_bitmap = CreateBitmap(defaultTextureSize, defaultTextureSize, 1, 32, 0);
-	SelectObject(_dc, _bitmap);
+	commonDC = CreateCompatibleDC(nullptr);
 
-	int pointsSize = -MulDiv(size, GetDeviceCaps(_dc, LOGPIXELSY), 72);
+	int pointsSize = -MulDiv(size, GetDeviceCaps(commonDC, LOGPIXELSY), 72);
 
-	_font = CreateFont(pointsSize, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, OUT_CHARACTER_PRECIS, 
-		CLIP_CHARACTER_PRECIS, CLEARTYPE_NATURAL_QUALITY, FF_DONTCARE, face.c_str());
-	_boldFont = CreateFont(pointsSize, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, 
-		CLIP_DEFAULT_PRECIS, CLEARTYPE_NATURAL_QUALITY, FF_DONTCARE, boldFace.c_str());
+	_font = CreateFont(pointsSize, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, OUT_CHARACTER_PRECIS,
+		CLIP_CHARACTER_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, face.c_str());
 
-	SetTextColor(_dc, 0xffffff);
-	SetBkMode(_dc, TRANSPARENT);
+	_boldFont = CreateFont(pointsSize, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, OUT_CHARACTER_PRECIS,
+		CLIP_CHARACTER_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, boldFace.c_str());
 }
 
 CharacterGeneratorPrivate::~CharacterGeneratorPrivate()
 {
 	DeleteObject(_font);
 	DeleteObject(_boldFont);
-	DeleteDC(_dc);
+	DeleteDC(commonDC);
 }
 
-void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, Texture texture)
+void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& position, const vec2i& size,
+	Texture texture, BinaryDataStorage& data)
 {
-	BITMAPINFO bm = { sizeof(bm.bmiHeader), defaultTextureSize, defaultTextureSize, 1, 32, 0, sqr(defaultTextureSize) * 4 };
+	vec2i dest(position.x, defaultTextureSize - position.y - size.y);
+	texture->updatePartialDataDirectly(rc, dest, size, data.binary(), data.dataSize());
 
-	GetDIBits(_dc, _bitmap, 0, defaultTextureSize, _textureData.data(), &bm, DIB_RGB_COLORS);
+	BinaryDataStorage img(defaultTextureSize * defaultTextureSize * 4, 0);
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.binary());
 
-	unsigned int* ptr = reinterpret_cast<unsigned int*>(_textureData.data());
-	unsigned int* ptrEnd = reinterpret_cast<unsigned int*>(_textureData.data() + _textureData.dataSize());
+	ImageWriter::writeImageToFile("d:\\test.png", img, vec2i(defaultTextureSize), 4, 8, ImageFormat_PNG, true);
+}
+
+void CharacterGeneratorPrivate::renderCharacter(int value, bool bold, const vec2i& size, BinaryDataStorage& data)
+{
+	RECT r = { 0, 0, size.x, size.y };
+	wchar_t string[2] = { static_cast<wchar_t>(value), 0 };
+
+	HDC dc = CreateCompatibleDC(nullptr);
+	HBITMAP bitmap = CreateBitmap(size.x, size.y, 1, 32, nullptr);
+	BITMAPINFO bitmapInfo = { };
+	bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bitmapInfo.bmiHeader.biWidth = size.x;
+	bitmapInfo.bmiHeader.biHeight = size.y;
+	bitmapInfo.bmiHeader.biPlanes = 1;
+	bitmapInfo.bmiHeader.biBitCount = 32;
+
+	SelectObject(dc, bitmap);
+	SelectObject(dc, bold ? _boldFont : _font);
+	SetTextColor(dc, RGB(255, 255, 255));
+	SetBkMode(dc, TRANSPARENT);
+
+	DrawTextW(dc, string, -1, &r, 0);
+	GetDIBits(dc, bitmap, 0, size.y, data.binary(), &bitmapInfo, DIB_RGB_COLORS);
+
+	unsigned int* ptr = reinterpret_cast<unsigned int*>(data.data());
+	unsigned int* ptrEnd = reinterpret_cast<unsigned int*>(data.data() + data.dataSize());
 	while (ptr != ptrEnd)
 	{
 		unsigned int& value = *ptr++;
-		value |= 0x00ffffff | ((((value & 0x000000ff) + ((value & 0x0000ff00) >> 8) + ((value & 0x00ff0000) >> 16) ) / 3) << 24);
+		value |= 0x00ffffff | ((((value & 0x000000ff) + ((value & 0x0000ff00) >> 8) + ((value & 0x00ff0000) >> 16)) / 3) << 24);
 	}
 
-	texture->updateDataDirectly(rc, vec2i(defaultTextureSize), _textureData.binary(), _textureData.size());
-}
-
-void CharacterGeneratorPrivate::renderCharacter(int value, const vec2i& position)
-{
-	RECT r = { position.x, position.y, defaultTextureSize, defaultTextureSize };
-	wchar_t string[2] = { static_cast<wchar_t>(value), 0 };
-
-	SelectObject(_dc, _font);
-	DrawTextW(_dc, string, -1, &r, 0);
-}
-
-void CharacterGeneratorPrivate::renderBoldCharacter(int value, const vec2i& position)
-{
-	RECT r = { position.x, position.y, defaultTextureSize, defaultTextureSize };
-	wchar_t string[2] = { static_cast<wchar_t>(value), 0 };
-
-	SelectObject(_dc, _boldFont);
-	DrawTextW(_dc, string, -1, &r, 0);
+	DeleteObject(bitmap);
+	DeleteDC(dc);
 }
