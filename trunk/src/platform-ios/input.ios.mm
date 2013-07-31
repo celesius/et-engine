@@ -13,15 +13,13 @@ using namespace et;
 extern NSString* etKeyboardRequiredNotification;
 extern NSString* etKeyboardNotRequiredNotification;
 
-PointerInputInfo Input::currentPointer() const
+bool Input::canGetCurrentPointerInfo()
+	{ return false; }
+
+PointerInputInfo Input::currentPointer()
 {
 	return PointerInputInfo(PointerType_None, vec2(0.0f), vec2(0.0f),
 		vec2(0.0f), 0, queryTime(), PointerOrigin_Touchscreen);
-}
-
-bool Input::canGetCurrentPointerInfo() const
-{
-	return false;
 }
 
 void Input::activateSoftwareKeyboard()
