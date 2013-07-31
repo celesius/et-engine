@@ -64,6 +64,8 @@ namespace et
 			Element* getActiveElement(const PointerInputInfo& p, Element* e);
 			void setCurrentElement(const PointerInputInfo& p, Element* e);
 			void addElementToRenderQueue(Element* element, RenderContext* rc, GuiRenderer& gr);
+			
+			void performDragging(const PointerInputInfo&);
 
 		private:
 			RenderingElement::Pointer _renderingElement;
