@@ -209,6 +209,14 @@ void Label::setShadowOffset(const vec2& offset)
 
 void Label::fitToWidth(float w)
 {
+	float minimalWidthToFit = _font->measureStringSize("W").x;
+	if (std::abs(w) < minimalWidthToFit)
+	{
+		log::error("Trying to fit text %s into %f width, minimal width to fit is %f",
+			_text.c_str(), w, minimalWidthToFit);
+		assert(false);
+	}
+	
 	std::string newText;
 	std::string oldText = _text;
 	std::string latestLine;
@@ -267,6 +275,7 @@ void Label::fitToWidth(float w)
 		else
 		{
 			size_t lastCharPos = newText.size() - 1;
+			assert(lastCharPos != std::string::npos);
 			char lastChar = newText.at(lastCharPos);
 			
 			if (isWhitespaceChar(lastChar) && !isNewLineChar(lastChar))
