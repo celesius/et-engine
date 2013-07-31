@@ -214,7 +214,7 @@ void Label::fitToWidth(float w)
 	{
 		log::error("Trying to fit text %s into %f width, minimal width to fit is %f",
 			_text.c_str(), w, minimalWidthToFit);
-		assert(false);
+		return;
 	}
 	
 	std::string newText;
