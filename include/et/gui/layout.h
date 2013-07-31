@@ -59,6 +59,8 @@ namespace et
 
 			void initRenderingElement(et::RenderContext* rc);
 			
+			bool elementIsBeingDragged(gui::Element*);
+			
 		private:
 			Element* activeElement(const PointerInputInfo& p);
 			Element* getActiveElement(const PointerInputInfo& p, Element* e);
