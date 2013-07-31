@@ -99,6 +99,9 @@ namespace et
 		
 		StringValue(ValueBase::Pointer p) :
 			ValuePointer<std::string, ValueClass_String>(p) { }
+		
+		operator std::string ()
+			{ return reference().content; }
 	};
 	
 	class ArrayValue : public ValuePointer<std::vector<ValueBase::Pointer>, ValueClass_Array>
