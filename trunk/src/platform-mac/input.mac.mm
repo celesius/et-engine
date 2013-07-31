@@ -16,16 +16,14 @@ bool Input::canGetCurrentPointerInfo()
 
 PointerInputInfo Input::currentPointer()
 {
-	CGEventRef event = CGEventCreate(nil);
-	CGPoint loc = CGEventGetLocation(event);
-	CFRelease(event);
-
-	NSPoint location = [[[NSApplication sharedApplication] keyWindow]
-		convertScreenToBase:NSMakePoint(loc.x, loc.y)];
+	NSWindow* keyWindow = [[NSApplication sharedApplication] keyWindow];
+	NSRect frame = [keyWindow contentRectForFrameRect:[keyWindow frame]];
+	NSPoint location = [keyWindow convertScreenToBase:[NSEvent mouseLocation]];
 	
 	PointerInputInfo result;
 	result.timestamp = queryTime();
-	result.pos = vec2(location.x, location.y);
+	result.pos = vec2(location.x, frame.size.height - location.y);
+	result.normalizedPos = result.pos / vec2(frame.size.width, frame.size.height);
 	return result;
 }
 
