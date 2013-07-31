@@ -7,6 +7,7 @@
 
 #include <Windows.h>
 #include <WinUser.h>
+#include <VersionHelpers.h>
 
 #include <et/core/tools.h>
 #include <et/opengl/opengl.h>
@@ -309,7 +310,7 @@ bool RenderContextPrivate::initOpenGL(const RenderContextParameters& params)
 	size_t compositionFlag = 0;
 	OSVERSIONINFO ver = { };
 	ver.dwOSVersionInfoSize = sizeof(ver);
-	if (GetVersionEx(&ver))
+	if (IsWindowsVistaOrGreater())
 		compositionFlag = (ver.dwMajorVersion >= 6) ? PFD_SUPPORT_COMPOSITION : 0;
 
 	PIXELFORMATDESCRIPTOR pfd = { };

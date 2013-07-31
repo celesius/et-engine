@@ -143,7 +143,7 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 	{
 		broadcastMoved(p);
 	}
-	else if (!_pointerCaptured)
+	else if (!_pointerCaptured && (p.type == PointerType_General))
 	{
 		_manualScrolling = true;
 		_pointerCaptured = true;

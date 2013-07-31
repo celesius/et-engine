@@ -43,7 +43,14 @@ DWORD WINAPI ThreadPrivate::threadProc(LPVOID lpParameter)
  * Thread
  */
 
-Thread::Thread(bool runImmediately) : _private(new ThreadPrivate())
+Thread::Thread() : 
+	_private(new ThreadPrivate())
+{
+	_private->activityEvent = CreateEvent(0, false, false, 0);
+}
+
+Thread::Thread(bool runImmediately) :
+	_private(new ThreadPrivate())
 {
 	_private->activityEvent = CreateEvent(0, false, false, 0);
 
