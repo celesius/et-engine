@@ -51,7 +51,7 @@ void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, GuiRen
 
 	for (auto& c : element->children())
 	{
-		if (c.ptr() != _capturedElement)
+		if (!elementIsBeingDragged(c.ptr()))
 			addElementToRenderQueue(c.ptr(), rc, gr);
 	}
 
@@ -69,17 +69,17 @@ void Layout::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 
 	for (auto& c : children())
 	{
-		if (c.ptr() != _capturedElement)
+		if (!elementIsBeingDragged(c.ptr()))
 			addElementToRenderQueue(c.ptr(), rc, gr);
 	}
 	
 	for (auto& t : _topmostElements)
 	{
-		if (t.ptr() != _capturedElement)
+		if (!elementIsBeingDragged(t.ptr()))
 			addElementToRenderQueue(t.ptr(), rc, gr);
 	}
 	
-	if (_capturedElement != nullptr)
+	if (elementIsBeingDragged(_capturedElement))
 		addElementToRenderQueue(_capturedElement, rc, gr);
 
 	_valid = true;
@@ -313,6 +313,11 @@ void Layout::performDragging(const PointerInputInfo& p)
 	
 	_capturedElement->dragged.invoke(_capturedElement,
 		ElementDragInfo(_capturedElement->position(), _dragInitialPosition, p.normalizedPos));
+}
+
+bool Layout::elementIsBeingDragged(gui::Element* e)
+{
+	return _dragging && (e != nullptr) && (e == _capturedElement);
 }
 
 void Layout::update(float)
