@@ -140,11 +140,6 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& po
 {
 	vec2i dest(position.x, defaultTextureSize - position.y - size.y);
 	texture->updatePartialDataDirectly(rc, dest, size, data.binary(), data.dataSize());
-
-	BinaryDataStorage img(defaultTextureSize * defaultTextureSize * 4, 0);
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.binary());
-
-	ImageWriter::writeImageToFile("d:\\test.png", img, vec2i(defaultTextureSize), 4, 8, ImageFormat_PNG, true);
 }
 
 void CharacterGeneratorPrivate::renderCharacter(int value, bool bold, const vec2i& size, BinaryDataStorage& data)
