@@ -102,6 +102,15 @@ namespace et
 		
 		operator std::string ()
 			{ return reference().content; }
+
+		size_t size() const
+			{ return reference().content.size(); }
+
+		const char* c_str() const
+			{ return reference().content.c_str(); }
+
+		bool empty() const
+			{ return reference().content.empty(); }
 	};
 	
 	class ArrayValue : public ValuePointer<std::vector<ValueBase::Pointer>, ValueClass_Array>
