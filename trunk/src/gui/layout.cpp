@@ -49,7 +49,11 @@ void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, GuiRen
 	
 	element->addToRenderQueue(rc, gr);
 
-	ET_ITERATE(element->children(), auto&, i, addElementToRenderQueue(i.ptr(), rc, gr))
+	for (auto& c : element->children())
+	{
+		if (c.ptr() != _capturedElement)
+			addElementToRenderQueue(c.ptr(), rc, gr);
+	}
 
 	element->addToOverlayRenderQueue(rc, gr);
 
@@ -63,8 +67,20 @@ void Layout::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 {
 	gr.resetClipRect();
 
-	ET_ITERATE(children(), auto&, i, addElementToRenderQueue(i.ptr(), rc, gr))
-	ET_ITERATE(_topmostElements, auto&, i, i->addToRenderQueue(rc, gr))
+	for (auto& c : children())
+	{
+		if (c.ptr() != _capturedElement)
+			addElementToRenderQueue(c.ptr(), rc, gr);
+	}
+	
+	for (auto& t : _topmostElements)
+	{
+		if (t.ptr() != _capturedElement)
+			addElementToRenderQueue(t.ptr(), rc, gr);
+	}
+	
+	if (_capturedElement != nullptr)
+		addElementToRenderQueue(_capturedElement, rc, gr);
 
 	_valid = true;
 }
@@ -111,6 +127,8 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 
 					if (Input::canGetCurrentPointerInfo())
 						startUpdates();
+					
+					invalidateContent();
 				}
 				else
 				{
@@ -119,7 +137,10 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 			}
 
 			if (processed || _dragging)
+			{
 				_capturedElement = active;
+				invalidateContent();
+			}
 		}
 
 		return processed;
@@ -174,11 +195,13 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 				_dragInitialPosition, p.normalizedPos));
 
 			_dragging = false;
-			_capturedElement = 0;
+			_capturedElement = nullptr;
+			invalidateContent();
 		}
 		else if (processed) 
 		{
-			_capturedElement = 0;
+			_capturedElement = nullptr;
+			invalidateContent();
 		}
 
 		return true;
@@ -303,8 +326,10 @@ void Layout::cancelDragging(float returnDuration)
 	if (_dragging)
 	{
 		_capturedElement->setPosition(_dragInitialPosition, returnDuration);
-		_capturedElement = 0;
+		_capturedElement = nullptr;
 		_dragging = false;
+		
+		invalidateContent();
 	}
 }
 

@@ -19,7 +19,8 @@ void EventReceiver::eventConnected(Event* e)
 
 EventReceiver::~EventReceiver() 
 {
-	ET_ITERATE(_events, auto&, i, i->receiverDisconnected(this))
+	for (auto& i : _events)
+		i->receiverDisconnected(this);
 }
 
 void EventReceiver::eventDisconnected(Event* e)
@@ -41,7 +42,7 @@ Event0::Event0() : _invoking(false)
 
 Event0::~Event0()
 {
-	ET_START_ITERATION(_connections, auto&, connection)
+	for (auto& connection : _connections)
 	{
 		if (connection->receiver())
 		{
@@ -51,7 +52,6 @@ Event0::~Event0()
 			delete connection;
 		}
 	}
-	ET_END_ITERATION
 }
 
 void Event0::connect(Event0& e)
@@ -86,7 +86,9 @@ void Event0::invoke()
 void Event0::invokeInMainRunLoop(float delay)
 {
 	cleanup();
-	ET_ITERATE(_connections, auto&, i, i->invokeInMainRunLoop(delay))
+	
+	for (auto& i : _connections)
+		i->invokeInMainRunLoop(delay);
 }
 
 void Event0::receiverDisconnected(EventReceiver* r)

@@ -25,14 +25,14 @@ Event0Connection<T>::Event0Connection(T* receiver, void(T::*func)()) :
 template <typename R>
 void Event0::connect(R* receiver, void (R::*receiverMethod)())
 {
-	ET_ITERATE(_connections, auto&, i,
+	for (auto& connection : _connections)
 	{
-		if (i->receiver() == receiver)
+		if (connection->receiver() == receiver)
 		{
-			i->setRemoved(false);
+			connection->setRemoved(false);
 			return;
 		}
-	})
+	}
 
 	_connections.push_back(new Event0Connection<R>(receiver, receiverMethod));
 	receiver->eventConnected(this);
@@ -66,7 +66,7 @@ Event1<ArgType>::Event1() : _invoking(false)
 template <typename ArgType>
 Event1<ArgType>::~Event1()
 {
-	ET_START_ITERATION(_connections, auto&, connection)
+	for (auto& connection : _connections)
 	{
 		if (connection->receiver())
 		{
@@ -76,21 +76,20 @@ Event1<ArgType>::~Event1()
 			delete connection;
 		}
 	}
-	ET_END_ITERATION
 }
 
 template <typename ArgType>
 template <typename ReceiverType>
 inline void Event1<ArgType>::connect(ReceiverType* receiver, void (ReceiverType::*receiverMethod)(ArgType))
 {
-	ET_ITERATE(_connections, auto&, i,
+	for (auto& connection : _connections)
 	{
-		if (i->receiver() == receiver)
+		if (connection->receiver() == receiver)
 		{
-			i->setRemoved(false);
+			connection->setRemoved(false);
 			return;
 		}
-	})
+	}
 
 	_connections.push_back(new Event1Connection<ReceiverType, ArgType>(receiver, receiverMethod));
 	receiver->eventConnected(this);
