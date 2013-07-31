@@ -220,7 +220,7 @@ void Carousel::buildRibbonItems()
 	float zOffset = 2.0f;
 
 	float index = 0.0f;
-	ET_START_ITERATION(_items, CarouselItem::Pointer&, item)
+	for (CarouselItem::Pointer& item : _items)
 	{
 		float actualIndex = (index - _selectedItem) / maxItems;
 		float linear = clamp(actualIndex, -1.0f, 1.0f);
@@ -241,7 +241,6 @@ void Carousel::buildRibbonItems()
 		a += da;
 		index += 1.0f;
 	}
-	ET_END_ITERATION
 }
 
 void Carousel::buildRoundItems()
