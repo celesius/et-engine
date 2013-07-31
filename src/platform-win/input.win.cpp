@@ -11,7 +11,7 @@
 
 using namespace et;
 
-PointerInputInfo Input::currentPointer() const
+PointerInputInfo Input::currentPointer()
 {
 	HWND appWindow = HWND(application().renderingContextHandle());
 	POINT pt = { };
@@ -25,14 +25,13 @@ PointerInputInfo Input::currentPointer() const
 	normPt.x = 2.0f * ptf.x / static_cast<float>(r.right) - 1.0f;
 	normPt.y = 1.0f - 2.0f * ptf.y / static_cast<float>(r.bottom);
 
-	return PointerInputInfo(PointerType_None, ptf, normPt, vec2(0.0f), 0, mainRunLoop().time(), PointerOrigin_Mouse);
+	return PointerInputInfo(PointerType_None, ptf, normPt, vec2(0.0f), 0,
+		mainRunLoop().time(), PointerOrigin_Mouse);
 }
 
 
-bool Input::canGetCurrentPointerInfo() const
-{
-	return true;
-}
+bool Input::canGetCurrentPointerInfo()
+	{ return true; }
 
 void Input::activateSoftwareKeyboard()
 {

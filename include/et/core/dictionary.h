@@ -91,7 +91,7 @@ namespace et
 		StringValue(const char* r) :
 			ValuePointer<std::string, ValueClass_String>(r) { }
 		
-		StringValue(const typename Value<std::string, ValueClass_String>::Pointer& p) :
+		StringValue(const Value<std::string, ValueClass_String>::Pointer& p) :
 			ValuePointer<std::string, ValueClass_String>(p) { }
 		
 		StringValue(Value<std::string, ValueClass_String>* p) :
