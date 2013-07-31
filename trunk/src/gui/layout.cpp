@@ -294,12 +294,18 @@ void Layout::setCurrentElement(const PointerInputInfo& p, Element* e)
 	if (e == _currentElement) return;
 
 	if (_currentElement)
+	{
 		_currentElement->pointerLeaved(p);
+		_currentElement->hoverEnded.invoke(_currentElement);
+	}
 
 	_currentElement = e;
 
 	if (_currentElement)
+	{
 		_currentElement->pointerEntered(p);
+		_currentElement->hoverStarted.invoke(_currentElement);
+	}
 }
 
 void Layout::performDragging(const PointerInputInfo& p)
