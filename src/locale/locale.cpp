@@ -223,13 +223,13 @@ size_t Locale::parseComment(const StringDataStorage& data, size_t index)
 
 void Locale::printKeyValues()
 {
-	ET_ITERATE(_localeMap, auto&, i,
+	for (auto& i : _localeMap)
 	{
 		const std::string& key = i.first;
 		std::string& value = i.second;
 		std::cout << key.size() << " / " << value.size() << " -> " << key << " -> " << value << std::endl;
 		std::cout.flush();
-	})
+	}
 }
 
 std::string et::localized(const std::string& key)

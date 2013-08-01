@@ -48,15 +48,13 @@ void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, GuiRen
 	}
 	
 	element->addToRenderQueue(rc, gr);
-
 	for (auto& c : element->children())
 	{
 		if (!elementIsBeingDragged(c.ptr()))
 			addElementToRenderQueue(c.ptr(), rc, gr);
 	}
-
 	element->addToOverlayRenderQueue(rc, gr);
-
+	
 	if (clipToBounds)
 	{
 		gr.popClipRect();
@@ -66,13 +64,13 @@ void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, GuiRen
 void Layout::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 {
 	gr.resetClipRect();
-
+	
 	for (auto& c : children())
 	{
 		if (!elementIsBeingDragged(c.ptr()))
 			addElementToRenderQueue(c.ptr(), rc, gr);
 	}
-	
+
 	for (auto& t : _topmostElements)
 	{
 		if (!elementIsBeingDragged(t.ptr()))
@@ -81,7 +79,7 @@ void Layout::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 	
 	if (elementIsBeingDragged(_capturedElement))
 		addElementToRenderQueue(_capturedElement, rc, gr);
-
+	
 	_valid = true;
 }
 

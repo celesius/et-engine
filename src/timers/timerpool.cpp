@@ -66,14 +66,14 @@ void TimerPoolObject::update(float t)
 
 	if (_queue.size())
 	{
-		ET_ITERATE(_queue, auto&, i,
+		for (auto& i : _queue)
 		{
 			if (i.action == QueueAction_Add)
 			{
 				i.action = QueueAction_Update;
 				_timedObjects.push_back(i);
 			}
-		})
+		}
 		_queue.clear();
 	}
 

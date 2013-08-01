@@ -7,6 +7,7 @@
 
 #include <et/core/tools.h>
 #include <et/opengl/opengl.h>
+#include <et/threading/threading.h>
 
 using namespace et;
 
@@ -49,7 +50,7 @@ std::string et::glErrorToString(uint32_t error)
 
 void et::checkOpenGLErrorEx(const char* caller, const char* fileName, const char* line, const char* tag, ...)
 {
-	uint32_t error = glGetError();
+	GLenum error = glGetError();
 	if (error != GL_NO_ERROR)
 	{
 		char buffer[1024] = { };
@@ -366,7 +367,7 @@ void et::etUseProgram(uint32_t program)
 #endif
 }
 
-#if defined(GL_ARB_vertex_array_object)
+#if (ET_SUPPORT_VERTEX_ARRAY_OBJECTS)
 void et::etBindVertexArray(uint32_t arr)
 {
 	glBindVertexArray(arr);
@@ -379,7 +380,8 @@ void et::etBindVertexArray(uint32_t arr)
 #else
 void et::etBindVertexArray(uint32_t)
 {
-	log::warning("Call to glBindVertexArray without defined GL_ARB_vertex_array_object");
+	log::warning("Call to glBindVertexArray without defined "
+		"GL_ARB_vertex_array_object or GL_OES_vertex_array_object");
 }
 #endif
 

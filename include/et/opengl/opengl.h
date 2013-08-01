@@ -110,6 +110,12 @@
 #
 #endif
 
+#if defined(GL_ARB_vertex_array_object) || defined(GL_OES_vertex_array_object)
+#	define ET_SUPPORT_VERTEX_ARRAY_OBJECTS	1
+#else
+#	error Vertex Array Objects are not supported on selected platform
+#endif
+
 namespace et
 {
 	enum BufferDrawType

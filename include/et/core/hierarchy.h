@@ -60,7 +60,8 @@ namespace et
 	template <typename T>
 	Hierarchy<T>::~Hierarchy()
 	{
-		ET_ITERATE(_children, auto&, i, i->removeParent())
+		for (auto& i : _children)
+			i->removeParent();
 	}
 
 	template <typename T>
