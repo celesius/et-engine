@@ -34,6 +34,7 @@ namespace et
 		bool run();
 		bool stop();
 
+		void waitForTermination();
 		void terminate(int result = 0);
 
 		bool running() const;
