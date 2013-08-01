@@ -222,7 +222,27 @@ namespace et
 		ValuePointer<T, C> valueForKeyPath(const std::vector<std::string>& key, ValuePointer<T, C> def) const
 		{
 			auto i = baseValueForKeyPath(key);
-			return (i.valid() && (i->valueClass() == C)) ? ValuePointer<T, C>(i) : ValuePointer<T, C>(def);
+			if (i.invalid())
+			{
+				/*
+				::printf("Value for key path {");
+				for (auto& s : key) ::printf(" %s", s.c_str());
+				::printf(" } not found.\n");
+				*/
+				return def;
+			}
+			
+			if (i->valueClass() != C)
+			{
+				/*
+				::printf("Value for key path {");
+				for (auto& s : key) ::printf(" %s", s.c_str());
+				::printf(" } found, but it contains different type.\n");
+				 */
+				return def;
+			}
+			
+			return ValuePointer<T, C>(i);
 		}
 		
 		template <typename T, ValueClass C>
