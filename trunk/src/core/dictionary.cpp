@@ -61,10 +61,10 @@ ValueBase::Pointer Dictionary::baseValueForKeyPathInHolder(const std::vector<std
 		log::warning("Trying to extract subvalue `%s` from string `%s`", path.front().c_str(),
 			string->content.c_str());
 	}
-	else if (holder->valueClass() == ValueClass_Numeric)
+	else if (holder->valueClass() == ValueClass_Integer)
 	{
-		NumericValue number(holder);
-		log::warning("Trying to extract subvalue `%s` from number %g.", path.front().c_str(),
+		IntegerValue number(holder);
+		log::warning("Trying to extract subvalue `%s` from number %d.", path.front().c_str(),
 			number->content);
 	}
 	else
@@ -94,10 +94,10 @@ void printArray(ArrayValue arr, const std::string& tabs)
 {
 	for (auto i : arr->content)
 	{
-		if (i->valueClass() == ValueClass_Numeric)
+		if (i->valueClass() == ValueClass_Integer)
 		{
-			NumericValue val = i;
-			log::info("%s%g", tabs.c_str(), val->content);
+			IntegerValue val = i;
+			log::info("%s%d", tabs.c_str(), val->content);
 		}
 		else if (i->valueClass() == ValueClass_String)
 		{
@@ -124,10 +124,10 @@ void printDictionary(Dictionary dict, const std::string& tabs)
 {
 	for (auto i : dict->content)
 	{
-		if (i.second->valueClass() == ValueClass_Numeric)
+		if (i.second->valueClass() == ValueClass_Integer)
 		{
-			NumericValue val = i.second;
-			log::info("%s%s = %g", tabs.c_str(), i.first.c_str(), val->content);
+			IntegerValue val = i.second;
+			log::info("%s%s = %d", tabs.c_str(), i.first.c_str(), val->content);
 		}
 		else if (i.second->valueClass() == ValueClass_String)
 		{
