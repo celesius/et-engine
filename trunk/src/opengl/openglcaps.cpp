@@ -57,7 +57,7 @@ void OpenGLCapabilites::checkCaps()
 	
 	_mipmap_generation = glGenerateMipmap != nullptr;
 	
-#if defined(GL_ARB_vertex_array_object)
+#if (ET_SUPPORT_VERTEX_ARRAY_OBJECTS)
 	_vertex_arrays = (glGenVertexArrays != nullptr) && (glDeleteVertexArrays != nullptr)
 		&& (glBindVertexArray != nullptr) && (glIsVertexArray != nullptr);
 	

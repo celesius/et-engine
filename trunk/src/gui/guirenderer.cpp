@@ -12,7 +12,7 @@
 using namespace et;
 using namespace et::gui;
 
-const size_t BlockSize = 1024;
+const size_t BlockSize = 2048;
 
 extern std::string gui_default_vertex_src;
 extern std::string gui_default_frag_src;
@@ -139,7 +139,9 @@ GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& text
 		_renderingElement->_chunks.push_back(RenderChunk(i0, count, 
 			_lastTextures[RenderLayer_Layer0], _lastTextures[RenderLayer_Layer1], _clip.top(), cls));
 	}
+	
 	alloc(count);
+	
 	_renderingElement->_vertexList.applyOffset(count);
 
 	assert(i0 < _renderingElement->_vertexList.size());
@@ -153,7 +155,7 @@ size_t GuiRenderer::addVertices(const GuiVertexList& vertices, const Texture& te
 {
 	size_t current = 0;
 	size_t count = vertices.offset();
-
+	
 	if (_renderingElement.valid() && (count > 0))
 	{
 		current = _renderingElement->_vertexList.offset();
@@ -206,12 +208,12 @@ void GuiRenderer::render(RenderContext* rc)
 	ElementRepresentation representation = ElementRepresentation_max;
 	
 	const VertexArrayObject& vao = _renderingElement->vertexArrayObject();
-	ET_START_ITERATION(_renderingElement->_chunks, const RenderChunk&, i)
+	for (auto& i : _renderingElement->_chunks)
 	{
 		rs.bindTexture(0, i.layers[RenderLayer_Layer0]);
 		rs.bindTexture(1, i.layers[RenderLayer_Layer1]);
 		rs.setClip(true, i.clip + recti(_customWindowOffset.x, _customWindowOffset.y, 0, 0));
-
+		
 		if (i.representation != representation)
 		{
 			representation = i.representation;
@@ -223,7 +225,6 @@ void GuiRenderer::render(RenderContext* rc)
 
 		renderer->drawElements(vao->indexBuffer(), i.first, i.count);
 	}
-	ET_END_ITERATION
 }
 
 void GuiRenderer::buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, const GuiVertex& topRight, 
@@ -244,7 +245,7 @@ void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescri
 	vec4 line;
 	std::vector<vec4> lines;
 
-	ET_ITERATE(chars, const CharDescriptor&, desc,
+	for (const CharDescriptor& desc : chars)
 	{
 		line.w = etMax(line.w, desc.size.y);
 		if ((desc.value == ET_NEWLINE) || (desc.value == ET_RETURN))
@@ -256,23 +257,23 @@ void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescri
 		{
 			line.z += desc.size.x;
 		}
-	})
+	}
 	lines.push_back(line);
 
 	float hAlignFactor = alignmentFactor(hAlign);
 	float vAlignFactor = alignmentFactor(vAlign);
-	ET_ITERATE(lines, vec4&, i,
+	for (vec4& i : lines)
 	{
 		i.x -= hAlignFactor * i.z;
 		i.y -= vAlignFactor * i.w;
-	})
+	}
 	
 	size_t lineIndex = 0;
 	line = lines.front();
 	
 	vec2 mask(layer == RenderLayer_Layer0 ? 0.0f : 1.0f, 0.0f);
 	vertices.fitToSize(6 * chars.size());
-	ET_ITERATE(chars, const CharDescriptor&, desc,
+	for (const CharDescriptor& desc : chars)
 	{
 		if ((desc.value == ET_NEWLINE) || (desc.value == ET_RETURN))
 		{
@@ -299,7 +300,7 @@ void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescri
 			
 			line.x += desc.size.x;
 		}
-	})
+	}
 }
 
 int GuiRenderer::measusevertexCountForImageDescriptor(const ImageDescriptor& desc)

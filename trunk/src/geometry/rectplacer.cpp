@@ -36,14 +36,16 @@ bool RectPlacer::place(const vec2i& size, rect& placedPosition)
 		return true;
 	}
 	
-	ET_START_ITERATION(_placedItems, const rect&, i)
+	for (const rect& i : _placedItems)
 	{
 		placedPosition.setOrigin(i.origin() + vec2(i.size().x, 0.0f));
 
-		bool placed = (placedPosition.origin().x + w <= _contextSize.x) && (placedPosition.origin().y + h <= _contextSize.y);
+		bool placed = (placedPosition.origin().x + w <= _contextSize.x) &&
+			(placedPosition.origin().y + h <= _contextSize.y);
+		
 		if (placed)
 		{
-			ET_START_ITERATION(_placedItems, const rect&, ii)
+			for (const rect& ii : _placedItems)
 			{
 				if (ii.intersects(placedPosition) && (ii != i))
 				{
@@ -51,7 +53,6 @@ bool RectPlacer::place(const vec2i& size, rect& placedPosition)
 					break;
 				}
 			}
-			ET_END_ITERATION
 		}
 
 		if (placed)
@@ -61,10 +62,12 @@ bool RectPlacer::place(const vec2i& size, rect& placedPosition)
 		}
 
 		placedPosition.setOrigin(i.origin() + vec2(0.0f, i.size().y));
-		placed = (placedPosition.origin().x + w <= _contextSize.x) && (placedPosition.origin().y + h <= _contextSize.y);
+		placed = (placedPosition.origin().x + w <= _contextSize.x) &&
+			(placedPosition.origin().y + h <= _contextSize.y);
+		
 		if (placed)
 		{
-			ET_START_ITERATION(_placedItems, const rect&, ii)
+			for (const rect& ii : _placedItems)
 			{
 				if (ii.intersects(placedPosition) && (ii != i))
 				{
@@ -72,7 +75,6 @@ bool RectPlacer::place(const vec2i& size, rect& placedPosition)
 					break;
 				}
 			}
-			ET_END_ITERATION
 		}
 
 		if (placed) 
@@ -81,7 +83,6 @@ bool RectPlacer::place(const vec2i& size, rect& placedPosition)
 			return true;
 		}
 	}
-	ET_END_ITERATION
-
+	
 	return false;
 }

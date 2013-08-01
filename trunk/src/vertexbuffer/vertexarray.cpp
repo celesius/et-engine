@@ -38,7 +38,7 @@ VertexArray::Description VertexArray::generateDescription() const
 	Description desc;
 	desc.declaration = VertexDeclaration(_decl.interleaved());
 
-	ET_START_ITERATION(_chunks, auto&, chunk)
+	for (auto& chunk : _chunks)
 	{
 		size_t t_stride = _decl.interleaved() ? static_cast<size_t>(_decl.dataSize()) : 0;
 		size_t t_offset = _decl.interleaved() ? offset : static_cast<size_t>(dataSize);
@@ -46,14 +46,13 @@ VertexArray::Description VertexArray::generateDescription() const
 		dataSize += chunk->dataSize();
 		offset += chunk->typeSize();
 	}
-	ET_END_ITERATION
 
 	desc.data.resize(dataSize);
 	size_t numElements = dataSize / desc.declaration.dataSize();
 	char* ptr0 = desc.data.binary();
 
 	size_t entry_i = 0;
-	ET_START_ITERATION(_chunks, auto&, chunk)
+	for (auto& chunk : _chunks)
 	{
 		const char* chunkData = chunk->data();
 		size_t chunkDataSize = chunk->dataSize();
@@ -76,7 +75,6 @@ VertexArray::Description VertexArray::generateDescription() const
 			etCopyMemory(ptr0 + chunkOffset, chunkData, chunkDataSize);
 		}
 	}
-	ET_END_ITERATION
 
 	return desc;
 }

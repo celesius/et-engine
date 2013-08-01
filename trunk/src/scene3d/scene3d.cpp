@@ -280,7 +280,11 @@ Material Scene3d::materialWithId(int id)
 	for (auto si = storages.begin(), se = storages.end(); si != se; ++si)
 	{
 		Scene3dStorage* storage = static_cast<Scene3dStorage*>(si->ptr());
-		ET_ITERATE(storage->materials(), auto&, data, if (data->tag == id) return data)
+		for (auto& data : storage->materials())
+		{
+			if (data->tag == id)
+				return data;
+		}
 	}
 	
 	return Material();
@@ -288,12 +292,11 @@ Material Scene3d::materialWithId(int id)
 
 VertexArrayObject Scene3d::vaoWithIdentifiers(const std::string& vbid, const std::string& ibid)
 {
-	ET_START_ITERATION(_vaos, auto, i)
+	for (auto& i : _vaos)
 	{
 		if ((i->vertexBuffer()->name() == vbid) && (i->indexBuffer()->name() == ibid))
 			return i;
 	}
-	ET_END_ITERATION
 
 	return VertexArrayObject();
 }

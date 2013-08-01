@@ -13,7 +13,8 @@ using namespace et;
 
 TextureLoaderDelegate::~TextureLoaderDelegate()
 {
-	ET_ITERATE(_requests, auto, i, i->discardDelegate())
+	for (auto i : _requests)
+		i->discardDelegate();
 }
 
 TextureLoadingRequest::TextureLoadingRequest(const std::string& name, size_t scrScale, const Texture& tex,

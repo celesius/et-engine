@@ -191,7 +191,7 @@ Event2<Arg1Type, Arg2Type>::Event2() : _invoking(false)
 template <typename Arg1Type, typename Arg2Type>
 Event2<Arg1Type, Arg2Type>::~Event2()
 {
-	ET_START_ITERATION(_connections, auto&, connection)
+	for (auto& connection : _connections)
 	{
 		if (connection->receiver())
 		{
@@ -201,7 +201,6 @@ Event2<Arg1Type, Arg2Type>::~Event2()
 			delete connection;
 		}
 	}
-	ET_END_ITERATION
 }
 
 template <typename Arg1Type, typename Arg2Type>
@@ -209,14 +208,14 @@ template <typename ReceiverType>
 inline void Event2<Arg1Type, Arg2Type>::connect(ReceiverType* receiver,
 	void (ReceiverType::*receiverMethod)(Arg1Type, Arg2Type))
 {
-	ET_ITERATE(_connections, auto&, i,
+	for (auto& i : _connections)
 	{
 		if (i->receiver() == receiver)
 		{
 			i->setRemoved(false);
 			return;
 		}
-	})
+	}
 
 	_connections.push_back(new Event2Connection<ReceiverType, Arg1Type, Arg2Type>(receiver, receiverMethod));
 	receiver->eventConnected(this);

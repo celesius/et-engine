@@ -117,11 +117,11 @@ void Element::sendToBack(Element* c)
 
 void Element::broardcastMessage(const GuiMessage& msg)
 {
-	ET_ITERATE(children(), auto, c,
+	for (auto& c : children())
 	{
 		c->processMessage(msg);
 		c->broardcastMessage(msg);
-	})
+	}
 }
 
 Element* Element::baseChildWithName(const std::string& name)

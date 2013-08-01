@@ -143,7 +143,7 @@ vec2 FontData::measureStringSize(const CharDescriptorList& s)
 	vec2 sz;
 	vec2 lineSize;
 
-	ET_START_ITERATION(s, auto&, desc)
+	for (auto& desc : s)
 	{
 		lineSize.y = etMax(lineSize.y, desc.size.y);
 		
@@ -158,7 +158,6 @@ vec2 FontData::measureStringSize(const CharDescriptorList& s)
 			lineSize.x += desc.size.x;
 		}
 	}
-	ET_END_ITERATION
 	
 	sz.x = etMax(lineSize.x, sz.x);
 	sz.y += lineSize.y;
@@ -225,7 +224,7 @@ CharDescriptorList FontData::parseString(const std::string& s)
 	bool closingTag = false;
 	std::string tag;
 
-	ET_START_ITERATION(s, auto&, c)
+	for (auto& c : s)
 	{
 		if (c == tagOpening)
 		{
@@ -298,7 +297,6 @@ CharDescriptorList FontData::parseString(const std::string& s)
 			}
 		}
 	}
-	ET_END_ITERATION
 
 	return result;
 }
@@ -323,7 +321,7 @@ CharDescriptorList FontData::parseString(const std::wstring& s)
 	bool closingTag = false;
 	std::wstring tag;
 
-	ET_START_ITERATION(s, auto&, c)
+	for (auto& c : s)
 	{
 		if (c == tagOpening)
 		{
@@ -396,14 +394,17 @@ CharDescriptorList FontData::parseString(const std::wstring& s)
 			}
 		}
 	}
-	ET_END_ITERATION
 
 	return result;
 }
 
 bool FontData::isUtf8String(const std::string& s) const
 {
-	ET_ITERATE(s, auto&, i, if (i & 0x80) return true)
-
+	for (auto c : s)
+	{
+		if (c & 0x80)
+			return true;
+	}
+	
 	return false;
 }

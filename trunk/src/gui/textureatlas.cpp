@@ -148,7 +148,13 @@ const gui::Image& TextureAtlas::image(const std::string& key) const
 ImageList TextureAtlas::imagesForTexture(Texture t) const
 {
 	ImageList result;
-	ET_ITERATE(_images, auto&, i, if (i.second.texture == t) result.push_back(i.second))
+	
+	for (auto& i : _images)
+	{
+		if (i.second.texture == t)
+			result.push_back(i.second);
+	}
+			
 	return result;
 }
 

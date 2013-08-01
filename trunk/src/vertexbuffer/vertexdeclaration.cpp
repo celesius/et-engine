@@ -108,14 +108,13 @@ void VertexDeclaration::serialize(std::ostream& stream)
 	serializeInt(stream, _interleaved);
 	serializeInt(stream, static_cast<int>(_totalSize));
 	serializeInt(stream, static_cast<int>(_list.size()));
-	ET_START_ITERATION(_list, auto&, i)
+	for (auto& i : _list)
 	{
 		serializeInt(stream, i.usage());
 		serializeInt(stream, i.type());
 		serializeInt(stream, i.stride());
 		serializeInt(stream, static_cast<int>(i.offset()));
 	}
-	ET_END_ITERATION
 }
 
 void VertexDeclaration::deserialize(std::istream& stream)
