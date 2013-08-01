@@ -21,6 +21,7 @@ namespace et
 		static void* threadProc(void* context);
 		
 	public:
+		pthread_attr_t attrib;
 		pthread_t thread;
 		pthread_mutex_t suspendMutex;
 		pthread_cond_t suspend;
@@ -32,23 +33,31 @@ namespace et
 
 using namespace et;
 
-ThreadPrivate::ThreadPrivate() : thread(0), threadId(0)
+ThreadPrivate::ThreadPrivate() :
+	thread(nullptr), threadId(0)
 {
+	attrib = { };
 	suspendMutex = { };
 	suspend = { };
+	
+	pthread_attr_init(&attrib);
+	pthread_mutex_init(&suspendMutex, 0);
+	pthread_cond_init(&suspend, 0);
+	
+	pthread_attr_setdetachstate(&attrib, PTHREAD_CREATE_JOINABLE);
 }
 
 ThreadPrivate::~ThreadPrivate()
 {
 	pthread_mutex_destroy(&suspendMutex);
 	pthread_cond_destroy(&suspend);
+	pthread_attr_destroy(&attrib);
 }
 
 void* ThreadPrivate::threadProc(void* context)
 {
 	Thread* thread = static_cast<Thread*>(context);
 	thread->_private->threadId = reinterpret_cast<ThreadId>(pthread_self());
-
 	return reinterpret_cast<void*>(thread->main());
 }
 
@@ -72,21 +81,15 @@ Thread::~Thread()
 bool Thread::run()
 {
 	if (_private->running.atomicCounterValue() > 0) return false;
-	
-	pthread_mutex_init(&_private->suspendMutex, 0);
-	pthread_cond_init(&_private->suspend, 0);
-	
-	pthread_attr_t attrib = { };
-	pthread_attr_init(&attrib);
-	pthread_attr_setdetachstate(&attrib, PTHREAD_CREATE_DETACHED);
-	
 	_private->running.retain();
 	
-	pthread_create(&_private->thread, &attrib, ThreadPrivate::threadProc, this);
-	pthread_join(_private->thread, nullptr);
-
-	pthread_attr_destroy(&attrib);
+	pthread_create(&_private->thread, &_private->attrib, ThreadPrivate::threadProc, this);
 	return true;
+}
+
+void Thread::waitForTermination()
+{
+	pthread_join(_private->thread, nullptr);
 }
 
 void Thread::suspend()
