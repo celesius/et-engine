@@ -25,7 +25,8 @@ namespace et
 	
 	enum ValueClass
 	{
-		ValueClass_Numeric,
+		ValueClass_Float,
+		ValueClass_Integer,
 		ValueClass_String,
 		ValueClass_Array,
 		ValueClass_Dictionary,
@@ -77,7 +78,8 @@ namespace et
 			{ return this->reference().content; }
 	};
 	
-	typedef ValuePointer<double, ValueClass_Numeric> NumericValue;
+	typedef ValuePointer<double, ValueClass_Float> FloatValue;
+	typedef ValuePointer<int, ValueClass_Integer> IntegerValue;
 	
 	class StringValue : public ValuePointer<std::string, ValueClass_String>
 	{
@@ -163,8 +165,8 @@ namespace et
 		void setStringForKey(const std::string& key, StringValue value)
 			{ setValueForKey<StringValue, ValueClass_String>(key, value); }
 
-		void setNumberForKey(const std::string& key, NumericValue value)
-			{ setValueForKey<NumericValue, ValueClass_Numeric>(key, value); }
+		void setIntegerForKey(const std::string& key, IntegerValue value)
+			{ setValueForKey<IntegerValue, ValueClass_Integer>(key, value); }
 		
 		void setArrayForKey(const std::string& key, ArrayValue value)
 			{ setValueForKey<ArrayValue, ValueClass_Array>(key, value); }
@@ -173,11 +175,11 @@ namespace et
 			{ setValueForKey<Dictionary, ValueClass_Dictionary>(key, value); }
 		
 	public:
-		NumericValue numberForKey(const std::string& key, NumericValue def = NumericValue()) const
-			{ return valueForKey<NumericValue::ValueType, ValueClass_Numeric>(key, def); }
+		IntegerValue integerForKey(const std::string& key, IntegerValue def = IntegerValue()) const
+			{ return valueForKey<IntegerValue::ValueType, ValueClass_Integer>(key, def); }
 		
-		NumericValue numberForKeyPath(const std::vector<std::string>& key, NumericValue def = NumericValue()) const
-			{ return valueForKeyPath<NumericValue::ValueType, ValueClass_Numeric>(key, def); }
+		IntegerValue integerForKeyPath(const std::vector<std::string>& key, IntegerValue def = IntegerValue()) const
+			{ return valueForKeyPath<IntegerValue::ValueType, ValueClass_Integer>(key, def); }
 		
 		StringValue stringForKey(const std::string& key, StringValue def = StringValue()) const
 			{ return valueForKey<StringValue::ValueType, ValueClass_String>(key, def); }
