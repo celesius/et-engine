@@ -9,10 +9,10 @@
 
 namespace et
 {
-	class Flags
+	class FlagsHolder
 	{
 	public:
-		Flags(size_t flags = 0) : _flags(flags) { }
+		FlagsHolder(size_t flags = 0) : _flags(flags) { }
 
 		size_t flags() const
 			{ return _flags; }

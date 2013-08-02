@@ -17,8 +17,8 @@ Layout::Layout() : Element2d(nullptr, ElementClass<decltype(this)>::uniqueName(s
 	_currentElement(nullptr), _focusedElement(nullptr), _capturedElement(nullptr), _valid(false),
 	_dragging(false)
 {
-	setAutolayot(vec2(0.0f), ElementLayoutMode_Absolute, vec2(1.0f),
-		ElementLayoutMode_RelativeToContext, vec2(0.0f));
+	setAutolayot(vec2(0.0f), LayoutMode_Absolute, vec2(1.0f),
+		LayoutMode_RelativeToContext, vec2(0.0f));
 }
 
 void Layout::layout(const vec2& sz)
@@ -34,7 +34,7 @@ void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, GuiRen
 {
 	if (!element->visible()) return;
 
-	bool clipToBounds = element->hasFlag(ElementFlag_ClipToBounds);
+	bool clipToBounds = element->hasFlag(Flag_ClipToBounds);
 
 	if (clipToBounds)
 	{
@@ -85,7 +85,7 @@ void Layout::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 
 bool Layout::pointerPressed(const et::PointerInputInfo& p)
 { 
-	if (hasFlag(ElementFlag_TransparentForPointer)) return false;
+	if (hasFlag(Flag_TransparentForPointer)) return false;
 
 	if (_capturedElement)
 	{
@@ -111,7 +111,7 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 
 			if ((p.type == PointerType_General))
 			{
-				if (active->hasFlag(ElementFlag_Dragable))
+				if (active->hasFlag(Flag_Dragable))
 				{
 					processed = true;
 
@@ -147,7 +147,7 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 
 bool Layout::pointerMoved(const et::PointerInputInfo& p)
 {
-	if (hasFlag(ElementFlag_TransparentForPointer)) return false;
+	if (hasFlag(Flag_TransparentForPointer)) return false;
 
 	if (_capturedElement)
 	{
@@ -174,7 +174,7 @@ bool Layout::pointerMoved(const et::PointerInputInfo& p)
 
 bool Layout::pointerReleased(const et::PointerInputInfo& p)
 { 
-	if (hasFlag(ElementFlag_TransparentForPointer)) return false;
+	if (hasFlag(Flag_TransparentForPointer)) return false;
 
 	Element* active = activeElement(p);
 	if (_capturedElement)
@@ -221,7 +221,7 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 
 bool Layout::pointerScrolled(const et::PointerInputInfo& p)
 { 
-	if (hasFlag(ElementFlag_TransparentForPointer)) return false;
+	if (hasFlag(Flag_TransparentForPointer)) return false;
 
 	if (_capturedElement)
 	{
@@ -274,7 +274,7 @@ Element* Layout::getActiveElement(const PointerInputInfo& p, Element* el)
 	if (!el->visible() || !el->enabled() || !el->containsPoint(p.pos, p.normalizedPos))
 		return nullptr;
 	
-	if (el->hasFlag(ElementFlag_HandlesChildEvents))
+	if (el->hasFlag(Flag_HandlesChildEvents))
 		return el;
 
 	for (auto ei = el->children().rbegin(), ee = el->children().rend(); ei != ee; ++ei)
@@ -284,7 +284,7 @@ Element* Layout::getActiveElement(const PointerInputInfo& p, Element* el)
 			return element;
 	}
 
-	return el->hasFlag(ElementFlag_TransparentForPointer) ? nullptr : el;
+	return el->hasFlag(Flag_TransparentForPointer) ? nullptr : el;
 }
 
 void Layout::setCurrentElement(const PointerInputInfo& p, Element* e)
@@ -351,7 +351,7 @@ void Layout::setActiveElement(Element* e)
 
 	_focusedElement = e;
 
-	bool needKeyboard = _focusedElement && _focusedElement->hasFlag(ElementFlag_RequiresKeyboard);
+	bool needKeyboard = _focusedElement && _focusedElement->hasFlag(Flag_RequiresKeyboard);
 
 	if (_focusedElement)
 		_focusedElement->setFocus();
@@ -371,7 +371,7 @@ void Layout::collectTopmostElements(Element* element)
 {
 	if (!element->visible()) return;
 	
-	if (element->hasFlag(ElementFlag_RenderTopmost))
+	if (element->hasFlag(Flag_RenderTopmost))
 		_topmostElements.push_back(Element::Pointer(element));
 
 	ET_ITERATE(element->children(), auto&, i, collectTopmostElements(i.ptr()))

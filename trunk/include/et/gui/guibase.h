@@ -27,7 +27,7 @@ namespace et
 		class Layout;
 		
 		typedef Hierarchy<Element> ElementHierarchy;
-		class Element : public ElementHierarchy, public Flags, public EventReceiver,
+		class Element : public ElementHierarchy, public FlagsHolder, public EventReceiver,
 			public TimedObject, public AnimatorDelegate
 		{
 		public:
@@ -58,19 +58,19 @@ namespace et
 			virtual void addToOverlayRenderQueue(RenderContext*, GuiRenderer&);
 
 			virtual bool pointerPressed(const PointerInputInfo&)
-				{ return !hasFlag(ElementFlag_TransparentForPointer); }
+				{ return !hasFlag(Flag_TransparentForPointer); }
 
 			virtual bool pointerMoved(const PointerInputInfo&)
-				{ return !hasFlag(ElementFlag_TransparentForPointer); }
+				{ return !hasFlag(Flag_TransparentForPointer); }
 
 			virtual bool pointerReleased(const PointerInputInfo&)
-				{ return !hasFlag(ElementFlag_TransparentForPointer); }
+				{ return !hasFlag(Flag_TransparentForPointer); }
 
 			virtual bool pointerScrolled(const PointerInputInfo&)
-				{ return !hasFlag(ElementFlag_TransparentForPointer); }
+				{ return !hasFlag(Flag_TransparentForPointer); }
 
 			virtual bool pointerCancelled(const PointerInputInfo&)
-				{ return !hasFlag(ElementFlag_TransparentForPointer); }
+				{ return !hasFlag(Flag_TransparentForPointer); }
 
 			virtual void pointerEntered(const PointerInputInfo&) { }
 			
@@ -102,8 +102,8 @@ namespace et
 
 			void setAutolayot(const ElementLayout&);
 
-			void setAutolayot(const vec2& pos, ElementLayoutMode pMode, const vec2& sz,
-				ElementLayoutMode sMode, const vec2& pivot);
+			void setAutolayot(const vec2& pos, LayoutMode pMode, const vec2& sz,
+				LayoutMode sMode, const vec2& pivot);
 
 			void setAutolayoutMask(size_t);
 			
@@ -223,10 +223,10 @@ namespace et
 			bool _contentValid;
 		};
 
-		inline bool elementIsSelected(ElementState s)
-			{ return (s >= ElementState_Selected) && (s < ElementState_max); }
+		inline bool elementIsSelected(State s)
+			{ return (s >= State_Selected) && (s < State_max); }
 
-		ElementState adjustElementState(ElementState s);
-		float alignmentFactor(ElementAlignment a);
+		State adjustState(State s);
+		float alignmentFactor(Alignment a);
 	}
 }

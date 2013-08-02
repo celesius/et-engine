@@ -15,7 +15,7 @@ ET_DECLARE_GUI_ELEMENT_CLASS(FullscreenElement)
 FullscreenElement::FullscreenElement(Element* parent, const std::string& name) :
 	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS)
 {
-	setFlag(ElementFlag_TransparentForPointer);
+	setFlag(Flag_TransparentForPointer);
 }
 
 void FullscreenElement::layout(const vec2& sz)

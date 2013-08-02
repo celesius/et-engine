@@ -45,8 +45,8 @@ namespace et
 			void addToRenderQueue(RenderContext* rc, GuiRenderer& guiRenderer);
 			
 			void setImage(const Image& img);
-			void setBackgroundForState(const Texture& tex, const ImageDescriptor& desc, ElementState s);
-			void setBackgroundForState(const Image& img, ElementState s);
+			void setBackgroundForState(const Texture& tex, const ImageDescriptor& desc, State s);
+			void setBackgroundForState(const Image& img, State s);
 
 			void adjustSize(float duration = 0.0f);
 			void adjustSizeForText(const std::string&, float duration = 0.0f);
@@ -58,7 +58,7 @@ namespace et
 			ET_DECLARE_EVENT1(pressed, Button*)
 			ET_DECLARE_EVENT1(released, Button*)
 			
-			const Image& backgroundForState(ElementState state) const
+			const Image& backgroundForState(State state) const
 				{ return _background[state]; }
 
 			bool capturePointer() const;
@@ -107,7 +107,7 @@ namespace et
 
 		private:
 			void buildVertices(RenderContext* rc, GuiRenderer& gr);
-			void setCurrentState(ElementState s);
+			void setCurrentState(State s);
 
 		private:
 			Font _font;
@@ -115,7 +115,7 @@ namespace et
 			GuiVertexList _bgVertices;
 			GuiVertexList _textVertices;
 			GuiVertexList _imageVertices;
-			StaticDataStorage<Image, ElementState_max> _background;
+			StaticDataStorage<Image, State_max> _background;
 			Image _image;
 			vec4 _textColor;
 			vec4 _textPressedColor;
@@ -124,7 +124,7 @@ namespace et
 			vec2 _contentOffset;
 
 			Type _type;
-			ElementState _state;
+			State _state;
 			ImageLayout _imageLayout;
 			ContentMode _contentMode;
 			bool _pressed;

@@ -40,7 +40,7 @@ namespace et
 			int measusevertexCountForImageDescriptor(const ImageDescriptor& desc);
 			
 			void createStringVertices(GuiVertexList& vertices, const CharDescriptorList& chars, 
-				ElementAlignment hAlign, ElementAlignment vAlign, const vec2& pos,
+				Alignment hAlign, Alignment vAlign, const vec2& pos,
 				const vec4& color, const mat4& transform, RenderLayer layer);
 
 			void createImageVertices(GuiVertexList& vertices, const Texture& tex, const ImageDescriptor& desc, 

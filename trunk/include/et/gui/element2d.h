@@ -70,7 +70,7 @@ namespace et
 			const mat4& finalInverseTransform();
 			vec2 positionInElement(const vec2& p);
 
-			ET_DECLARE_EVENT2(elementAnimationFinished, Element2d*, ElementAnimatedPropery)
+			ET_DECLARE_EVENT2(elementAnimationFinished, Element2d*, AnimatedPropery)
 
 		protected:
 			void buildFinalTransform();

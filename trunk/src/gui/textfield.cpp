@@ -20,7 +20,7 @@ TextField::TextField(const Image& background, const std::string& text, Font font
 	Element* parent, const std::string& name) : Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS),
 	_font(font), _background(background), _text(text), _secured(false), _caretVisible(false)
 {
-	setFlag(ElementFlag_RequiresKeyboard);
+	setFlag(Flag_RequiresKeyboard);
 	setSize(font->measureStringSize(text));
 	
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
@@ -77,7 +77,7 @@ void TextField::buildVertices(RenderContext*, GuiRenderer& gr)
 	
 	if (_charList.size())
 	{
-		gr.createStringVertices(_textVertices, _charList, ElementAlignment_Near, ElementAlignment_Near,
+		gr.createStringVertices(_textVertices, _charList, Alignment_Near, Alignment_Near,
 			0.5f * (size() - textSize), color() * alphaVector, transform, RenderLayer_Layer1);
 	}
 	

@@ -121,7 +121,7 @@ namespace et
 			void configurePopup();
 
 			void setState(ListboxState s);
-			void onPopupAnimationFinished(Element2d*, ElementAnimatedPropery);
+			void onPopupAnimationFinished(Element2d*, AnimatedPropery);
 
 			void popupDidOpen();
 

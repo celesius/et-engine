@@ -23,9 +23,9 @@ namespace et
 		class Element;
 		class Scene3dStorage;
 
-		enum ElementFlags
+		enum Flags
 		{
-			ElementFlag_Renderable = 0x0001,
+			Flag_Renderable = 0x0001,
 		};
 
 		enum ElementType
@@ -43,7 +43,7 @@ namespace et
 
 		class ElementFactory;
 		typedef Hierarchy<Element> ElementHierarchy;
-		class Element : public ElementHierarchy, public Flags, public ComponentTransformable
+		class Element : public ElementHierarchy, public FlagsHolder, public ComponentTransformable
 		{
 		public:
 			typedef IntrusivePtr<Element> Pointer;
@@ -156,7 +156,7 @@ namespace et
 
 		public:
 			RenderableElement(const std::string& name, Element* parent) : Element(name, parent),
-				_visible(true) { setFlag(ElementFlag_Renderable); }
+				_visible(true) { setFlag(Flag_Renderable); }
 
 			Material& material() 
 				{ return _material; }

@@ -44,7 +44,7 @@ namespace et
 			
 			void setButton1Title(const std::string&);
 			void setButton2Title(const std::string&);
-			void setButtonsBackground(const Image& img, ElementState s);
+			void setButtonsBackground(const Image& img, State s);
 			void setButtonsTextColor(const vec4& color);
 			void setButtonsPressedTextColor(const vec4& color);
 			

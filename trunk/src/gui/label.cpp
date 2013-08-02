@@ -17,10 +17,10 @@ ET_DECLARE_GUI_ELEMENT_CLASS(Label)
 Label::Label(const std::string& text, Font font, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _text(text), _nextText(text), _font(font),
 	_vertices(0), _backgroundColor(0.0f), _shadowOffset(1.0f), _textFade(0.0f), _textFadeDuration(0.0f),
-	_textFadeStartTime(0.0f), _horizontalAlignment(ElementAlignment_Near),
-	_verticalAlignment(ElementAlignment_Near), _animatingText(false), _allowFormatting(false)
+	_textFadeStartTime(0.0f), _horizontalAlignment(Alignment_Near),
+	_verticalAlignment(Alignment_Near), _animatingText(false), _allowFormatting(false)
 {
-	setFlag(ElementFlag_TransparentForPointer);
+	setFlag(Flag_TransparentForPointer);
 	_charListText = _font->buildString(_text);
 	_charListNextText = _font->buildString(_nextText);
 	adjustSize();
@@ -173,7 +173,7 @@ void Label::setAllowFormatting(bool f)
 	invalidateContent();
 }
 
-void Label::setHorizontalAlignment(ElementAlignment h)
+void Label::setHorizontalAlignment(Alignment h)
 {
 	if (_horizontalAlignment == h) return;
 	
@@ -181,7 +181,7 @@ void Label::setHorizontalAlignment(ElementAlignment h)
 	invalidateContent();
 }
 
-void Label::setVerticalAlignment(ElementAlignment v)
+void Label::setVerticalAlignment(Alignment v)
 {
 	if (_verticalAlignment == v) return;
 	

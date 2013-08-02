@@ -29,11 +29,11 @@ MessageView::MessageView(const std::string& title, const std::string& text, Font
 	_imgImage->setContentMode(ImageView::ContentMode_Fit);
 	
 	_text->setPivotPoint(vec2(0.5f, 0.0f));
-	_text->setHorizontalAlignment(ElementAlignment_Center);
+	_text->setHorizontalAlignment(Alignment_Center);
 	_text->setShadowColor(vec4(0.0f, 0.0f, 0.0f, 0.75f));
 
 	_title->setPivotPoint(vec2(0.5f, 0.0f));
-	_title->setHorizontalAlignment(ElementAlignment_Center);
+	_title->setHorizontalAlignment(Alignment_Center);
 	_title->setAllowFormatting(true);
 	_title->setShadowColor(vec4(0.0f, 0.0f, 0.0f, 0.75f));
 
@@ -172,7 +172,7 @@ void MessageView::setImage(const Image& img)
 	_imgImage->setImage(img);
 }
 
-void MessageView::setButtonsBackground(const Image& img, ElementState s)
+void MessageView::setButtonsBackground(const Image& img, State s)
 {
 	_button1->setBackgroundForState(img, s);
 	_button2->setBackgroundForState(img, s);

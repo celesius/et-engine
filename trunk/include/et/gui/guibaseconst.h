@@ -4,15 +4,15 @@ namespace et
 {
 	namespace gui
 	{
-		enum ElementState
+		enum State
 		{
-			ElementState_Default,
-			ElementState_Hovered,
-			ElementState_Pressed,
-			ElementState_Selected,
-			ElementState_SelectedHovered,
-			ElementState_SelectedPressed,
-			ElementState_max
+			State_Default,
+			State_Hovered,
+			State_Pressed,
+			State_Selected,
+			State_SelectedHovered,
+			State_SelectedPressed,
+			State_max
 		};
 
 		enum AnimationFlags
@@ -25,24 +25,24 @@ namespace et
 			AnimationFlag_FromBottom = 0x10
 		};
 
-		enum ElementFlags
+		enum Flags
 		{
-			ElementFlag_RequiresKeyboard = 0x0001,
-			ElementFlag_Dragable = 0x0002,
-			ElementFlag_TransparentForPointer = 0x0004,
-			ElementFlag_RenderTopmost = 0x0008,
-			ElementFlag_HandlesChildEvents = 0x0010,
-			ElementFlag_ClipToBounds = 0x0020,
+			Flag_RequiresKeyboard = 0x0001,
+			Flag_Dragable = 0x0002,
+			Flag_TransparentForPointer = 0x0004,
+			Flag_RenderTopmost = 0x0008,
+			Flag_HandlesChildEvents = 0x0010,
+			Flag_ClipToBounds = 0x0020,
 		};
 
-		enum ElementAnimatedPropery
+		enum AnimatedPropery
 		{
-			ElementAnimatedProperty_None,
-			ElementAnimatedProperty_Angle,
-			ElementAnimatedProperty_Scale,
-			ElementAnimatedProperty_Color,
-			ElementAnimatedProperty_Frame,
-			ElementAnimatedProperty_max
+			AnimatedProperty_None,
+			AnimatedProperty_Angle,
+			AnimatedProperty_Scale,
+			AnimatedProperty_Color,
+			AnimatedProperty_Frame,
+			AnimatedProperty_max
 		};
 
 		enum RenderLayer 
@@ -52,31 +52,31 @@ namespace et
 			RenderLayer_max
 		};
 
-		enum ElementAlignment
+		enum Alignment
 		{
-			ElementAlignment_Near,
-			ElementAlignment_Center,
-			ElementAlignment_Far,
-			ElementAlignment_max,
+			Alignment_Near,
+			Alignment_Center,
+			Alignment_Far,
+			Alignment_max,
 		};
 
-		enum ElementLayoutMode
+		enum LayoutMode
 		{
-			ElementLayoutMode_Absolute,
-			ElementLayoutMode_RelativeToParent,
-			ElementLayoutMode_RelativeToContext
+			LayoutMode_Absolute,
+			LayoutMode_RelativeToParent,
+			LayoutMode_RelativeToContext
 		};
 
-		enum ElementLayoutMask
+		enum LayoutMask
 		{
-			ElementLayoutMask_None = 0x00,
-			ElementLayoutMask_Position = 0x01,
-			ElementLayoutMask_Size = 0x02,
-			ElementLayoutMask_Pivot = 0x04,
+			LayoutMask_None = 0x00,
+			LayoutMask_Position = 0x01,
+			LayoutMask_Size = 0x02,
+			LayoutMask_Pivot = 0x04,
 
-			ElementLayoutMask_PositionPivot = ElementLayoutMask_Position | ElementLayoutMask_Pivot,
-			ElementLayoutMask_Frame = ElementLayoutMask_Position | ElementLayoutMask_Size,
-			ElementLayoutMask_All = ElementLayoutMask_Frame | ElementLayoutMask_Pivot
+			LayoutMask_PositionPivot = LayoutMask_Position | LayoutMask_Pivot,
+			LayoutMask_Frame = LayoutMask_Position | LayoutMask_Size,
+			LayoutMask_All = LayoutMask_Frame | LayoutMask_Pivot
 		};
 	}
 }

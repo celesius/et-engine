@@ -28,8 +28,8 @@ Scroll::Scroll(Element2d* parent, const std::string& name) :
 	_pointerCaptured(false), _manualScrolling(false)
 {
 	_offsetAnimator.setDelegate(this);
-	setFlag(ElementFlag_HandlesChildEvents);
-	setFlag(ElementFlag_ClipToBounds);
+	setFlag(Flag_HandlesChildEvents);
+	setFlag(Flag_ClipToBounds);
 	startUpdates();
 }
 
