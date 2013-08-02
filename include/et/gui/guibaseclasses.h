@@ -202,15 +202,15 @@ namespace et
 			float angle;
 			size_t mask;
 
-			ElementLayoutMode positionMode;
-			ElementLayoutMode sizeMode;
+			LayoutMode positionMode;
+			LayoutMode sizeMode;
 
-			ElementLayout() : scale(1.0f), angle(0.0f), mask(ElementLayoutMask_All),
-				positionMode(ElementLayoutMode_Absolute), sizeMode(ElementLayoutMode_Absolute) { }
+			ElementLayout() : scale(1.0f), angle(0.0f), mask(LayoutMask_All),
+				positionMode(LayoutMode_Absolute), sizeMode(LayoutMode_Absolute) { }
 
-			ElementLayout(const vec2& pos, const vec2& sz, ElementLayoutMode pMode,
-				ElementLayoutMode sMode) : position(pos), size(sz), scale(1.0f), angle(0.0f),
-				mask(ElementLayoutMask_All), positionMode(pMode), sizeMode(sMode) { }
+			ElementLayout(const vec2& pos, const vec2& sz, LayoutMode pMode,
+				LayoutMode sMode) : position(pos), size(sz), scale(1.0f), angle(0.0f),
+				mask(LayoutMask_All), positionMode(pMode), sizeMode(sMode) { }
 		};
 
 

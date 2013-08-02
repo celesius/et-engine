@@ -16,7 +16,7 @@ ET_DECLARE_GUI_ELEMENT_CLASS(Button)
 Button::Button(const std::string& title, Font font, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _title(title), _font(font),
 	_textSize(font->measureStringSize(title, true)), _textColor(vec3(0.0f), 1.0f),
-	_textPressedColor(vec3(0.0f), 1.0f), _type(Button::Type_PushButton), _state(ElementState_Default),
+	_textPressedColor(vec3(0.0f), 1.0f), _type(Button::Type_PushButton), _state(State_Default),
 	_imageLayout(ImageLayout_Left), _contentMode(ContentMode_Fit), _pressed(false),
 	_hovered(false), _selected(false)
 {
@@ -106,17 +106,17 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 
 	if (_title.size() > 0)
 	{
-		vec4 aColor = _state == ElementState_Pressed ? _textPressedColor : _textColor;
+		vec4 aColor = _state == State_Pressed ? _textPressedColor : _textColor;
 		if (aColor.w > 0.0f)
 		{
-			gr.createStringVertices(_textVertices, _font->buildString(_title, true), ElementAlignment_Near,
-				ElementAlignment_Near, textOrigin, aColor * alphaScaleColor, transform, RenderLayer_Layer1);
+			gr.createStringVertices(_textVertices, _font->buildString(_title, true), Alignment_Near,
+				Alignment_Near, textOrigin, aColor * alphaScaleColor, transform, RenderLayer_Layer1);
 		}
 	}
 
 	if (_image.texture.valid())
 	{
-		vec4 aColor = _state == ElementState_Pressed ?
+		vec4 aColor = _state == State_Pressed ?
 			color() * vec4(0.5f, 0.5f, 0.5f, 1.0f) : color();
 		
 		if (aColor.w > 0.0f)
@@ -127,12 +127,12 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 	}
 }
 
-void Button::setBackgroundForState(const Texture& tex, const ImageDescriptor& desc, ElementState s)
+void Button::setBackgroundForState(const Texture& tex, const ImageDescriptor& desc, State s)
 {
 	setBackgroundForState(Image(tex, desc), s);
 }
 
-void Button::setBackgroundForState(const Image& img, ElementState s)
+void Button::setBackgroundForState(const Image& img, State s)
 {
 	_background[s] = img;
 	invalidateContent();
@@ -143,7 +143,7 @@ bool Button::pointerPressed(const PointerInputInfo& p)
 	if (p.type != PointerType_General) return false;
 
 	_pressed = true;
-	setCurrentState(_selected ? ElementState_SelectedPressed : ElementState_Pressed);
+	setCurrentState(_selected ? State_SelectedPressed : State_Pressed);
 	
 	pressed.invoke(this);
 	return true;
@@ -154,12 +154,12 @@ bool Button::pointerReleased(const PointerInputInfo& p)
 	if ((p.type != PointerType_General) || !_pressed) return false;
 	
 	_pressed = false;
-	ElementState newState = _selected ? ElementState_Selected : ElementState_Default;
+	State newState = _selected ? State_Selected : State_Default;
 
 	if (containLocalPoint(p.pos))
 	{
 		performClick();
-		newState = adjustElementState(_selected ? ElementState_SelectedHovered : ElementState_Hovered);
+		newState = adjustState(_selected ? State_SelectedHovered : State_Hovered);
 	}
 
 	setCurrentState(newState);
@@ -172,10 +172,10 @@ bool Button::pointerCancelled(const PointerInputInfo& p)
 	if ((p.type != PointerType_General) || !_pressed) return false;
 	
 	_pressed = false;
-	ElementState newState = newState = _selected ? ElementState_Selected : ElementState_Default;
+	State newState = newState = _selected ? State_Selected : State_Default;
 	
 	if (containLocalPoint(p.pos))
-		newState = adjustElementState(_selected ? ElementState_SelectedHovered : ElementState_Hovered);
+		newState = adjustState(_selected ? State_SelectedHovered : State_Hovered);
 	
 	setCurrentState(newState);
 	released.invoke(this);
@@ -185,20 +185,20 @@ bool Button::pointerCancelled(const PointerInputInfo& p)
 void Button::pointerEntered(const PointerInputInfo&)
 {
 	if (_selected)
-		setCurrentState(adjustElementState(_pressed ? ElementState_SelectedPressed : ElementState_SelectedHovered));
+		setCurrentState(adjustState(_pressed ? State_SelectedPressed : State_SelectedHovered));
 	else
-		setCurrentState(adjustElementState(_pressed ? ElementState_Pressed : ElementState_Hovered));
+		setCurrentState(adjustState(_pressed ? State_Pressed : State_Hovered));
 }
 
 void Button::pointerLeaved(const PointerInputInfo&)
 {
 	if (_selected)
-		setCurrentState(_pressed ? ElementState_SelectedPressed : ElementState_Selected);
+		setCurrentState(_pressed ? State_SelectedPressed : State_Selected);
 	else
-		setCurrentState(_pressed ? ElementState_Pressed : ElementState_Default);
+		setCurrentState(_pressed ? State_Pressed : State_Default);
 }
 
-void Button::setCurrentState(ElementState s)
+void Button::setCurrentState(State s)
 {
 	if (_state == s) return;
 
@@ -269,7 +269,7 @@ vec2 Button::sizeForText(const std::string& text)
 {
 	vec2 textSize = _font.valid() ? _font->measureStringSize("AA" + text + "AA", true) : vec2(0.0f);
 	
-	for (size_t i = 0; i < ElementState_max; ++i)
+	for (size_t i = 0; i < State_max; ++i)
 		textSize = maxv(textSize, _background[i].descriptor.size);
 
 	return vec2(floorf(textSize.x), floorf(1.25f * textSize.y));
@@ -289,9 +289,9 @@ void Button::setSelected(bool s)
 	if (wasSelected != _selected)
 	{
 		if (elementIsSelected(_state))
-			setCurrentState(static_cast<ElementState>(_state - 3 * static_cast<int>(!_selected)));
+			setCurrentState(static_cast<State>(_state - 3 * static_cast<int>(!_selected)));
 		else
-			setCurrentState(static_cast<ElementState>(_state + 3 * static_cast<int>(_selected)));
+			setCurrentState(static_cast<State>(_state + 3 * static_cast<int>(_selected)));
 	}
 }
 

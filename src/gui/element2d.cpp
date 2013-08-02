@@ -19,13 +19,13 @@ Element2d::Element2d(Element* parent, const std::string& name) :
 	_colorAnimator(timerPool()), _scaleAnimator(timerPool()), _angleAnimator(timerPool()),
 	_frame(0.0f, 0.0f, 0.0f, 0.0f), _scale(1.0f), _color(1.0f), _angle(0.0f), _pivotPoint(0.0f)
 {
-	_frameAnimator.setTag(ElementAnimatedProperty_Frame);
+	_frameAnimator.setTag(AnimatedProperty_Frame);
 	_frameAnimator.setDelegate(this);
-	_colorAnimator.setTag(ElementAnimatedProperty_Color);
+	_colorAnimator.setTag(AnimatedProperty_Color);
 	_colorAnimator.setDelegate(this);
-	_scaleAnimator.setTag(ElementAnimatedProperty_Scale);
+	_scaleAnimator.setTag(AnimatedProperty_Scale);
 	_scaleAnimator.setDelegate(this);
-	_angleAnimator.setTag(ElementAnimatedProperty_Angle);
+	_angleAnimator.setTag(AnimatedProperty_Angle);
 	_angleAnimator.setDelegate(this);
 }
 
@@ -34,13 +34,13 @@ Element2d::Element2d(const rect& frame, Element* parent, const std::string& name
 	_colorAnimator(timerPool()), _scaleAnimator(timerPool()), _angleAnimator(timerPool()),
 	_frame(frame), _scale(1.0f), _color(1.0f), _angle(0.0f), _pivotPoint(0.0f)
 {
-	_frameAnimator.setTag(ElementAnimatedProperty_Frame);
+	_frameAnimator.setTag(AnimatedProperty_Frame);
 	_frameAnimator.setDelegate(this);
-	_colorAnimator.setTag(ElementAnimatedProperty_Color);
+	_colorAnimator.setTag(AnimatedProperty_Color);
 	_colorAnimator.setDelegate(this);
-	_scaleAnimator.setTag(ElementAnimatedProperty_Scale);
+	_scaleAnimator.setTag(AnimatedProperty_Scale);
 	_scaleAnimator.setDelegate(this);
-	_angleAnimator.setTag(ElementAnimatedProperty_Angle);
+	_angleAnimator.setTag(AnimatedProperty_Angle);
 	_angleAnimator.setDelegate(this);
 }
 
@@ -228,12 +228,12 @@ float Element2d::finalAlpha() const
 
 void Element2d::animatorUpdated(BaseAnimator* a)
 {
-	ElementAnimatedPropery prop = static_cast<ElementAnimatedPropery>(a->tag());
+	AnimatedPropery prop = static_cast<AnimatedPropery>(a->tag());
 
-	bool isFrame = (prop & ElementAnimatedProperty_Frame) == ElementAnimatedProperty_Frame;
-	bool isAngle = (prop & ElementAnimatedProperty_Angle) == ElementAnimatedProperty_Angle;
-	bool isScale = (prop & ElementAnimatedProperty_Scale) == ElementAnimatedProperty_Scale;
-	bool isColor = (prop & ElementAnimatedProperty_Color) == ElementAnimatedProperty_Color;
+	bool isFrame = (prop & AnimatedProperty_Frame) == AnimatedProperty_Frame;
+	bool isAngle = (prop & AnimatedProperty_Angle) == AnimatedProperty_Angle;
+	bool isScale = (prop & AnimatedProperty_Scale) == AnimatedProperty_Scale;
+	bool isColor = (prop & AnimatedProperty_Color) == AnimatedProperty_Color;
 
 	if (isFrame || isAngle || isScale)
 		invalidateTransform();
@@ -244,7 +244,7 @@ void Element2d::animatorUpdated(BaseAnimator* a)
 
 void Element2d::animatorFinished(BaseAnimator* a)
 {
-	elementAnimationFinished.invoke(this, static_cast<ElementAnimatedPropery>(a->tag()));
+	elementAnimationFinished.invoke(this, static_cast<AnimatedPropery>(a->tag()));
 }
 
 bool Element2d::containsPoint(const vec2& p, const vec2&) 

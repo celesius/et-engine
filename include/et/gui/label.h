@@ -41,8 +41,8 @@ namespace et
 			void setAllowFormatting(bool);
 			void setBackgroundColor(const vec4&);
 			
-			void setHorizontalAlignment(ElementAlignment);
-			void setVerticalAlignment(ElementAlignment);
+			void setHorizontalAlignment(Alignment);
+			void setVerticalAlignment(Alignment);
 			
 			void setShadowColor(const vec4& color);
 			void setShadowOffset(const vec2& offset);
@@ -69,8 +69,8 @@ namespace et
 			float _textFade;
 			float _textFadeDuration;
 			float _textFadeStartTime;
-			ElementAlignment _horizontalAlignment;
-			ElementAlignment _verticalAlignment;
+			Alignment _horizontalAlignment;
+			Alignment _verticalAlignment;
 			bool _animatingText;
 			bool _allowFormatting;
 		};

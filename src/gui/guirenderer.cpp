@@ -239,7 +239,7 @@ void GuiRenderer::buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, c
 }
 
 void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescriptorList& chars,
-	ElementAlignment hAlign, ElementAlignment vAlign, const vec2& pos, const vec4& color,
+	Alignment hAlign, Alignment vAlign, const vec2& pos, const vec4& color,
 	const mat4& transform, RenderLayer layer)
 {
 	vec4 line;

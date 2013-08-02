@@ -21,7 +21,7 @@ ListboxPopup::ListboxPopup(Listbox* owner, const std::string& name) :
 	Element2d(owner, ET_GUI_PASS_NAME_TO_BASE_CLASS), _owner(owner), _textAlphaAnimator(0),
 	_selectedIndex(-1), _textAlpha(0.0f), _pressed(false)
 {
-	setFlag(ElementFlag_RenderTopmost);
+	setFlag(Flag_RenderTopmost);
 }
 
 void ListboxPopup::buildVertices(GuiRenderer& gr)
@@ -65,8 +65,8 @@ void ListboxPopup::buildVertices(GuiRenderer& gr)
 					RenderLayer_Layer0);
 			}
 
-			gr.createStringVertices(_textVertices, _owner->_font->buildString(*i), ElementAlignment_Near,
-				ElementAlignment_Near, textPos, drawColor, transform, RenderLayer_Layer1);
+			gr.createStringVertices(_textVertices, _owner->_font->buildString(*i), Alignment_Near,
+				Alignment_Near, textPos, drawColor, transform, RenderLayer_Layer1);
 			textPos.y += dy;
 		}
 	}
@@ -220,7 +220,7 @@ void Listbox::buildVertices(GuiRenderer& gr)
 	{
 		std::string textToDraw = _prefix + _values[_selectedIndex];
 		vec2 textPos = _contentOffset + vec2(0.0f, 0.5f * (size().y - _font->lineHeight()));
-		gr.createStringVertices(_textVertices, _font->buildString(textToDraw), ElementAlignment_Near, ElementAlignment_Near,
+		gr.createStringVertices(_textVertices, _font->buildString(textToDraw), Alignment_Near, Alignment_Near,
 								textPos, color(), transform, RenderLayer_Layer1);
 	}
 
@@ -386,7 +386,7 @@ void Listbox::setSelectedIndex(int value)
 	invalidateContent();
 }
 
-void Listbox::onPopupAnimationFinished(Element2d*, ElementAnimatedPropery)
+void Listbox::onPopupAnimationFinished(Element2d*, AnimatedPropery)
 {
 	_popup->revealText();
 	popupOpened.invoke(this);
