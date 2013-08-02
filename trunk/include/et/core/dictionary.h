@@ -199,7 +199,7 @@ namespace et
 		Dictionary dictionaryForKeyPath(const std::vector<std::string>& key, Dictionary def = Dictionary()) const
 			{ return Dictionary(valueForKeyPath<Dictionary::ValueType, ValueClass_Dictionary>(key, def)); }
 		
-		bool emptry() const
+		bool empty() const
 			{ return reference().content.empty(); }
 		
 		void removeObjectForKey(const std::string& key)
