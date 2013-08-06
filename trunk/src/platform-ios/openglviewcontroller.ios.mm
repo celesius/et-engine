@@ -128,6 +128,15 @@ extern NSString* etKeyboardNotRequiredNotification;
 
 #endif
 
+#if defined(__IPHONE_7_0)
+
+- (BOOL)prefersStatusBarHidden
+{
+	return YES;
+}
+
+#endif
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
     if ((toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) &&
