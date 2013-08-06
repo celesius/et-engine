@@ -27,8 +27,6 @@ Application::~Application()
 {
 	_running = false;
 	
-	delegate()->applicationWillTerminate();
-
 	platformDeactivate();
 	platformFinalize();
 }

@@ -8,6 +8,7 @@
 #include <iostream>
 #include <Windows.h>
 #include <et/core/tools.h>
+#include <et/threading/atomiccounter.h>
 #include <et/threading/thread.h>
 
 namespace et
@@ -16,7 +17,7 @@ namespace et
 	{
 	public:
 		ThreadPrivate::ThreadPrivate() : 
-		  threadId(0), thread(0), activityEvent(0), running(0), suspended(0) { }
+		  threadId(0), thread(nullptr), activityEvent(nullptr) { }
 
 		static DWORD WINAPI threadProc(LPVOID lpParameter);
 
@@ -24,8 +25,8 @@ namespace et
 		DWORD threadId;
 		HANDLE thread;
 		HANDLE activityEvent;
-		volatile long running;
-		volatile long suspended;
+		AtomicCounter running;
+		AtomicCounter suspended;
 	};
 }
 
@@ -35,7 +36,7 @@ using namespace et;
 DWORD WINAPI ThreadPrivate::threadProc(LPVOID lpParameter)
 {
 	Thread* thread = reinterpret_cast<Thread*>(lpParameter);
-	InterlockedIncrement(&thread->_private->running);
+	thread->_private->running.retain();
 	return static_cast<DWORD>(thread->main());
 }
 
@@ -67,7 +68,7 @@ Thread::~Thread()
 
 bool Thread::run()
 {
-	if (_private->running) return false;
+	if (_private->running.atomicCounterValue() != 0) return false;
 
 	_private->thread = CreateThread(0, 0, ThreadPrivate::threadProc, this, 0, &_private->threadId);
 	return true;
@@ -90,31 +91,33 @@ ThreadResult Thread::main()
 
 void Thread::suspend()
 {
-	if (_private->suspended) return;
+	if (_private->suspended.atomicCounterValue() != 0) return;
 
-	InterlockedIncrement(&_private->suspended);
+	_private->suspended.retain();
 	WaitForSingleObject(_private->activityEvent, INFINITE);
 }
 
 void Thread::resume()
 {
-	if (_private->suspended == 0) return;
+	if (_private->suspended.atomicCounterValue() == 0) return;
 
-	InterlockedDecrement(&_private->suspended);
+	_private->suspended.release();
 	SetEvent(_private->activityEvent);
 }
 
 bool Thread::stop()
 {
-	if (_private->running == 0) return false;
+	if (_private->running.atomicCounterValue() == 0) return false;
+	
+	resume();
 
-	InterlockedDecrement(&_private->running);
+	_private->running.release();
 	return true;
 }
 
 void Thread::terminate(int exitCode)
 {
-	if (_private->running == 0) return;
+	if (_private->running.atomicCounterValue() == 0) return;
 
 	DWORD threadExitCode = 0;
 	GetExitCodeThread(_private->thread, &threadExitCode);
@@ -123,20 +126,25 @@ void Thread::terminate(int exitCode)
 		TerminateThread(_private->thread, exitCode);
 
 	CloseHandle(_private->thread);
-	InterlockedDecrement(&_private->running);
+	_private->running.release();
 }
 
 bool Thread::suspended() const
 {
-	return (_private->suspended != 0);
+	return (_private->suspended.atomicCounterValue() != 0);
 }
 
 bool Thread::running() const
 {
-	return (_private->running != 0);
+	return (_private->running.atomicCounterValue() != 0);
 }
 
 ThreadId Thread::id() const
 {
 	return _private->threadId;
+}
+
+void Thread::waitForTermination()
+{
+	WaitForSingleObject(_private->thread, INFINITE);
 }
