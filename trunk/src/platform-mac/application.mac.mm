@@ -155,7 +155,7 @@ void Application::platformResume()
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
     (void)notification;
-	_notifier.notifyDeactivated();
+	_notifier.notifyTerminated();
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender

@@ -96,6 +96,8 @@ namespace et
 
 		int platformRun();
 		
+		void terminated();
+		
 	private:
 		friend class ApplicationNotifier;
 		

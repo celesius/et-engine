@@ -155,3 +155,8 @@ void Application::resume()
 	_runLoop.update(_lastQueuedTimeMSec);
 	_runLoop.resume();
 }
+
+void Application::terminated()
+{
+	_delegate->applicationWillTerminate();
+}
