@@ -52,6 +52,12 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 		transform, RenderLayer_Layer0);
 	}
 
+	if (_charListText.empty())
+	{
+		setContentValid();
+		return;
+	}
+
 	if (_animatingText)
 	{
 		float fadeIn = sqrtf(_textFade);
