@@ -121,11 +121,11 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face, co
 
 	int pointsSize = -MulDiv(size, GetDeviceCaps(commonDC, LOGPIXELSY), 72);
 
-	_font = CreateFont(pointsSize, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, OUT_CHARACTER_PRECIS,
-		CLIP_CHARACTER_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, face.c_str());
+	_font = CreateFont(pointsSize, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+		CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, face.c_str());
 
-	_boldFont = CreateFont(pointsSize, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, OUT_CHARACTER_PRECIS,
-		CLIP_CHARACTER_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, boldFace.c_str());
+	_boldFont = CreateFont(pointsSize, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+		CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, boldFace.c_str());
 }
 
 CharacterGeneratorPrivate::~CharacterGeneratorPrivate()
