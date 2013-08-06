@@ -90,9 +90,6 @@ namespace et
 		StringValue(const std::string& r) :
 			ValuePointer<std::string, ValueClass_String>(r) { }
 
-		StringValue(const char* r) :
-			ValuePointer<std::string, ValueClass_String>(r) { }
-		
 		StringValue(const Value<std::string, ValueClass_String>::Pointer& p) :
 			ValuePointer<std::string, ValueClass_String>(p) { }
 		
@@ -102,14 +99,8 @@ namespace et
 		StringValue(ValueBase::Pointer p) :
 			ValuePointer<std::string, ValueClass_String>(p) { }
 		
-		operator std::string ()
-			{ return reference().content; }
-
 		size_t size() const
 			{ return reference().content.size(); }
-
-		const char* c_str() const
-			{ return reference().content.c_str(); }
 
 		bool empty() const
 			{ return reference().content.empty(); }
