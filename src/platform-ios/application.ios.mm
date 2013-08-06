@@ -127,7 +127,7 @@ void Application::quit(int exitCode)
 #if defined(ET_EMBEDDED_APPLICATION)
 	
 	_active = false;
-	_delegate->applicationWillTerminate();
+	terminated();
 	
 	delete _delegate;
 	delete _renderContext;

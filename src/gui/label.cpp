@@ -275,8 +275,7 @@ void Label::fitToWidth(float w)
 		else
 		{
 			size_t lastCharPos = newText.size() - 1;
-			assert(lastCharPos != std::string::npos);
-			char lastChar = newText.at(lastCharPos);
+			char lastChar = (lastCharPos == std::string::npos) ? 0 : newText.at(lastCharPos);
 			
 			if (isWhitespaceChar(lastChar) && !isNewLineChar(lastChar))
 			{
@@ -285,7 +284,10 @@ void Label::fitToWidth(float w)
 			}
 			else
 			{
-				newText.append("\n" + word);
+				if (newText.empty())
+					newText.append(word);
+				else
+					newText.append("\n" + word);
 			}
 			
 			if (isNewLineChar(nextCharStr[0]))
@@ -300,6 +302,6 @@ void Label::fitToWidth(float w)
 			}
 		}
 	}
-	
+
 	setText(newText);
 }

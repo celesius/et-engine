@@ -32,6 +32,9 @@ namespace et
 		void notifyResumed()
 			{ application().resume(); }
 
+		void notifyTerminated()
+			{ application().terminated(); }
+		
 		void notifyResize(const et::vec2i& sz)
 			{ application().renderContext()->resized(sz); }
 		
