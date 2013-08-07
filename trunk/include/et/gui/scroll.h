@@ -45,7 +45,10 @@ namespace et
 			const vec2& offset() const
 				{ return _offset; }
 			
-			void scrollToBottom(float delay = 0.0f);
+			void scrollToBottom(float duration = 0.0f);
+			
+		protected:
+			virtual void setOffsetDirectly(const vec2& o);
 			
 		private:
 			void buildVertices(RenderContext* rc, GuiRenderer& r);
@@ -72,8 +75,6 @@ namespace et
 			
 			void animatorUpdated(BaseAnimator*);
 			void animatorFinished(BaseAnimator*);
-			
-			void internal_setOffset(const vec2& o);
 			
 			float scrollOutOfContentXSize() const;
 			float scrollOutOfContentYSize() const;
