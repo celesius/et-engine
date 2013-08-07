@@ -17,6 +17,7 @@ namespace et
 		{
 		public:
 			typedef IntrusivePtr<Element2d> Pointer;
+			typedef std::list<Pointer> List;
 
 		public:
 			Element2d(Element* parent, const std::string& name = std::string());

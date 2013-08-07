@@ -195,8 +195,11 @@ void Element::autoLayout(const vec2& contextSize, float duration)
 	if ((_autoLayout.mask & LayoutMask_Frame) != 0)
 		setFrame(aPos, aSize, duration);
 
-	for (auto aChild : children())
-		aChild->autoLayout(contextSize, duration);
+	if (!hasFlag(Flag_HandlesChildLayout))
+	{
+		for (auto aChild : children())
+			aChild->autoLayout(contextSize, duration);
+	}
 }
 
 void Element::fillParent()

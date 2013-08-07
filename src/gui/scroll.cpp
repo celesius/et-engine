@@ -187,7 +187,11 @@ bool Scroll::pointerCancelled(const PointerInputInfo& p)
 
 void Scroll::invalidateChildren()
 {
-	ET_ITERATE(children(), auto&, i, i->invalidateTransform(); i->invalidateContent())
+	for (auto& c : children())
+	{
+		c->invalidateTransform();
+		c->invalidateContent();
+	}
 }
 
 void Scroll::broadcastPressed(const PointerInputInfo& p)
@@ -403,7 +407,7 @@ void Scroll::setOffset(const vec2& aOffset, float duration)
 	if (duration == 0.0f)
 	{
 		_offsetAnimator.cancelUpdates();
-		internal_setOffset(aOffset);
+		setOffsetDirectly(aOffset);
 	}
 	else
 	{
@@ -441,7 +445,7 @@ float Scroll::scrollLeftLimit() const
 float Scroll::scrollRightLimit() const
 	{ return scrollRightDefaultValue() + scrollOutOfContentXSize(); }
 
-void Scroll::internal_setOffset(const vec2& o)
+void Scroll::setOffsetDirectly(const vec2& o)
 {
 	_offset = o;
 	vec2 actualOffset = -_offset;
@@ -482,7 +486,7 @@ void Scroll::internal_setOffset(const vec2& o)
 void Scroll::animatorUpdated(BaseAnimator* a)
 {
 	if (a == &_offsetAnimator)
-		internal_setOffset(_offset);
+		setOffsetDirectly(_offset);
 	
 	Element2d::animatorUpdated(a);
 }
