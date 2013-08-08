@@ -35,6 +35,7 @@ using namespace et;
 @interface etOpenGLView : NSOpenGLView
 {
 @public
+	NSTrackingArea* _trackingArea;
 	Input::PointerInputSource pointerInputSource;
 	Input::GestureInputSource gestureInputSource;
 	ApplicationNotifier applicationNotifier;
@@ -318,12 +319,6 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 	self = [super initWithFrame:frameRect pixelFormat:format];
 	if (self)
 	{
-		NSUInteger opts = NSTrackingMouseMoved | NSTrackingActiveAlways;
-
-		NSTrackingArea* area = [[NSTrackingArea alloc] initWithRect:[self bounds]
-			options:opts owner:self userInfo:nil];
-
-		[self addTrackingArea:[area autorelease]];
 	}
 	return self;
 }
@@ -439,6 +434,17 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 - (void)reshape
 {
 	[super reshape];
+	
+	if (_trackingArea)
+	{
+		[self removeTrackingArea:_trackingArea];
+		[_trackingArea release];
+	}
+	
+	_trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
+		options:NSTrackingMouseMoved | NSTrackingActiveAlways owner:self userInfo:nil];
+
+	[self addTrackingArea:_trackingArea];
 	
 	if (rcPrivate->canPerformOperations())
 		rcPrivate->resize(self.bounds.size);
