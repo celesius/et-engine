@@ -210,7 +210,6 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 	windowDelegate->rcPrivate = this;
 	[mainWindow setDelegate:windowDelegate];
 	[mainWindow setOpaque:YES];
-	[mainWindow setHidesOnDeactivate:YES];
 	
 	openGlView = [[etOpenGLView alloc] initWithFrame:NSMakeRect(0.0f, 0.0f, contentRect.size.width,
 		contentRect.size.height) pixelFormat:pixelFormat];
@@ -222,6 +221,7 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 	
 	if (appParams.windowSize == WindowSize_Fullscreen)
 	{
+		[mainWindow setHidesOnDeactivate:YES];
 		[mainWindow setLevel:NSMainMenuWindowLevel + 1];
 		[openGlContext setFullScreen];
 	}
