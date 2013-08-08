@@ -137,14 +137,14 @@ namespace et
 		{ setUniform(u.location, u.type, value); }
 
 	template <typename T>
-	inline void ProgramData::setUniform(int nLoc, int type, const T& value)
+	inline void ProgramData::setUniform(int, int type, const T&)
 	{
 		log::error("Unhandled uniform type: %d", type);
 		abort();
 	}
 	
 	template <> void
-	inline ProgramData::setUniform(int nLoc, int type, const int& value)
+	inline ProgramData::setUniform(int nLoc, int, const int& value)
 	{
 		assert(loaded() && (nLoc >= 0));
 		glUniform1i(nLoc, value);
@@ -152,7 +152,7 @@ namespace et
 	}
 	
 	template <> void
-	inline ProgramData::setUniform(int nLoc, int type, const unsigned int& value)
+	inline ProgramData::setUniform(int nLoc, int, const unsigned int& value)
 	{
 		assert(loaded() && (nLoc >= 0));
 		glUniform1i(nLoc, value);
