@@ -19,7 +19,7 @@ namespace et
 	
 	static const IndexType InvalidIndex = static_cast<IndexType>(-1);
 	
-	enum IndexArrayFormat
+	enum IndexArrayFormat : size_t
 	{
 		IndexArrayFormat_Undefined  = 0,
 		IndexArrayFormat_8bit = 1,

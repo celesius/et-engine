@@ -28,6 +28,18 @@ namespace et
 			mat[2] = vector3<T>(a20, a21, a22);
 		}
 
+		T* data()
+			{ return mat[0].data(); }
+		
+		const T* data() const
+			{ return mat[0].data(); }
+		
+		char* binary()
+			{ return mat[0].binary(); }
+		
+		const char* binary() const
+			{ return mat[0].binary(); }
+		
 		vector3<T>& operator[](int i) 
 			{ return mat[i]; }
 

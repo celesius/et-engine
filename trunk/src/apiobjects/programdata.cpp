@@ -131,9 +131,7 @@ void ProgramData::setTransformMatrix(const mat4 &m)
 {
 	assert(loaded());
 
-	if (_mTransformLocation < 0) return;
-
-	if (_cachedTransformMatrix != m)
+	if ((_mTransformLocation >= 0) && (_cachedTransformMatrix != m))
 	{
 		_cachedTransformMatrix = m;
 		glUniformMatrix4fv(_mTransformLocation, 1, false, m.data());
