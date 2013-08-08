@@ -56,9 +56,7 @@ void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, GuiRen
 	element->addToOverlayRenderQueue(rc, gr);
 	
 	if (clipToBounds)
-	{
 		gr.popClipRect();
-	}
 }
 
 void Layout::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
