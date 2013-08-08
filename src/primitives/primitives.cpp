@@ -554,6 +554,7 @@ void primitives::createIcosahedron(VertexArray::Pointer data, float radius)
 	bool hasNormals = nrmChunk.valid() && (nrmChunk->type() == Type_Vec3);
 
 	assert(hasPosition);
+	(void)hasPosition;
 	
 	size_t offset = data->size();
 	data->fitToSize(60);
@@ -626,6 +627,7 @@ void primitives::tesselateTriangles(VertexArray::Pointer data)
 		(data->chunk(Usage_Normal)->type() == Type_Vec3);
 	
 	assert(hasPosition);
+	(void)hasPosition;
 	
 	VertexArray::Pointer oldData(data->duplicate());
 	

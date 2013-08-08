@@ -11,8 +11,13 @@
 using namespace et;
 using namespace et::gui;
 
+#if (ET_PLATFORM_IOS || ET_PLATFORM_ANDROID)
+static const bool shouldSaveFillRate = true;
+#else
+static const bool shouldSaveFillRate = false;
+#endif
 
-Gui::Gui(RenderContext* rc) : _rc(rc),  _renderer(rc, true), 
+Gui::Gui(RenderContext* rc) : _rc(rc),  _renderer(rc, shouldSaveFillRate),
 	_renderingElementBackground(new RenderingElement(rc)),
 	_background(Texture(), 0), _backgroundValid(true)
 {

@@ -15,7 +15,7 @@ namespace et
 	class VertexArray : public Shared
 	{
 	public:
-		typedef et::IntrusivePtr<VertexArray> Pointer;
+		ET_DECLARE_POINTER(VertexArray)
 		
 		struct Description
 		{

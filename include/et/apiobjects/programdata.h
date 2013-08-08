@@ -88,13 +88,13 @@ namespace et
 		void setCameraProperties(const Camera& cam);
 
 		template <typename T>
-		void setUniform(const std::string& name, const T& value, int count = 1);
+		void setUniform(const std::string& name, const T& value);
 
 		template <typename T>
-		void setUniform(const ProgramUniform& u, const T& value, int count = 1);
+		void setUniform(const ProgramUniform& u, const T& value);
 
 		template <typename T>
-		void setUniform(int location, int type, const T& value, int count = 1);
+		void setUniform(int location, int type, const T& value);
 
 		uint32_t glID() const
 			{ return _glID; }
@@ -125,151 +125,100 @@ namespace et
 	};
 
 	template <typename T>
-	void ProgramData::setUniform(const std::string& uniformName, const T& value, int count)
+	inline void ProgramData::setUniform(const std::string& uniformName, const T& value)
 	{
 		auto i = findUniform(uniformName);
 		if (i != _uniforms.end())
-			setUniform(i->second.location, i->second.type, value, count);
+			setUniform(i->second.location, i->second.type, value);
 	}
 
 	template <typename T>
-	void ProgramData::setUniform(const ProgramUniform& u, const T& value, int count)
-	{
-		setUniform(u.location, u.type, value, count);
-	}
+	inline void ProgramData::setUniform(const ProgramUniform& u, const T& value)
+		{ setUniform(u.location, u.type, value); }
 
 	template <typename T>
-	void ProgramData::setUniform(int nLoc, int type, const T& value, int count)
+	inline void ProgramData::setUniform(int nLoc, int type, const T& value)
 	{
-		assert(loaded());
-		if (nLoc == -1) return;
-
-		const int* intPtr = reinterpret_cast<const int*>(&value);
-		const float* floatPtr = reinterpret_cast<const float*>(&value);
-
-		switch (type)
-		{
-		case GL_FLOAT: 
-			{
-				glUniform1fv(nLoc, count, floatPtr); 
-				break;
-			}
-
-		case GL_FLOAT_VEC2:
-			{
-				glUniform2fv(nLoc, count, floatPtr); 
-				break;
-			};
-
-		case GL_FLOAT_VEC3:
-			{
-				glUniform3fv(nLoc, count, floatPtr); 
-				break;
-			};
-
-		case GL_FLOAT_VEC4:
-			{
-				glUniform4fv(nLoc, count, floatPtr); 
-				break;
-			};
-
-		case GL_INT_VEC2 :
-			{
-				glUniform2iv(nLoc, count, intPtr); 
-				break;
-			};
-
-		case GL_INT_VEC3 :
-			{
-				glUniform3iv(nLoc, count, intPtr);
-				break;
-			};
-
-		case GL_INT_VEC4 :
-			{
-				glUniform4iv(nLoc, count, intPtr); 
-				break;
-			};
-
-		case GL_FLOAT_MAT2:
-			{
-				glUniformMatrix2fv(nLoc, count, false, floatPtr); 
-				break;
-			};
-
-		case GL_FLOAT_MAT3:
-			{
-				glUniformMatrix3fv(nLoc, count, false, floatPtr); 
-				break;
-			};
-
-		case GL_FLOAT_MAT4:
-			{
-				glUniformMatrix4fv(nLoc, count, false, floatPtr); 
-				break;
-			};
-
-		case GL_SAMPLER_2D:
-		case GL_SAMPLER_CUBE:
-				
-#if defined(GL_SAMPLER_1D)
-		case GL_SAMPLER_1D:
-#endif				
-#if defined(GL_SAMPLER_1D_SHADOW)
-		case GL_SAMPLER_1D_SHADOW:
-#endif				
-#if defined(GL_SAMPLER_1D_ARRAY)
-		case GL_SAMPLER_1D_ARRAY:
-#endif				
-#if defined(GL_SAMPLER_1D_ARRAY_SHADOW)
-		case GL_SAMPLER_1D_ARRAY_SHADOW:
-#endif				
-#if defined(GL_SAMPLER_2D_SHADOW)
-		case GL_SAMPLER_2D_SHADOW:
-#endif				
-#if defined(GL_SAMPLER_2D_ARRAY)
-		case GL_SAMPLER_2D_ARRAY:
-#endif				
-#if defined(GL_SAMPLER_2D_ARRAY_SHADOW)
-		case GL_SAMPLER_2D_ARRAY_SHADOW:
-#endif				
-#if defined(GL_SAMPLER_2D_MULTISAMPLE)
-		case GL_SAMPLER_2D_MULTISAMPLE:
-#endif				
-#if defined(GL_SAMPLER_2D_MULTISAMPLE_ARRAY)
-		case GL_SAMPLER_2D_MULTISAMPLE_ARRAY:
-#endif				
-#if defined(GL_SAMPLER_2D_RECT)
-		case GL_SAMPLER_2D_RECT:
-#endif				
-#if defined(GL_SAMPLER_2D_RECT_SHADOW)
-		case GL_SAMPLER_2D_RECT_SHADOW:
-#endif		
-#if defined(GL_SAMPLER_3D)				
-		case GL_SAMPLER_3D:
-#endif				
-#if defined(GL_SAMPLER_BUFFER)
-		case GL_SAMPLER_BUFFER:
-#endif				
-#if defined(GL_SAMPLER_CUBE_MAP_ARRAY)
-		case GL_SAMPLER_CUBE_MAP_ARRAY:
-#endif				
-#if defined(GL_SAMPLER_CUBE_MAP_ARRAY_SHADOW)
-		case GL_SAMPLER_CUBE_MAP_ARRAY_SHADOW:
-#endif				
-#if defined(GL_SAMPLER_CUBE_SHADOW)
-		case GL_SAMPLER_CUBE_SHADOW : 
-#endif				
-			{
-				glUniform1iv(nLoc, 1, intPtr); 
-				break;
-			}
-
-		default:
-			log::warning("ProgramData::setUniform refers to unknown uniform type.");
-		}
-		
-		checkOpenGLError("ProgramData::setUniform : %d", nLoc);
+		log::error("Unhandled uniform type: %d", type);
+		abort();
+	}
+	
+	template <> void
+	inline ProgramData::setUniform(int nLoc, int type, const int& value)
+	{
+		assert(loaded() && (nLoc >= 0));
+		glUniform1i(nLoc, value);
+		checkOpenGLError("setUniform - int");
+	}
+	
+	template <> void
+	inline ProgramData::setUniform(int nLoc, int type, const unsigned int& value)
+	{
+		assert(loaded() && (nLoc >= 0));
+		glUniform1i(nLoc, value);
+		checkOpenGLError("setUniform - unsigned int");
+	}
+	
+	template <> void
+	inline ProgramData::setUniform(int nLoc, int, const unsigned long& value)
+	{
+		assert(loaded() && (nLoc >= 0));
+		glUniform1i(nLoc, value);
+		checkOpenGLError("setUniform - unsigned long");
 	}
 
+	template <> void
+	inline ProgramData::setUniform(int nLoc, int type, const float& value)
+	{
+		assert(type == GL_FLOAT);
+		assert(loaded() && (nLoc >= 0));
+		glUniform1f(nLoc, value);
+		checkOpenGLError("setUniform - float");
+	}
+	
+	template <> void
+	inline ProgramData::setUniform(int nLoc, int type, const vec2& value)
+	{
+		assert(type == GL_FLOAT_VEC2);
+		assert(loaded() && (nLoc >= 0));
+		glUniform2fv(nLoc, 1, value.data());
+		checkOpenGLError("setUniform - vec2");
+	}
+	
+	template <> void
+	inline ProgramData::setUniform(int nLoc, int type, const vec3& value)
+	{
+		assert(type == GL_FLOAT_VEC3);
+		assert(loaded() && (nLoc >= 0));
+		glUniform3fv(nLoc, 1, value.data());
+		checkOpenGLError("setUniform - vec3");
+	}
+	
+	template <> void
+	inline ProgramData::setUniform(int nLoc, int type, const vec4& value)
+	{
+		assert(type == GL_FLOAT_VEC4);
+		assert(loaded() && (nLoc >= 0));
+		glUniform4fv(nLoc, 1, value.data());
+		checkOpenGLError("setUniform - vec4");
+	}
+
+	template <> void
+	inline ProgramData::setUniform(int nLoc, int type, const mat3& value)
+	{
+		assert(type == GL_FLOAT_MAT3);
+		assert(loaded() && (nLoc >= 0));
+		glUniformMatrix3fv(nLoc, 1, 0, value.data());
+		checkOpenGLError("setUniform - mat3");
+	}
+	
+	template <> void
+	inline ProgramData::setUniform(int nLoc, int type, const mat4& value)
+	{
+		assert(type == GL_FLOAT_MAT4);
+		assert(loaded() && (nLoc >= 0));
+		glUniformMatrix4fv(nLoc, 1, 0, value.data());
+		checkOpenGLError("setUniform - mat4");
+	}
 }
+
