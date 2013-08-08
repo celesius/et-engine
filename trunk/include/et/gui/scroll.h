@@ -34,19 +34,17 @@ namespace et
 			void setOffset(const vec2& aOffset, float duration = 0.0f);
 			void applyOffset(const vec2& dOffset, float duration = 0.0f);
 			
+			vec2 contentSize();
 			void adjustContentSize();
 			
 			void setBackgroundColor(const vec4& color);
 			void setScrollbarsColor(const vec4&);
-			
-			const vec2& contentSize() const
-				{ return _contentSize; }
-			
+						
 			const vec2& offset() const
 				{ return _offset; }
 			
 			void scrollToBottom(float duration = 0.0f);
-			
+						
 		protected:
 			virtual void setOffsetDirectly(const vec2& o);
 			

@@ -311,3 +311,8 @@ void Label::fitToWidth(float w)
 
 	setText(newText);
 }
+
+vec2 Label::contentSize()
+{
+	return maxv(_nextTextSize, _textSize);
+}

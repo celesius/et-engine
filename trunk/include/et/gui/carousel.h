@@ -63,6 +63,9 @@ namespace et
 
 			const vec2& size() const 
 				{ return _scale; }
+			
+			vec2 contentSize()
+				{ return vec2(0.0f); }
 
 		private:
 			GuiVertexList _vertices;

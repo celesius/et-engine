@@ -39,6 +39,8 @@ namespace et
 			
 			ET_DECLARE_EVENT2(layoutRequiresKeyboard, Layout*, Element*)
 			ET_DECLARE_EVENT1(layoutDoesntNeedKeyboard, Layout*)
+			
+			vec2 contentSize();
 
 		protected:
 			friend class Gui;

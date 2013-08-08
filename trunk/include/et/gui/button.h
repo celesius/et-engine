@@ -101,6 +101,8 @@ namespace et
 			void setSelected(bool s);
 
 			void setContentOffset(const vec2& o);
+			
+			vec2 contentSize();
 
 		protected:
 			void performClick();

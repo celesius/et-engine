@@ -30,7 +30,6 @@ using namespace et;
 @end
 
 @interface etOpenGLWindow : NSWindow
-
 @end
 
 @interface etOpenGLView : NSOpenGLView
@@ -39,6 +38,7 @@ using namespace et;
 	Input::PointerInputSource pointerInputSource;
 	Input::GestureInputSource gestureInputSource;
 	ApplicationNotifier applicationNotifier;
+	RenderContextPrivate* rcPrivate;
 }
 
 @end
@@ -46,36 +46,40 @@ using namespace et;
 class et::RenderContextPrivate
 {
 public:
-	RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params);
+	RenderContextPrivate(RenderContext*, RenderContextParameters&, const ApplicationParameters&);
 	~RenderContextPrivate();
 	
 	int displayLinkSynchronized();
 	
 	void run();
+	void resize(const NSSize&);
+	void render();
 	void stop();
+		
+	bool canPerformOperations()
+		{ return !firstSync; }
 	
-public:
-	RenderContext* _rc;
-	etWindowDelegate* _windowDelegate;
-	etOpenGLView* _openGlView;
+private:
+	etWindowDelegate* windowDelegate;
+	etOpenGLView* openGlView;
+	etOpenGLWindow* mainWindow;
 	
-	etOpenGLWindow* _mainWindow;
-	NSOpenGLPixelFormat* _pixelFormat;
-	NSOpenGLContext* _openGlContext;
-	CVDisplayLinkRef _displayLink;
+	NSOpenGLPixelFormat* pixelFormat;
+	NSOpenGLContext* openGlContext;
+	CVDisplayLinkRef displayLink;
 	
 	bool firstSync;
 };
 
-RenderContext::RenderContext(const RenderContextParameters& params, Application* app) : _params(params),
+RenderContext::RenderContext(const RenderContextParameters& inParams, Application* app) : _params(inParams),
 	_app(app), _programFactory(0), _textureFactory(0), _framebufferFactory(0), _vertexBufferFactory(0),
 	_renderer(0), _screenScaleFactor(1)
 {
-	_private = new RenderContextPrivate(this, params);
+	_private = new RenderContextPrivate(this, _params, app->parameters());
 	
 	openGLCapabilites().checkCaps();
-	_renderState.setMainViewportSize(params.contextSize);
-	updateScreenScale(params.contextSize);
+	_renderState.setMainViewportSize(_params.contextSize);
+	updateScreenScale(_params.contextSize);
 	
 	_textureFactory = new TextureFactory(this);
 	_framebufferFactory = new FramebufferFactory(this, _textureFactory.ptr());
@@ -132,88 +136,135 @@ void RenderContext::endRender()
 CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*,
 	CVOptionFlags, CVOptionFlags*, void *displayLinkContext);
 
-RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params) :
-	_rc(rc), _mainWindow(0), _pixelFormat(0), _openGlContext(0), _openGlView(0),
-	_displayLink(0), firstSync(true)
+RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParameters& params,
+	const ApplicationParameters& appParams) : mainWindow(nil), pixelFormat(nil),
+	openGlContext(nil), openGlView(nil), displayLink(nil), firstSync(true)
 {
-	NSRect screenRect = [[NSScreen mainScreen] frame];
-	
-	NSRect contentRect = NSMakeRect(0.5f * (screenRect.size.width - params.contextSize.x),
-		0.5f * (screenRect.size.height - params.contextSize.y), params.contextSize.x, params.contextSize.y);
-	
-	NSRect openglRect = NSMakeRect(0.0f, 0.0f, params.contextSize.x, params.contextSize.y);
-	
 	NSOpenGLPixelFormatAttribute pixelFormatAttributes[] =
-		{
-			NSOpenGLPFAColorSize, 24,
-			NSOpenGLPFAAlphaSize, 8,
-			NSOpenGLPFADepthSize, 32,
-			
-			NSOpenGLPFAAccelerated,
-			NSOpenGLPFADoubleBuffer,
-
-			NSOpenGLPFAMultisample,
-			NSOpenGLPFASampleBuffers, 4,
-			NSOpenGLPFASamples, 16,
-			0,
-			0,
-			0
-		};
+	{
+		NSOpenGLPFAColorSize, 24,
+		NSOpenGLPFAAlphaSize, 8,
+		NSOpenGLPFADepthSize, 32,
+		NSOpenGLPFAAccelerated,
+		NSOpenGLPFAAcceleratedCompute,
+		NSOpenGLPFADoubleBuffer,
+		NSOpenGLPFASampleBuffers, 4,
+		NSOpenGLPFASamples, 16,
+		NSOpenGLPFAMultisample,
+		0,
+		0,
+		0,
+	};
 	
-#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7)
+	size_t lastEntry = (sizeof(pixelFormatAttributes) / sizeof(NSOpenGLPixelFormatAttribute)) - 3;
 	if (params.openGLForwardContext)
 	{
-		size_t lastEntry = sizeof(pixelFormatAttributes) / sizeof(NSOpenGLPixelFormatAttribute) - 1;
-		pixelFormatAttributes[lastEntry - 2] = NSOpenGLPFAOpenGLProfile;
-		pixelFormatAttributes[lastEntry - 1] = NSOpenGLProfileVersion3_2Core;
+		pixelFormatAttributes[lastEntry++] = NSOpenGLPFAOpenGLProfile;
+		pixelFormatAttributes[lastEntry++] = NSOpenGLProfileVersion3_2Core;
 	}
-#endif
-
-	_pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes] autorelease];
-	assert(_pixelFormat != nil);
 	
-	_mainWindow = [[etOpenGLWindow alloc] initWithContentRect:contentRect
-		styleMask:NSTitledWindowMask | NSClosableWindowMask backing:NSBackingStoreBuffered defer:YES];
+	pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes] autorelease];
+	assert(pixelFormat != nil);
 	
-	_windowDelegate = [[etWindowDelegate alloc] init];
-	_windowDelegate->rcPrivate = this;
-	[_mainWindow setDelegate:_windowDelegate];
+	NSUInteger windowMask = NSBorderlessWindowMask;
 	
-	_openGlView = [[etOpenGLView alloc] initWithFrame:openglRect pixelFormat:_pixelFormat];
-	_openGlContext = [[_openGlView openGLContext] retain];
+	if (appParams.windowSize != WindowSize_Fullscreen)
+	{
+		if ((appParams.windowStyle & WindowStyle_Caption) == WindowStyle_Caption)
+			windowMask |= NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
+		
+		if ((appParams.windowStyle & WindowStyle_Sizable) == WindowStyle_Sizable)
+			windowMask |= NSResizableWindowMask;
+	}
 	
-	[_openGlContext makeCurrentContext];
+	NSScreen* mainScreen = [NSScreen mainScreen];
+	NSRect visibleRect = [mainScreen visibleFrame];
 	
-	[_mainWindow setContentView:_openGlView];
-	[_mainWindow makeKeyAndOrderFront:NSApp];
+	NSRect contentRect = { };
+	if (appParams.windowSize == WindowSize_FillWorkarea)
+	{
+		contentRect = [NSWindow contentRectForFrameRect:visibleRect styleMask:windowMask];
+	}
+	else if (appParams.windowSize == WindowSize_Fullscreen)
+	{
+		[[NSApplication sharedApplication] setPresentationOptions:NSApplicationPresentationAutoHideDock |
+			NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationFullScreen];
+		
+		windowMask |= NSFullScreenWindowMask;
+		contentRect = [mainScreen frame];
+	}
+	else
+	{
+		contentRect = NSMakeRect(0.5f * (visibleRect.size.width - params.contextSize.x),
+			visibleRect.origin.y + 0.5f * (visibleRect.size.height - params.contextSize.y),
+			params.contextSize.x, params.contextSize.y);
+	}
+	
+	params.contextSize = vec2i(static_cast<int>(contentRect.size.width), static_cast<int>(contentRect.size.height));
+	
+	mainWindow = [[etOpenGLWindow alloc] initWithContentRect:contentRect
+		styleMask:windowMask backing:NSBackingStoreBuffered defer:YES];
+	
+	windowDelegate = [[etWindowDelegate alloc] init];
+	windowDelegate->rcPrivate = this;
+	[mainWindow setDelegate:windowDelegate];
+	[mainWindow setOpaque:YES];
+	[mainWindow setHidesOnDeactivate:YES];
+	
+	openGlView = [[etOpenGLView alloc] initWithFrame:NSMakeRect(0.0f, 0.0f, contentRect.size.width,
+		contentRect.size.height) pixelFormat:pixelFormat];
+	openGlView->rcPrivate = this;
+	[openGlView setWantsBestResolutionOpenGLSurface:YES];
+	
+	openGlContext = [[openGlView openGLContext] retain];
+	[openGlContext makeCurrentContext];
+	
+	if (appParams.windowSize == WindowSize_Fullscreen)
+	{
+		[mainWindow setLevel:NSMainMenuWindowLevel + 1];
+		[openGlContext setFullScreen];
+	}
+	
+	[mainWindow setContentView:openGlView];
+	[mainWindow makeKeyAndOrderFront:[NSApplication sharedApplication]];
 }
 
 RenderContextPrivate::~RenderContextPrivate()
 {
-	[_openGlView release];
-	[_openGlContext release];
-	[_windowDelegate release];
+	[openGlView release];
+	[openGlContext release];
+	[windowDelegate release];
 }
 
 void RenderContextPrivate::run()
 {
-	if (_displayLink == nil)
+	if (displayLink == nil)
 	{
-		CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink);
-		CVDisplayLinkSetOutputCallback(_displayLink, cvDisplayLinkOutputCallback, this);
-		CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink,
-			static_cast<CGLContextObj>([_openGlContext CGLContextObj]),
-			static_cast<CGLPixelFormatObj>([_pixelFormat CGLPixelFormatObj]));
+		CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
+		CVDisplayLinkSetOutputCallback(displayLink, cvDisplayLinkOutputCallback, this);
+		CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(displayLink,
+			static_cast<CGLContextObj>([openGlContext CGLContextObj]),
+			static_cast<CGLPixelFormatObj>([pixelFormat CGLPixelFormatObj]));
 	}
 	
-	CVDisplayLinkStart(_displayLink);
+	CVDisplayLinkStart(displayLink);
 }
 
 void RenderContextPrivate::stop()
 {
-	CVDisplayLinkStop(_displayLink);
-	CVDisplayLinkRelease(_displayLink);
-	_displayLink = nil;
+	CVDisplayLinkStop(displayLink);
+	CVDisplayLinkRelease(displayLink);
+	displayLink = nil;
+}
+
+void RenderContextPrivate::render()
+{
+	CGLContextObj glObject = reinterpret_cast<CGLContextObj>([openGlContext CGLContextObj]);
+	[openGlContext makeCurrentContext];
+	CGLLockContext(glObject);
+	windowDelegate->applicationNotifier.notifyIdle();
+	CGLFlushDrawable(glObject);
+	CGLUnlockContext(glObject);
 }
 
 int RenderContextPrivate::displayLinkSynchronized()
@@ -227,17 +278,22 @@ int RenderContextPrivate::displayLinkSynchronized()
 	}
 	
 	if (application().running() && !application().suspended())
-	{
-		CGLLockContext(reinterpret_cast<CGLContextObj>([_openGlContext CGLContextObj]));
-		[_openGlContext makeCurrentContext];
-		
-		_windowDelegate->applicationNotifier.notifyIdle();
-		
-		[_openGlContext flushBuffer];
-		CGLUnlockContext(reinterpret_cast<CGLContextObj>([_openGlContext CGLContextObj]));
-	}
+		render();
 
 	return kCVReturnSuccess;
+}
+
+void RenderContextPrivate::resize(const NSSize& sz)
+{
+	CGLContextObj glObject = reinterpret_cast<CGLContextObj>([openGlContext CGLContextObj]);
+	
+	[openGlContext makeCurrentContext];
+	CGLLockContext(glObject);
+	
+	windowDelegate->applicationNotifier.notifyResize(vec2i(static_cast<int>(sz.width),
+		static_cast<int>(sz.height)));
+
+	CGLUnlockContext(glObject);
 }
 
 /*
@@ -371,6 +427,21 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 - (void)keyUp:(NSEvent *)event
 {
     (void)event;
+}
+
+- (void)drawRect:(NSRect)dirtyRect
+{
+	(void)dirtyRect;
+	if (rcPrivate->canPerformOperations())
+		rcPrivate->render();
+}
+
+- (void)reshape
+{
+	[super reshape];
+	
+	if (rcPrivate->canPerformOperations())
+		rcPrivate->resize(self.bounds.size);
 }
 
 @end

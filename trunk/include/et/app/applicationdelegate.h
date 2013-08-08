@@ -31,25 +31,31 @@ namespace et
 
 	enum WindowStyle
 	{
-		WindowStyle_FixedWithCaption,
-		WindowStyle_FixedWithoutCaption,
-		WindowStyle_Sizable,
-		WindowStyle_StretchedToWorkarea,
-		WindowStyle_Fullscreen
+		WindowStyle_Borderless = 0x00,
+		WindowStyle_Caption = 0x01,
+		WindowStyle_Sizable = 0x02,
+	};
+	
+	enum WindowSize
+	{
+		WindowSize_Predefined,
+		WindowSize_FillWorkarea,
+		WindowSize_Fullscreen
 	};
 
 	struct ApplicationParameters
 	{
-		WindowStyle windowStyle;
+		size_t windowStyle;
+		WindowSize windowSize;
 		bool shouldSuspendOnDeactivate;
 
-		ApplicationParameters(
 #if (ET_PLATFORM_IOS || ET_PLATFORM_ANDROID)
-							  WindowStyle ws = WindowStyle_Fullscreen
+		ApplicationParameters() :
+			windowStyle(WindowStyle_Borderless), windowSize(WindowSize_Predefined) { }
 #else
-							  WindowStyle ws = WindowStyle_FixedWithCaption
+		ApplicationParameters() :
+			windowStyle(WindowStyle_Caption), windowSize(WindowSize_Predefined) { }
 #endif
-							  ) : windowStyle(ws) { }
 	};
 	
 	class IApplicationDelegate : virtual public EventReceiver

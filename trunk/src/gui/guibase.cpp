@@ -178,6 +178,8 @@ void Element::autoLayout(const vec2& contextSize, float duration)
 			aSize = contextSize * _autoLayout.size;
 		else if ((_autoLayout.sizeMode == LayoutMode_RelativeToParent) && (parent() != nullptr))
 			aSize = parent()->size() * _autoLayout.size;
+		else if (_autoLayout.sizeMode == LayoutMode_WrapContent)
+			aSize = contentSize();
 		else
 			aSize = _autoLayout.size;
 	}
@@ -188,6 +190,8 @@ void Element::autoLayout(const vec2& contextSize, float duration)
 			aPos = contextSize * _autoLayout.position;
 		else if ((_autoLayout.positionMode == LayoutMode_RelativeToParent) && (parent() != nullptr))
 			aPos = parent()->size() * _autoLayout.position;
+		else if (_autoLayout.positionMode == LayoutMode_WrapContent)
+			abort();
 		else
 			aPos = _autoLayout.position;
 	}
@@ -213,4 +217,14 @@ void Element::centerInParent()
 	setAutolayot(vec2(0.5f), LayoutMode_RelativeToParent, vec2(1.0f),
 		LayoutMode_RelativeToParent, vec2(0.5f));
 	setAutolayoutMask(LayoutMask_PositionPivot);
+}
+
+void Element::setAutolayotRelativeToParent(const vec2& pos, const vec2& sz, const vec2& pivot)
+{
+	setAutolayot(pos, LayoutMode_RelativeToParent, sz, LayoutMode_RelativeToParent, pivot);
+}
+
+void Element::setAutolayoutSizeMode(LayoutMode mode)
+{
+	_autoLayout.sizeMode = mode;
 }
