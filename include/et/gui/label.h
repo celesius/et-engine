@@ -47,6 +47,8 @@ namespace et
 			void setShadowColor(const vec4& color);
 			void setShadowOffset(const vec2& offset);
 			void setText(const std::string& text, float duration = 0.0f);
+			
+			vec2 contentSize();
 
 		private:
 			void buildVertices(RenderContext* rc, GuiRenderer& guiRenderer);

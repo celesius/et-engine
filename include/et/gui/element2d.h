@@ -34,9 +34,10 @@ namespace et
 			const vec2& scale() const;
 			const rect& frame() const;
 			const vec2& pivotPoint() const;
-
+			
 			vec2 origin() const;
 			vec2 offset() const;
+			vec2 contentSize();
 
 			float angle() const;
 			float alpha() const;

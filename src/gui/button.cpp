@@ -329,3 +329,8 @@ void Button::setContentMode(ContentMode m)
 	_contentMode = m;
 	invalidateContent();
 }
+
+vec2 Button::contentSize()
+{
+	return sizeForText(_title);
+}

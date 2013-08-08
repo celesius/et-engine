@@ -517,3 +517,9 @@ void Scroll::scrollToBottom(float delay)
 {
 	setOffset(vec2(_offset.x, etMin(0.0f, size().y - _contentSize.y)), delay);
 }
+
+vec2 Scroll::contentSize()
+{
+	adjustContentSize();
+	return _contentSize;
+}

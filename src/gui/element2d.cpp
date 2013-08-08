@@ -292,3 +292,8 @@ vec2 Element2d::positionInElement(const vec2& p)
 {
 	return finalInverseTransform() * p;
 }
+
+vec2 Element2d::contentSize()
+{
+	return _frame.size();
+}

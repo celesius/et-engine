@@ -31,6 +31,8 @@ void Application::loaded()
 	_lastQueuedTimeMSec = queryTimeMSec();
 	_runLoop.update(_lastQueuedTimeMSec);
 	
+	delegate()->setApplicationParameters(_parameters);
+	
 	RenderContextParameters parameters;
 	delegate()->setRenderContextParameters(parameters);
 	

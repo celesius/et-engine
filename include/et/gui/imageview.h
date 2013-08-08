@@ -63,6 +63,8 @@ namespace et
 			void setTexture(const Texture& t, bool updateDescriptor);
 			void setImage(const Image& img);
 			void setBackgroundColor(const vec4& color);
+			
+			vec2 contentSize();
 
 			ImageDescriptor calculateImageFrame();
 

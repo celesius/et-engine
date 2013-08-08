@@ -5,7 +5,7 @@
  *
  */
 
-#include <et/rendering/rendercontext.h>
+#include <et/app/applicationnotifier.h>
 #include <et/gui/layout.h>
 
 using namespace et;
@@ -379,6 +379,11 @@ void Layout::initRenderingElement(et::RenderContext* rc)
 {
 	if (_renderingElement.invalid())
 		_renderingElement = RenderingElement::Pointer(new RenderingElement(rc));
+}
+
+vec2 Layout::contentSize()
+{
+	return ApplicationNotifier().accessRenderContext()->size();
 }
 
 /*

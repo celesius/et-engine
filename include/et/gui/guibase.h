@@ -101,10 +101,14 @@ namespace et
 				{ layoutChildren(); }
 
 			void setAutolayot(const ElementLayout&);
-
+			
 			void setAutolayot(const vec2& pos, LayoutMode pMode, const vec2& sz,
 				LayoutMode sMode, const vec2& pivot);
-
+			
+			void setAutolayotRelativeToParent(const vec2& pos, const vec2& sz, const vec2& pivot);
+			
+			void setAutolayoutSizeMode(LayoutMode);
+			
 			void setAutolayoutMask(size_t);
 			
 			void fillParent();
@@ -148,6 +152,8 @@ namespace et
 			virtual void setPivotPoint(const vec2& p, bool preservePosition = true) = 0;
 
 			virtual bool containsPoint(const vec2&, const vec2&) = 0;
+			
+			virtual vec2 contentSize() = 0;
 
 			/*
 			 * Events

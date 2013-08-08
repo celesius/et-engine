@@ -65,7 +65,8 @@ namespace et
 		{
 			LayoutMode_Absolute,
 			LayoutMode_RelativeToParent,
-			LayoutMode_RelativeToContext
+			LayoutMode_RelativeToContext,
+			LayoutMode_WrapContent
 		};
 
 		enum LayoutMask

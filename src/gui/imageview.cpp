@@ -218,3 +218,8 @@ ImageDescriptor ImageView::calculateImageFrame()
 
 	return desc;
 }
+
+vec2 ImageView::contentSize()
+{
+	return _descriptor.size;
+}
