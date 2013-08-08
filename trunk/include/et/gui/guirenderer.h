@@ -50,7 +50,7 @@ namespace et
 				const mat4& transform, RenderLayer layer);
 			
 			void buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, const GuiVertex& topRight,
-						   const GuiVertex& bottomLeft, const GuiVertex& bottomRight);
+				const GuiVertex& bottomLeft, const GuiVertex& bottomRight);
 			
 			void setCustomOffset(const vec2& offset);
 			
@@ -73,6 +73,7 @@ namespace et
 			RenderContext* _rc;
 			RenderingElement::Pointer _renderingElement;
 			Texture _lastTextures[RenderLayer_max];
+			Texture _defaultTexture;
 			
 			Program _guiProgram;
 			mat4 _defaultTransform;
