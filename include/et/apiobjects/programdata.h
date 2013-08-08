@@ -146,7 +146,7 @@ namespace et
 	template <> void
 	inline ProgramData::setUniform(int nLoc, int, const int& value)
 	{
-		assert(loaded() && (nLoc >= 0));
+		assert(loaded());
 		glUniform1i(nLoc, value);
 		checkOpenGLError("setUniform - int");
 	}
@@ -154,7 +154,7 @@ namespace et
 	template <> void
 	inline ProgramData::setUniform(int nLoc, int, const unsigned int& value)
 	{
-		assert(loaded() && (nLoc >= 0));
+		assert(loaded());
 		glUniform1i(nLoc, value);
 		checkOpenGLError("setUniform - unsigned int");
 	}
@@ -162,7 +162,7 @@ namespace et
 	template <> void
 	inline ProgramData::setUniform(int nLoc, int, const unsigned long& value)
 	{
-		assert(loaded() && (nLoc >= 0));
+		assert(loaded());
 		glUniform1i(nLoc, value);
 		checkOpenGLError("setUniform - unsigned long");
 	}
@@ -171,7 +171,7 @@ namespace et
 	inline ProgramData::setUniform(int nLoc, int type, const float& value)
 	{
 		assert(type == GL_FLOAT);
-		assert(loaded() && (nLoc >= 0));
+		assert(loaded());
 		glUniform1f(nLoc, value);
 		checkOpenGLError("setUniform - float");
 	}
@@ -180,7 +180,7 @@ namespace et
 	inline ProgramData::setUniform(int nLoc, int type, const vec2& value)
 	{
 		assert(type == GL_FLOAT_VEC2);
-		assert(loaded() && (nLoc >= 0));
+		assert(loaded());
 		glUniform2fv(nLoc, 1, value.data());
 		checkOpenGLError("setUniform - vec2");
 	}
@@ -189,7 +189,7 @@ namespace et
 	inline ProgramData::setUniform(int nLoc, int type, const vec3& value)
 	{
 		assert(type == GL_FLOAT_VEC3);
-		assert(loaded() && (nLoc >= 0));
+		assert(loaded());
 		glUniform3fv(nLoc, 1, value.data());
 		checkOpenGLError("setUniform - vec3");
 	}
@@ -198,7 +198,7 @@ namespace et
 	inline ProgramData::setUniform(int nLoc, int type, const vec4& value)
 	{
 		assert(type == GL_FLOAT_VEC4);
-		assert(loaded() && (nLoc >= 0));
+		assert(loaded());
 		glUniform4fv(nLoc, 1, value.data());
 		checkOpenGLError("setUniform - vec4");
 	}
@@ -207,7 +207,7 @@ namespace et
 	inline ProgramData::setUniform(int nLoc, int type, const mat3& value)
 	{
 		assert(type == GL_FLOAT_MAT3);
-		assert(loaded() && (nLoc >= 0));
+		assert(loaded());
 		glUniformMatrix3fv(nLoc, 1, 0, value.data());
 		checkOpenGLError("setUniform - mat3");
 	}
@@ -216,7 +216,7 @@ namespace et
 	inline ProgramData::setUniform(int nLoc, int type, const mat4& value)
 	{
 		assert(type == GL_FLOAT_MAT4);
-		assert(loaded() && (nLoc >= 0));
+		assert(loaded());
 		glUniformMatrix4fv(nLoc, 1, 0, value.data());
 		checkOpenGLError("setUniform - mat4");
 	}
