@@ -84,7 +84,7 @@ namespace et
 			std::stack<recti> _clip;
 			recti _clipRect;
 			vec2 _customOffset;
-			vec2i _customWindowOffset;
+			recti _customWindowOffset;
 			float _customAlpha;
 	
 			size_t _blendState;

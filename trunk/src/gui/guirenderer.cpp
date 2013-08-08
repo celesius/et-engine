@@ -122,11 +122,13 @@ GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& text
 	if (_renderingElement->_chunks.size())
 	{
 		RenderChunk& lastChunk = _renderingElement->_chunks.back();
-
-		if ((lastChunk.representation == cls) && (lastChunk.layers[layer] == texture))
+		bool sameConfiguration = (lastChunk.representation == cls) &&
+			(lastChunk.layers[layer] == texture) && (lastChunk.clip == _clip.top());
+		
+		if (sameConfiguration)
 			lastChunk.count += count;
-		else 
-			shouldAdd = true;
+		
+		shouldAdd = !sameConfiguration;
 	}
 	else 
 	{
@@ -212,7 +214,7 @@ void GuiRenderer::render(RenderContext* rc)
 	{
 		rs.bindTexture(0, i.layers[RenderLayer_Layer0]);
 		rs.bindTexture(1, i.layers[RenderLayer_Layer1]);
-		rs.setClip(true, i.clip + recti(_customWindowOffset.x, _customWindowOffset.y, 0, 0));
+		rs.setClip(true, i.clip + _customWindowOffset);
 		
 		if (i.representation != representation)
 		{
@@ -293,10 +295,10 @@ void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescri
 			vec4 charColor = desc.color * color;
 			
 			buildQuad(vertices,
-					  GuiVertex(floorv(transform * topLeft), vec4(topLeftUV, mask), charColor),
-					  GuiVertex(floorv(transform * topRight), vec4(topRightUV, mask), charColor),
-					  GuiVertex(floorv(transform * bottomLeft), vec4(bottomLeftUV, mask), charColor),
-					  GuiVertex(floorv(transform * bottomRight), vec4(bottomRightUV, mask), charColor));
+				GuiVertex(floorv(transform * topLeft), vec4(topLeftUV, mask), charColor),
+				GuiVertex(floorv(transform * topRight), vec4(topRightUV, mask), charColor),
+				GuiVertex(floorv(transform * bottomLeft), vec4(bottomLeftUV, mask), charColor),
+				GuiVertex(floorv(transform * bottomRight), vec4(bottomRightUV, mask), charColor));
 			
 			line.x += desc.size.x;
 		}
@@ -494,29 +496,24 @@ void GuiRenderer::createImageVertices(GuiVertexList& vertices, const Texture& te
 }
 
 void GuiRenderer::createColorVertices(GuiVertexList& vertices, const rect& p, const vec4& color, 
-									  const mat4& transform, RenderLayer layer)
+	const mat4& transform, RenderLayer layer)
 {
 	vec2 topLeft = p.origin();
 	vec2 topRight = topLeft + vec2(p.width, 0.0f);
 	vec2 bottomLeft = topLeft + vec2(0.0f, p.height);
 	vec2 bottomRight = bottomLeft + vec2(p.width, 0.0f);
-	
-	vec2 mask(layer == RenderLayer_Layer0 ? 0.0f : 1.0f, 1.0f);
-	
-	buildQuad(vertices, 
-			  GuiVertex(transform * topLeft, vec4(vec2(0.0f), mask), color ), 
-			  GuiVertex(transform * topRight, vec4(vec2(0.0f), mask), color ),
-			  GuiVertex(transform * bottomLeft, vec4(vec2(0.0f), mask), color ),
-			  GuiVertex(transform * bottomRight, vec4(vec2(0.0f), mask), color ) );
+	vec4 texCoord(vec2(0.0f), vec2(layer == RenderLayer_Layer0 ? 0.0f : 1.0f, 1.0f));
+	buildQuad(vertices, GuiVertex(transform * topLeft, texCoord, color),
+		GuiVertex(transform * topRight, texCoord, color), GuiVertex(transform * bottomLeft, texCoord, color),
+		GuiVertex(transform * bottomRight, texCoord, color));
 }
 
 void GuiRenderer::setCustomOffset(const vec2& offset)
 {
 	_customOffset = 2.0f * offset;
-	_customWindowOffset.x = static_cast<int>(offset.x * _rc->size().x);
-	_customWindowOffset.y = static_cast<int>(offset.y * _rc->size().y);
+	_customWindowOffset.left = static_cast<int>(offset.x * _rc->size().x);
+	_customWindowOffset.top = static_cast<int>(offset.y * _rc->size().y);
 }
-
 
 std::string gui_default_vertex_src =
 	"uniform mat4 mTransform;"
