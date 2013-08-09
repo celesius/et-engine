@@ -5,7 +5,6 @@
  *
  */
 
-#include <et/app/application.h>
 #include <et/core/tools.h>
 #include <et/resources/textureloader.h>
 #include <et/imaging/pngloader.h>
@@ -15,11 +14,93 @@
 
 using namespace et;
 
-static StringList extensions;
+TextureDescription::Pointer et::loadTextureDescription(const std::string& fileName, bool initWithZero)
+{
+	if (!fileExists(fileName))
+		return TextureDescription::Pointer();
+	
+	std::string ext = getFileExt(fileName);
+	TextureDescription* desc = nullptr;
+	if (ext == "png")
+	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
+		desc->source = fileName;
+		PNGLoader::loadInfoFromFile(fileName, *desc);
+	}
+	else if (ext == "dds")
+	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
+		desc->source = fileName;
+		DDSLoader::loadInfoFromFile(fileName, *desc);
+	}
+	else if (ext == "pvr")
+	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
+		desc->source = fileName;
+		PVRLoader::loadInfoFromFile(fileName, *desc);
+	}
+	else if ((ext == "jpg") || (ext == "jpeg"))
+	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
+		desc->source = fileName;
+		JPGLoader::loadInfoFromFile(fileName, *desc);
+	}
+	
+	if ((desc != nullptr) && initWithZero)
+	{
+		desc->data = BinaryDataStorage(desc->dataSizeForAllMipLevels());
+		desc->data.fill(0);
+	}
+	
+	return TextureDescription::Pointer(desc);
+}
 
+TextureDescription::Pointer et::loadTexture(const std::string& fileName)
+{
+	if (!fileExists(fileName))
+		return TextureDescription::Pointer();
+	
+	std::string ext = getFileExt(fileName);
+	TextureDescription* desc = nullptr;
+	if (ext == "png")
+	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
+		desc->source = fileName;
+		PNGLoader::loadFromFile(fileName, *desc, true);
+	}
+	else if (ext == "dds")
+	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
+		DDSLoader::loadFromFile(fileName, *desc);
+	}
+	else if (ext == "pvr")
+	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
+		PVRLoader::loadFromFile(fileName, *desc);
+	}
+	else if ((ext == "jpg") || (ext == "jpeg"))
+	{
+		desc = new TextureDescription;
+		desc->target = GL_TEXTURE_2D;
+		JPGLoader::loadFromFile(fileName, *desc);
+	}
+	
+	return TextureDescription::Pointer(desc);
+}
+
+/*
 const StringList& TextureLoader::preferredExtensions()
 {
-	if (extensions.size() == 0)
+	static StringList extensions;
+	
+	if (extensions.empty())
 	{
 #if (ET_PLATFORM_WIN || ET_PLATFORM_MAC)
 		extensions.push_back(".dds");
@@ -113,84 +194,4 @@ std::string TextureLoader::resolveFileName(const std::string& name, std::string*
 {
 	return TextureLoader::resolveScalableFileName(name, 1, ext, silent);
 }
-
-TextureDescription::Pointer TextureLoader::loadDescription(const std::string& name,
-	size_t scaleFactor, bool initWithZero)
-{
-	std::string ext;
-	std::string fileName = resolveScalableFileName(name, scaleFactor, &ext);
-	
-	TextureDescription* desc = nullptr;
-	if (ext == ".png")
-	{
-		desc = new TextureDescription;
-		desc->target = GL_TEXTURE_2D;
-		desc->source = fileName;
-		PNGLoader::loadInfoFromFile(fileName, *desc);
-	}
-	else if (ext == ".dds")
-	{
-		desc = new TextureDescription;
-		desc->target = GL_TEXTURE_2D;
-		desc->source = fileName;
-		DDSLoader::loadInfoFromFile(fileName, *desc);
-	}
-	else if (ext == ".pvr")
-	{
-		desc = new TextureDescription;
-		desc->target = GL_TEXTURE_2D;
-		desc->source = fileName;
-		PVRLoader::loadInfoFromFile(fileName, *desc);
-	}
-	else if ((ext == ".jpg") || (ext == ".jpeg"))
-	{
-		desc = new TextureDescription;
-		desc->target = GL_TEXTURE_2D;
-		desc->source = fileName;
-		JPGLoader::loadInfoFromFile(fileName, *desc);
-	}
-	
-	if ((desc != nullptr) && initWithZero)
-	{
-		desc->data = BinaryDataStorage(desc->dataSizeForAllMipLevels());
-		desc->data.fill(0);
-	}
-
-	return TextureDescription::Pointer(desc);
-}
-
-TextureDescription::Pointer TextureLoader::load(const std::string& name, size_t scaleFactor)
-{
-	std::string ext;
-	std::string fileName = resolveScalableFileName(name, scaleFactor, &ext, true);
-	
-	TextureDescription* desc = nullptr;
-	
-	if (ext == ".png")
-	{
-		desc = new TextureDescription;
-		desc->target = GL_TEXTURE_2D;
-		desc->source = fileName;
-		PNGLoader::loadFromFile(fileName, *desc, true);
-	}
-	else if (ext == ".dds")
-	{
-		desc = new TextureDescription;
-		desc->target = GL_TEXTURE_2D;
-		DDSLoader::loadFromFile(fileName, *desc);
-	}
-	else if (ext == ".pvr")
-	{
-		desc = new TextureDescription;
-		desc->target = GL_TEXTURE_2D;
-		PVRLoader::loadFromFile(fileName, *desc);
-	}
-	else if ((ext == ".jpg") || (ext == ".jpeg"))
-	{
-		desc = new TextureDescription;
-		desc->target = GL_TEXTURE_2D;
-		JPGLoader::loadFromFile(fileName, *desc);
-	}
-
-	return TextureDescription::Pointer(desc);
-}
+*/

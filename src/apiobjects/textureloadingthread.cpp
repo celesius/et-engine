@@ -17,9 +17,9 @@ TextureLoaderDelegate::~TextureLoaderDelegate()
 		i->discardDelegate();
 }
 
-TextureLoadingRequest::TextureLoadingRequest(const std::string& name, size_t scrScale, const Texture& tex,
-	TextureLoaderDelegate* d) : fileName(name), screenScale(scrScale),
-	textureDescription(new TextureDescription), texture(tex), delegate(d)
+TextureLoadingRequest::TextureLoadingRequest(const std::string& name, const Texture& tex,
+	TextureLoaderDelegate* d) : fileName(name), textureDescription(new TextureDescription),
+	texture(tex), delegate(d)
 {
 	if (delegate)
 		delegate->addTextureLoadingRequest(this);
@@ -75,7 +75,7 @@ ThreadResult TextureLoadingThread::main()
 
 		if (req)
 		{
-			req->textureDescription = TextureLoader::load(req->fileName, req->screenScale);
+			req->textureDescription = loadTexture(req->fileName);
 
 			Invocation1 invocation;
 			invocation.setTarget(_delegate,
@@ -91,11 +91,14 @@ ThreadResult TextureLoadingThread::main()
 	return 0;
 }
 
-void TextureLoadingThread::addRequest(const std::string& fileName, size_t scrScale, Texture texture,
+void TextureLoadingThread::addRequest(const std::string& fileName, Texture texture,
 	TextureLoaderDelegate* delegate)
 {
+	if (delegate != nullptr)
+		delegate->textureDidStartLoading(texture);
+
 	CriticalSectionScope lock(_requestsCriticalSection);
-	_requests.push(new TextureLoadingRequest(fileName, scrScale, texture, delegate));
+	_requests.push(new TextureLoadingRequest(fileName, texture, delegate));
 
 	if (running())
 		resume();

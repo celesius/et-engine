@@ -11,6 +11,7 @@
 #include <et/threading/threading.h>
 #include <et/resources/textureloader.h>
 #include <et/apiobjects/texturefactory.h>
+#include <et/app/application.h>
 
 using namespace et;
 
@@ -19,40 +20,40 @@ TextureFactory::TextureFactory(RenderContext* rc) : APIObjectFactory(rc)
 	_loadingThread = new TextureLoadingThread(this);
 }
 
-Texture TextureFactory::loadTexture(const std::string& file, ObjectsCache& cache,
+TextureFactory::~TextureFactory()
+{
+	_loadingThread->stop();
+	_loadingThread->waitForTermination();
+}
+
+Texture TextureFactory::loadTexture(const std::string& fileName, ObjectsCache& cache,
 	bool async, TextureLoaderDelegate* delegate)
 {
-	if (file.length() == 0) return Texture();
-
+	if (fileName.length() == 0)
+		return Texture();
+	
 	CriticalSectionScope lock(_csTextureLoading);
+	
+	std::string file = application().environment().resolveScalableFileName(fileName,
+		renderContext()->screenScaleFactor());
     
     Texture texture = cache.find(file);
 	if (texture.invalid())
 	{
-		bool calledFromAnotherThread = Threading::currentThread() != threading().renderingThread();
-		size_t screenScale = renderContext()->screenScaleFactor();
-		
-		TextureDescription::Pointer desc = async ? 
-            TextureLoader::loadDescription(file, screenScale, false) :
-			TextureLoader::load(file, screenScale);
+		TextureDescription::Pointer desc =
+			async ? et::loadTextureDescription(file, false) : et::loadTexture(file);
 
 		if (desc.valid())
 		{
+			bool calledFromAnotherThread = Threading::currentThread() != threading().renderingThread();
+			
 			texture = Texture(new TextureData(renderContext(), desc, desc->source, calledFromAnotherThread));
 			cache.manage(texture);
 			
 			if (async)
-			{
-				if (delegate)
-					delegate->textureDidStartLoading(texture);
-
-				_loadingThread->addRequest(desc->source,
-					renderContext()->screenScaleFactor(), texture, delegate);
-			}
+				_loadingThread->addRequest(desc->source, texture, delegate);
 			else if (calledFromAnotherThread)
-			{
 				assert(false && "ERROR: Unable to load texture synchronously from non-rendering thread.");
-			}
 		}
 		
 	}
@@ -175,15 +176,14 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 	const std::string& posy, const std::string& negy, const std::string& posz, const std::string& negz,
 	ObjectsCache& cache)
 {
-	size_t screenScale = renderContext()->screenScaleFactor();
 	TextureDescription::Pointer layers[6] = 
 	{
-		TextureLoader::load(posx, screenScale), 
-		TextureLoader::load(negx, screenScale), 
-		TextureLoader::load(negy, screenScale), 
-		TextureLoader::load(posy, screenScale), 
-		TextureLoader::load(posz, screenScale), 
-		TextureLoader::load(negz, screenScale) 
+		et::loadTexture(posx),
+		et::loadTexture(negx),
+		et::loadTexture(negy),
+		et::loadTexture(posy),
+		et::loadTexture(posz),
+		et::loadTexture(negz)
 	};
 
 	int maxCubemapSize = openGLCapabilites().maxCubemapTextureSize();

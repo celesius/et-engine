@@ -11,7 +11,8 @@
 
 using namespace et;
 
-#define CASE_VALUE(V) case V: return #V;
+#define ET_STOP_ON_OPENGL_ERROR			1
+#define CASE_VALUE(V)					case V: return #V;
 
 size_t OpenGLCounters::primitiveCounter = 0;
 size_t OpenGLCounters::DIPCounter = 0;
