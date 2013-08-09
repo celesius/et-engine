@@ -27,3 +27,4 @@
 #include <et/core/debug.h>
 #include <et/core/constants.h>
 #include <et/core/log.h>
+#include <et/core/stringlist.h>

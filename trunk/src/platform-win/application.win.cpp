@@ -71,8 +71,7 @@ int Application::platformRun()
 		_lastQueuedTimeMSec = queryTimeMSec();
 
 		enterRunLoop(); 
-
-		_delegate->applicationWillTerminate();
+		terminated();
 
 		delete _delegate, _delegate = nullptr;
 		delete _renderContext, _renderContext = nullptr;

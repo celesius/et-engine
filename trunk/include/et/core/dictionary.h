@@ -240,6 +240,6 @@ namespace et
 		
 		template <typename T, ValueClass C>
 		ValuePointer<T, C> valueForKey(const std::string& key, ValuePointer<T, C> def) const
-			{ return valueForKeyPath({key}, def); }
+			{ return valueForKeyPath(std::vector<std::string>(1, key), def); }
 	};
 }

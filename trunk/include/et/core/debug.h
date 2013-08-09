@@ -19,12 +19,10 @@
 #
 #	define _CRTDBG_MAP_ALLOC
 #	include <crtdbg.h>
+#	include <stdarg.h>
 #
-#	if ((_MSC_VER >= 1700) && !defined(ET_MSC_USE_1600_TOOLSET))
-#		define ET_SUPPORT_RANGE_BASED_FOR	1
-#	else
-#		define ET_SUPPORT_RANGE_BASED_FOR	0
-#	endif
+#	define ET_SUPPORT_RANGE_BASED_FOR	(_MSC_FULL_VER >= 170060315)
+#	define ET_SUPPORT_INITIALIZER_LIST	(_MSC_FULL_VER >= 180020617)
 #
 #	define ET_DEPRECATED					__declspec(deprecated)
 #	define ET_FORMAT_FUNCTION
@@ -33,6 +31,7 @@
 #
 #	define ET_CALL_FUNCTION					__PRETTY_FUNCTION__
 #	define ET_SUPPORT_RANGE_BASED_FOR		__has_feature(cxx_range_for)
+#	define ET_SUPPORT_INITIALIZER_LIST		__has_feature(cxx_generalized_initializers)
 #
 #	if (ET_PLATFORM_MAC)
 #		define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
@@ -45,6 +44,7 @@
 #
 #	define ET_CALL_FUNCTION					__PRETTY_FUNCTION__
 #	define ET_SUPPORT_RANGE_BASED_FOR		__has_feature(cxx_range_for)
+#	define ET_SUPPORT_INITIALIZER_LIST		__has_feature(cxx_generalized_initializers)
 #
 #else
 #
