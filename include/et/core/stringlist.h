@@ -9,14 +9,13 @@
 
 #if (ET_SUPPORT_INITIALIZER_LIST)
 #
-	#define ET_DECLARE_STRINGLIST(NAME, ...) StringList NAME = { __VA_ARGS__ };
+#	define ET_STRINGLIST(...)					StringList({ __VA_ARGS__ })
 #
 #else
 #
-	#define ET_DECLARE_STRINGLIST(NAME, ...) \
-		std::string et##NAME##strings[] = {__VA_ARGS__};\
-		size_t etnum##NAME##strings = sizeof(et##NAME##strings) / sizeof(std::string); \
-		StringList NAME = StringList(et##NAME##strings, et##NAME##strings + etnum##NAME##strings); 
+#	define ET_STRINGLIST(...)					([&]()->StringList{const std::string et_sl[]={__VA_ARGS__};\
+													return StringList(et_sl, et_sl+sizeof(et_sl)/sizeof(std::string));})()
+#
 #
 #endif
 
