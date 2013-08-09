@@ -7,7 +7,8 @@
 
 #include <Windows.h>
 #include <WinUser.h>
-#include <VersionHelpers.h>
+
+// #include <VersionHelpers.h>
 
 #include <et/core/tools.h>
 #include <et/opengl/opengl.h>
@@ -38,28 +39,27 @@ struct RenderContextData
 class et::RenderContextPrivate : public Input::KeyboardInputSource, public Input::PointerInputSource
 {
 public:
-	RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params, const ApplicationParameters& appParams);
+	RenderContextPrivate(RenderContext* rc, RenderContextParameters& params, const ApplicationParameters& appParams);
 	~RenderContextPrivate();
 
 public:
 	bool failed;
 	HINSTANCE hInstance;
 	WNDCLASSEX wndClass;
-	vec2i windowSize;
 
 	RenderContextData primaryContext;
 	RenderContextData dummyContext;
 
-	inline RenderContext* renderContext() 
+	RenderContext* renderContext() 
 		{ return _renderContext; }
 
 	bool shouldPostMovementMessage(int x, int y);
 
 private:
-	HWND createWindow(WindowStyle, const vec2i&, const vec2i&);
+	HWND createWindow(size_t, WindowSize, vec2i&);
 	RenderContextData createDummyContext(HWND hWnd);
 
-	bool initWindow(const RenderContextParameters& params, const ApplicationParameters& appParams);
+	bool initWindow(RenderContextParameters& params, const ApplicationParameters& appParams);
 	bool initOpenGL(const RenderContextParameters& params);
 
 	int chooseMSAAPixelFormat(HDC, PIXELFORMATDESCRIPTOR*);
@@ -72,11 +72,10 @@ private:
 	int _mouseY;
 };
 
-RenderContext::RenderContext(const RenderContextParameters& params, Application* app) : _params(params), _app(app),
+RenderContext::RenderContext(const RenderContextParameters& inParams, Application* app) : _params(inParams), _app(app),
 	_programFactory(0), _textureFactory(0), _framebufferFactory(0), _vertexBufferFactory(0), _renderer(0)
 {
-	_private = new RenderContextPrivate(this, params, app->parameters());
-	_params.contextSize = _private->windowSize;
+	_private = new RenderContextPrivate(this, _params, app->parameters());
 
 	if (_private->failed)
 	{
@@ -147,76 +146,79 @@ void RenderContext::endRender()
  * 
  */
 
-RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params, 
-	const ApplicationParameters& appParams) : failed(false), hInstance(0), _renderContext(rc), _mouseX(-1), _mouseY(-1)
+RenderContextPrivate::RenderContextPrivate(RenderContext* rc, RenderContextParameters& params, 
+	const ApplicationParameters& appParams) : failed(true), hInstance(nullptr), _renderContext(rc), 
+	_mouseX(-1), _mouseY(-1)
 {
-	failed = !initWindow(params, appParams);
-
-	if (!failed)
-		failed = !initOpenGL(params);
+	if (initWindow(params, appParams))
+	{
+		if (initOpenGL(params))
+			failed = false;
+	}
 }
 
-HWND RenderContextPrivate::createWindow(WindowStyle style, const vec2i& pos, const vec2i& size)
+HWND RenderContextPrivate::createWindow(size_t style, WindowSize windowSize, vec2i& size)
 { 
-	bool isSizeable = style == WindowStyle_Sizable;
-	bool hasCaption = style == (WindowStyle_FixedWithCaption) || isSizeable; 
-	bool hasBorder = style == (WindowStyle_FixedWithoutCaption) || isSizeable;
+	UINT windowStyle = WS_POPUP | WS_VISIBLE | WS_SYSMENU | WS_MINIMIZEBOX;
 
-	UINT wCaptionStyle = WS_MINIMIZEBOX | WS_CAPTION | WS_ACTIVECAPTION | (isSizeable ? WS_SIZEBOX | WS_MAXIMIZEBOX : 0);
-	UINT wStyle = WS_POPUP | WS_VISIBLE | WS_SYSMENU | (hasCaption ? wCaptionStyle : 0) | (hasBorder ? WS_BORDER : 0);
-
-	hasCaption |= hasBorder;
-
-	vec2i vPos;
-	vPos.x = pos.x * hasCaption;
-	vPos.y = pos.y * hasCaption;
-	vec2i winSize = size;
-
-	tagRECT wRect; 
-	wRect.left = pos.x;
-	wRect.top  = pos.y;
-
-	RECT wR = { };
-	SystemParametersInfo(SPI_GETWORKAREA, 0, (PVOID)&wR, 0);
-
-	int nScreenH = wR.bottom - wR.top;
-	int nScreenW = wR.right  - wR.left;
-
-	if (style == WindowStyle_Fullscreen)
+	if (windowSize != WindowSize_Fullscreen)
 	{
-		nScreenW = GetSystemMetrics(SM_CXSCREEN);
-		nScreenH = GetSystemMetrics(SM_CYSCREEN);
+		if ((style & WindowStyle_Caption) == WindowStyle_Caption)
+			windowStyle |= WS_CAPTION | WS_ACTIVECAPTION;
+
+		if ((style & WindowStyle_Sizable) == WindowStyle_Sizable)
+			windowStyle |= WS_SIZEBOX | WS_MAXIMIZEBOX;
+
+		if (windowSize == WindowSize_FillWorkarea)
+			windowStyle |= WS_MAXIMIZE;
 	}
 
-	if (!hasCaption)
+	RECT windowRect = { };
+	RECT workareaRect = { };
+	SystemParametersInfo(SPI_GETWORKAREA, 0, (PVOID)&workareaRect, 0);
+	vec2i workareaSize(workareaRect.right - workareaRect.left, workareaRect.bottom - workareaRect.top);
+
+	if (windowSize == WindowSize_Fullscreen)
 	{
-		wRect.right  = nScreenW;
-		wRect.bottom = nScreenH;
-	} 
+		windowRect.right = GetSystemMetrics(SM_CXSCREEN);
+		windowRect.bottom = GetSystemMetrics(SM_CYSCREEN);
+	}
+	else if (windowSize == WindowSize_FillWorkarea)
+	{
+		windowRect.right = workareaSize.x;
+		windowRect.bottom = workareaSize.y;
+	}
 	else
 	{
-		wRect.right  = pos.x + size.x;
-		wRect.bottom = pos.y + size.y;
-		AdjustWindowRect(&wRect, wStyle, false);
-
-		if (pos.x == -1)
-			vPos.x = (nScreenW - wRect.right  + wRect.left) / 2;
-
-		if (pos.y == -1)
-			vPos.y = (nScreenH - wRect.bottom + wRect.top ) / 2;
+		windowRect.right = size.x;
+		windowRect.bottom = size.y;
 	}
 
-	winSize.x = wRect.right  - wRect.left;
-	winSize.y = wRect.bottom - wRect.top;
+	size = vec2i(windowRect.right, windowRect.bottom);
+	vec2i actualSize = size;
 
-	if (windowSize.square() == 0)
-		windowSize = winSize;
+	if (windowSize == WindowSize_Predefined)
+	{
+		if ((windowStyle & WS_CAPTION) == WS_CAPTION)
+		{
+			AdjustWindowRectEx(&windowRect, windowStyle, 0, WS_EX_APPWINDOW);
+			actualSize = vec2i(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
+		}
+		windowRect.left = workareaRect.left + (workareaSize.x - windowRect.right) / 2;
+		windowRect.top = workareaRect.top + (workareaSize.y - windowRect.bottom) / 2;
+	}
 
-	return CreateWindowExA(WS_EX_APPWINDOW, wndClass.lpszClassName, application().identifier().applicationName.c_str(), wStyle, vPos.x, vPos.y, 
-		winSize.x, winSize.y, 0, 0, hInstance, 0);
+	HWND window = CreateWindowExA(WS_EX_APPWINDOW, wndClass.lpszClassName, 
+		application().identifier().applicationName.c_str(), windowStyle, 
+		windowRect.left, windowRect.top, actualSize.x, actualSize.y, 0, 0, hInstance, 0);
+
+	GetClientRect(window, &windowRect);
+	size = vec2i(windowRect.right, windowRect.bottom);
+
+	return window;
 }
 
-bool RenderContextPrivate::initWindow(const RenderContextParameters& params, const ApplicationParameters& appParams)
+bool RenderContextPrivate::initWindow(RenderContextParameters& params, const ApplicationParameters& appParams)
 {
 	hInstance = GetModuleHandle(0);
 
@@ -228,29 +230,23 @@ bool RenderContextPrivate::initWindow(const RenderContextParameters& params, con
 	wndClass.hCursor = LoadCursor(0, IDC_ARROW);
 	wndClass.lpszClassName = "etWindowClass";
 
-	if (!RegisterClassEx(&wndClass)) return false;
+	ATOM result = RegisterClassEx(&wndClass);
+	assert(result);
+	(void)result;
 
-	primaryContext.hWnd = createWindow(appParams.windowStyle, params.contextPosition, params.contextSize);
+	primaryContext.hWnd = createWindow(appParams.windowStyle, appParams.windowSize, params.contextSize);
+	assert(primaryContext.hWnd != nullptr);
 
-	if (primaryContext.hWnd == 0) return false;
-
-#if ET_PLATFORM_WIN64
-	SetWindowLong(primaryContext.hWnd, GWLP_USERDATA, LONG(this));
-#else
-	SetWindowLong(primaryContext.hWnd, GWL_USERDATA, LONG(this));
-#endif
+	SetWindowLong(primaryContext.hWnd, GWL_USERDATA, reinterpret_cast<LONG>(this));
 
 	ShowWindow(primaryContext.hWnd, SW_SHOW);
 	SetForegroundWindow(primaryContext.hWnd);
 	SetFocus(primaryContext.hWnd);
 
-	bool hasCaption = (appParams.windowStyle == WindowStyle_FixedWithCaption) || (appParams.windowStyle == WindowStyle_Sizable);
-	bool isFullscreen = appParams.windowStyle == WindowStyle_Fullscreen;
-
-	if (!hasCaption)
+	if ((appParams.windowStyle & WindowStyle_Caption) == WindowStyle_Caption)
 		SetCapture(primaryContext.hWnd);
 
-	if (isFullscreen)
+	if (appParams.windowSize == WindowSize_Fullscreen)
 	{
 		DEVMODE dm = { };
 		EnumDisplaySettings(0, ENUM_CURRENT_SETTINGS, &dm);
@@ -297,8 +293,8 @@ RenderContextData RenderContextPrivate::createDummyContext(HWND hWnd)
 
 bool RenderContextPrivate::initOpenGL(const RenderContextParameters& params)
 {
-	HWND dummyWindow = createWindow(WindowStyle_FixedWithoutCaption, vec2i(0), vec2i(0));
-	if (dummyWindow == 0) return false;
+	HWND dummyWindow = createWindow(WindowStyle_Borderless, WindowSize_Predefined, vec2i(0));
+	if (dummyWindow == nullptr) return false;
 
 	RenderContextData dummy = createDummyContext(dummyWindow);
 	if (!dummy.initialized)	return false;
@@ -307,16 +303,10 @@ bool RenderContextPrivate::initOpenGL(const RenderContextParameters& params)
 	wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
 	wglMakeContextCurrentARB = (PFNWGLMAKECONTEXTCURRENTARBPROC)wglGetProcAddress("wglMakeContextCurrentARB");
 
-	size_t compositionFlag = 0;
-	OSVERSIONINFO ver = { };
-	ver.dwOSVersionInfoSize = sizeof(ver);
-	if (IsWindowsVistaOrGreater())
-		compositionFlag = (ver.dwMajorVersion >= 6) ? PFD_SUPPORT_COMPOSITION : 0;
-
 	PIXELFORMATDESCRIPTOR pfd = { };
 	pfd.nSize = sizeof(pfd);
 	pfd.nVersion = 1;
-	pfd.dwFlags = PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW | PFD_DOUBLEBUFFER | compositionFlag;
+	pfd.dwFlags = PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW | PFD_DOUBLEBUFFER | PFD_SUPPORT_COMPOSITION;
 	pfd.cColorBits = 24;
 	pfd.cAlphaBits = 8;
 	pfd.cDepthBits = 24;
@@ -426,10 +416,9 @@ bool RenderContextPrivate::initOpenGL(const RenderContextParameters& params)
 			{
 				DWORD lastError = GetLastError();
 				if (lastError == ERROR_INVALID_VERSION_ARB)
-					std::cout << "Error creating context: ERROR_INVALID_VERSION_ARB. " <<
-								 "Requested: " << attrib_list[1] << "." << attrib_list[3] << std::endl;
+					log::error("Creating context: ERROR_INVALID_VERSION_ARB. Requested: %d.",  attrib_list[1],  attrib_list[3]);
 				else if (lastError == ERROR_INVALID_PROFILE_ARB)
-					std::cout << "Error creating context: ERROR_INVALID_PROFILE_ARB" << std::endl;
+					log::error("Error creating context: ERROR_INVALID_PROFILE_ARB");
 			}
 		}
 

@@ -51,14 +51,12 @@ namespace et
         
         size_t supportedInterfaceOrientations;
 
-		vec2i contextPosition;
 		vec2i contextSize;
 		vec2i contextBaseSize;
 
 		RenderContextParameters(
 #if defined(ET_PLATFORM_IOS)
 								MultisamplingQuality ms = MultisamplingQuality_None,
-								const vec2i& windowPos = vec2i(0, 0), 
 								const vec2i& windowSize = vec2i(480, 320),
 								const vec2i& openGLMaxVer = vec2i(2, 0), 
 								const vec2i& baseScrSize = vec2i(480, 320),
@@ -70,7 +68,6 @@ namespace et
                                 size_t orientationFlags = InterfaceOrientation_AnyLandscape
 #else 
 								MultisamplingQuality ms = MultisamplingQuality_Best,
-								const vec2i& windowPos = vec2i(-1), 
 								const vec2i& windowSize = vec2i(800, 600),
 								const vec2i& openGLMaxVer = vec2i(4, 2),
 								const vec2i& baseScrSize = vec2i(512, 512),
@@ -84,7 +81,7 @@ namespace et
 								) :
 		multisamplingQuality(ms), openGLForwardContext(forwardContext),
 		openGLCoreProfile(coreProfile), openGLCompatibilityProfile(compatibilityProfile),
-		contextPosition(windowPos), contextSize(windowSize), openGLTargetVersion(openGLMaxVer),
+		contextSize(windowSize), openGLTargetVersion(openGLMaxVer),
 		contextBaseSize(baseScrSize), verticalSync(vSync), multipleTouch(mTouch),
 		supportedInterfaceOrientations(orientationFlags) { }
 	};
