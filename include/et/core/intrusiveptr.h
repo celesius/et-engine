@@ -30,17 +30,17 @@ namespace et
 		IntrusivePtr() : _data(nullptr)
 			{ }
 
-		IntrusivePtr(const IntrusivePtr& r) : IntrusivePtr()
+		IntrusivePtr(const IntrusivePtr& r) : _data(nullptr)
 			{ reset(r._data);  }
 
-		IntrusivePtr(IntrusivePtr&& r) : IntrusivePtr()
+		IntrusivePtr(IntrusivePtr&& r) : _data(nullptr)
 			{ std::swap(_data, r._data); }
 		
 		template <typename R>
-		IntrusivePtr(IntrusivePtr<R> r) : IntrusivePtr()
+		IntrusivePtr(IntrusivePtr<R> r) : _data(nullptr)
 			{ reset(static_cast<T*>(r.ptr()));  }
 
-		explicit IntrusivePtr(T* data) : IntrusivePtr()
+		explicit IntrusivePtr(T* data) : _data(nullptr)
 			{ reset(data); }
 
 		virtual ~IntrusivePtr() 

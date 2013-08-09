@@ -70,8 +70,6 @@
 
 namespace et
 {
-	typedef std::vector<std::string> StringList;
-
 	enum Platform
 	{
 		Platform_Windows,
@@ -79,5 +77,4 @@ namespace et
 		Platform_Mac,
 		Platform_Android
 	};
-
 }
