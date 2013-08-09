@@ -55,7 +55,7 @@ void FontData::loadFromFile(RenderContext* rc, const std::string& fileName, Obje
 	std::string textureFileName = fontFileDir + textureFile;
 	std::string actualName = fileExists(textureFileName) ? textureFileName : textureFile;
 
-	_texture =rc->textureFactory().loadTexture(actualName, cache);
+	_texture = rc->textureFactory().loadTexture(actualName, cache);
 	_biggestChar = vec2(0.0f);
 	_biggestBoldChar = vec2(0.0f);
 	int charCount = deserializeInt(fontFile.stream());

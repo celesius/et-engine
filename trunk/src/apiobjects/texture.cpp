@@ -280,7 +280,8 @@ void TextureData::setMaxLod(RenderContext* rc, size_t value)
 
 void TextureData::reload(const std::string& anOrigin, RenderContext* rc, ObjectsCache&)
 {
-	TextureDescription::Pointer newDesc = TextureLoader::load(anOrigin, rc->screenScaleFactor());
+	TextureDescription::Pointer newDesc = loadTexture(anOrigin);
+	
 	if (newDesc.valid())
 	{
 		_desc = newDesc;

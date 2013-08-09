@@ -17,6 +17,8 @@ namespace et
 	class TextureFactory : public APIObjectFactory, public TextureLoadingThreadDelegate
 	{
 	public:
+		~TextureFactory();
+		
 		Texture loadTexture(const std::string& file, ObjectsCache& cache, bool async = false,
 			TextureLoaderDelegate* delegate = nullptr);
 
@@ -48,7 +50,7 @@ namespace et
 
 		TextureFactory& operator = (const TextureFactory&)
 			{ return *this; }
-
+		
 	private:
 		AutoPtr<TextureLoadingThread> _loadingThread;
 		CriticalSection _csTextureLoading;

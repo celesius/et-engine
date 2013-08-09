@@ -58,7 +58,7 @@ public:
 	void stop();
 		
 	bool canPerformOperations()
-		{ return !firstSync; }
+		{ return !firstSync && (displayLink != nil); }
 	
 private:
 	etWindowDelegate* windowDelegate;

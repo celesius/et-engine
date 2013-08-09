@@ -43,18 +43,16 @@ namespace et
 	struct TextureLoadingRequest
 	{
 		std::string fileName;
-		size_t screenScale;
 		TextureDescription::Pointer textureDescription;
 		Texture texture;
 		TextureLoaderDelegate* delegate;
 
-		TextureLoadingRequest(const std::string& name, size_t scrScale, const Texture& tex,
-			TextureLoaderDelegate* d);
-		
+		TextureLoadingRequest(const std::string& name, const Texture& tex, TextureLoaderDelegate* d);
 		~TextureLoadingRequest();
 		
 		void discardDelegate();
 	};
+	
 	typedef std::queue<TextureLoadingRequest*> TextureLoadingRequestQueue;
 
 	class TextureLoadingThread;
@@ -71,12 +69,10 @@ namespace et
 		TextureLoadingThread(TextureLoadingThreadDelegate* delegate);
 		~TextureLoadingThread();
 
-		void addRequest(const std::string& fileName, size_t scrScale, Texture texture,
-			TextureLoaderDelegate* delegate);
-
-		ThreadResult main();
+		void addRequest(const std::string& fileName, Texture texture, TextureLoaderDelegate* delegate);
 
 	private:
+		ThreadResult main();
 		TextureLoadingRequest* dequeRequest();
 
 	private:
