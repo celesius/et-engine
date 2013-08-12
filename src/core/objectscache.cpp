@@ -25,7 +25,13 @@ void ObjectsCache::manage(const LoadableObject::Pointer& o, const ObjectLoader::
 	if (o.valid())
 	{
 		CriticalSectionScope lock(_lock);
-		_objects[o->origin()] = ObjectProperty(o, loader, getFileProperty(o->origin()));
+		auto last = _objects.insert(std::make_pair(o->origin(), ObjectProperty(o, loader)));
+		last.first->second.identifiers[o->origin()] = getFileProperty(o->origin());
+		for (auto& s : o->distributedOrigins())
+		{
+			log::info("%s", s.c_str());
+			last.first->second.identifiers[s] = getFileProperty(s);
+		}
 	}
 }
 
@@ -93,7 +99,7 @@ void ObjectsCache::update(float t)
 	}
 }
 
-unsigned long ObjectsCache::getFileProperty(const std::string& p)
+uint64_t ObjectsCache::getFileProperty(const std::string& p)
 {
 	return getFileDate(p);
 }
@@ -106,12 +112,23 @@ void ObjectsCache::performUpdate()
 	{
 		if (p.second.object->canBeReloaded())
 		{
-			unsigned long newProp = getFileProperty(p.first);
-			if (newProp != p.second.identifier)
+			bool shouldReload = false;
+			
+			for (auto i : p.second.identifiers)
+			{
+				uint64_t prop = getFileProperty(i.first);
+				if (prop != i.second)
+				{
+					i.second = prop;
+					shouldReload = true;
+				}
+			}
+			
+			if (shouldReload)
 			{
 				log::info("[ObjectsCache] Object updated: %s", p.first.c_str());
 				p.second.loader->reloadObject(p.second.object, cache);
-				p.second.identifier = newProp;
+				
 			}
 		}
 	}

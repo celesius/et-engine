@@ -37,7 +37,7 @@ namespace et
 	private:
 		ET_DENY_COPY(ObjectsCache)
 
-		unsigned long getFileProperty(const std::string& p);
+		uint64_t getFileProperty(const std::string& p);
 		void performUpdate();
 		void update(float t);
 
@@ -46,13 +46,12 @@ namespace et
 		{
 			LoadableObject::Pointer object;
 			ObjectLoader::Pointer loader;
-			uint64_t identifier;
+			std::map<std::string, uint64_t> identifiers;
 			
-			ObjectProperty() :
-				identifier(0) { }
+			ObjectProperty() { }
 			
-			ObjectProperty(LoadableObject::Pointer o, ObjectLoader::Pointer l, uint64_t i) :
-				object(o), loader(l), identifier(i) { }
+			ObjectProperty(LoadableObject::Pointer o, ObjectLoader::Pointer l) :
+				object(o), loader(l) { }
 		};
 		typedef std::map<const std::string, ObjectProperty> ObjectMap;
 

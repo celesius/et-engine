@@ -78,6 +78,102 @@ ProgramFactory::~ProgramFactory()
 	release();
 }
 
+StringList ProgramFactory::loadProgramSources(const std::string& file, std::string& vertex_shader,
+	std::string& geom_shader, std::string& frag_shader, const StringList& defines)
+{
+	StringList sources;
+	
+	std::string filename = application().environment().findFile(file);
+	if (!fileExists(filename))
+	{
+		log::error("Unable to find file: %s", file.c_str());
+		return sources;
+	}
+	
+	StringList resultDefines = defines;
+	std::string vertex_source;
+	std::string geometry_source;
+	std::string fragment_source;
+	std::string s;
+	
+	InputStream progFile(filename, StreamMode_Binary);
+	while (!progFile.stream().eof())
+	{
+		getline(progFile.stream(), s);
+		trim(s);
+		
+		std::string id = s.substr(0, s.find(':'));
+		trim(id);
+		lowercase(id);
+		
+		if (id == "vs")
+			vertex_source = s.substr(s.find_first_of(':') + 1);
+		
+		if (id == "gs")
+			geometry_source = s.substr(s.find_first_of(':') + 1);
+		
+		if (id == "fs")
+			fragment_source = s.substr(s.find_first_of(':') + 1);
+		
+		if (id == "defines")
+		{
+			StringList aDefines = parseDefinesString(s.substr(s.find_first_of(':') + 1));
+			resultDefines.insert(resultDefines.end(), aDefines.begin(), aDefines.end());
+		}
+	}
+	
+	normalizeFilePath(trim(vertex_source));
+	normalizeFilePath(trim(geometry_source));
+	normalizeFilePath(trim(fragment_source));
+	
+	std::string programFolder = getFilePath(filename);
+	std::string fName = programFolder + vertex_source;
+	
+	if (!fileExists(fName))
+		fName = application().environment().findFile(fName);
+	
+	if (!fileExists(fName))
+		fName = application().environment().findFile(vertex_source);
+	
+	if (fileExists(fName))
+	{
+		sources.push_back(fName);
+		vertex_shader = loadTextFile(fName);
+	}
+	
+	if (!geometry_source.empty())
+	{
+		fName = programFolder + geometry_source;
+		if (!fileExists(fName))
+			fName = application().environment().findFile(fName);
+		
+		if (!fileExists(fName))
+			fName = application().environment().findFile(geometry_source);
+		
+		if (fileExists(fName))
+		{
+			geom_shader = loadTextFile(fName);
+			sources.push_back(fName);
+		}
+	}
+	
+	fName = programFolder + fragment_source;
+	
+	if (!fileExists(fName))
+		fName = application().environment().findFile(fName);
+	
+	if (!fileExists(fName))
+		fName = application().environment().findFile(fragment_source);
+	
+	if (fileExists(fName))
+	{
+		sources.push_back(fName);
+		frag_shader = loadTextFile(fName);
+	}
+	
+	return sources;
+}
+
 Program::Pointer ProgramFactory::loadProgram(const std::string& file, ObjectsCache& cache,
 	const StringList& defines)
 {
@@ -85,89 +181,27 @@ Program::Pointer ProgramFactory::loadProgram(const std::string& file, ObjectsCac
 	if (cached.valid())
 		return cached;
 	
-	std::string filename = application().environment().findFile(file);
-	if (!fileExists(filename)) 
-	{
-		log::error("Unable to find file: %s", file.c_str());
-		return Program::Pointer::create(renderContext()->renderState());
-	}
-
-	StringList resultDefines = defines;
-	std::string vertex_source;
-	std::string geometry_source;
-	std::string fragment_source;
-	std::string s;
-
-	InputStream progFile(filename, StreamMode_Binary);
-	while (!progFile.stream().eof())
-	{
-		getline(progFile.stream(), s);
-		trim(s);
-
-		std::string id = s.substr(0, s.find(':'));
-		trim(id); 
-		lowercase(id);
-
-		if (id == "vs")
-			vertex_source = s.substr(s.find_first_of(':') + 1);
-
-		if (id == "gs") 
-			geometry_source = s.substr(s.find_first_of(':') + 1);
-
-		if (id == "fs") 
-			fragment_source = s.substr(s.find_first_of(':') + 1);
-
-		if (id == "defines")
-		{
-			StringList aDefines = parseDefinesString(s.substr(s.find_first_of(':') + 1));
-			resultDefines.insert(resultDefines.end(), aDefines.begin(), aDefines.end());
-		}
-	}
-
-	normalizeFilePath(trim(vertex_source));
-	normalizeFilePath(trim(geometry_source));
-	normalizeFilePath(trim(fragment_source));
-
 	std::string vertex_shader;
 	std::string geom_shader;
 	std::string frag_shader;
-	std::string programFolder = getFilePath(filename);
-	std::string fName = programFolder + vertex_source;
 
-	if (!fileExists(fName))
-		fName = application().environment().findFile(fName);
-
-	if (!fileExists(fName)) 
-		fName = application().environment().findFile(vertex_source);
-
-	bool gl2 = openGLCapabilites().version() == OpenGLVersion_Old;
-	std::string gl2Name = replaceFileExt(fName, ".gl2." + getFileExt(fName));
-	vertex_shader = loadTextFile(gl2 && fileExists(gl2Name) ? gl2Name : fName);
-
-	if (!geometry_source.empty())
-	{
-		fName = programFolder + geometry_source;
-		if (!fileExists(fName))
-			fName = application().environment().findFile(fName);
-
-		if (!fileExists(fName))
-			fName = application().environment().findFile(geometry_source);
-
-		if (fileExists(fName)) 
-			vertex_shader = loadTextFile(fName);
-	}
-
-	fName = programFolder + fragment_source;
-	if (!fileExists(fName)) 
-		fName = application().environment().findFile(fName);
-
-	if (!fileExists(fName))
-		fName = application().environment().findFile(fragment_source);
-
-	gl2Name = replaceFileExt(fName, ".gl2." + getFileExt(fName));
-	frag_shader = loadTextFile((gl2 && fileExists(gl2Name)) ? gl2Name : fName);
+	StringList sourceFiles = loadProgramSources(file, vertex_shader, geom_shader, frag_shader);
+	if (sourceFiles.empty())
+		return Program::Pointer::create(renderContext()->renderState());
 	
-	return genProgram(file, vertex_shader, geom_shader, frag_shader, cache, defines, getFilePath(filename));
+	std::string workFolder = getFilePath(file);
+	parseSourceCode(ShaderType_Vertex, vertex_shader, defines, workFolder);
+	parseSourceCode(ShaderType_Geometry, geom_shader, defines, workFolder);
+	parseSourceCode(ShaderType_Fragment, frag_shader, defines, workFolder);
+	
+	Program::Pointer program(new Program(renderContext()->renderState(), vertex_shader, geom_shader,
+		frag_shader, getFileName(file), file));
+	
+	for (auto& s : sourceFiles)
+		program->addOrigin(s);
+	
+	cache.manage(program, _objectLoader);
+	return program;
 }
 
 Program::Pointer ProgramFactory::loadProgram(const std::string& file, ObjectsCache& cache, const std::string& defines)
@@ -263,9 +297,22 @@ void ProgramFactory::parseSourceCode(ShaderType type, std::string& source, const
 }
 
 
-void ProgramFactory::reloadObject(LoadableObject::Pointer, ObjectsCache&)
+void ProgramFactory::reloadObject(LoadableObject::Pointer obj, ObjectsCache&)
 {
+	std::string vertex_shader;
+	std::string geom_shader;
+	std::string frag_shader;
 	
+	StringList sourceFiles = loadProgramSources(obj->origin(), vertex_shader, geom_shader, frag_shader);
+	if (sourceFiles.empty()) return;
+	
+	// TODO: handle defines
+	std::string workFolder = getFilePath(obj->origin());
+	parseSourceCode(ShaderType_Vertex, vertex_shader, StringList(), workFolder);
+	parseSourceCode(ShaderType_Geometry, geom_shader, StringList(), workFolder);
+	parseSourceCode(ShaderType_Fragment, frag_shader, StringList(), workFolder);
+	
+	Program::Pointer(obj)->buildProgram(vertex_shader, geom_shader, frag_shader);
 }
 
 StringList parseDefinesString(std::string defines, std::string separators)

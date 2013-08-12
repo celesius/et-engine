@@ -42,6 +42,9 @@ namespace et
 		
 		void reloadObject(LoadableObject::Pointer, ObjectsCache&);
 		
+		StringList loadProgramSources(const std::string&, std::string&, std::string&, std::string&,
+			const StringList& defines = StringList());
+		
 	private:
 		ObjectLoader::Pointer _objectLoader;
 		std::string _commonHeader;

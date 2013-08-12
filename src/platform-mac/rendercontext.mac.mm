@@ -95,6 +95,7 @@ RenderContext::RenderContext(const RenderContextParameters& inParams, Applicatio
 
 RenderContext::~RenderContext()
 {
+	_renderer.release();
 	_textureFactory.release();
 	_vertexBufferFactory.release();
 	_programFactory.release();

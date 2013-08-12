@@ -49,10 +49,24 @@ namespace et
 		LoadableObject(const std::string& aName, const std::string& aOrigin) :
 			Object(aName), _origin(aOrigin) { }
 
-		bool canBeReloaded() const
-			{ return _origin.size() > 0; }
+		const std::string& origin() const
+			{ return _origin; }
+		
+		void setOrigin(const std::string& origin)
+			{ _origin = origin; }
+		
+		const StringList& distributedOrigins() const
+			{ return _distributedOrigins; }
+		
+		void addOrigin(const std::string& origin)
+			{ _distributedOrigins.push_back(origin); }
 
-		ET_DECLARE_PROPERTY_GET_REF_SET_REF(std::string, origin, setOrigin)
+		bool canBeReloaded() const
+			{ return !(_origin.empty() && _distributedOrigins.empty()); }
+	
+	private:
+		std::string _origin;
+		StringList _distributedOrigins;
 	};
 	
 	class ObjectLoader : public Shared

@@ -345,13 +345,25 @@ void Program::buildProgram(const std::string& vertex_source, const std::string& 
 	}
 
 	if (VertexShader != 0)
+	{
+		glDetachShader(_glID, VertexShader);
 		glDeleteShader(VertexShader);
+		checkOpenGLError("Deatch and delete vertex shader");
+	}
 
 	if (GeometryShader != 0)
+	{
+		glDetachShader(_glID, GeometryShader);
 		glDeleteShader(GeometryShader);
-
+		checkOpenGLError("Deatch and delete geometry shader");
+	}
+	
 	if (FragmentShader != 0)
+	{
+		glDetachShader(_glID, FragmentShader);
 		glDeleteShader(FragmentShader);
+		checkOpenGLError("Deatch and delete fragment shader");
+	}
 
 	checkOpenGLError("Program::buildProgram -> end"); 
 }
