@@ -19,7 +19,7 @@ namespace et
 		class Manager;
 
         class TrackPrivate;
-        class Track : public Shared
+        class Track : public Object
         {
         public:
 			ET_DECLARE_POINTER(Track)
@@ -53,7 +53,7 @@ namespace et
          */
         
         class PlayerPrivate;
-        class Player : public Shared
+        class Player : public Object
         {
         public:
 			ET_DECLARE_POINTER(Player)

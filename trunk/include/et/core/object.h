@@ -49,12 +49,18 @@ namespace et
 		LoadableObject(const std::string& aName, const std::string& aOrigin) :
 			Object(aName), _origin(aOrigin) { }
 
-		virtual void reload(const std::string&, RenderContext*, ObjectsCache&)
-			{ }
-
 		bool canBeReloaded() const
 			{ return _origin.size() > 0; }
 
 		ET_DECLARE_PROPERTY_GET_REF_SET_REF(std::string, origin, setOrigin)
+	};
+	
+	class ObjectLoader : public Shared
+	{
+	public:
+		ET_DECLARE_POINTER(ObjectLoader)
+		
+	public:
+		virtual void reloadObject(LoadableObject::Pointer, ObjectsCache&) = 0;
 	};
 }

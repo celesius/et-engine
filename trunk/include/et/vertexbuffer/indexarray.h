@@ -7,13 +7,13 @@
 
 #pragma once
 
-#include <et/core/intrusiveptr.h>
+#include <et/core/object.h>
 #include <et/core/containers.h>
 #include <et/opengl/opengltypes.h>
 
 namespace et
 {
-	class IndexArray : public Shared
+	class IndexArray : public Object
 	{
 	public:
 		ET_DECLARE_POINTER(IndexArray)

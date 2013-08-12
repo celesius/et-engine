@@ -55,12 +55,6 @@ namespace et
 		public:
 			Element(const std::string& name, Element* parent);
 
-			void setName(const std::string& name)
-				{ _name = name; }
-
-			const std::string& name() const
-				{ return _name; }
-
 			bool active() const
 				{ return _active; }
 
@@ -110,7 +104,6 @@ namespace et
 			void childrenHavingFlagCallback(size_t flag, Element::List& list, Pointer root);
 
 		private:
-			std::string _name;
 			std::set<std::string> _properites;
 			mat4 _cachedFinalTransform;
 			bool _active;

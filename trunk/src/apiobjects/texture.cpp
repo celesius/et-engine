@@ -14,7 +14,7 @@ using namespace et;
 static const int defaultBindingUnit = 7;
 
 TextureData::TextureData(RenderContext* rc, TextureDescription::Pointer desc,
-	const std::string& id, bool deferred) : LoadableObject(id, desc->source),
+	const std::string& id, bool deferred) : LoadableObject(id, desc->origin()),
 	_glID(0), _desc(desc), _own(true)
 {
 	if (deferred) return;
@@ -118,7 +118,7 @@ void TextureData::compareRefToTexture(RenderContext*, bool, uint32_t)
 
 void TextureData::generateTexture(RenderContext*)
 {
-	if (_glID == 0)
+	if (!glIsTexture(_glID))
 		glGenTextures(1, &_glID);
 
 	checkOpenGLError("TextureData::generateTexture - %s", name().c_str());
@@ -199,7 +199,7 @@ void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
 void TextureData::build(RenderContext* rc)
 {
 	assert(_desc.valid());
-	setOrigin(_desc->source);
+	setOrigin(_desc->origin());
 
 	if ((_desc->size.square() == 0) || (_desc->internalformat == 0) || (_desc->type == 0)) return;
 
@@ -276,16 +276,4 @@ void TextureData::setMaxLod(RenderContext* rc, size_t value)
 	glTexParameteri(_desc->target, GL_TEXTURE_MAX_LEVEL, value);
 	checkOpenGLError("TextureData::setMaxLod - %s", name().c_str());
 #endif
-}
-
-void TextureData::reload(const std::string& anOrigin, RenderContext* rc, ObjectsCache&)
-{
-	TextureDescription::Pointer newDesc = loadTexture(anOrigin);
-	
-	if (newDesc.valid())
-	{
-		_desc = newDesc;
-		generateTexture(rc);
-		build(rc);
-	}
 }

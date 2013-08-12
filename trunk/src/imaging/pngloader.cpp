@@ -132,7 +132,7 @@ void PNGLoader::loadFromFile(const std::string& path, TextureDescription& desc, 
 	InputStream file(path, StreamMode_Binary);
 	if (file.valid())
 	{
-		desc.source = path;
+		desc.setOrigin(path);
 		loadFromStream(file.stream(), desc, flip);
 	}
 }
@@ -142,7 +142,7 @@ void PNGLoader::loadInfoFromFile(const std::string& path, TextureDescription& de
 	InputStream file(path, StreamMode_Binary);
 	if (file.valid())
 	{
-		desc.source = path;
+		desc.setOrigin(path);
 		loadInfoFromStream(file.stream(), desc);
 	}
 }

@@ -26,28 +26,28 @@ TextureDescription::Pointer et::loadTextureDescription(const std::string& fileNa
 	{
 		desc = new TextureDescription;
 		desc->target = GL_TEXTURE_2D;
-		desc->source = fileName;
+		desc->setOrigin(fileName);
 		PNGLoader::loadInfoFromFile(fileName, *desc);
 	}
 	else if (ext == "dds")
 	{
 		desc = new TextureDescription;
 		desc->target = GL_TEXTURE_2D;
-		desc->source = fileName;
+		desc->setOrigin(fileName);
 		DDSLoader::loadInfoFromFile(fileName, *desc);
 	}
 	else if (ext == "pvr")
 	{
 		desc = new TextureDescription;
 		desc->target = GL_TEXTURE_2D;
-		desc->source = fileName;
+		desc->setOrigin(fileName);
 		PVRLoader::loadInfoFromFile(fileName, *desc);
 	}
 	else if ((ext == "jpg") || (ext == "jpeg"))
 	{
 		desc = new TextureDescription;
 		desc->target = GL_TEXTURE_2D;
-		desc->source = fileName;
+		desc->setOrigin(fileName);
 		JPGLoader::loadInfoFromFile(fileName, *desc);
 	}
 	
@@ -71,7 +71,7 @@ TextureDescription::Pointer et::loadTexture(const std::string& fileName)
 	{
 		desc = new TextureDescription;
 		desc->target = GL_TEXTURE_2D;
-		desc->source = fileName;
+		desc->setOrigin(fileName);
 		PNGLoader::loadFromFile(fileName, *desc, true);
 	}
 	else if (ext == "dds")

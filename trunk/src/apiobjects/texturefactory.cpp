@@ -15,15 +15,21 @@
 
 using namespace et;
 
-TextureFactory::TextureFactory(RenderContext* rc) : APIObjectFactory(rc)
+TextureFactory::TextureFactory(RenderContext* rc) :
+	APIObjectFactory(rc)
 {
+	_loader = ObjectLoader::Pointer(this);
 	_loadingThread = new TextureLoadingThread(this);
+	retain();
 }
 
 TextureFactory::~TextureFactory()
 {
 	_loadingThread->stop();
 	_loadingThread->waitForTermination();
+	
+	release();
+	_loader.reset(nullptr);
 }
 
 Texture TextureFactory::loadTexture(const std::string& fileName, ObjectsCache& cache,
@@ -47,11 +53,11 @@ Texture TextureFactory::loadTexture(const std::string& fileName, ObjectsCache& c
 		{
 			bool calledFromAnotherThread = Threading::currentThread() != threading().renderingThread();
 			
-			texture = Texture(new TextureData(renderContext(), desc, desc->source, calledFromAnotherThread));
-			cache.manage(texture);
+			texture = Texture(new TextureData(renderContext(), desc, desc->origin(), calledFromAnotherThread));
+			cache.manage(texture, ObjectLoader::Pointer(this));
 			
 			if (async)
-				_loadingThread->addRequest(desc->source, texture, delegate);
+				_loadingThread->addRequest(desc->origin(), texture, delegate);
 			else if (calledFromAnotherThread)
 				assert(false && "ERROR: Unable to load texture synchronously from non-rendering thread.");
 		}
@@ -127,7 +133,7 @@ Texture TextureFactory::genCubeTexture(uint32_t internalformat, GLsizei size, ui
 
 Texture TextureFactory::genTexture(TextureDescription::Pointer desc)
 {
-	return Texture(new TextureData(renderContext(), desc, desc->source, false));
+	return Texture(new TextureData(renderContext(), desc, desc->origin(), false));
 }
 
 Texture TextureFactory::genNoiseTexture(const vec2i& size, bool norm, const std::string& id)
@@ -194,8 +200,8 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 		{
 			if ((layers[l]->size.x > maxCubemapSize) || (layers[l]->size.y > maxCubemapSize))
 			{
-				log::error("Cubemap %s size of (%d x %d) is larger than allowed %dx%d", layers[l]->source.c_str(),
-					layers[l]->size.x, layers[l]->size.y, maxCubemapSize, maxCubemapSize);
+				log::error("Cubemap %s size of (%d x %d) is larger than allowed %dx%d",
+					layers[l]->origin().c_str(), layers[l]->size.x, layers[l]->size.y, maxCubemapSize, maxCubemapSize);
 				return Texture();
 			}
 		}
@@ -206,10 +212,10 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 		}
 	}
 
-	std::string texId = layers[0]->source + ";";
+	std::string texId = layers[0]->origin() + ";";
 	for (size_t l = 1; l < 6; ++l)
 	{
-		texId += (l < 5) ? layers[l]->source + ";" : layers[l]->source;
+		texId += (l < 5) ? layers[l]->origin() + ";" : layers[l]->origin();
 		if ((layers[l-1]->size != layers[l]->size) || 
 			(layers[l-1]->format != layers[l]->format) ||
 			(layers[l-1]->internalformat != layers[l]->internalformat) || 
@@ -219,14 +225,14 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 			(layers[l-1]->data.size() != layers[l]->data.size()))
 		{
 			log::error("Failed to load cubemap textures. Textures `%s` and `%s` aren't identical",
-				layers[l-1]->source.c_str(), layers[l]->source.c_str());
+				layers[l-1]->origin().c_str(), layers[l]->origin().c_str());
 			return Texture();
 		}
 	}
 
 	size_t layerSize = layers[0]->dataSizeForAllMipLevels();
 	TextureDescription::Pointer desc(new TextureDescription);
-	desc->source = posx;
+	desc->setOrigin(posx);
 	desc->target = GL_TEXTURE_CUBE_MAP;
 	desc->layersCount = 6;
 	desc->bitsPerPixel = layers[0]->bitsPerPixel;
@@ -242,11 +248,19 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 		etCopyMemory(desc->data.element_ptr(l * layerSize), layers[l]->data.element_ptr(0), layerSize);
 
 	Texture result(new TextureData(renderContext(), desc, texId, false));
-	cache.manage(result);
+	cache.manage(result, ObjectLoader::Pointer(this));
+	
 	return result;
 }
 
 Texture TextureFactory::createTextureWrapper(uint32_t texture, const vec2i& size, const std::string& name)
 {
 	return Texture(new TextureData(renderContext(), texture, size, name));
+}
+
+void TextureFactory::reloadObject(LoadableObject::Pointer object, ObjectsCache&)
+{
+	TextureDescription::Pointer newData = et::loadTexture(object->origin());
+	if (newData.valid())
+		Texture(object)->updateData(renderContext(), newData);
 }

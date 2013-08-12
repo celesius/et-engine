@@ -10,7 +10,8 @@
 
 using namespace et;
 
-ObjectsCache::ObjectsCache() : _updateTime(0.0f)
+ObjectsCache::ObjectsCache() :
+	_updateTime(0.0f)
 {
 }
 
@@ -19,13 +20,12 @@ ObjectsCache::~ObjectsCache()
 	clear();
 }
 
-void ObjectsCache::manage(const LoadableObject::Pointer& o)
+void ObjectsCache::manage(const LoadableObject::Pointer& o, const ObjectLoader::Pointer& loader)
 {
 	if (o.valid())
 	{
 		CriticalSectionScope lock(_lock);
-		_objects[o->origin()].first = o;
-		_objects[o->origin()].second = getFileProperty(o->origin());
+		_objects[o->origin()] = ObjectProperty(o, loader, getFileProperty(o->origin()));
 	}
 }
 
@@ -33,7 +33,7 @@ LoadableObject::Pointer ObjectsCache::find(const std::string& key)
 {
 	CriticalSectionScope lock(_lock);
 	auto i = _objects.find(key);
-	return (i == _objects.end()) ? LoadableObject::Pointer() : i->second.first;
+	return (i == _objects.end()) ? LoadableObject::Pointer() : i->second.object;
 }
 
 void ObjectsCache::discard(const LoadableObject::Pointer& o)
@@ -57,7 +57,7 @@ void ObjectsCache::flush()
 	auto i = _objects.begin();
 	while (i != _objects.end())
 	{
-		if (i->second.first->atomicCounterValue() == 1)
+		if (i->second.object->atomicCounterValue() == 1)
 		{
 			auto toErase = i++;
 			_objects.erase(toErase);
@@ -100,16 +100,18 @@ unsigned long ObjectsCache::getFileProperty(const std::string& p)
 
 void ObjectsCache::performUpdate()
 {
+	ObjectsCache& cache = *this;
+	
 	for (auto& p : _objects)
 	{
-		if (p.second.first->canBeReloaded())
+		if (p.second.object->canBeReloaded())
 		{
 			unsigned long newProp = getFileProperty(p.first);
-			if (newProp != p.second.second)
+			if (newProp != p.second.identifier)
 			{
 				log::info("[ObjectsCache] Object updated: %s", p.first.c_str());
-				_objects[p.first].first->reload(p.first, ApplicationNotifier().accessRenderContext(), *this);
-				p.second.second = newProp;
+				p.second.loader->reloadObject(p.second.object, cache);
+				p.second.identifier = newProp;
 			}
 		}
 	}
