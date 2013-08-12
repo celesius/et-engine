@@ -9,6 +9,7 @@
 
 #include <stack>
 #include <et/core/containers.h>
+#include <et/core/objectscache.h>
 #include <et/camera/camera.h>
 #include <et/gui/font.h>
 #include <et/gui/renderingelement.h>
@@ -71,6 +72,7 @@ namespace et
 			
 		private:
 			RenderContext* _rc;
+			ObjectsCache _sharedCache;
 			RenderingElement::Pointer _renderingElement;
 			Texture _lastTextures[RenderLayer_max];
 			Texture _defaultTexture;
