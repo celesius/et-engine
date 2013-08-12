@@ -124,16 +124,17 @@ namespace et
 		/*
 		 * Framebuffers
 		 */
-		Framebuffer defaultFramebuffer()
+		Framebuffer::Pointer defaultFramebuffer()
 			{ return _defaultFramebuffer; }
 		
-		const Framebuffer& defaultFramebuffer() const
+		const Framebuffer::Pointer& defaultFramebuffer() const
 			{ return _defaultFramebuffer; }
 		
-		void setDefaultFramebuffer(const Framebuffer& framebuffer);
-		void bindDefaultFramebuffer(uint32_t target = GL_FRAMEBUFFER);
-		void bindFramebuffer(uint32_t framebuffer, uint32_t target = GL_FRAMEBUFFER);
-		void bindFramebuffer(const Framebuffer& fbo);
+		void setDefaultFramebuffer(const Framebuffer::Pointer& framebuffer);
+		
+		void bindDefaultFramebuffer();
+		void bindFramebuffer(uint32_t framebuffer);
+		void bindFramebuffer(const Framebuffer::Pointer& fbo);
 
 		/*
 		 * Textures
@@ -146,7 +147,7 @@ namespace et
 		 * Programs
 		 */
 		void bindProgram(uint32_t program, bool force);
-		void bindProgram(const Program& prog, bool force = false);
+		void bindProgram(const Program::Pointer& prog, bool force = false);
 
 		/*
 	 	 * Buffers
@@ -221,17 +222,26 @@ namespace et
 		 * Service
 		 */
 		static State currentState();
+		
+	protected:
+		void bindDefaultFramebuffer(uint32_t target);
+		void bindFramebuffer(uint32_t framebuffer, uint32_t target);
 
 	private:
 		friend class RenderContext;
 		
-		RenderState() : _rc(0) { }
-		RenderState(const RenderState&) : _rc(0) { }
-		RenderState& operator = (const RenderState&) { return *this; }
+		RenderState() :
+			_rc(nullptr) { }
+		
+		RenderState(const RenderState&) :
+			_rc(nullptr) { }
+		
+		RenderState& operator = (const RenderState&)
+			{ return *this; }
 		
 	private:
 		RenderContext* _rc;
-		Framebuffer _defaultFramebuffer;
+		Framebuffer::Pointer _defaultFramebuffer;
 	
 		State _currentState;
 	};

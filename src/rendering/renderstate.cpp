@@ -92,7 +92,6 @@ void RenderState::bindTexture(uint32_t unit, uint32_t texture, uint32_t target, 
 		_currentState.boundTextures[unit] = texture;
 		etBindTexture(target, texture);
 	}
-
 }
 
 void RenderState::bindProgram(uint32_t program, bool force)
@@ -102,6 +101,12 @@ void RenderState::bindProgram(uint32_t program, bool force)
 		_currentState.boundProgram = program;
 		etUseProgram(program);
 	}
+}
+
+void RenderState::bindProgram(const Program::Pointer& prog, bool force)
+{
+	if (prog.valid())
+		bindProgram(prog->glID(), force);
 }
 
 void RenderState::bindBuffer(uint32_t target, uint32_t buffer, bool force)
@@ -188,6 +193,11 @@ void RenderState::bindTexture(uint32_t unit, const Texture& texture)
 		bindTexture(unit, 0, GL_TEXTURE_2D);
 }
 
+void RenderState::bindFramebuffer(uint32_t framebuffer)
+{
+	bindFramebuffer(framebuffer, GL_FRAMEBUFFER);
+}
+
 void RenderState::bindFramebuffer(uint32_t framebuffer, uint32_t target)
 {
 	if (_currentState.boundFramebuffer != framebuffer)
@@ -197,30 +207,29 @@ void RenderState::bindFramebuffer(uint32_t framebuffer, uint32_t target)
 	}
 }
 
-void RenderState::bindFramebuffer(const Framebuffer& fbo)
+void RenderState::bindFramebuffer(const Framebuffer::Pointer& fbo)
 {
 	if (fbo.valid())
 	{
-		bindFramebuffer(fbo->glID());
+		bindFramebuffer(fbo->glID(), GL_FRAMEBUFFER);
 		setViewportSize(fbo->size());
 	}
 	else 
 	{
-		bindFramebuffer(0);
+		bindFramebuffer(0, GL_FRAMEBUFFER);
 		setViewportSize(_currentState.mainViewportSize);
 	}
 }
 
-void RenderState::bindProgram(const Program& prog, bool force)
-{
-	if (prog.valid())
-		bindProgram(prog->glID(), force);
-}
-
-void RenderState::setDefaultFramebuffer(const Framebuffer& framebuffer)
+void RenderState::setDefaultFramebuffer(const Framebuffer::Pointer& framebuffer)
 {
 	_defaultFramebuffer = framebuffer;
 	setMainViewportSize(_defaultFramebuffer->size());
+}
+
+void RenderState::bindDefaultFramebuffer()
+{
+	bindFramebuffer(_defaultFramebuffer);
 }
 
 void RenderState::bindDefaultFramebuffer(uint32_t)
@@ -386,7 +395,7 @@ void RenderState::textureDeleted(uint32_t texture)
 void RenderState::frameBufferDeleted(uint32_t buffer)
 {
 	if (_defaultFramebuffer.valid() && (_defaultFramebuffer->glID() == buffer))
-		_defaultFramebuffer = Framebuffer();
+		_defaultFramebuffer = Framebuffer::Pointer();
 	
 	if (_currentState.boundFramebuffer == buffer)
 		bindDefaultFramebuffer();
@@ -538,7 +547,7 @@ void RenderState::applyState(const RenderState::State& s)
 	setWireframeRendering(s.wireframe);
 	setCulling(s.lastCull);
 	setViewportSize(s.viewportSize);
-	bindFramebuffer(s.boundFramebuffer);
+	bindFramebuffer(s.boundFramebuffer, GL_FRAMEBUFFER);
 	bindProgram(s.boundProgram, true);
 	bindVertexArray(s.boundVertexArrayObject);
 	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, s.boundElementArrayBuffer, true);

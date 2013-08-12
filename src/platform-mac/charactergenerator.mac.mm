@@ -3,15 +3,15 @@
 
 #include <et/rendering/rendercontext.h>
 #include <et/geometry/rectplacer.h>
-#include <et/gui/charactergenerator.h>
+#include <et-ext/scene2d/charactergenerator.h>
 #include <et/imaging/imagewriter.h>
 
 using namespace et;
-using namespace et::gui;
+using namespace et::s2d;
 
 const size_t defaultTextureSize = 1024;
 
-class et::gui::CharacterGeneratorPrivate
+class et::s2d::CharacterGeneratorPrivate
 {
 public:
 	CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size);

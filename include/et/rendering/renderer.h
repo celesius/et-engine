@@ -44,17 +44,17 @@ namespace et
 		ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(size_t, defaultTextureBindingUnit, setDefaultTextureBindingUnit)
 		
 	private:
-		Renderer& operator = (const Renderer&) 
+		Renderer& operator = (const Renderer&)
 			{ return *this; }
 
 	private:
 		RenderContext* _rc;
 		VertexArrayObject _fullscreenQuadVao;
 
-		Program _fullscreenProgram;
-		Program _fullscreenDepthProgram;
-		Program _fullscreenScaledProgram;
-		Program _scaledProgram;
+		Program::Pointer _fullscreenProgram;
+		Program::Pointer _fullscreenDepthProgram;
+		Program::Pointer _fullscreenScaledProgram;
+		Program::Pointer _scaledProgram;
 
 		ProgramUniform _scaledProgram_PSUniform;
 		ProgramUniform _fullScreenScaledProgram_PSUniform;

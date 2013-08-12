@@ -22,7 +22,7 @@ namespace et
 	class InputStream : public Shared
 	{
 	public:
-		typedef IntrusivePtr<InputStream> Pointer;
+		ET_DECLARE_POINTER(InputStream)
 		
 	public:
 		InputStream();

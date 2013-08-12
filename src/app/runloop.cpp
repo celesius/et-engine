@@ -14,7 +14,7 @@ using namespace et;
 RunLoop::RunLoop() :
 	_actualTimeMSec(0), _time(0.0f), _activityTimeMSec(0), _started(false), _active(true)
 {
-	attachTimerPool(TimerPool(new TimerPoolObject(this)));
+	attachTimerPool(TimerPool::Pointer::create(this));
 }
 
 void RunLoop::update(uint64_t t)
@@ -38,7 +38,7 @@ void RunLoop::addTask(Task* t, float delay)
 	_taskPool.addTask(t, delay);
 }
 
-void RunLoop::attachTimerPool(TimerPool pool)
+void RunLoop::attachTimerPool(TimerPool::Pointer pool)
 {
 	if (std::find(_timerPools.begin(), _timerPools.end(), pool) == _timerPools.end())
 	{
@@ -47,12 +47,12 @@ void RunLoop::attachTimerPool(TimerPool pool)
 	}
 }
 
-void RunLoop::detachTimerPool(TimerPool pool)
+void RunLoop::detachTimerPool(TimerPool::Pointer pool)
 {
 	auto i = _timerPools.begin();
 	while (i != _timerPools.end())
 	{
-		const TimerPool& p = *i;
+		auto& p = *i;
 		if (p == pool)
 		{
 			pool->setOwner(0);

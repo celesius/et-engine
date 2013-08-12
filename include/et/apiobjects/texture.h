@@ -8,7 +8,7 @@
 #pragma once
 
 #include <et/core/object.h>
-#include <et/opengl/opengl.h>
+#include <et/opengl/opengltypes.h>
 #include <et/apiobjects/texturedescription.h>
 
 namespace et
@@ -28,7 +28,7 @@ namespace et
 
 		void setMaxLod(RenderContext* rc, size_t value);
 
-		void compareRefToTexture(RenderContext* rc, bool enable, uint32_t compareFunc = GL_LEQUAL);
+		void compareRefToTexture(RenderContext* rc, bool enable, uint32_t compareFunc);
 		void generateMipMaps(RenderContext* rc);
 
 		vec2 getTexCoord(const vec2& ivec, TextureOrigin origin = TextureOrigin_TopLeft) const;
@@ -57,7 +57,7 @@ namespace et
 		int width() const
 			{ return _desc->size.x; }
 
-		GLsizei height() const
+		int height() const
 			{ return _desc->size.y; }
 
 		const vec2i& size() const

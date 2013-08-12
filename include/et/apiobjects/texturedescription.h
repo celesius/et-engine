@@ -22,7 +22,7 @@ namespace et
 	class TextureDescription : public Shared
 	{  
 	public:
-		typedef IntrusivePtr<TextureDescription> Pointer;
+		ET_DECLARE_POINTER(TextureDescription)
 		typedef std::vector<TextureDescription::Pointer> List;
 
 	public:

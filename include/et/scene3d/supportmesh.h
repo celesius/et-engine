@@ -17,7 +17,7 @@ namespace et
 		class SupportMesh : public Mesh
 		{
 		public:
-			typedef IntrusivePtr<SupportMesh> Pointer;
+			ET_DECLARE_POINTER(SupportMesh)
 			typedef DataStorage<triangle> CollisionData;
 
 		public:

@@ -14,11 +14,13 @@
 namespace et
 {
 	class RunLoop;
-	class TimerPoolObjectPrivate;
-	class TimerPoolObject : public Shared
+	class TimerPool : public Shared
 	{
 	public:
-		TimerPoolObject(RunLoop* owner);
+		ET_DECLARE_POINTER(TimerPool)
+		
+	public:
+		TimerPool(RunLoop* owner);
 
 		void update(float t);
 		float actualTime() const;
@@ -33,6 +35,8 @@ namespace et
 			{ _owner = owner; }
 
 	private:
+		ET_DENY_COPY(TimerPool)
+		
 		enum QueueAction
 		{
 			QueueAction_Add,
@@ -61,7 +65,4 @@ namespace et
 		bool _initialized;
 		bool _updating;
 	};
-
-	typedef IntrusivePtr<TimerPoolObject> TimerPool;
-	typedef std::list<TimerPool> TimerPoolList;
 }

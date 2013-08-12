@@ -12,11 +12,11 @@
 
 using namespace et;
 
-TimerPoolObject::TimerPoolObject(RunLoop* owner) : _owner(owner)
+TimerPool::TimerPool(RunLoop* owner) : _owner(owner)
 {
 }
 
-void TimerPoolObject::attachTimedObject(TimedObject* obj)
+void TimerPool::attachTimedObject(TimedObject* obj)
 {
 	CriticalSectionScope lock(_lock);
 
@@ -35,7 +35,7 @@ void TimerPoolObject::attachTimedObject(TimedObject* obj)
 	}
 }
 
-void TimerPoolObject::detachTimedObject(TimedObject* obj)
+void TimerPool::detachTimedObject(TimedObject* obj)
 {
 	CriticalSectionScope lock(_lock);
 
@@ -60,7 +60,7 @@ void TimerPoolObject::detachTimedObject(TimedObject* obj)
 	}
 }
 
-void TimerPoolObject::update(float t)
+void TimerPool::update(float t)
 {
 	CriticalSectionScope lock(_lock);
 
@@ -104,17 +104,17 @@ void TimerPoolObject::update(float t)
 	_updating = false;
 }
 
-void TimerPoolObject::deleteTimedObjecct(TimedObject* obj)
+void TimerPool::deleteTimedObjecct(TimedObject* obj)
 {
 	_owner->addTask(new TimedObjectDeletionTask(obj));
 }
 
-float TimerPoolObject::actualTime() const
+float TimerPool::actualTime() const
 {
 	return _owner->time();
 }
 
-void TimerPoolObject::retain()
+void TimerPool::retain()
 {
 	Shared::retain();
 }

@@ -21,7 +21,7 @@
 - (void)beginRender;
 - (void)endRender;
 
-- (const et::Framebuffer&)defaultFramebuffer;
+- (const et::Framebuffer::Pointer&)defaultFramebuffer;
 
 @property (nonatomic, retain) EAGLContext* context;
 

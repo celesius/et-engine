@@ -24,7 +24,7 @@ void Scene3dStorage::addVertexArray(const VertexArray::Pointer& va)
 
 VertexArray::Pointer Scene3dStorage::addVertexArrayWithDeclaration(const VertexDeclaration& decl, size_t size)
 {
-	_vertexArrays.push_back(VertexArray::Pointer(new VertexArray(decl, size)));
+	_vertexArrays.push_back(VertexArray::Pointer::create(decl, size));
 	return _vertexArrays.back();
 }
 

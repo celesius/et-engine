@@ -118,23 +118,23 @@ Manager::~Manager()
 
 Track::Pointer Manager::loadTrack(const std::string& fileName)
 {
-	return Track::Pointer(new Track(fileName));
+	return Track::Pointer::create(fileName);
 }
 
 Track::Pointer Manager::genTrack(Description::Pointer desc)
 {
-	return Track::Pointer(new Track(desc));
+	return Track::Pointer::create(desc);
 }
 
 Player::Pointer Manager::genPlayer(Track::Pointer track)
 {
 	assert(track.valid());
-	return Player::Pointer(new Player(track));
+	return Player::Pointer::create(track);
 }
 
 Player::Pointer Manager::genPlayer()
 {
-	return Player::Pointer(new Player);
+	return Player::Pointer::create();
 }
 
 /*

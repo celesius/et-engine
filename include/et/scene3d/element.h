@@ -46,8 +46,8 @@ namespace et
 		class Element : public ElementHierarchy, public FlagsHolder, public ComponentTransformable
 		{
 		public:
-			typedef IntrusivePtr<Element> Pointer;
-
+			ET_DECLARE_POINTER(Element)
+			
 			size_t tag;
 			virtual ElementType type() const = 0;
 			virtual Element* duplicate() = 0;
@@ -119,8 +119,8 @@ namespace et
 		class ElementContainer : public Element
 		{
 		public:
-			typedef IntrusivePtr<ElementContainer> Pointer;
-
+			ET_DECLARE_POINTER(ElementContainer)
+			
 		public:
 			ElementContainer(const std::string& name, Element* parent) : Element(name, parent) 
 				{ }
@@ -152,8 +152,8 @@ namespace et
 		class RenderableElement : public Element
 		{
 		public:
-			typedef IntrusivePtr<RenderableElement> Pointer;
-
+			ET_DECLARE_POINTER(RenderableElement)
+			
 		public:
 			RenderableElement(const std::string& name, Element* parent) : Element(name, parent),
 				_visible(true) { setFlag(Flag_Renderable); }

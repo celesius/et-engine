@@ -24,7 +24,7 @@ namespace et
 
 		Sequence(float duration, float from = 0.0, float to = 1.0, Curve curve = Linear);
 
-		void start(TimerPool& tp);
+		void start(TimerPool::Pointer tp);
 		void update(float t);
 
 		ET_DECLARE_EVENT2(updated, Sequence*, float)

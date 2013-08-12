@@ -81,7 +81,7 @@ namespace et
 
 	private:
 
-		void startUpdates(TimerPoolObject* timerPool = 0) override
+		void startUpdates(TimerPool* timerPool = 0) override
 			{ TimedObject::startUpdates(timerPool); }
 
 		void update(float t)

@@ -9,29 +9,14 @@
 
 #include <et/core/intrusiveptr.h>
 #include <et/core/containers.h>
-#include <et/opengl/opengl.h>
+#include <et/opengl/opengltypes.h>
 
 namespace et
 {
-	typedef unsigned int IndexType;
-	typedef unsigned short ShortIndexType;
-	typedef unsigned char SmallIndexType;
-	
-	static const IndexType InvalidIndex = static_cast<IndexType>(-1);
-	
-	enum IndexArrayFormat : size_t
-	{
-		IndexArrayFormat_Undefined  = 0,
-		IndexArrayFormat_8bit = 1,
-		IndexArrayFormat_16bit = 2,
-		IndexArrayFormat_32bit = 4,
-		IndexArrayFormat_max
-	};
-
 	class IndexArray : public Shared
 	{
 	public:
-		typedef IntrusivePtr<IndexArray> Pointer;
+		ET_DECLARE_POINTER(IndexArray)
 		
 		static const IndexType MaxShortIndex;
 		static const IndexType MaxSmallIndex;

@@ -8,6 +8,7 @@
 #pragma once
 
 #include <et/core/et.h>
+#include <et/opengl/opengltypes.h>
 
 #if ET_PLATFORM_WIN
 #
@@ -118,61 +119,6 @@
 
 namespace et
 {
-	enum BufferDrawType
-	{
-		BufferDrawType_Static,
-		BufferDrawType_Dynamic,
-		BufferDrawType_Stream,
-		BufferDrawType_max
-	};
-
-	enum TextureWrap
-	{
-		TextureWrap_Repeat,
-		TextureWrap_ClampToEdge,
-		TextureWrap_MirrorRepeat,
-		TextureWrap_max
-	};
-
-	enum TextureFiltration
-	{
-		TextureFiltration_Nearest,
-		TextureFiltration_Linear,
-		TextureFiltration_NearestMipMapNearest,
-		TextureFiltration_LinearMipMapNearest,
-		TextureFiltration_NearestMipMapLinear,
-		TextureFiltration_LinearMipMapLinear,
-		TextureFiltration_max
-	};
-	
-	enum PrimitiveType
-	{
-		PrimitiveType_Points,
-		PrimitiveType_Lines,
-		PrimitiveType_Triangles,
-		PrimitiveType_TriangleStrips,
-		PrimitiveType_LineStrip,
-		PrimitiveType_max
-	};
-
-	enum VertexAttributeUsage
-	{
-		Usage_Undefined = -1,
-
-		Usage_Position,
-		Usage_Normal,
-		Usage_Color,
-		Usage_Tangent,
-		Usage_Binormal,
-		Usage_TexCoord0,
-		Usage_TexCoord1,
-		Usage_TexCoord2,
-		Usage_TexCoord3,
-		Usage_Smoothing,
-
-		Usage_max
-	};
-
 	enum VertexAttributeType
 	{
 		Type_Undefined = -1,
@@ -184,11 +130,6 @@ namespace et
 		Type_Mat3 = GL_FLOAT_MAT3,
 		Type_Mat4 = GL_FLOAT_MAT4,
 		Type_Int = GL_INT
-	};
-	
-	enum
-	{
-		MaxTextureUnits	= 8
 	};
 
 	struct OpenGLCounters
@@ -211,9 +152,10 @@ namespace et
 	std::string glTypeToString(uint32_t type);
 	std::string glBlendFuncToString(uint32_t value);
 	std::string glPrimitiveTypeToString(uint32_t value);
-
+	
 	void validateExtensions();
 
+	uint32_t primitiveTypeValue(PrimitiveType);
 	size_t primitiveCount(uint32_t mode, GLsizei count);
 
 	void etViewport(int x, int y, GLsizei width, GLsizei height);

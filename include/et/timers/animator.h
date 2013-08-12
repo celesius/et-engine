@@ -26,7 +26,7 @@ namespace et
 	class BaseAnimator : public TimedObject
 	{
 	public:
-		BaseAnimator(const TimerPool& tp) : 
+		BaseAnimator(const TimerPool::Pointer& tp) :
 			_tag(0), _delegate(nullptr), _timerPool(tp) { }
 
 	public:
@@ -34,14 +34,14 @@ namespace et
 		ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(int, tag, setTag)
 
 	protected:
-		BaseAnimator(AnimatorDelegate* aDelegate, int aTag, const TimerPool& tp) :
+		BaseAnimator(AnimatorDelegate* aDelegate, int aTag, const TimerPool::Pointer& tp) :
 			 _tag(aTag), _delegate(aDelegate), _timerPool(tp) { }
 
-		TimerPool& timerPool()
+		TimerPool::Pointer timerPool()
 			{ return _timerPool; }
 
 	protected:
-		TimerPool _timerPool;
+		TimerPool::Pointer _timerPool;
 	};
 
 	typedef std::vector<BaseAnimator*> AnimatorList;
@@ -50,16 +50,16 @@ namespace et
 	class Animator : public BaseAnimator
 	{
 	public:
-		Animator(const TimerPool& tp) :
+		Animator(const TimerPool::Pointer& tp) :
 			BaseAnimator(0, 0, tp), _from(), _to(), _value(nullptr),
 			_startTime(0.0f), _duration(0.0f) { }
 
-		Animator(AnimatorDelegate* delegate, int tag, const TimerPool& tp) : 
+		Animator(AnimatorDelegate* delegate, int tag, const TimerPool::Pointer& tp) :
 			BaseAnimator(delegate, tag, tp), _from(), _to(), _value(nullptr),
 			_startTime(0.0f), _duration(0.0f) { }
 
 		Animator(AnimatorDelegate* delegate, T* value, const T& from, const T& to, float duration,
-			int tag, const TimerPool& tp) : BaseAnimator(delegate, tag, tp), _from(), _to(),
+			int tag, const TimerPool::Pointer& tp) : BaseAnimator(delegate, tag, tp), _from(), _to(),
 			_value(nullptr), _startTime(0.0f), _duration(0.0f)
 		{
 			animate(value, from, to, duration);

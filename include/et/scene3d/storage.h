@@ -19,7 +19,7 @@ namespace et
 		class Scene3dStorage : public ElementContainer
 		{
 		public:
-			typedef IntrusivePtr<Scene3dStorage> Pointer;
+			ET_DECLARE_POINTER(Scene3dStorage)
 			typedef std::vector<Texture> TextureList;
 
 		public:

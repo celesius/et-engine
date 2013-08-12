@@ -15,7 +15,7 @@ namespace et
 	class Object : public Shared
 	{
 	public:
-		typedef IntrusivePtr<Object> Pointer;
+		ET_DECLARE_POINTER(Object)
 		
 	public:
 		Object()
@@ -37,7 +37,7 @@ namespace et
 	class LoadableObject : public Object
 	{
 	public:
-		typedef IntrusivePtr<LoadableObject> Pointer;
+		ET_DECLARE_POINTER(LoadableObject)
 		
 	public:
 		LoadableObject()

@@ -21,8 +21,9 @@
 #	include <crtdbg.h>
 #	include <stdarg.h>
 #
-#	define ET_SUPPORT_RANGE_BASED_FOR	(_MSC_FULL_VER >= 170060315)
-#	define ET_SUPPORT_INITIALIZER_LIST	(_MSC_FULL_VER >= 180020617)
+#	define ET_SUPPORT_RANGE_BASED_FOR		(_MSC_FULL_VER >= 170060315)
+#	define ET_SUPPORT_INITIALIZER_LIST		(_MSC_FULL_VER >= 180020617)
+#	define ET_SUPPORT_VARIADIC_TEMPLATES	(_MSC_FULL_VER >= 180020617)
 #
 #	define ET_DEPRECATED					__declspec(deprecated)
 #	define ET_FORMAT_FUNCTION
@@ -30,8 +31,9 @@
 #elif (ET_PLATFORM_APPLE)
 #
 #	define ET_CALL_FUNCTION					__PRETTY_FUNCTION__
-#	define ET_SUPPORT_RANGE_BASED_FOR		__has_feature(cxx_range_for)
-#	define ET_SUPPORT_INITIALIZER_LIST		__has_feature(cxx_generalized_initializers)
+#	define ET_SUPPORT_RANGE_BASED_FOR		(__has_feature(cxx_range_for) || __has_extension(cxx_range_for))
+#	define ET_SUPPORT_INITIALIZER_LIST		(__has_feature(cxx_generalized_initializers) || __has_extension(cxx_generalized_initializers))
+#	define ET_SUPPORT_VARIADIC_TEMPLATES	(__has_feature(cxx_variadic_templates) || __has_extension(cxx_variadic_templates))
 #
 #	if (ET_PLATFORM_MAC)
 #		define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
@@ -43,8 +45,9 @@
 #elif (ET_PLATFORM_ANDROID)
 #
 #	define ET_CALL_FUNCTION					__PRETTY_FUNCTION__
-#	define ET_SUPPORT_RANGE_BASED_FOR		__has_feature(cxx_range_for)
-#	define ET_SUPPORT_INITIALIZER_LIST		__has_feature(cxx_generalized_initializers)
+#	define ET_SUPPORT_RANGE_BASED_FOR		(__has_feature(cxx_range_for) || __has_extension(cxx_range_for))
+#	define ET_SUPPORT_INITIALIZER_LIST		(__has_feature(cxx_generalized_initializers) || __has_extension(cxx_generalized_initializers))
+#	define ET_SUPPORT_VARIADIC_TEMPLATES	(__has_feature(cxx_variadic_templates) || __has_extension(cxx_variadic_templates))
 #
 #else
 #

@@ -11,7 +11,8 @@
 
 namespace et
 {
-	#define ET_DECLARE_POINTER(T)	typedef et::IntrusivePtr< T > Pointer;
+	#define ET_DECLARE_POINTER(T)					typedef et::IntrusivePtr<T> Pointer; \
+													friend class et::IntrusivePtr<T>;
 	
 	class Shared : virtual public AtomicCounter
 	{
@@ -42,10 +43,39 @@ namespace et
 
 		explicit IntrusivePtr(T* data) : _data(nullptr)
 			{ reset(data); }
-
+			
 		virtual ~IntrusivePtr() 
 			{ reset(nullptr); }
-
+		
+#if (ET_SUPPORT_VARIADIC_TEMPLATES)
+		template <typename ...args>
+		static IntrusivePtr create(args&&...a)
+			{ return IntrusivePtr<T>(new T(a...)); }
+#else
+		static IntrusivePtr create()
+			{ return IntrusivePtr<T>(new T); }
+		
+#	define ET_DECL_TEMPLATE(...)	template <__VA_ARGS__> static IntrusivePtr create
+#	define ET_DECL_CONSTRUCT(...)	{ return IntrusivePtr<T>(new T(__VA_ARGS__)); }
+		
+		ET_DECL_TEMPLATE(typename A)(A&& a)ET_DECL_CONSTRUCT(a)
+		ET_DECL_TEMPLATE(typename A)(const A& a)ET_DECL_CONSTRUCT(a)
+		ET_DECL_TEMPLATE(typename A, typename B)(A&& a, B&& b)ET_DECL_CONSTRUCT(a, b)
+		ET_DECL_TEMPLATE(typename A, typename B)(const A& a, const B& b)ET_DECL_CONSTRUCT(a, b)
+		ET_DECL_TEMPLATE(typename A, typename B, typename C)(A&& a, B&& b, C&& c)ET_DECL_CONSTRUCT(a, b, c)
+		ET_DECL_TEMPLATE(typename A, typename B, typename C)(const A& a, const B& b, const C& c)ET_DECL_CONSTRUCT(a, b, c)
+		ET_DECL_TEMPLATE(typename A, typename B, typename C, typename D)(A&& a, B&& b, C&& c, D&& d)ET_DECL_CONSTRUCT(a, b, c, d)
+		ET_DECL_TEMPLATE(typename A, typename B, typename C, typename D)(const A& a, const B& b, const C& c, const D& d)ET_DECL_CONSTRUCT(a, b, c, d)
+		ET_DECL_TEMPLATE(typename A, typename B, typename C, typename D, typename E)(A&& a, B&& b, C&& c, D&& d, E&& e)ET_DECL_CONSTRUCT(a, b, c, d, e)
+		ET_DECL_TEMPLATE(typename A, typename B, typename C, typename D, typename E)(const A& a, const B& b, const C& c, const D& d, E&& e)ET_DECL_CONSTRUCT(a, b, c, d, e)
+		ET_DECL_TEMPLATE(typename A, typename B, typename C, typename D, typename E, typename F)(A&& a, B&& b, C&& c, D&& d, E&& e, F&& f)ET_DECL_CONSTRUCT(a, b, c, d, e, f)
+		ET_DECL_TEMPLATE(typename A, typename B, typename C, typename D, typename E, typename F)(const A& a, const B& b, const C& c, const D& d, E&& e, F&& f)ET_DECL_CONSTRUCT(a, b, c, d, e, f)
+		
+#	undef ET_DECL_CONSTRUCT
+#	undef ET_DECL_TEMPLATE
+		
+#endif
+		
 		T* operator *() 
 			{ return _data; }
 

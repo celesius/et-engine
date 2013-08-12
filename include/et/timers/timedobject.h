@@ -11,7 +11,7 @@
 
 namespace et
 {
-	class TimerPoolObject;
+	class TimerPool;
 	class TimedObject 
 	{
 	public:
@@ -27,17 +27,17 @@ namespace et
 		virtual void destroy();
 
 	protected:
-		friend class TimerPoolObject;
+		friend class TimerPool;
 		friend class TimedObjectDeletionTask;
 
 		virtual ~TimedObject();
-		virtual void startUpdates(TimerPoolObject* timerPool = 0);
+		virtual void startUpdates(TimerPool* timerPool = 0);
 		virtual void update(float) {  }
 
 		float actualTime();
 
 	private:
-		TimerPoolObject* _owner;
+		TimerPool* _owner;
 		bool _running;
 		bool _released;
 	};

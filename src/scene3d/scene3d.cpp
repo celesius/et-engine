@@ -250,26 +250,26 @@ Element::Pointer Scene3d::createElementOfType(size_t type, Element* parent)
 	switch (type)
 	{
 	case ElementType_Container:
-		return ElementContainer::Pointer(new ElementContainer(std::string(), parent));
+		return ElementContainer::Pointer::create(std::string(), parent);
 
 	case ElementType_Mesh:
-		return Mesh::Pointer(new Mesh(std::string(), parent));
+		return Mesh::Pointer::create(std::string(), parent);
 
 	case ElementType_SupportMesh:
-		return SupportMesh::Pointer(new SupportMesh(std::string(), parent));
+		return SupportMesh::Pointer::create(std::string(), parent);
 
 	case ElementType_Storage:
-		return Scene3dStorage::Pointer(new Scene3dStorage(std::string(), parent));
+		return Scene3dStorage::Pointer::create(std::string(), parent);
 
 	case ElementType_Camera:
-		return CameraElement::Pointer(new CameraElement(std::string(), parent));
+		return CameraElement::Pointer::create(std::string(), parent);
 
 	default:
 		{
 			if (_externalFactory)
 				return _externalFactory->createElementOfType(type, parent);
 			else
-				return ElementContainer::Pointer(new ElementContainer(std::string(), parent));
+				return ElementContainer::Pointer::create(std::string(), parent);
 		}
 	}
 }

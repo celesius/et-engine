@@ -15,8 +15,8 @@ namespace et
 	class RunLoop : public Shared
 	{
 	public:
-		typedef IntrusivePtr<RunLoop> Pointer;
-
+		ET_DECLARE_POINTER(RunLoop)
+		
 	public:
 		RunLoop();
 		
@@ -24,7 +24,7 @@ namespace et
 		void pause();
 		void resume();
 
-		TimerPool& mainTimerPool()
+		TimerPool::Pointer mainTimerPool()
 			{ return _timerPools.front(); }
 
 		float time() const
@@ -33,8 +33,8 @@ namespace et
 		uint64_t timeMSec() const
 			{ return _actualTimeMSec; }
 		
-		void attachTimerPool(TimerPool pool);
-		void detachTimerPool(TimerPool pool);
+		void attachTimerPool(TimerPool::Pointer pool);
+		void detachTimerPool(TimerPool::Pointer pool);
 		void detachAllTimerPools();
 
 		void addTask(Task* t, float delay = 0.0f);
@@ -43,7 +43,7 @@ namespace et
 		void updateTime(uint64_t t);
 
 	private:
-		TimerPoolList _timerPools;
+		std::vector<TimerPool::Pointer> _timerPools;
 		TaskPool _taskPool;
 		
 		uint64_t _actualTimeMSec;

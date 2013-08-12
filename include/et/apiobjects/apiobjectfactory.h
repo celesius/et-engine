@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <et/core/et.h>
+
 namespace et
 {
 	class RenderContext;
@@ -14,15 +16,21 @@ namespace et
 	class APIObjectFactory
 	{
 	protected:
-		APIObjectFactory(RenderContext* rc) : _rc(rc)
-			{ }
+		APIObjectFactory(RenderContext* rc) :
+			_rc(rc) { }
 
 		virtual ~APIObjectFactory()
 			{ }
 
 		RenderContext* renderContext()
 			{ return _rc; }
-
+		
+	protected:
+		APIObjectFactory() :
+			_rc(nullptr) { abort(); }
+		
+		ET_DENY_COPY(APIObjectFactory)
+		
 	private:
 		RenderContext* _rc;
 	};
