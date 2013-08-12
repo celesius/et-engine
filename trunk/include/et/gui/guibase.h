@@ -200,8 +200,7 @@ namespace et
 				{ return parent() ? parent()->owner() : 0; }
 
 			void startUpdates();
-			TimerPool& timerPool();
-			const TimerPool& timerPool() const;
+			TimerPool::Pointer timerPool();
 
 			void layoutChildren();
 
@@ -218,7 +217,7 @@ namespace et
 			Element& operator = (const Element&)
 				{ return *this; }
 
-			void startUpdates(TimerPoolObject* timerPool);
+			void startUpdates(TimerPool::Pointer timerPool);
 
 		private:
 			ElementLayout _autoLayout;

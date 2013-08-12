@@ -75,7 +75,7 @@ namespace et
 			Texture _lastTextures[RenderLayer_max];
 			Texture _defaultTexture;
 			
-			Program _guiProgram;
+			Program::Pointer _guiProgram;
 			mat4 _defaultTransform;
 			int _guiCustomOffsetUniform;
 			int _guiCustomAlphaUniform;

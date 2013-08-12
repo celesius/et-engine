@@ -77,9 +77,9 @@ void Element::addToOverlayRenderQueue(RenderContext*, GuiRenderer&)
 {
 }
 
-void Element::startUpdates(TimerPoolObject* timerPool)
+void Element::startUpdates(TimerPool::Pointer timerPool)
 {
-	TimedObject::startUpdates(timerPool);
+	TimedObject::startUpdates(timerPool.ptr());
 }
 
 void Element::startUpdates()
@@ -87,12 +87,7 @@ void Element::startUpdates()
 	TimedObject::startUpdates();
 }
 
-TimerPool& Element::timerPool()
-{
-	return mainTimerPool();
-}
-
-const TimerPool& Element::timerPool() const
+TimerPool::Pointer Element::timerPool()
 {
 	return mainTimerPool();
 }
