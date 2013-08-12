@@ -7,14 +7,14 @@
 
 #pragma once
 
-#include <et/core/intrusiveptr.h>
+#include <et/core/object.h>
 #include <et/core/containers.h>
 
 namespace et
 {
 	namespace audio
 	{
-		class Description : public Shared
+		class Description : public LoadableObject
 		{
 		public:
 			ET_DECLARE_POINTER(Description)
@@ -24,7 +24,6 @@ namespace et
 				duration(0.0f), format(0), channels(0), bitDepth(0), sampleRate(0) { }
 
 		public:
-			std::string source;
 			float duration;
 
 			size_t format;

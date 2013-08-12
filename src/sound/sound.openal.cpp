@@ -193,7 +193,7 @@ void Track::init(Description::Pointer data)
 	if (actualDataSize != data->data.dataSize())
 	{
 		size_t remain = data->data.dataSize() % sampleSize;
-		std::cout << data->source << std::endl << 
+		std::cout << data->origin() << std::endl <<
 			"\tincorrect audio data size: " << data->data.dataSize() << ", should be: " << actualDataSize << 
 			" to fit " << numSamples << " samples (" << remain << " bytes remained)." <<  std::endl;
 	}
@@ -327,7 +327,7 @@ void Player::setPan(float pan)
 	if (_currentTrack.invalid()) return;
 	if (_currentTrack->channels() > 1)
 	{
-		std::cout << "Unable to set pan for stereo sound: " << _currentTrack->_private->desc->source << std::endl;
+		std::cout << "Unable to set pan for stereo sound: " << _currentTrack->_private->desc->origin() << std::endl;
 		return;
 	}
 

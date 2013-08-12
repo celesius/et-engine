@@ -17,7 +17,7 @@ namespace et
 {
 	namespace s3d
 	{
-		class MaterialData : public LoadableObject
+		class MaterialData : public LoadableObject, public ObjectLoader
 		{
 		public:
 			MaterialData();
@@ -45,12 +45,10 @@ namespace et
 			void deserialize(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
 				const std::string& basePath, StorageFormat format, bool async);
 
-			void reload(const std::string& anOrigin, RenderContext*, ObjectsCache&);
-
 			void clear();
 			
 			MaterialData* duplicate() const;
-
+			
 		public:
 			ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(BlendState, blendState, setBlendState)
 			ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(bool, depthWriteEnabled, setDepthWriteEnabled)
@@ -59,6 +57,8 @@ namespace et
 			int tag;
 
 		private:
+			void reloadObject(LoadableObject::Pointer obj, ObjectsCache&);
+			
 			void serializeBinary(std::ostream& stream) const;
 			void serializeReadable(std::ostream& stream) const;
 
@@ -89,6 +89,8 @@ namespace et
 				const std::string& basePath, ObjectsCache& cache, bool async);
 
 		private:
+			RenderContext* _rc;
+			
 			DefaultIntParameters _defaultIntParameters;
 			DefaultFloatParameters _defaultFloatParameters;
 			DefaultVectorParameters _defaultVectorParameters;

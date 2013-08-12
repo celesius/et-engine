@@ -7,14 +7,14 @@
 
 #pragma once
 
-#include <et/core/intrusiveptr.h>
+#include <et/core/object.h>
 #include <et/threading/criticalsection.h>
 #include <et/timers/timedobject.h>
 
 namespace et
 {
 	class RunLoop;
-	class TimerPool : public Shared
+	class TimerPool : public Object
 	{
 	public:
 		ET_DECLARE_POINTER(TimerPool)

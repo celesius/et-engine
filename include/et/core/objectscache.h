@@ -21,10 +21,10 @@ namespace et
 		ObjectsCache();
 		~ObjectsCache();
 
-		void manage(const LoadableObject::Pointer& o);
+		void manage(const LoadableObject::Pointer&, const ObjectLoader::Pointer& loader);
 		void discard(const LoadableObject::Pointer& o);
-		void clear();
 		
+		void clear();
 		void flush();
 
 		LoadableObject::Pointer find(const std::string& key);
@@ -42,7 +42,18 @@ namespace et
 		void update(float t);
 
 	private:
-		typedef std::pair<LoadableObject::Pointer, unsigned long> ObjectProperty;
+		struct ObjectProperty
+		{
+			LoadableObject::Pointer object;
+			ObjectLoader::Pointer loader;
+			uint64_t identifier;
+			
+			ObjectProperty() :
+				identifier(0) { }
+			
+			ObjectProperty(LoadableObject::Pointer o, ObjectLoader::Pointer l, uint64_t i) :
+				object(o), loader(l), identifier(i) { }
+		};
 		typedef std::map<const std::string, ObjectProperty> ObjectMap;
 
 		CriticalSection _lock;

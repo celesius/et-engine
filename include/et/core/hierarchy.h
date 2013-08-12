@@ -8,12 +8,12 @@
 #pragma once
 
 #include <list>
-#include <et/core/intrusiveptr.h>
+#include <et/core/object.h>
 
 namespace et
 {
 	template <typename T>
-	class Hierarchy : public Shared
+	class Hierarchy : public Object
 	{
 	public:
 		typedef IntrusivePtr<T> BasePointer;

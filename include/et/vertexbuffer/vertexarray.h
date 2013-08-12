@@ -7,12 +7,13 @@
 
 #pragma once
 
+#include <et/core/object.h>
 #include <et/vertexbuffer/vertexdeclaration.h>
 #include <et/vertexbuffer/vertexdatachunk.h>
 
 namespace et
 { 
-	class VertexArray : public Shared
+	class VertexArray : public Object
 	{
 	public:
 		ET_DECLARE_POINTER(VertexArray)

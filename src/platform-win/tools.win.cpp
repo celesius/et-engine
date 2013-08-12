@@ -61,7 +61,7 @@ bool et::fileExists(const std::string& name)
 
 bool et::folderExists(const std::string& folder)
 {
-	return GetFileAttributes(folder.c_str()) == FILE_ATTRIBUTE_DIRECTORY;
+	return (GetFileAttributes(folder.c_str()) & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY;
 }
 
 void et::findFiles(const std::string& folder, const std::string& mask, bool recursive, StringList& list)

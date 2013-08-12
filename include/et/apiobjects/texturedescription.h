@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et/core/intrusiveptr.h>
+#include <et/core/object.h>
 #include <et/core/containers.h>
 #include <et/geometry/geometry.h>
 
@@ -19,7 +19,7 @@ namespace et
 		TextureOrigin_BottomLeft
 	};
 
-	class TextureDescription : public Shared
+	class TextureDescription : public LoadableObject
 	{  
 	public:
 		ET_DECLARE_POINTER(TextureDescription)
@@ -70,8 +70,6 @@ namespace et
 			{ return *this; }
 
 	public:
-		std::string source;
-		
 		BinaryDataStorage data;
 		vec2i size;
 		

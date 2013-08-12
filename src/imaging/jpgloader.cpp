@@ -108,7 +108,7 @@ void JPGLoader::loadInfoFromFile(const std::string& path, TextureDescription& de
 	InputStream stream(path, StreamMode_Binary);
 	if (stream.valid())
 	{
-		desc.source = path;
+		desc.setOrigin(path);
 		loadInfoFromStream(stream.stream(), desc);
 	}
 }
@@ -118,7 +118,7 @@ void JPGLoader::loadFromFile(const std::string& path, TextureDescription& desc)
 	InputStream stream(path, StreamMode_Binary);
 	if (stream.valid())
 	{
-		desc.source = path;
+		desc.setOrigin(path);
 		loadFromStream(stream.stream(), desc);
 	}
 }

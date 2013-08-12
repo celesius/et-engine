@@ -156,7 +156,7 @@ Description::Pointer et::audio::loadWAVFile(const std::string& fileName)
 			file.stream().read(reinterpret_cast<char*>(&fmt), sizeof(fmt));
 
 			result = new Description;
-			result->source = fileName;
+			result->setOrigin(fileName);
 			result->sampleRate = fmt.sampleRate;
 			result->channels = fmt.numChannels;
 			result->bitDepth = fmt.bitsPerSample;
@@ -213,7 +213,7 @@ Description::Pointer et::audio::loadAIFFile(const std::string& fileName)
 			file.stream().read(reinterpret_cast<char*>(&comm), chunk.size);
 
 			result = new Description;
-			result->source = fileName;
+			result->setOrigin(fileName);
 			result->bitDepth = swapEndiannes(comm.sampleSize);
 			result->channels = swapEndiannes(comm.numChannels);
 			result->sampleRate = static_cast<size_t>(_af_convert_from_ieee_extended(comm.c_sampleRate));

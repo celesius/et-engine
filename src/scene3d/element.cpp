@@ -11,8 +11,9 @@ using namespace et;
 using namespace et::s3d;
 
 Element::Element(const std::string& name, Element* parent) : ElementHierarchy(parent), 
-	tag(0), _name(name), _active(true)
+	tag(0), _active(true)
 {
+	setName(name);
 }
 
 void Element::setParent(Element* p)
@@ -118,7 +119,7 @@ void Element::clear()
 
 void Element::serializeGeneralParameters(std::ostream& stream, SceneVersion version)
 {
-	serializeString(stream, _name);
+	serializeString(stream, name());
 	serializeInt(stream, _active);
 	serializeInt(stream, flags());
 	serializeVector(stream, translation());
@@ -134,7 +135,8 @@ void Element::serializeGeneralParameters(std::ostream& stream, SceneVersion vers
 
 void Element::deserializeGeneralParameters(std::istream& stream, SceneVersion version)
 {
-	_name = deserializeString(stream);
+	setName(deserializeString(stream));
+	
 	_active = deserializeInt(stream) != 0;
 	setFlags(deserializeInt(stream));
 	setTranslation(deserializeVector<vec3>(stream));

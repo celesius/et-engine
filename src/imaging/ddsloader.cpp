@@ -212,7 +212,7 @@ void DDSLoader::loadFromStream(std::istream& source, TextureDescription& desc)
 {
 	if (source.fail()) 
 	{
-		log::error("Unable to load DDS image from stream: %s", desc.source.c_str());
+		log::error("Unable to load DDS image from stream: %s", desc.origin().c_str());
 		return;
 	}
 
@@ -229,7 +229,7 @@ void DDSLoader::loadFromFile(const std::string& path, TextureDescription& desc)
 	InputStream file(path, StreamMode_Binary);
 	if (file.valid())
 	{
-		desc.source = path;
+		desc.setOrigin(path);
 		loadFromStream(file.stream(), desc);
 	}
 }
@@ -239,7 +239,7 @@ void DDSLoader::loadInfoFromFile(const std::string& path, TextureDescription& de
 	InputStream file(path, StreamMode_Binary);
 	if (file.valid())
 	{
-		desc.source = path;
+		desc.setOrigin(path);
 		loadInfoFromStream(file.stream(), desc);
 	}
 }

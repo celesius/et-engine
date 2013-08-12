@@ -14,7 +14,7 @@
 
 namespace et
 {
-	class TextureFactory : public APIObjectFactory, public TextureLoadingThreadDelegate
+	class TextureFactory : public APIObjectFactory, public TextureLoadingThreadDelegate, public ObjectLoader
 	{
 	public:
 		~TextureFactory();
@@ -51,9 +51,12 @@ namespace et
 		TextureFactory& operator = (const TextureFactory&)
 			{ return *this; }
 		
+		void reloadObject(LoadableObject::Pointer, ObjectsCache&);
+		
 	private:
 		AutoPtr<TextureLoadingThread> _loadingThread;
 		CriticalSection _csTextureLoading;
+		ObjectLoader::Pointer _loader;
 	};
 
 }
