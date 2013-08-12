@@ -232,7 +232,6 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 
 	size_t layerSize = layers[0]->dataSizeForAllMipLevels();
 	TextureDescription::Pointer desc(new TextureDescription);
-	desc->setOrigin(posx);
 	desc->target = GL_TEXTURE_CUBE_MAP;
 	desc->layersCount = 6;
 	desc->bitsPerPixel = layers[0]->bitsPerPixel;
@@ -248,6 +247,10 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 		etCopyMemory(desc->data.element_ptr(l * layerSize), layers[l]->data.element_ptr(0), layerSize);
 
 	Texture result(new TextureData(renderContext(), desc, texId, false));
+	
+	for (size_t i = 0; i < 6; ++i)
+		result->addOrigin(layers[i]->origin());
+	
 	cache.manage(result, ObjectLoader::Pointer(this));
 	
 	return result;

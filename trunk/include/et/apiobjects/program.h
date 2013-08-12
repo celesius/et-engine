@@ -109,13 +109,13 @@ namespace et
 		template <typename T>
 		void setUniform(const ProgramUniform& u, const T& value)
 			{ setUniform(u.location, u.type, value); }
-
-	private:
-		UniformMap::iterator findUniform(const std::string& name);
 		
 		void buildProgram(const std::string& vertex_source, const std::string& geom_source,
 			const std::string& frag_source);
 
+	private:
+		UniformMap::iterator findUniform(const std::string& name);
+		
 		int link();
 
 	private:
