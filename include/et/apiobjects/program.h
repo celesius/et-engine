@@ -32,7 +32,6 @@ namespace et
 
 	typedef std::map<std::string, ProgramUniform> UniformMap;
 	typedef std::vector<ProgramAttrib> AttribVector;
-	typedef StringList ProgramDefinesList;
 
 	class Camera;
 	class RenderState;

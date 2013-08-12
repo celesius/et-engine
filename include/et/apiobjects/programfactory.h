@@ -20,33 +20,32 @@ namespace et
 	};
 	
 	class RenderContext;
-	class ProgramFactory : public APIObjectFactory
+	class ProgramFactory : public APIObjectFactory, public ObjectLoader
 	{
 	public:
 		ProgramFactory(RenderContext* rc);
+		~ProgramFactory();
 
-		Program::Pointer loadProgram(const std::string& file, const std::string& defines = std::string());
+		Program::Pointer loadProgram(const std::string& file, ObjectsCache&,
+			const std::string& defines = std::string());
 
-		Program::Pointer loadProgram(const std::string& file, const ProgramDefinesList& defines);
+		Program::Pointer loadProgram(const std::string& file, ObjectsCache&,
+			const StringList& defines);
 
-		Program::Pointer genProgram(std::string& vertexshader, std::string& geometryshader,
-			std::string& fragmentshader, const ProgramDefinesList& defines = ProgramDefinesList(),
-			const std::string& workFolder = ".", const std::string& origin = std::string());
-
-		Program ::Pointer genProgram(const std::string& vertexshader, const std::string& geometryshader,
-			const std::string& fragmentshader, const ProgramDefinesList& defines = ProgramDefinesList(),
-			const std::string& workFolder = ".", const std::string& origin = std::string());
-
-		void parseSourceCode(ShaderType type, std::string& code, const ProgramDefinesList& defines,
-			const std::string& workFolder = ".");
+		Program ::Pointer genProgram(const std::string& origin, const std::string& vertexshader,
+			const std::string& geometryshader, const std::string& fragmentshader, ObjectsCache&,
+			const StringList& defines = StringList(), const std::string& workFolder = ".");
 
 	private:
+		void parseSourceCode(ShaderType type, std::string& code,
+			const StringList& defines, const std::string& workFolder);
+		
+		void reloadObject(LoadableObject::Pointer, ObjectsCache&);
+		
+	private:
+		ObjectLoader::Pointer _objectLoader;
 		std::string _commonHeader;
 		std::string _fragShaderHeader;
 		std::string _vertShaderHeader;
 	};
-
-	ProgramDefinesList parseDefinesString(std::string defines, std::string separators = ",; \t");
-	void parseDefinesString(std::string defines, ProgramDefinesList& storage, std::string separators = ",; \t");
-
 }
