@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <et/core/tools.h>
+#include <et/opengl/opengl.h>
 #include <et/imaging/imagewriter.h>
 #include <et/imaging/pngloader.h>
 #include <et/imaging/imageoperations.h>
