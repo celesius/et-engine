@@ -13,7 +13,7 @@ NotifyTimer::NotifyTimer()
 {
 }
 
-void NotifyTimer::start(TimerPool& tp, float period, int repeatCount)
+void NotifyTimer::start(TimerPool::Pointer tp, float period, int repeatCount)
 {
 	startUpdates(tp.ptr());
 

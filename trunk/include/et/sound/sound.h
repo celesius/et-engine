@@ -22,7 +22,7 @@ namespace et
         class Track : public Shared
         {
         public:
-            typedef IntrusivePtr<Track> Pointer;
+			ET_DECLARE_POINTER(Track)
             
 		public:
 			~Track();
@@ -56,7 +56,7 @@ namespace et
         class Player : public Shared
         {
         public:
-            typedef IntrusivePtr<Player> Pointer;
+			ET_DECLARE_POINTER(Player)
 
 		public:
 			~Player();

@@ -15,7 +15,7 @@ namespace et
 	{
 	public:
 		VertexBuffer() :
-			IntrusivePtr<VertexBufferData>(0) { }
+			IntrusivePtr<VertexBufferData>(nullptr) { }
 		
 	private:
 		friend class VertexBufferFactory;

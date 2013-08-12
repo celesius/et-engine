@@ -17,8 +17,8 @@ namespace et
 		class CameraElement : public Element, public Camera
 		{
 		public:
-			typedef IntrusivePtr<CameraElement> Pointer;
-
+			ET_DECLARE_POINTER(CameraElement)
+			
 		public:
 			CameraElement(const std::string& name, Element* parent);
 

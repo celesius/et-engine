@@ -15,7 +15,7 @@ Sequence::Sequence(float duration, float from, float to, Curve curve ) :
 
 }
 
-void Sequence::start(TimerPool& tp)
+void Sequence::start(TimerPool::Pointer tp)
 {
 	startUpdates(tp.ptr());
 

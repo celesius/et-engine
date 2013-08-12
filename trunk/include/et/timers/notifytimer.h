@@ -24,7 +24,7 @@ namespace et
 	public:
 		NotifyTimer();
 
-		void start(TimerPool& tp, float period, int repeatCount = DontRepear);
+		void start(TimerPool::Pointer tp, float period, int repeatCount = DontRepear);
 		void update(float t);
 
 		ET_DECLARE_EVENT1(expired, NotifyTimer*)

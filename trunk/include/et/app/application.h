@@ -141,6 +141,6 @@ namespace et
 	inline RunLoop& mainRunLoop()
 		{ return Application::instance().runLoop(); }
 
-	inline TimerPool& mainTimerPool()
+	inline TimerPool::Pointer mainTimerPool()
 		{ return Application::instance().runLoop().mainTimerPool(); }
 }

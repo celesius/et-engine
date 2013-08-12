@@ -23,7 +23,7 @@ TimedObject::~TimedObject()
 		_owner->detachTimedObject(this);
 }
 
-void TimedObject::startUpdates(TimerPoolObject* timerPool)
+void TimedObject::startUpdates(TimerPool* timerPool)
 {
 	if (_released || _running) return;
 

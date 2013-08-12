@@ -25,8 +25,8 @@ using namespace et;
 {
     EAGLContext* _context;
 	
-	et::Framebuffer _mainFramebuffer;
-	et::Framebuffer _multisampledFramebuffer;
+	et::Framebuffer::Pointer _mainFramebuffer;
+	et::Framebuffer::Pointer _multisampledFramebuffer;
 	
 	et::RenderContext* _rc;
 	et::RenderContextNotifier* _rcNotifier;
@@ -266,7 +266,7 @@ using namespace et;
 	[self createFramebuffer];
 }
 
-- (const Framebuffer&)defaultFramebuffer
+- (const Framebuffer::Pointer&)defaultFramebuffer
 {
 	return _multisampled ? _multisampledFramebuffer : _mainFramebuffer;
 }

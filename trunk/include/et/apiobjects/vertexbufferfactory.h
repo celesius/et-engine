@@ -18,7 +18,8 @@ namespace et
 	class VertexBufferFactory
 	{
 	public:
-		VertexBufferFactory(RenderState& rs) : _rs(rs) { }
+		VertexBufferFactory(RenderState& rs) :
+			_rs(rs) { }
 
 		VertexBuffer createVertexBuffer(const std::string& name,
 			VertexArray::Pointer data, BufferDrawType drawType);

@@ -17,7 +17,8 @@ namespace et
 		class Mesh : public RenderableElement
 		{
 		public:
-			typedef IntrusivePtr<Mesh> Pointer;
+			ET_DECLARE_POINTER(Mesh)
+			
 			typedef std::map<size_t, Pointer> LodMap;
 			static const std::string defaultMeshName;
 

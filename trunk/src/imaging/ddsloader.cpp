@@ -8,6 +8,7 @@
 #include <et/core/stream.h>
 #include <et/imaging/ddsloader.h>
 #include <et/imaging/ddsloader.const.h>
+#include <et/opengl/opengl.h>
 
 using namespace et;
 

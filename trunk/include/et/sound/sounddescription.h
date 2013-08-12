@@ -17,7 +17,7 @@ namespace et
 		class Description : public Shared
 		{
 		public:
-			typedef IntrusivePtr<Description> Pointer;
+			ET_DECLARE_POINTER(Description)
 			
 		public:
 			Description() :	

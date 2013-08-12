@@ -67,13 +67,13 @@ ProgramFactory::ProgramFactory(RenderContext* rc) : APIObjectFactory(rc)
 	}
 }
 
-Program ProgramFactory::loadProgram(const std::string& file, const ProgramDefinesList& defines)
+Program::Pointer ProgramFactory::loadProgram(const std::string& file, const ProgramDefinesList& defines)
 {
 	std::string filename = application().environment().findFile(file);
 	if (!fileExists(filename)) 
 	{
 		log::error("Unable to find file: %s", file.c_str());
-		return Program(new ProgramData(renderContext()->renderState()));
+		return Program::Pointer::create(renderContext()->renderState());
 	}
 
 	ProgramDefinesList resultDefines = defines;
@@ -110,7 +110,7 @@ Program ProgramFactory::loadProgram(const std::string& file, const ProgramDefine
 	normalizeFilePath(trim(fragment_source));
 
 	std::string vertex_shader;
-	std::string geom_shader = ProgramData::emptyShaderSource;
+	std::string geom_shader;
 	std::string frag_shader;
 	std::string programFolder = getFilePath(filename);
 	std::string fName = programFolder + vertex_source;
@@ -125,7 +125,7 @@ Program ProgramFactory::loadProgram(const std::string& file, const ProgramDefine
 	std::string gl2Name = replaceFileExt(fName, ".gl2." + getFileExt(fName));
 	vertex_shader = loadTextFile(gl2 && fileExists(gl2Name) ? gl2Name : fName);
 
-	if ((geometry_source.length()) > 0 && (geometry_source != ProgramData::emptyShaderSource))
+	if (!geometry_source.empty())
 	{
 		fName = programFolder + geometry_source;
 		if (!fileExists(fName))
@@ -151,13 +151,13 @@ Program ProgramFactory::loadProgram(const std::string& file, const ProgramDefine
 	return genProgram(vertex_shader, geom_shader, frag_shader, defines, getFilePath(filename), file);
 }
 
-Program ProgramFactory::loadProgram(const std::string& file, const std::string& defines)
+Program::Pointer ProgramFactory::loadProgram(const std::string& file, const std::string& defines)
 {
 	ProgramDefinesList defines_list = parseDefinesString(defines);
 	return loadProgram(file, defines_list);
 }
 
-Program ProgramFactory::genProgram(std::string& vertexshader, std::string& geometryshader,
+Program::Pointer ProgramFactory::genProgram(std::string& vertexshader, std::string& geometryshader,
 	std::string& fragmentshader, const ProgramDefinesList& defines, const std::string& workFolder,
 	const std::string& origin)
 {
@@ -165,11 +165,11 @@ Program ProgramFactory::genProgram(std::string& vertexshader, std::string& geome
 	parseSourceCode(ShaderType_Geometry, geometryshader, defines, workFolder);
 	parseSourceCode(ShaderType_Fragment, fragmentshader, defines, workFolder);
 	
-	return Program(new ProgramData(renderContext()->renderState(), vertexshader,
-		geometryshader, fragmentshader, getFileName(origin), origin));
+	return Program::Pointer::create(renderContext()->renderState(), vertexshader,
+		geometryshader, fragmentshader, getFileName(origin), origin);
 }
 
-Program ProgramFactory::genProgram(const std::string& vertexshader, const std::string& geometryshader,
+Program::Pointer ProgramFactory::genProgram(const std::string& vertexshader, const std::string& geometryshader,
 	const std::string& fragmentshader, const ProgramDefinesList& defines, const std::string& workFolder,
 	const std::string& origin)
 {
@@ -182,8 +182,8 @@ Program ProgramFactory::genProgram(const std::string& vertexshader, const std::s
 void ProgramFactory::parseSourceCode(ShaderType type, std::string& source, const ProgramDefinesList& defines,
 	const std::string& workFolder)
 {
-	if ((source.length() == 0) || (source == ProgramData::emptyShaderSource)) return;
-
+	if (source.empty()) return;
+	
 	std::string header = _commonHeader;
 	
 	if (type == ShaderType_Vertex)

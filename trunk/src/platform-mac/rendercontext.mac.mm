@@ -73,14 +73,15 @@ private:
 };
 
 RenderContext::RenderContext(const RenderContextParameters& inParams, Application* app) : _params(inParams),
-	_app(app), _programFactory(0), _textureFactory(0), _framebufferFactory(0), _vertexBufferFactory(0),
-	_renderer(0), _screenScaleFactor(1)
+	_app(app), _programFactory(nullptr), _textureFactory(nullptr), _framebufferFactory(nullptr),
+	_vertexBufferFactory(nullptr), _renderer(nullptr), _screenScaleFactor(1)
 {
 	_private = new RenderContextPrivate(this, _params, app->parameters());
 	
 	openGLCapabilites().checkCaps();
-	_renderState.setMainViewportSize(_params.contextSize);
 	updateScreenScale(_params.contextSize);
+	
+	_renderState.setMainViewportSize(_params.contextSize);
 	
 	_textureFactory = new TextureFactory(this);
 	_framebufferFactory = new FramebufferFactory(this, _textureFactory.ptr());
