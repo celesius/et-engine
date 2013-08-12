@@ -13,8 +13,13 @@
 
 using namespace et;
 
+StringList parseDefinesString(std::string defines, std::string separators = ",; \t");
+
 ProgramFactory::ProgramFactory(RenderContext* rc) : APIObjectFactory(rc)
 {
+	retain();
+	_objectLoader = ObjectLoader::Pointer(this);
+	
 #if (ET_OPENGLES)	
 	_commonHeader = 
 		"#define etLowp		lowp\n"
@@ -67,8 +72,19 @@ ProgramFactory::ProgramFactory(RenderContext* rc) : APIObjectFactory(rc)
 	}
 }
 
-Program::Pointer ProgramFactory::loadProgram(const std::string& file, const ProgramDefinesList& defines)
+ProgramFactory::~ProgramFactory()
 {
+	_objectLoader.reset(nullptr);
+	release();
+}
+
+Program::Pointer ProgramFactory::loadProgram(const std::string& file, ObjectsCache& cache,
+	const StringList& defines)
+{
+	Program::Pointer cached = cache.find(file);
+	if (cached.valid())
+		return cached;
+	
 	std::string filename = application().environment().findFile(file);
 	if (!fileExists(filename)) 
 	{
@@ -76,7 +92,7 @@ Program::Pointer ProgramFactory::loadProgram(const std::string& file, const Prog
 		return Program::Pointer::create(renderContext()->renderState());
 	}
 
-	ProgramDefinesList resultDefines = defines;
+	StringList resultDefines = defines;
 	std::string vertex_source;
 	std::string geometry_source;
 	std::string fragment_source;
@@ -101,8 +117,11 @@ Program::Pointer ProgramFactory::loadProgram(const std::string& file, const Prog
 		if (id == "fs") 
 			fragment_source = s.substr(s.find_first_of(':') + 1);
 
-		if (id == "defines") 
-			parseDefinesString(s.substr(s.find_first_of(':') + 1), resultDefines);
+		if (id == "defines")
+		{
+			StringList aDefines = parseDefinesString(s.substr(s.find_first_of(':') + 1));
+			resultDefines.insert(resultDefines.end(), aDefines.begin(), aDefines.end());
+		}
 	}
 
 	normalizeFilePath(trim(vertex_source));
@@ -147,39 +166,33 @@ Program::Pointer ProgramFactory::loadProgram(const std::string& file, const Prog
 
 	gl2Name = replaceFileExt(fName, ".gl2." + getFileExt(fName));
 	frag_shader = loadTextFile((gl2 && fileExists(gl2Name)) ? gl2Name : fName);
-
-	return genProgram(vertex_shader, geom_shader, frag_shader, defines, getFilePath(filename), file);
-}
-
-Program::Pointer ProgramFactory::loadProgram(const std::string& file, const std::string& defines)
-{
-	ProgramDefinesList defines_list = parseDefinesString(defines);
-	return loadProgram(file, defines_list);
-}
-
-Program::Pointer ProgramFactory::genProgram(std::string& vertexshader, std::string& geometryshader,
-	std::string& fragmentshader, const ProgramDefinesList& defines, const std::string& workFolder,
-	const std::string& origin)
-{
-	parseSourceCode(ShaderType_Vertex, vertexshader, defines, workFolder);
-	parseSourceCode(ShaderType_Geometry, geometryshader, defines, workFolder);
-	parseSourceCode(ShaderType_Fragment, fragmentshader, defines, workFolder);
 	
-	return Program::Pointer::create(renderContext()->renderState(), vertexshader,
-		geometryshader, fragmentshader, getFileName(origin), origin);
+	return genProgram(file, vertex_shader, geom_shader, frag_shader, cache, defines, getFilePath(filename));
 }
 
-Program::Pointer ProgramFactory::genProgram(const std::string& vertexshader, const std::string& geometryshader,
-	const std::string& fragmentshader, const ProgramDefinesList& defines, const std::string& workFolder,
-	const std::string& origin)
+Program::Pointer ProgramFactory::loadProgram(const std::string& file, ObjectsCache& cache, const std::string& defines)
+{
+	return loadProgram(file, cache, parseDefinesString(defines));
+}
+
+Program::Pointer ProgramFactory::genProgram(const std::string& origin, const std::string& vertexshader,
+	const std::string& geometryshader, const std::string& fragmentshader, ObjectsCache& cache,
+	const StringList& defines, const std::string& workFolder)
 {
 	std::string vs = vertexshader;
 	std::string gs = geometryshader;
 	std::string fs = fragmentshader;
-	return genProgram(vs, gs, fs, defines, workFolder, origin);
+	
+	parseSourceCode(ShaderType_Vertex, vs, defines, workFolder);
+	parseSourceCode(ShaderType_Geometry, gs, defines, workFolder);
+	parseSourceCode(ShaderType_Fragment, fs, defines, workFolder);
+	
+	Program::Pointer program(new Program(renderContext()->renderState(), vs, gs, fs, getFileName(origin), origin));
+	cache.manage(program, _objectLoader);
+	return program;
 }
 
-void ProgramFactory::parseSourceCode(ShaderType type, std::string& source, const ProgramDefinesList& defines,
+void ProgramFactory::parseSourceCode(ShaderType type, std::string& source, const StringList& defines,
 	const std::string& workFolder)
 {
 	if (source.empty()) return;
@@ -249,8 +262,16 @@ void ProgramFactory::parseSourceCode(ShaderType type, std::string& source, const
 	
 }
 
-void et::parseDefinesString(std::string defines, ProgramDefinesList& storage, std::string separators)
+
+void ProgramFactory::reloadObject(LoadableObject::Pointer, ObjectsCache&)
 {
+	
+}
+
+StringList parseDefinesString(std::string defines, std::string separators)
+{
+	StringList result;
+	
 	if (separators.length() == 0)
 		separators = ",; \t";
 
@@ -258,9 +279,9 @@ void et::parseDefinesString(std::string defines, ProgramDefinesList& storage, st
 	{
 		std::string::size_type separator_pos = std::string::npos;
 
-		for (ProgramDefinesList::size_type s_i = 0 ; s_i < separators.length(); ++s_i)
+		for (auto& s_i : separators)
 		{
-			std::string::size_type s = defines.find_first_of(separators[s_i]);
+			std::string::size_type s = defines.find_first_of(s_i);
 			if (s != std::string::npos)
 			{
 				separator_pos = s;
@@ -270,7 +291,7 @@ void et::parseDefinesString(std::string defines, ProgramDefinesList& storage, st
 
 		if (separator_pos == std::string::npos)
 		{
-			storage.push_back(defines);
+			result.push_back(defines);
 			break;
 		}
 		else
@@ -279,14 +300,9 @@ void et::parseDefinesString(std::string defines, ProgramDefinesList& storage, st
 			defines.erase(0, separator_pos + 1);
 
 			if (define.size() > 0)
-				storage.push_back(define);
+				result.push_back(define);
 		}
 	}
-}
-
-ProgramDefinesList et::parseDefinesString(std::string defines, std::string separators)
-{ 
-	ProgramDefinesList value;
-	parseDefinesString(defines, value, separators);
-	return value;
+	
+	return result;
 }

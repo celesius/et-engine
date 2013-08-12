@@ -49,6 +49,7 @@ namespace et
 
 	private:
 		RenderContext* _rc;
+		ObjectsCache _sharedCache;
 		VertexArrayObject _fullscreenQuadVao;
 
 		Program::Pointer _fullscreenProgram;
