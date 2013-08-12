@@ -26,13 +26,13 @@ GuiRenderer::GuiRenderer(RenderContext* rc, bool saveFillRate) :
 
 	if (_saveFillRate)
 	{
-		_guiProgram = rc->programFactory().genProgram(gui_savefillrate_vertex_src, std::string(),
-			gui_savefillrate_frag_src, ProgramDefinesList(),  std::string(), "shader-gui");
+		_guiProgram = rc->programFactory().genProgram("shader-gui", gui_savefillrate_vertex_src, std::string(),
+			gui_savefillrate_frag_src, _sharedCache);
 	}
 	else 
 	{
-		_guiProgram = rc->programFactory().genProgram(gui_default_vertex_src, std::string(),
-			gui_default_frag_src, ProgramDefinesList(),  std::string(), "shader-gui");
+		_guiProgram = rc->programFactory().genProgram("shader-gui", gui_default_vertex_src, std::string(),
+			gui_default_frag_src, _sharedCache, StringList());
 	}
 	
 	_defaultTexture = rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(1), GL_RGBA,
