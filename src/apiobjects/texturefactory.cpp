@@ -28,8 +28,8 @@ TextureFactory::~TextureFactory()
 	_loadingThread->stop();
 	_loadingThread->waitForTermination();
 	
-	release();
 	_loader.reset(nullptr);
+	release();
 }
 
 Texture TextureFactory::loadTexture(const std::string& fileName, ObjectsCache& cache,
