@@ -102,7 +102,7 @@ Texture TextureFactory::genTexture(uint32_t target, uint32_t internalformat, con
 	{
 		desc->bitsPerPixel = 16;
 	}
-	else if ((format == GL_ALPHA) || (format == GL_LUMINANCE))
+	else if (format == GL_ALPHA)
 	{
 		desc->bitsPerPixel = 8;
 	}
