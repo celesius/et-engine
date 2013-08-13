@@ -25,11 +25,11 @@ namespace et
 			T c[4];
 		};
 
-		Rect() : left(0), top(0), width(0), height(0) 
-			{ }
+		Rect() :
+			left(0), top(0), width(0), height(0) { }
 
-		Rect(T x, T y, T w, T h) : left(x), top(y), width(w), height(h) 
-			{ }
+		Rect(T x, T y, T w, T h) :
+			left(x), top(y), width(w), height(h) { }
 
 		Rect(const vector2<T>& pos, const vector2<T>& size) : 
 			left(pos.x), top(pos.y), width(size.x), height(size.y) { }

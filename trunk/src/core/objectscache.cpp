@@ -110,7 +110,7 @@ void ObjectsCache::performUpdate()
 	
 	for (auto& p : _objects)
 	{
-		if (p.second.object->canBeReloaded())
+		if (p.second.loader.valid() && p.second.object->canBeReloaded())
 		{
 			bool shouldReload = false;
 			
@@ -128,7 +128,6 @@ void ObjectsCache::performUpdate()
 			{
 				log::info("[ObjectsCache] Object updated: %s", p.first.c_str());
 				p.second.loader->reloadObject(p.second.object, cache);
-				
 			}
 		}
 	}
