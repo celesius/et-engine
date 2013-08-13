@@ -311,12 +311,10 @@ void Framebuffer::createColorRenderbuffer(uint32_t internalFormat)
 	glGenRenderbuffers(1, &_colorRenderbuffer);
 	checkOpenGLError("glGenRenderbuffers -> color");
 	
-	glBindRenderbuffer(GL_RENDERBUFFER, _colorRenderbuffer);
-	checkOpenGLError("glBindRenderbuffer -> color");
+	_rc->renderState().bindRenderbuffer(_colorRenderbuffer);
 	
 	glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, _size.x, _size.y);
 	checkOpenGLError("glRenderbufferStorage -> color");
-	
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _colorRenderbuffer);
 	checkOpenGLError("glFramebufferRenderbuffer -> color");
 }
@@ -326,12 +324,10 @@ void Framebuffer::createDepthRenderbuffer(uint32_t internalFormat)
 	glGenRenderbuffers(1, &_depthRenderbuffer);
 	checkOpenGLError("glGenRenderbuffers -> depth");
 	
-	glBindRenderbuffer(GL_RENDERBUFFER, _depthRenderbuffer);
-	checkOpenGLError("glBindRenderbuffer -> depth");
+	_rc->renderState().bindRenderbuffer(_depthRenderbuffer);
 	
 	glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, _size.x, _size.y);
 	checkOpenGLError("glRenderbufferStorage -> depth");
-	
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderbuffer);
 	checkOpenGLError("glFramebufferRenderbuffer -> depth");
 }

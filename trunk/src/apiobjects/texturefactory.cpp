@@ -102,6 +102,10 @@ Texture TextureFactory::genTexture(uint32_t target, uint32_t internalformat, con
 	{
 		desc->bitsPerPixel = 16;
 	}
+	else if ((format == GL_ALPHA) || (format == GL_LUMINANCE))
+	{
+		desc->bitsPerPixel = 8;
+	}
 #if defined(GL_BGRA)
 	else if (format == GL_BGRA)
 	{

@@ -12,46 +12,6 @@
 
 namespace et
 {
-	enum BlendState
-	{
-		Blend_Disabled,
-		Blend_Current,
-		Blend_Default,
-		Blend_AlphaPremultiplied,
-		Blend_Additive,
-		Blend_AlphaAdditive,
-		Blend_ColorAdditive
-	};
-
-	enum CullState
-	{
-		CullState_None,
-		CullState_Front,
-		CullState_Back
-	};
-
-	enum DepthFunc
-	{
-		DepthFunc_Never,
-		DepthFunc_Less,
-		DepthFunc_LessOrEqual,
-		DepthFunc_Equal,
-		DepthFunc_GreaterOrEqual,
-		DepthFunc_Greater,
-		DepthFunc_Always
-	};
-
-	enum ColorMask
-	{
-		ColorMask_None = 0x00,
-		ColorMask_Red = 0x01,
-		ColorMask_Green = 0x02,
-		ColorMask_Blue = 0x04,
-		ColorMask_Alpha = 0x08,
-		ColorMask_RGB = ColorMask_Red | ColorMask_Green | ColorMask_Blue,
-		ColorMask_RGBA = ColorMask_RGB | ColorMask_Alpha
-	};
-
 	class RenderContext;
 	class VertexBuffer;
 	class IndexBuffer;
@@ -68,10 +28,14 @@ namespace et
 			StaticDataStorage<size_t, Usage_max> enabledVertexAttributes;
 			
 			uint32_t activeTextureUnit;
-			uint32_t boundFramebuffer; 
+			
+			uint32_t boundFramebuffer;
+			uint32_t boundRenderbuffer;
+			
 			uint32_t boundArrayBuffer;
 			uint32_t boundElementArrayBuffer;
 			uint32_t boundVertexArrayObject;
+			
 			uint32_t boundProgram;
 			
 			recti clipRect;
@@ -132,9 +96,11 @@ namespace et
 		
 		void setDefaultFramebuffer(const Framebuffer::Pointer& framebuffer);
 		
-		void bindDefaultFramebuffer();
-		void bindFramebuffer(uint32_t framebuffer);
-		void bindFramebuffer(const Framebuffer::Pointer& fbo);
+		void bindDefaultFramebuffer(bool force = false);
+		void bindFramebuffer(uint32_t framebuffer, bool force = false);
+		void bindFramebuffer(const Framebuffer::Pointer& fbo, bool force = false);
+		
+		void bindRenderbuffer(uint32_t);
 
 		/*
 		 * Textures
@@ -224,8 +190,7 @@ namespace et
 		static State currentState();
 		
 	protected:
-		void bindDefaultFramebuffer(uint32_t target);
-		void bindFramebuffer(uint32_t framebuffer, uint32_t target);
+		void bindFramebuffer(uint32_t framebuffer, uint32_t target, bool force);
 
 	private:
 		friend class RenderContext;

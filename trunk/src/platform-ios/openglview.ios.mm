@@ -116,6 +116,7 @@ using namespace et;
 
 - (void)beginRender
 {
+    [EAGLContext setCurrentContext:_context];
 	_rc->renderState().bindDefaultFramebuffer();
 }
 
@@ -139,8 +140,7 @@ using namespace et;
 		glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards);
 	}
 	
-	glBindRenderbuffer(GL_RENDERBUFFER, _mainFramebuffer->colorRenderbuffer());
-	checkOpenGLError("glBindRenderbuffer(GL_RENDERBUFFER, ...)");
+	_rc->renderState().bindRenderbuffer(_mainFramebuffer->colorRenderbuffer());
 	
 	[_context presentRenderbuffer:GL_RENDERBUFFER];
 	checkOpenGLError("[_context presentRenderbuffer:GL_RENDERBUFFER]");
@@ -199,8 +199,7 @@ using namespace et;
 	_rc->renderState().setDefaultFramebuffer([self defaultFramebuffer]);
 
 	_rc->renderState().bindFramebuffer(_mainFramebuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, _mainFramebuffer->colorRenderbuffer());
-	checkOpenGLError("glBindRenderbuffer -> color");
+	_rc->renderState().bindRenderbuffer(_mainFramebuffer->colorRenderbuffer());
 	if ([_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:glLayer])
 	{
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
@@ -211,8 +210,7 @@ using namespace et;
 		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &size.y);
 	}
 	
-	glBindRenderbuffer(GL_RENDERBUFFER, _mainFramebuffer->depthRenderbuffer());
-	checkOpenGLError("glBindRenderbuffer -> depth");
+	_rc->renderState().bindRenderbuffer(_mainFramebuffer->depthRenderbuffer());
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, size.x, size.y);
 	checkOpenGLError("glRenderbufferStorage -> depth");
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
@@ -229,26 +227,19 @@ using namespace et;
 		/*
 		 * Create color buffer
 		 */
-		glBindRenderbuffer(GL_RENDERBUFFER, _multisampledFramebuffer->colorRenderbuffer());
-		
+		_rc->renderState().bindRenderbuffer(_multisampledFramebuffer->colorRenderbuffer());
 		glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, 4, GL_RGBA8_OES, size.x, size.y);
-		
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
 			_multisampledFramebuffer->colorRenderbuffer());
-		
 		checkOpenGLError("Multisampled color buffer");
 		
 		/*
 		 * Create depth buffer
 		 */
-		glBindRenderbuffer(GL_RENDERBUFFER, _multisampledFramebuffer->depthRenderbuffer());
-		
-		glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT16,
-			size.x, size.y);
-		
+		_rc->renderState().bindRenderbuffer(_multisampledFramebuffer->depthRenderbuffer());
+		glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT16, size.x, size.y);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
 			_multisampledFramebuffer->depthRenderbuffer());
-		
 		checkOpenGLError("Multisampled depth buffer");
 		
 		_multisampledFramebuffer->checkStatus();

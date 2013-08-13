@@ -60,9 +60,7 @@ namespace et
 			T a20 = mat[2].x;
 			T a21 = mat[2].y;
 			T a22 = mat[2].z;
-			return mat[0].x * (a11*a22 - a12*a21) + 
-					mat[0].y * (a20*a12 - a10*a22) + 
-					mat[0].z * (a10*a21 - a11*a20);
+			return mat[0].x * (a11*a22 - a12*a21) +  mat[0].y * (a20*a12 - a10*a22) + mat[0].z * (a10*a21 - a11*a20);
 		}
 
 		vector3<T> operator * (const vector3<T>& r) const
@@ -106,17 +104,21 @@ namespace et
 			return matrix3(r0, r1, r2);
 		}
 
-		matrix3<T> transpose() const
+		matrix3<T> transposed() const
 		{
-			return matrix3<T>(mat[0][0], mat[1][0], mat[2][0],
-							  mat[0][1], mat[1][1], mat[2][1],
-							  mat[0][2], mat[1][2], mat[2][2]);
+			return matrix3<T>(mat[0][0], mat[1][0], mat[2][0], mat[0][1], mat[1][1], mat[2][1],
+				mat[0][2], mat[1][2], mat[2][2]);
 		}
 
 		vector3<T> column(int i) const
-		{
-			return vector3<T>(mat[0][i], mat[1][i], mat[2][i]);
-		}
+			{ return vector3<T>(mat[0][i], mat[1][i], mat[2][i]); }
+		
+		bool operator == (const matrix3<T>& m) const
+			{ return (mat[0] == m.mat[0]) && (mat[1] == m.mat[1]) && (mat[2] == m.mat[2]); }
+		
+		bool operator != (const matrix3<T>& m) const
+			{ return (mat[0] != m.mat[0]) || (mat[1] != m.mat[1]) || (mat[2] != m.mat[2]); }
+		
 	};
 
 }

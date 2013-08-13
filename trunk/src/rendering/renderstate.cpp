@@ -18,11 +18,12 @@ static const char* keyEnableVertexAttribArray = "glEnableVertexAttribArray(...)"
 static const char* keyDisableVertexAttribArray = "glDisableVertexAttribArray(...)";
 static const char* keyVertexAttribPointer = "glVertexAttribPointer(...)";
 
-RenderState::State::State() : activeTextureUnit(0), boundFramebuffer(0), boundArrayBuffer(0),
-	boundElementArrayBuffer(0), boundVertexArrayObject(0), boundProgram(0), clearColor(0.0f),
-	colorMask(ColorMask_RGBA), clearDepth(1.0f), polygonOffsetFactor(0.0f), polygonOffsetUnits(0.0f),
-	blendEnabled(false), depthTestEnabled(false), depthMask(true), polygonOffsetFillEnabled(false),
-	wireframe(false), lastBlend(Blend_Disabled), lastCull(CullState_None), lastDepthFunc(DepthFunc_Less)
+RenderState::State::State() : activeTextureUnit(0), boundFramebuffer(0), boundRenderbuffer(0),
+	boundArrayBuffer(0), boundElementArrayBuffer(0), boundVertexArrayObject(0), boundProgram(0),
+	clearColor(0.0f), colorMask(ColorMask_RGBA), clearDepth(1.0f), polygonOffsetFactor(0.0f),
+	polygonOffsetUnits(0.0f), blendEnabled(false), depthTestEnabled(false), depthMask(true),
+	polygonOffsetFillEnabled(false), wireframe(false), lastBlend(Blend_Disabled), lastCull(CullState_None),
+	lastDepthFunc(DepthFunc_Less)
 {
 	(void)keyCurrentStateBegin;
 	(void)keyCurrentStateEnd;
@@ -50,6 +51,17 @@ void RenderState::setRenderContext(RenderContext* rc)
 {
 	_rc = rc;
 	_currentState = RenderState::currentState();
+	
+	char zero[] = { 0, 0, 0, 0 };
+	bindTexture(0, 0, GL_TEXTURE_2D, true);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	etTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &zero);
+	
+	bindTexture(_currentState.activeTextureUnit,
+		_currentState.boundTextures[_currentState.activeTextureUnit], GL_TEXTURE_2D);
 }
 
 void RenderState::setMainViewportSize(const vec2i& sz, bool force)
@@ -193,31 +205,41 @@ void RenderState::bindTexture(uint32_t unit, const Texture& texture)
 		bindTexture(unit, 0, GL_TEXTURE_2D);
 }
 
-void RenderState::bindFramebuffer(uint32_t framebuffer)
+void RenderState::bindFramebuffer(uint32_t framebuffer, bool force)
 {
-	bindFramebuffer(framebuffer, GL_FRAMEBUFFER);
+	bindFramebuffer(framebuffer, GL_FRAMEBUFFER, force);
 }
 
-void RenderState::bindFramebuffer(uint32_t framebuffer, uint32_t target)
+void RenderState::bindFramebuffer(uint32_t framebuffer, uint32_t target, bool force)
 {
-	if (_currentState.boundFramebuffer != framebuffer)
+	if (force || (_currentState.boundFramebuffer != framebuffer))
 	{
 		_currentState.boundFramebuffer = framebuffer;
 		etBindFramebuffer(target, framebuffer);
 	}
 }
 
-void RenderState::bindFramebuffer(const Framebuffer::Pointer& fbo)
+void RenderState::bindFramebuffer(const Framebuffer::Pointer& fbo, bool force)
 {
 	if (fbo.valid())
 	{
-		bindFramebuffer(fbo->glID(), GL_FRAMEBUFFER);
+		bindFramebuffer(fbo->glID(), GL_FRAMEBUFFER, force);
 		setViewportSize(fbo->size());
 	}
 	else 
 	{
-		bindFramebuffer(0, GL_FRAMEBUFFER);
+		bindFramebuffer(0, GL_FRAMEBUFFER, force);
 		setViewportSize(_currentState.mainViewportSize);
+	}
+}
+
+void RenderState::bindRenderbuffer(uint32_t renderbuffer)
+{
+	if (_currentState.boundRenderbuffer != renderbuffer)
+	{
+		_currentState.boundRenderbuffer = renderbuffer;
+		glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+		checkOpenGLError("glBindRenderbuffer");
 	}
 }
 
@@ -227,14 +249,9 @@ void RenderState::setDefaultFramebuffer(const Framebuffer::Pointer& framebuffer)
 	setMainViewportSize(_defaultFramebuffer->size());
 }
 
-void RenderState::bindDefaultFramebuffer()
+void RenderState::bindDefaultFramebuffer(bool force)
 {
-	bindFramebuffer(_defaultFramebuffer);
-}
-
-void RenderState::bindDefaultFramebuffer(uint32_t)
-{
-	bindFramebuffer(_defaultFramebuffer);
+	bindFramebuffer(_defaultFramebuffer, force);
 }
 
 void RenderState::setDepthMask(bool enable)
@@ -309,7 +326,7 @@ void RenderState::setBlend(bool enable, BlendState blend)
 		(enable ? glEnable : glDisable)(GL_BLEND);
 	}
 
-	if ((blend != Blend_Current) && (_currentState.lastBlend != blend))
+	if ((_currentState.lastBlend != blend) && (blend != Blend_Current))
 	{
 		_currentState.lastBlend = blend;
 		switch (blend)
@@ -351,7 +368,7 @@ void RenderState::setBlend(bool enable, BlendState blend)
 			}
 
 		default:
-			break;
+			assert(false && "Unknown blend state.");
 		}
 	}
 }
@@ -601,6 +618,10 @@ RenderState::State RenderState::currentState()
 	value = 0;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &value);
 	s.boundFramebuffer = value;
+	
+	value = 0;
+	glGetIntegerv(GL_RENDERBUFFER_BINDING, &value);
+	s.boundRenderbuffer = value;
 
 #if (ET_SUPPORT_VERTEX_ARRAY_OBJECTS)
 	value = 0;

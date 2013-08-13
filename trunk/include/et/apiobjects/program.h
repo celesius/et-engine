@@ -32,7 +32,6 @@ namespace et
 	};
 
 	typedef std::map<std::string, ProgramUniform> UniformMap;
-	typedef std::vector<ProgramAttrib> AttribVector;
 
 	class Camera;
 	class RenderState;
@@ -123,8 +122,9 @@ namespace et
 		RenderState& _rs;
 
 		uint32_t _glID;
+		
 		UniformMap _uniforms;
-		AttribVector _attributes;
+		std::vector<ProgramAttrib> _attributes;
 
 		int _mModelViewLocation;
 		int _mModelViewProjectionLocation;
@@ -133,6 +133,10 @@ namespace et
 		int _mLightProjectionMatrixLocation;
 		int _mTransformLocation;
 
-		mat4 _cachedTransformMatrix;
+		std::map<int, vec2> _vec2Cache;
+		std::map<int, vec3> _vec3Cache;
+		std::map<int, vec4> _vec4Cache;
+		std::map<int, mat3> _mat3Cache;
+		std::map<int, mat4> _mat4Cache;
 	};
 }

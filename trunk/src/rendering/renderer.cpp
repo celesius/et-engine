@@ -64,10 +64,13 @@ Renderer::~Renderer()
 
 void Renderer::clear(bool color, bool depth)
 {
-	GLbitfield mask = (color * GL_COLOR_BUFFER_BIT) + (depth * GL_DEPTH_BUFFER_BIT);
+	assert(!depth || (depth && _rc->renderState().depthMask()));
+	assert(!color || (color && (_rc->renderState().colorMask() != ColorMask_None)));
+	
+	GLbitfield clearMask = (color * GL_COLOR_BUFFER_BIT) + (depth * GL_DEPTH_BUFFER_BIT);
 
-	if (mask)
-		glClear(mask);
+	if (clearMask)
+		glClear(clearMask);
 }
 
 void Renderer::fullscreenPass()

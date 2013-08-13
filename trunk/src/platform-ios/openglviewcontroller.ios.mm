@@ -36,8 +36,11 @@ extern NSString* etKeyboardNotRequiredNotification;
 	if (self)
 	{
 		_params = params;
+		
 		BOOL initialized = [self performInitialization];
 		assert(initialized);
+		(void)initialized;
+		
 		self.view = _glView;
 	}
 	return self;
