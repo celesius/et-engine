@@ -37,23 +37,25 @@ Renderer::Renderer(RenderContext* rc) :
 		vb, BufferDrawType_Static, ib, BufferDrawType_Static);
 
 	_fullscreenProgram = rc->programFactory().genProgram("__et__fullscreeen__program__",
-		fullscreen_vertex_shader, std::string(), copy_fragment_shader, _sharedCache);
+		fullscreen_vertex_shader, copy_fragment_shader);
 	_fullscreenProgram->setUniform("color_texture", _defaultTextureBindingUnit);
 
 	_fullscreenDepthProgram = rc->programFactory().genProgram("__et__fullscreeen__depth__program__",
-		fullscreen_vertex_shader, std::string(), depth_fragment_shader, _sharedCache);
+		fullscreen_vertex_shader, depth_fragment_shader);
 	_fullscreenDepthProgram->setUniform("depth_texture", _defaultTextureBindingUnit);
 	_fullScreenDepthProgram_FactorUniform = _fullscreenDepthProgram->getUniform("factor");
 
 	_fullscreenScaledProgram = rc->programFactory().genProgram("__et__fullscreeen_scaled_program__",
-		fullscreen_scaled_vertex_shader, std::string(), copy_fragment_shader, _sharedCache);
+		fullscreen_scaled_vertex_shader, copy_fragment_shader);
 	_fullscreenScaledProgram->setUniform("color_texture", _defaultTextureBindingUnit);
 	_fullScreenScaledProgram_PSUniform = _fullscreenScaledProgram->getUniform("vScale");
 
-	_scaledProgram = rc->programFactory().genProgram("__et____scaled_program__", scaled_copy_vertex_shader,
-		std::string(), copy_fragment_shader, _sharedCache);
+	_scaledProgram = rc->programFactory().genProgram("__et____scaled_program__",
+		scaled_copy_vertex_shader, copy_fragment_shader);
 	_scaledProgram->setUniform("color_texture", _defaultTextureBindingUnit);
 	_scaledProgram_PSUniform = _scaledProgram->getUniform("PositionScale");
+	
+	// TODO: add to cache and handle reloading
 }
 
 Renderer::~Renderer()

@@ -209,9 +209,9 @@ Program::Pointer ProgramFactory::loadProgram(const std::string& file, ObjectsCac
 	return loadProgram(file, cache, parseDefinesString(defines));
 }
 
-Program::Pointer ProgramFactory::genProgram(const std::string& origin, const std::string& vertexshader,
-	const std::string& geometryshader, const std::string& fragmentshader, ObjectsCache& cache,
-	const StringList& defines, const std::string& workFolder)
+Program::Pointer ProgramFactory::genProgram(const std::string& name, const std::string& vertexshader,
+	const std::string& geometryshader, const std::string& fragmentshader, const StringList& defines,
+	const std::string& workFolder)
 {
 	std::string vs = vertexshader;
 	std::string gs = geometryshader;
@@ -221,9 +221,19 @@ Program::Pointer ProgramFactory::genProgram(const std::string& origin, const std
 	parseSourceCode(ShaderType_Geometry, gs, defines, workFolder);
 	parseSourceCode(ShaderType_Fragment, fs, defines, workFolder);
 	
-	Program::Pointer program(new Program(renderContext()->renderState(), vs, gs, fs, getFileName(origin), origin));
-	cache.manage(program, _objectLoader);
-	return program;
+	return Program::Pointer::create(renderContext()->renderState(), vs, gs, fs, name, name);
+}
+
+Program ::Pointer ProgramFactory::genProgram(const std::string& name, const std::string& vertexshader,
+	const std::string& fragmentshader, const StringList& defines, const std::string& workFolder)
+{
+	std::string vs = vertexshader;
+	std::string fs = fragmentshader;
+	
+	parseSourceCode(ShaderType_Vertex, vs, defines, workFolder);
+	parseSourceCode(ShaderType_Fragment, fs, defines, workFolder);
+	
+	return Program::Pointer::create(renderContext()->renderState(), vs, std::string(), fs, name, name);
 }
 
 void ProgramFactory::parseSourceCode(ShaderType type, std::string& source, const StringList& defines,

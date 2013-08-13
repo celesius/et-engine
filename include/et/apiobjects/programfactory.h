@@ -32,9 +32,11 @@ namespace et
 		Program::Pointer loadProgram(const std::string& file, ObjectsCache&,
 			const StringList& defines);
 
-		Program ::Pointer genProgram(const std::string& origin, const std::string& vertexshader,
-			const std::string& geometryshader, const std::string& fragmentshader, ObjectsCache&,
+		Program ::Pointer genProgram(const std::string& name, const std::string&, const std::string&,
 			const StringList& defines = StringList(), const std::string& workFolder = ".");
+		
+		Program ::Pointer genProgram(const std::string& name, const std::string& vs, const std::string& gs,
+			const std::string& fs, const StringList& defines = StringList(), const std::string& workFolder = ".");
 
 	private:
 		void parseSourceCode(ShaderType type, std::string& code,
