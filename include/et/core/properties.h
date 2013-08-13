@@ -8,8 +8,8 @@
 #pragma once
 
 #define ET_DECLARE_PROPERTY_GET_REF_SET_REF(TYPE, NAME, SETTER) public: \
-	const TYPE & NAME() const { return _##NAME; } \
-	void SETTER(const TYPE & new##NAME) { _##NAME = new##NAME; } \
+	const TYPE& NAME() const { return _##NAME; } \
+	void SETTER(const TYPE& new##NAME) { _##NAME = new##NAME; } \
 private: \
 	TYPE _##NAME;
 

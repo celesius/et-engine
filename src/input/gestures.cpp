@@ -25,13 +25,13 @@ void GesturesRecognizer::handlePointersMovement()
         vec2 previousPositions[2];
 		
         size_t index = 0;
-		ET_ITERATE(_pointers, auto, i,
+		for (auto& i : _pointers)
         {
             currentPositions[index] = i.second.current.normalizedPos;
             previousPositions[index] = i.second.previous.normalizedPos;
 			i.second.moved = false;
 			++index;
-        })
+        }
 		
 		vec2 dir1 = currentPositions[0] - previousPositions[0];
 		vec2 dir2 = currentPositions[1] - previousPositions[1];
@@ -106,13 +106,14 @@ void GesturesRecognizer::onPointerMoved(et::PointerInputInfo pi)
 	else
 	{
 		bool allMoved = true;
-		ET_ITERATE(_pointers, auto, p, {
+		for (auto& p : _pointers)
+		{
 			if (!p.second.moved)
 			{
 				allMoved = false;
 				break;
 			}
-		});
+		};
 		
 		if (allMoved)
 			handlePointersMovement();
@@ -185,9 +186,9 @@ void GesturesRecognizer::cancelWaitingForClicks()
 
 void GesturesRecognizer::onGesturePerformed(GestureInputInfo i)
 {
-	if ((i.mask & GestureTypeMask_Zoom) == GestureTypeMask_Zoom)
+	if (i.mask & GestureTypeMask_Zoom)
 		zoom.invoke(1.0f - i.values.z);
 
-	if ((i.mask & GestureTypeMask_Swipe) == GestureTypeMask_Swipe)
+	if (i.mask & GestureTypeMask_Swipe)
 		drag.invoke(i.values.xy(), PointerType_None);
 }

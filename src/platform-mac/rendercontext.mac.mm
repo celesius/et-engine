@@ -65,9 +65,10 @@ private:
 	etOpenGLView* openGlView;
 	etOpenGLWindow* mainWindow;
 	
-	NSOpenGLPixelFormat* pixelFormat;
-	NSOpenGLContext* openGlContext;
-	CVDisplayLinkRef displayLink;
+	NSOpenGLPixelFormat* pixelFormat = nil;
+	NSOpenGLContext* openGlContext = nil;
+	CVDisplayLinkRef displayLink = nullptr;
+	CGLContextObj cglObject = nullptr;
 	
 	bool firstSync;
 };
@@ -137,7 +138,7 @@ void RenderContext::endRender()
  *
  */
 CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*,
-	CVOptionFlags, CVOptionFlags*, void *displayLinkContext);
+	CVOptionFlags, CVOptionFlags*, void* displayLinkContext);
 
 RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParameters& params,
 	const ApplicationParameters& appParams) : mainWindow(nil), pixelFormat(nil),
@@ -173,10 +174,10 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 	
 	if (appParams.windowSize != WindowSize_Fullscreen)
 	{
-		if ((appParams.windowStyle & WindowStyle_Caption) == WindowStyle_Caption)
+		if (appParams.windowStyle & WindowStyle_Caption)
 			windowMask |= NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
 		
-		if ((appParams.windowStyle & WindowStyle_Sizable) == WindowStyle_Sizable)
+		if (appParams.windowStyle & WindowStyle_Sizable)
 			windowMask |= NSResizableWindowMask;
 	}
 	
@@ -220,6 +221,11 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 	
 	openGlContext = [[openGlView openGLContext] retain];
 	[openGlContext makeCurrentContext];
+
+	cglObject = static_cast<CGLContextObj>([openGlContext CGLContextObj]);
+	
+	const int swap = 1;
+	CGLSetParameter(cglObject, kCGLCPSwapInterval, &swap);
 	
 	if (appParams.windowSize == WindowSize_Fullscreen)
 	{
@@ -245,8 +251,7 @@ void RenderContextPrivate::run()
 	{
 		CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
 		CVDisplayLinkSetOutputCallback(displayLink, cvDisplayLinkOutputCallback, this);
-		CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(displayLink,
-			static_cast<CGLContextObj>([openGlContext CGLContextObj]),
+		CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(displayLink, cglObject,
 			static_cast<CGLPixelFormatObj>([pixelFormat CGLPixelFormatObj]));
 	}
 	
@@ -262,12 +267,13 @@ void RenderContextPrivate::stop()
 
 void RenderContextPrivate::render()
 {
-	CGLContextObj glObject = reinterpret_cast<CGLContextObj>([openGlContext CGLContextObj]);
 	[openGlContext makeCurrentContext];
-	CGLLockContext(glObject);
+	CGLLockContext(cglObject);
+	
 	windowDelegate->applicationNotifier.notifyIdle();
-	CGLFlushDrawable(glObject);
-	CGLUnlockContext(glObject);
+	
+	CGLFlushDrawable(cglObject);
+	CGLUnlockContext(cglObject);
 }
 
 int RenderContextPrivate::displayLinkSynchronized()
@@ -288,26 +294,24 @@ int RenderContextPrivate::displayLinkSynchronized()
 
 void RenderContextPrivate::resize(const NSSize& sz)
 {
-	CGLContextObj glObject = reinterpret_cast<CGLContextObj>([openGlContext CGLContextObj]);
-	
 	[openGlContext makeCurrentContext];
-	CGLLockContext(glObject);
+	CGLLockContext(cglObject);
 	
 	windowDelegate->applicationNotifier.notifyResize(vec2i(static_cast<int>(sz.width),
 		static_cast<int>(sz.height)));
 
-	CGLUnlockContext(glObject);
+	CGLUnlockContext(cglObject);
 }
 
 /*
  * Display link callback
  */
 CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*,
-	CVOptionFlags, CVOptionFlags*, void *displayLinkContext)
+	CVOptionFlags, CVOptionFlags*, void* displayLinkContext)
 {
 	@autoreleasepool
 	{
-		return reinterpret_cast<RenderContextPrivate*>(displayLinkContext)->displayLinkSynchronized();
+		return static_cast<RenderContextPrivate*>(displayLinkContext)->displayLinkSynchronized();
 	}
 }
 

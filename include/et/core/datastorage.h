@@ -181,8 +181,7 @@ namespace et
 		void push_back(const T& value)
 		{
 			assert(mutableData());
-			fitToSize(1);
-			assert(_offset < _size);
+			assert((_offset < _size) && "Do no use push back to increase capacity of DataStorage");
 			_mutableData[_offset++] = value;
 		}
 		
@@ -240,10 +239,10 @@ namespace et
 		};
 		
 		bool ownsData() const
-			{ return (_flags & DataStorageFlag_OwnsData) == DataStorageFlag_OwnsData; }
+			{ return (_flags & DataStorageFlag_OwnsData); }
 		
 		bool mutableData() const
-			{ return (_flags & DataStorageFlag_Mutable) == DataStorageFlag_Mutable; }
+			{ return (_flags & DataStorageFlag_Mutable); }
 		
 	private:
 		union

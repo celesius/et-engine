@@ -14,29 +14,20 @@ using namespace et;
 
 VertexElement VertexDeclaration::_empty;
 
-VertexDeclaration::VertexDeclaration() : _interleaved(true), _totalSize(0), _usageMask(0)
-{
-}
+VertexDeclaration::VertexDeclaration() :
+	_interleaved(true), _totalSize(0), _usageMask(0) { }
 
-VertexDeclaration::VertexDeclaration(bool interleaved) : _interleaved(interleaved), _totalSize(0), _usageMask(0)
-{
-}
+VertexDeclaration::VertexDeclaration(bool interleaved) :
+	_interleaved(interleaved), _totalSize(0), _usageMask(0) { }
 
 VertexDeclaration::VertexDeclaration(bool interleaved, VertexAttributeUsage usage, VertexAttributeType type) : 
-_interleaved(interleaved), _totalSize(0), _usageMask(0)
-{
-	push_back(usage, type);
-}
+	_interleaved(interleaved), _totalSize(0), _usageMask(0) { push_back(usage, type); }
 
 bool VertexDeclaration::has(VertexAttributeUsage usage) const
-{
-	return (_usageMask & vertexAttributeUsageMask(usage)) != 0;
-}
+	{ return (_usageMask & vertexAttributeUsageMask(usage)); }
 
 bool VertexDeclaration::push_back(VertexAttributeUsage usage, VertexAttributeType type)
-{
-	return push_back(VertexElement(usage, type, 0, _totalSize));
-}
+	{ return push_back(VertexElement(usage, type, 0, _totalSize)); }
 
 bool VertexDeclaration::push_back(const VertexElement& element)
 {
@@ -49,7 +40,8 @@ bool VertexDeclaration::push_back(const VertexElement& element)
 
 	if (_interleaved)
 	{
-		ET_ITERATE(_list, auto&, i, i.setStride(static_cast<int>(_totalSize)));
+		for (auto& i : _list)
+			i.setStride(static_cast<int>(_totalSize));
 	}
 
 	return true;
@@ -78,11 +70,11 @@ const VertexElement& VertexDeclaration::element(size_t i) const
 
 const VertexElement& VertexDeclaration::elementForUsage(VertexAttributeUsage u) const
 {
-	ET_ITERATE(_list, const VertexElement&, e, 
+	for (auto& e : _list)
 	{
 		if (e.usage() == u)
 			return e;
-	});
+	};
 
 	return _empty;
 }
