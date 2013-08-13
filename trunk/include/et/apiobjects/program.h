@@ -9,6 +9,7 @@
 
 #include <map>
 #include <et/core/object.h>
+#include <et/opengl/opengltypes.h>
 
 namespace et
 {
@@ -49,9 +50,9 @@ namespace et
 
 		~Program();
 
-		int getUniformLocation(const std::string& uniform);
-		uint32_t getUniformType(const std::string& uniform);
-		ProgramUniform getUniform(const std::string& uniform);
+		int getUniformLocation(const std::string& uniform) const;
+		uint32_t getUniformType(const std::string& uniform) const;
+		ProgramUniform getUniform(const std::string& uniform) const;
 
 		void validate() const;
 
@@ -114,7 +115,7 @@ namespace et
 			const std::string& frag_source);
 
 	private:
-		UniformMap::iterator findUniform(const std::string& name);
+		UniformMap::const_iterator findUniform(const std::string& name) const;
 		
 		int link();
 

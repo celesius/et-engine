@@ -62,7 +62,7 @@ namespace et
 		virtual void invalidateTransform();
 		
 		bool transformValid() const
-			{ return (_flags & Flag_Valid) == Flag_Valid; }
+			{ return (_flags & Flag_Valid); }
 		
 		const vec3& translation() const;
 		const vec3& scale();
@@ -76,7 +76,7 @@ namespace et
 		};
 
 		bool shouldDecompose() const
-			{ return (_flags & Flag_ShouldDecompose) == Flag_ShouldDecompose; }
+			{ return (_flags & Flag_ShouldDecompose); }
 
 		void buildTransform();
 

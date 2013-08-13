@@ -105,8 +105,8 @@ void RenderState::bindProgram(uint32_t program, bool force)
 
 void RenderState::bindProgram(const Program::Pointer& prog, bool force)
 {
-	if (prog.valid())
-		bindProgram(prog->glID(), force);
+	assert(prog.valid());
+	bindProgram(prog->glID(), force);
 }
 
 void RenderState::bindBuffer(uint32_t target, uint32_t buffer, bool force)
@@ -499,8 +499,7 @@ void RenderState::setColorMask(size_t mask)
 	if (_currentState.colorMask == mask) return;
 
 	_currentState.colorMask = mask;
-	glColorMask((mask & ColorMask_Red) == ColorMask_Red, (mask & ColorMask_Green) == ColorMask_Green,
-				(mask & ColorMask_Blue) == ColorMask_Blue, (mask & ColorMask_Alpha) == ColorMask_Alpha);
+	glColorMask(mask & ColorMask_Red, mask & ColorMask_Green, mask & ColorMask_Blue, mask & ColorMask_Alpha);
 }
 
 void RenderState::setClearDepth(float depth)

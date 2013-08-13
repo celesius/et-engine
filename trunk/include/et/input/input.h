@@ -112,9 +112,9 @@ namespace et
 
 		GestureInputInfo(size_t m, float v) : mask(m)
 		{
-			if ((m & GestureTypeMask_Zoom) == GestureTypeMask_Zoom)
+			if (m & GestureTypeMask_Zoom)
 				values.z = v;
-			else if ((m & GestureTypeMask_Rotate) == GestureTypeMask_Rotate)
+			else if (m & GestureTypeMask_Rotate)
 				values.w = v;
 		}
 

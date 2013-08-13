@@ -40,10 +40,9 @@ Program::~Program()
 	_rs.programDeleted(_glID);
 }
 
-UniformMap::iterator Program::findUniform(const std::string& name)
+UniformMap::const_iterator Program::findUniform(const std::string& name) const
 {
 	assert(loaded());
-
 	return _uniforms.find(name);
 }
 
@@ -87,7 +86,7 @@ void Program::setPrimaryLightPosition(const vec3 &p)
 	checkOpenGLError("SetPrimaryLightPosition");
 }
 
-int Program::getUniformLocation(const std::string& uniform) 
+int Program::getUniformLocation(const std::string& uniform) const
 {
 	assert(loaded());
 
@@ -97,7 +96,7 @@ int Program::getUniformLocation(const std::string& uniform)
 	return i->second.location;
 }
 
-uint32_t Program::getUniformType(const std::string& uniform) 
+uint32_t Program::getUniformType(const std::string& uniform) const
 {
 	assert(loaded());
 
@@ -107,7 +106,7 @@ uint32_t Program::getUniformType(const std::string& uniform)
 	return i->second.type;
 }
 
-ProgramUniform Program::getUniform(const std::string& uniform)
+ProgramUniform Program::getUniform(const std::string& uniform) const
 {
 	assert(loaded());
 
@@ -302,7 +301,8 @@ void Program::buildProgram(const std::string& vertex_source, const std::string& 
 				log::warning("Undefined vertex attribute: %s", name.data());
 		}
 
-		ET_ITERATE(_attributes, auto&, i, glBindAttribLocation(_glID, i.usage, i.name.c_str()))
+		for (auto& i : _attributes)
+			glBindAttribLocation(_glID, i.usage, i.name.c_str());
 
 		cStatus = link();
 		_rs.bindProgram(_glID, true);
@@ -424,6 +424,7 @@ void Program::setUniform(int nLoc, int, const unsigned long value)
 
 void Program::setUniform(int nLoc, int type, const float value)
 {
+	(void)type;
 	assert(type == GL_FLOAT);
 	assert(loaded());
 	glUniform1f(nLoc, value);
@@ -432,6 +433,7 @@ void Program::setUniform(int nLoc, int type, const float value)
 
 void Program::setUniform(int nLoc, int type, const vec2& value)
 {
+	(void)type;
 	assert(type == GL_FLOAT_VEC2);
 	assert(loaded());
 	glUniform2fv(nLoc, 1, value.data());
@@ -440,6 +442,7 @@ void Program::setUniform(int nLoc, int type, const vec2& value)
 
 void Program::setUniform(int nLoc, int type, const vec3& value)
 {
+	(void)type;
 	assert(type == GL_FLOAT_VEC3);
 	assert(loaded());
 	glUniform3fv(nLoc, 1, value.data());
@@ -448,6 +451,7 @@ void Program::setUniform(int nLoc, int type, const vec3& value)
 
 void Program::setUniform(int nLoc, int type, const vec4& value)
 {
+	(void)type;
 	assert(type == GL_FLOAT_VEC4);
 	assert(loaded());
 	glUniform4fv(nLoc, 1, value.data());
@@ -456,6 +460,7 @@ void Program::setUniform(int nLoc, int type, const vec4& value)
 
 void Program::setUniform(int nLoc, int type, const mat3& value)
 {
+	(void)type;
 	assert(type == GL_FLOAT_MAT3);
 	assert(loaded());
 	glUniformMatrix3fv(nLoc, 1, 0, value.data());
@@ -464,6 +469,7 @@ void Program::setUniform(int nLoc, int type, const mat3& value)
 
 void Program::setUniform(int nLoc, int type, const mat4& value)
 {
+	(void)type;
 	assert(type == GL_FLOAT_MAT4);
 	assert(loaded());
 	glUniformMatrix4fv(nLoc, 1, 0, value.data());
