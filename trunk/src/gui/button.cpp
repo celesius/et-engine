@@ -28,13 +28,13 @@ void Button::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, gr);
 
-	if (_bgVertices.offset() > 0)
+	if (_bgVertices.lastElementIndex() > 0)
 		gr.addVertices(_bgVertices, _background[_state].texture, ElementRepresentation_2d, RenderLayer_Layer0);
 
-	if (_textVertices.offset() > 0)
+	if (_textVertices.lastElementIndex() > 0)
 		gr.addVertices(_textVertices, _font->texture(), ElementRepresentation_2d, RenderLayer_Layer1);
 
-	if (_imageVertices.offset() > 0)
+	if (_imageVertices.lastElementIndex() > 0)
 		gr.addVertices(_imageVertices, _image.texture, ElementRepresentation_2d, RenderLayer_Layer0);
 }
 

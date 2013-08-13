@@ -43,7 +43,7 @@ void ImageView::addToRenderQueue(RenderContext* rc, GuiRenderer& g)
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, g);
 
-	if (_vertices.offset())
+	if (_vertices.lastElementIndex() > 0)
 		g.addVertices(_vertices, _texture, ElementRepresentation_2d, RenderLayer_Layer0);
 }
 

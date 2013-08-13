@@ -31,7 +31,7 @@ void Label::addToRenderQueue(RenderContext* rc, GuiRenderer& guiRenderer)
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, guiRenderer);
 
-	if (_vertices.offset() > 0)
+	if (_vertices.lastElementIndex() > 0)
 		guiRenderer.addVertices(_vertices, _font->texture(), ElementRepresentation_2d, RenderLayer_Layer1);
 }
 

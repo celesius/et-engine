@@ -39,7 +39,7 @@ const VertexArrayObject& RenderingElement::vertexArrayObject()
 
 	if (_changed)
 	{
-		size_t count = _vertexList.offset();
+		size_t count = _vertexList.lastElementIndex();
 		_indexArray->setActualSize(count);
 		_vao->vertexBuffer()->setData(_vertexList.data(), count * _vertexList.typeSize());
 		_vao->indexBuffer()->setData(_indexArray);
