@@ -17,19 +17,18 @@ namespace et
 	public:
 		typedef T DataFormat;
 
-		DataStorage() : 
-			_mutableData(0), _size(0), _dataSize(0), _offset(0),
+		DataStorage() :  _mutableData(0), _size(0), _dataSize(0), _lastElementIndex(0),
 			_flags(DataStorageFlag_OwnsMutableData) { }
-
+		
 		explicit DataStorage(size_t size) :
-			_mutableData(0), _size(0), _dataSize(0), _offset(0),
+			_mutableData(0), _size(0), _dataSize(0), _lastElementIndex(0),
 			_flags(DataStorageFlag_OwnsMutableData)
 		{
 			resize(size); 
 		}
 
 		DataStorage(size_t size, int initValue) :
-			_mutableData(0), _size(0), _dataSize(0), _offset(0),
+			_mutableData(0), _size(0), _dataSize(0), _lastElementIndex(0),
 			_flags(DataStorageFlag_OwnsMutableData)
 		{
 			resize(size); 
@@ -37,7 +36,7 @@ namespace et
 		}
 
 		DataStorage(const DataStorage& copy) :
-			_mutableData(0), _size(0), _dataSize(0), _offset(0),
+			_mutableData(0), _size(0), _dataSize(0), _lastElementIndex(0),
 			_flags(DataStorageFlag_OwnsMutableData)
 		{
 			resize(copy.size());
@@ -46,13 +45,13 @@ namespace et
 		}
 		
 		DataStorage(T* data, size_t dataSize) :
-			_mutableData(data), _size(dataSize / sizeof(T)), _dataSize(dataSize), _offset(0),
+			_mutableData(data), _size(dataSize / sizeof(T)), _dataSize(dataSize), _lastElementIndex(0),
 			_flags(DataStorageFlag_Mutable)
 		{
 		}
 
 		DataStorage(const T* data, size_t dataSize) :
-			_immutableData(data), _size(dataSize / sizeof(T)), _dataSize(dataSize), _offset(0),
+			_immutableData(data), _size(dataSize / sizeof(T)), _dataSize(dataSize), _lastElementIndex(0),
 			_flags(0)
 		{
 		}
@@ -68,7 +67,7 @@ namespace et
 		{
 			if (buf.ownsData())
 			{
-				_offset = buf._offset;
+				_lastElementIndex = buf._lastElementIndex;
 				_flags = buf._flags;
 				resize(buf.size());
 				if (buf.size() > 0)
@@ -78,7 +77,7 @@ namespace et
 			}
 			else
 			{
-				_offset = 0;
+				_lastElementIndex = 0;
 				_mutableData = buf._mutableData;
 				_dataSize = buf._dataSize;
 				_flags = buf._flags;
@@ -101,10 +100,10 @@ namespace et
 			{ assert(mutableData() && (aIndex < _size)); return _mutableData[aIndex]; }
 		
 		T& current()
-			{ assert(mutableData() && (_offset < _size)); return _mutableData[_offset]; }
+			{ assert(mutableData() && (_lastElementIndex < _size)); return _mutableData[_lastElementIndex]; }
 
 		T* current_ptr()
-			{ assert(mutableData() && (_offset < _size)); return &_mutableData[_offset]; }
+			{ assert(mutableData() && (_lastElementIndex < _size)); return &_mutableData[_lastElementIndex]; }
 		
 		T* element_ptr(size_t aIndex)
 			{ assert(aIndex < _size); return &_mutableData[aIndex]; }
@@ -122,10 +121,10 @@ namespace et
 			{ assert(i < _size); return _immutableData[i]; }
 		
 		const T& current() const
-			{ assert(_offset < _size); return _immutableData[_offset]; }
+			{ assert(_lastElementIndex < _size); return _immutableData[_lastElementIndex]; }
 
 		const T* current_ptr() const
-			{ assert(_offset < _size); return &_immutableData[_offset]; }
+			{ assert(_lastElementIndex < _size); return &_immutableData[_lastElementIndex]; }
 		
 		const T* element_ptr(size_t i) const
 			{ assert(i < _size); return &_immutableData[i]; }
@@ -168,7 +167,7 @@ namespace et
 			}
 			else
 			{
-				_offset = 0;
+				_lastElementIndex = 0;
 			}
 			
 			if (ownsData())
@@ -181,8 +180,8 @@ namespace et
 		void push_back(const T& value)
 		{
 			assert(mutableData());
-			assert((_offset < _size) && "Do no use push back to increase capacity of DataStorage");
-			_mutableData[_offset++] = value;
+			assert((_lastElementIndex < _size) && "Do no use push back to increase capacity of DataStorage");
+			_mutableData[_lastElementIndex++] = value;
 		}
 		
 		void append(const T* values, size_t count)
@@ -210,25 +209,25 @@ namespace et
 			_mutableData = nullptr;
 			_size = 0;
 			_dataSize = 0;
-			_offset = 0;
+			_lastElementIndex = 0;
 			return value;
 		}
 
 		void fitToSize(size_t size)
 		{
-			size_t need_size = _offset + size;
+			size_t need_size = _lastElementIndex + size;
 			if (need_size > _size)
 				resize(need_size);
 		}
 
-		const size_t offset() const
-			{ return _offset; }
+		const size_t lastElementIndex() const
+			{ return _lastElementIndex; }
 		
 		void applyOffset(size_t o)
-			{  assert(mutableData()); _offset += o; }
+			{  assert(mutableData()); _lastElementIndex += o; }
 
 		void setOffset(size_t o) 
-			{ assert(mutableData()); _offset = o; }
+			{ assert(mutableData()); _lastElementIndex = o; }
 
 	private:
 		enum
@@ -254,7 +253,7 @@ namespace et
 	private:
 		size_t _size;
 		size_t _dataSize;
-		size_t _offset;
+		size_t _lastElementIndex;
 		size_t _flags;
 	};
 
