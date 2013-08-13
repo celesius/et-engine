@@ -324,6 +324,9 @@ void et::etDrawElements(uint32_t mode, GLsizei count, uint32_t type, const GLvoi
 
 void et::etBindTexture(uint32_t target, uint32_t texture)
 {
+	if (texture == 0)
+		texture = 0;
+	
 	glBindTexture(target, texture);
 	checkOpenGLError("glBindTexture(%u, %d)", target, texture);
 
@@ -510,6 +513,8 @@ void et::etCompressedTexImage2D(uint32_t target, int level, uint32_t internalfor
 void et::etTexImage2D(uint32_t target, int level, int internalformat, GLsizei width, GLsizei height,
 	int border, uint32_t format, uint32_t type, const GLvoid * pixels)
 {
+	assert(pixels);
+	
 	glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
 
 #if (ET_DEBUG)

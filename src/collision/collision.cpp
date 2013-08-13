@@ -381,8 +381,8 @@ bool et::intersect::sphereAABB(const Sphere& s, const AABB& b)
 
 bool et::intersect::sphereOBB(const Sphere& s, const OBB& b)
 {
-	return sphereBox(b.center + b.transform.transpose() *
-		(s.center() - b.center), s.radius(), b.center, b.dimension);
+	return sphereBox(b.center + b.transform.transposed() * (s.center() - b.center),
+		s.radius(), b.center, b.dimension);
 }
 
 bool et::intersect::aabbAABB(const AABB& a1, const AABB& a2)
@@ -398,7 +398,7 @@ bool et::intersect::aabbAABB(const AABB& a1, const AABB& a2)
 }
 
 bool et::intersect::sphereTriangle(const vec3& sphereCenter, const float radius, const triangle& t, 
-								   vec3& point, vec3& normal, float& penetration)
+	vec3& point, vec3& normal, float& penetration)
 {
 	normal = t.normalizedNormal();
 	float distanceFromPlane = dot(sphereCenter - t.v1(), normal);

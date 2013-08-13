@@ -9,6 +9,46 @@
 
 namespace et
 {
+	enum BlendState
+	{
+		Blend_Disabled,
+		Blend_Current,
+		Blend_Default,
+		Blend_AlphaPremultiplied,
+		Blend_Additive,
+		Blend_AlphaAdditive,
+		Blend_ColorAdditive
+	};
+	
+	enum CullState
+	{
+		CullState_None,
+		CullState_Front,
+		CullState_Back
+	};
+	
+	enum DepthFunc
+	{
+		DepthFunc_Never,
+		DepthFunc_Less,
+		DepthFunc_LessOrEqual,
+		DepthFunc_Equal,
+		DepthFunc_GreaterOrEqual,
+		DepthFunc_Greater,
+		DepthFunc_Always
+	};
+	
+	enum ColorMask
+	{
+		ColorMask_None = 0x00,
+		ColorMask_Red = 0x01,
+		ColorMask_Green = 0x02,
+		ColorMask_Blue = 0x04,
+		ColorMask_Alpha = 0x08,
+		ColorMask_RGB = ColorMask_Red | ColorMask_Green | ColorMask_Blue,
+		ColorMask_RGBA = ColorMask_RGB | ColorMask_Alpha
+	};
+	
 	enum BufferDrawType
 	{
 		BufferDrawType_Static,
