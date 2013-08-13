@@ -50,16 +50,16 @@ void Slider::addToRenderQueue(RenderContext* rc, GuiRenderer& guiRenderer)
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, guiRenderer);
 
-	if (_backgroundVertices.offset() > 0)
+	if (_backgroundVertices.lastElementIndex() > 0)
 		guiRenderer.addVertices(_backgroundVertices, _background.texture, ElementRepresentation_2d, RenderLayer_Layer0);
 
-	if (_sliderLeftVertices.offset() > 0)
+	if (_sliderLeftVertices.lastElementIndex() > 0)
 		guiRenderer.addVertices(_sliderLeftVertices, _sliderLeft.texture, ElementRepresentation_2d, RenderLayer_Layer0);
 
-	if (_sliderRightVertices.offset() > 0)
+	if (_sliderRightVertices.lastElementIndex() > 0)
 		guiRenderer.addVertices(_sliderRightVertices, _sliderRight.texture, ElementRepresentation_2d, RenderLayer_Layer0);
 	
-	if (_handleVertices.offset() > 0)
+	if (_handleVertices.lastElementIndex() > 0)
 		guiRenderer.addVertices(_handleVertices, _handle.texture, ElementRepresentation_2d, RenderLayer_Layer0);
 }
 

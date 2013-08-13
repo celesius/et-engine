@@ -31,13 +31,13 @@ void TextField::addToRenderQueue(RenderContext* rc, GuiRenderer& gr)
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, gr);
 	
-	if (_backgroundVertices.offset() > 0)
+	if (_backgroundVertices.lastElementIndex() > 0)
 		gr.addVertices(_backgroundVertices, _background.texture, ElementRepresentation_2d, RenderLayer_Layer0);
 
-	if (_imageVertices.offset() > 0)
+	if (_imageVertices.lastElementIndex() > 0)
 		gr.addVertices(_imageVertices, _background.texture, ElementRepresentation_2d, RenderLayer_Layer0);
 	
-	if (_textVertices.offset() > 0)
+	if (_textVertices.lastElementIndex() > 0)
 		gr.addVertices(_textVertices, _font->texture(), ElementRepresentation_2d, RenderLayer_Layer1);
 }
 

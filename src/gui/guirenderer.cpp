@@ -27,12 +27,12 @@ GuiRenderer::GuiRenderer(RenderContext* rc, bool saveFillRate) :
 	if (_saveFillRate)
 	{
 		_guiProgram = rc->programFactory().genProgram("shader-gui", gui_savefillrate_vertex_src, std::string(),
-			gui_savefillrate_frag_src, _sharedCache);
+			gui_savefillrate_frag_src);
 	}
 	else 
 	{
 		_guiProgram = rc->programFactory().genProgram("shader-gui", gui_default_vertex_src, std::string(),
-			gui_default_frag_src, _sharedCache, StringList());
+			gui_default_frag_src, StringList());
 	}
 	
 	_defaultTexture = rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(1), GL_RGBA,
@@ -100,7 +100,7 @@ void GuiRenderer::alloc(size_t count)
 {
 	if (_renderingElement.invalid()) return;
 
-	size_t currentOffset = _renderingElement->_vertexList.offset();
+	size_t currentOffset = _renderingElement->_vertexList.lastElementIndex();
 	size_t currentSize = _renderingElement->_vertexList.size();
 
 	if (currentOffset + count >= currentSize)
@@ -125,7 +125,7 @@ GuiVertexPointer GuiRenderer::allocateVertices(size_t count, const Texture& inTe
 		layer = RenderLayer_Layer0;
 	
 	_renderingElement->_changed = true;
-	size_t i0 = _renderingElement->_vertexList.offset();
+	size_t i0 = _renderingElement->_vertexList.lastElementIndex();
 
 	if (_renderingElement->_chunks.size())
 	{
@@ -161,11 +161,11 @@ size_t GuiRenderer::addVertices(const GuiVertexList& vertices, const Texture& te
 	ElementRepresentation cls, RenderLayer layer)
 {
 	size_t current = 0;
-	size_t count = vertices.offset();
+	size_t count = vertices.lastElementIndex();
 	
 	if (_renderingElement.valid() && (count > 0))
 	{
-		current = _renderingElement->_vertexList.offset();
+		current = _renderingElement->_vertexList.lastElementIndex();
 		GuiVertex* v0 = allocateVertices(count, texture, cls, layer);
 		etCopyMemory(v0, vertices.data(), count * vertices.typeSize());
 	}
@@ -237,6 +237,7 @@ void GuiRenderer::render(RenderContext* rc)
 void GuiRenderer::buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, const GuiVertex& topRight, 
 	const GuiVertex& bottomLeft, const GuiVertex& bottomRight)
 {
+	vertices.fitToSize(6);
 	vertices.push_back(bottomLeft);
 	vertices.push_back(bottomRight);
 	vertices.push_back(topRight);
