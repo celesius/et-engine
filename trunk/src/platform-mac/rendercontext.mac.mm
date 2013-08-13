@@ -152,15 +152,21 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 		NSOpenGLPFAAccelerated,
 		NSOpenGLPFAAcceleratedCompute,
 		NSOpenGLPFADoubleBuffer,
-		NSOpenGLPFASampleBuffers, 4,
-		NSOpenGLPFASamples, 16,
-		NSOpenGLPFAMultisample,
-		0,
-		0,
+		NSOpenGLPFASampleBuffers, 1,
+		0, 0, 0, 0, 0, 0, // space for multisampling and context profile
 		0,
 	};
 	
-	size_t lastEntry = (sizeof(pixelFormatAttributes) / sizeof(NSOpenGLPixelFormatAttribute)) - 3;
+	size_t lastEntry = 0;
+	while (pixelFormatAttributes[++lastEntry] != 0);
+	
+	if (params.multisamplingQuality == MultisamplingQuality_Best)
+	{
+		pixelFormatAttributes[lastEntry++] = NSOpenGLPFAMultisample;
+		pixelFormatAttributes[lastEntry++] = NSOpenGLPFASamples;
+		pixelFormatAttributes[lastEntry++] = 16;
+	}
+	
 	if (params.openGLForwardContext)
 	{
 		pixelFormatAttributes[lastEntry++] = NSOpenGLPFAOpenGLProfile;
