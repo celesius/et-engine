@@ -19,8 +19,8 @@ namespace et
 	{
 	public:
 		virtual ~AnimatorDelegate() { }
-		virtual void animatorUpdated(BaseAnimator*) = 0;
-		virtual void animatorFinished(BaseAnimator*) = 0;
+		virtual void animatorUpdated(BaseAnimator*) { }
+		virtual void animatorFinished(BaseAnimator*) { }
 	};
 
 	class BaseAnimator : public TimedObject
@@ -50,8 +50,12 @@ namespace et
 	class Animator : public BaseAnimator
 	{
 	public:
+		Animator() :
+			BaseAnimator(nullptr, 0, TimerPool::Pointer()), _from(), _to(), _value(nullptr),
+			_startTime(0.0f), _duration(0.0f) { }
+		
 		Animator(const TimerPool::Pointer& tp) :
-			BaseAnimator(0, 0, tp), _from(), _to(), _value(nullptr),
+			BaseAnimator(nullptr, 0, tp), _from(), _to(), _value(nullptr),
 			_startTime(0.0f), _duration(0.0f) { }
 
 		Animator(AnimatorDelegate* delegate, int tag, const TimerPool::Pointer& tp) :
@@ -67,6 +71,7 @@ namespace et
 
 		void animate(T* value, const T& from, const T& to, float duration)
 		{
+			assert(timerPool().valid());
 			startUpdates(timerPool().ptr());
 
 			*value = from;
@@ -78,23 +83,28 @@ namespace et
 			_startTime = actualTime();
 		};
 		
-	protected:
-		
+	private:
 		void update(float t)
 		{
 			float dt = (t - _startTime) / _duration;
 			if (dt >= 1.0f)
 			{
 				*_value = _to;
-				delegate()->animatorUpdated(this);
+				
+				if (delegate())
+					delegate()->animatorUpdated(this);
 
 				cancelUpdates();
-				delegate()->animatorFinished(this);
+				
+				if (delegate())
+					delegate()->animatorFinished(this);
 			}
 			else 
 			{
 				*_value = _from * (1.0f - dt) + _to * dt;
-				delegate()->animatorUpdated(this);
+				
+				if (delegate())
+					delegate()->animatorUpdated(this);
 			}
 		}
 

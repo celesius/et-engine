@@ -17,7 +17,7 @@ namespace et
 {
 	namespace s3d
 	{
-		class MaterialData : public LoadableObject, public ObjectLoader
+		class MaterialData : public LoadableObject
 		{
 		public:
 			MaterialData();

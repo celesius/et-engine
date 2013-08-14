@@ -29,8 +29,7 @@ namespace et
 	{
 	public:
 		AtomicCounter();
-		virtual ~AtomicCounter() { }
-
+		
 		AtomicCounterType retain();
 		AtomicCounterType release();
 
@@ -38,6 +37,28 @@ namespace et
 			{ return _counter; }
 
 	private:
+		ET_DENY_COPY(AtomicCounter)
+		
+	private:
 		volatile AtomicCounterType _counter;
+	};
+	
+	class AtomicBool
+	{
+	public:
+		AtomicBool();
+		
+		bool operator = (bool b);
+		
+		bool operator == (bool b);
+		bool operator == (const AtomicBool&);
+
+		bool operator != (bool b);
+		bool operator != (const AtomicBool&);
+		
+		operator bool() const;
+		
+	private:
+		volatile AtomicCounterType _value;
 	};
 }

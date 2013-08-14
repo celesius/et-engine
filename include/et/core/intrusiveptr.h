@@ -14,15 +14,7 @@ namespace et
 	#define ET_DECLARE_POINTER(T)					typedef et::IntrusivePtr<T> Pointer; \
 													friend class et::IntrusivePtr<T>;
 	
-	class Shared : virtual public AtomicCounter
-	{
-	public:   
-		Shared()
-			{ }
-
-	private:
-		ET_DENY_COPY(Shared)
-	};
+	typedef AtomicCounter Shared;
 
 	template <typename T>
 	class IntrusivePtr

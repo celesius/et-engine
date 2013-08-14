@@ -13,7 +13,7 @@ using namespace et;
 IApplicationDelegate* et::Application::_delegate = 0;
 
 Application::Application() : _renderContext(0), _exitCode(0), _lastQueuedTimeMSec(queryTimeMSec()),
-	_fpsLimitMSec(0), _fpsLimitMSecFractPart(0), _running(false), _active(false), _suspended(false)
+	_fpsLimitMSec(0), _fpsLimitMSecFractPart(0)
 {
 	threading();
 	
@@ -21,11 +21,16 @@ Application::Application() : _renderContext(0), _exitCode(0), _lastQueuedTimeMSe
 
 	platformInit();
 	platformActivate();
+	
+	_backgroundThread.run();
 }
 
 Application::~Application()
 {
 	_running = false;
+
+	_backgroundThread.stop();
+	_backgroundThread.waitForTermination();
 	
 	platformDeactivate();
 	platformFinalize();
@@ -96,8 +101,8 @@ void Application::setActive(bool active)
 	if (!_running || (_active == active)) return;
 
 	_active = active;
-
-	if (_active)
+	
+	if (active)
 	{
 		if (_suspended)
 			resume();
