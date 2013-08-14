@@ -17,15 +17,15 @@ TaskPool::TaskPool()
 TaskPool::~TaskPool() 
 {
 	CriticalSectionScope lock(_csModifying);
-	for (auto i = _tasks.begin(), e = _tasks.end(); i != e; ++i)
-	{
-		delete (*i);
-	}
+	
+	for (auto i : _tasks)
+		delete i;
 }
 
 void TaskPool::addTask(Task* t, float delay)
 {
 	CriticalSectionScope lock(_csModifying);
+	
 	auto alreadyAdded = std::find(_tasksToAdd.begin(), _tasksToAdd.end(), t);
 	if (alreadyAdded == _tasksToAdd.end())
 	{
@@ -36,15 +36,10 @@ void TaskPool::addTask(Task* t, float delay)
 
 void TaskPool::update(float t)
 {
+	joinTasks();
+	
 	_lastTime = t;
-
-	_csModifying.enter();
-	if (_tasksToAdd.size())
-	{
-		_tasks.insert(_tasks.end(), _tasksToAdd.begin(), _tasksToAdd.end());
-		_tasksToAdd.clear();
-	}
-
+	
 	auto i = _tasks.begin();
 	while (i != _tasks.end())
 	{
@@ -60,6 +55,20 @@ void TaskPool::update(float t)
 			++i;
 		}
 	}
-	
-	_csModifying.leave();
+}
+
+bool TaskPool::hasTasks()
+{
+	CriticalSectionScope lock(_csModifying);
+	return (_tasks.size() + _tasksToAdd.size()) > 0;
+}
+
+void TaskPool::joinTasks()
+{
+	CriticalSectionScope lock(_csModifying);
+	if (_tasksToAdd.size())
+	{
+		_tasks.insert(_tasks.end(), _tasksToAdd.begin(), _tasksToAdd.end());
+		_tasksToAdd.clear();
+	}
 }

@@ -124,6 +124,7 @@ namespace et
 	public:
 		void invoke();
 		void invokeInMainRunLoop(float delay = 0.0f);
+		void invokeInBackground(float delay = 0.0f);
 		void invokeInRunLoop(RunLoop& rl, float delay = 0.0f);
 
 		template <typename T>
@@ -139,6 +140,7 @@ namespace et
 	public:
 		void invoke();
 		void invokeInMainRunLoop(float delay = 0.0f);
+		void invokeInBackground(float delay = 0.0f);
 		void invokeInRunLoop(RunLoop& rl, float delay = 0.0f);
 
 		template <typename T, typename A1>
@@ -155,6 +157,7 @@ namespace et
 	public:
 		void invoke();
 		void invokeInMainRunLoop(float delay = 0.0f);
+		void invokeInBackground(float delay = 0.0f);
 		void invokeInRunLoop(RunLoop& rl, float delay = 0.0f);
 
 		template <typename T, typename A1, typename A2>
@@ -166,6 +169,10 @@ namespace et
 			{ (static_cast<Invocation2Target<T, A1, A2>*>(_target.ptr()))->setParameters(p1, p2); }
 	};
 
+/*
+ * 0
+ */
+	
 #define ET_INVOKE_THIS_CLASS_METHOD(CLASS, METHOD)	\
 		{ Invocation _aInvocation;\
 		_aInvocation.setTarget(this, &CLASS::METHOD);\
@@ -176,6 +183,20 @@ namespace et
 		_aInvocation.setTarget(this, &CLASS::METHOD);\
 		_aInvocation.invokeInMainRunLoop(DELAY); }
 
+#define ET_INVOKE_THIS_CLASS_METHOD_IN_BACKGROUND(CLASS, METHOD)	\
+		{ Invocation _aInvocation;\
+		_aInvocation.setTarget(this, &CLASS::METHOD);\
+		_aInvocation.invokeInBackground(); }
+	
+#define ET_INVOKE_THIS_CLASS_METHOD_IN_BACKGROUND_DELAYED(CLASS, METHOD, DELAY)	\
+		{ Invocation _aInvocation;\
+		_aInvocation.setTarget(this, &CLASS::METHOD);\
+		_aInvocation.invokeInBackground(DELAY); }
+	
+/*
+ * 1
+ */
+	
 #define ET_INVOKE_THIS_CLASS_METHOD1(CLASS, METHOD, P1)	\
 		{ Invocation1 _aInvocation1;\
 		_aInvocation1.setTarget(this, &CLASS::METHOD, P1);\
@@ -185,6 +206,10 @@ namespace et
 		{ Invocation1 _aInvocation1; \
 		_aInvocation1.setTarget(this, &CLASS::METHOD, P1); \
 		_aInvocation1.invokeInMainRunLoop(DELAY); }
+
+/*
+ * 2
+ */
 
 #define ET_INVOKE_THIS_CLASS_METHOD2(CLASS, METHOD, P1, P2)	\
 		{ Invocation2 _aInvocation2; \

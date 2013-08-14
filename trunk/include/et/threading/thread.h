@@ -12,6 +12,7 @@
 namespace et
 {
 	typedef unsigned long ThreadResult;
+	
 #if (ET_PLATFORM_ANDROID)
 	typedef long ThreadId;
 #else
@@ -31,8 +32,10 @@ namespace et
 		
 		virtual ~Thread();
 
-		bool run();
-		bool stop();
+		void run();
+		void suspend();
+		void resume();
+		void stop();
 
 		void waitForTermination();
 		void terminate(int result = 0);
@@ -42,10 +45,6 @@ namespace et
 
 		ThreadId id() const;
 		virtual ThreadResult main();
-
-	protected:
-		void suspend();
-		void resume();
 
 	private:
 		Thread(const Thread&)

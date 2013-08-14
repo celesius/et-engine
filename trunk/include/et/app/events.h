@@ -96,6 +96,13 @@ namespace et
 			i.invokeInMainRunLoop(delay);
 		}
 
+		void invokeInBackground(float delay = 0.0f)
+		{
+			Invocation i;
+			i.setTarget(_receiver, _receiverMethod);
+			i.invokeInBackground(delay);
+		}
+		
 	private:
 		void (RecevierType::*_receiverMethod)();
 		RecevierType* _receiver;
@@ -159,6 +166,13 @@ namespace et
 			Invocation1 i;
 			i.setTarget<ReceiverType, ArgType>(_receiver, _receiverMethod, arg);
 			i.invokeInMainRunLoop(delay);
+		}
+		
+		void invokeInBackground(ArgType arg, float delay)
+		{
+			Invocation1 i;
+			i.setTarget<ReceiverType, ArgType>(_receiver, _receiverMethod, arg);
+			i.invokeInBackground(delay);
 		}
 
 	private:
@@ -225,6 +239,13 @@ namespace et
 			Invocation2 i;
 			i.setTarget<ReceiverType, Arg1Type, Arg2Type>(_receiver, _receiverMethod, a1, a2);
 			i.invokeInMainRunLoop(delay);
+		}
+		
+		void invokeInBackground(Arg1Type a1, Arg2Type a2, float delay)
+		{
+			Invocation2 i;
+			i.setTarget<ReceiverType, Arg1Type, Arg2Type>(_receiver, _receiverMethod, a1, a2);
+			i.invokeInBackground(delay);
 		}
 
 	private:

@@ -75,6 +75,7 @@ namespace et
 		ET_DECLARE_POINTER(ObjectLoader)
 		
 	public:
+		virtual ~ObjectLoader() { }
 		virtual void reloadObject(LoadableObject::Pointer, ObjectsCache&) = 0;
 	};
 }

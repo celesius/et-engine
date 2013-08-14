@@ -26,8 +26,8 @@ namespace et
 		pthread_mutex_t suspendMutex;
 		pthread_cond_t suspend;
 		ThreadId threadId;
-		AtomicCounter running;
-		AtomicCounter suspended;
+		AtomicBool running;
+		AtomicBool suspended;
 	};
 }
 
@@ -78,25 +78,19 @@ Thread::~Thread()
 	delete _private;
 }
 
-bool Thread::run()
+void Thread::run()
 {
-	if (_private->running.atomicCounterValue() > 0) return false;
-	_private->running.retain();
+	if (_private->running) return;
 	
+	_private->running = true;
 	pthread_create(&_private->thread, &_private->attrib, ThreadPrivate::threadProc, this);
-	return true;
-}
-
-void Thread::waitForTermination()
-{
-	pthread_join(_private->thread, nullptr);
 }
 
 void Thread::suspend()
 {
-	if (_private->suspended.atomicCounterValue() > 0) return;
+	if (_private->suspended) return;
 	
-	_private->suspended.retain();
+	_private->suspended = true;
 	
 	pthread_mutex_lock(&_private->suspendMutex);
 	pthread_cond_wait(&_private->suspend, &_private->suspendMutex);
@@ -105,29 +99,32 @@ void Thread::suspend()
 
 void Thread::resume()
 {
-	if (_private->suspended.atomicCounterValue() == 0) return;
-	
-	_private->suspended.release();
-	
-	pthread_mutex_lock(&_private->suspendMutex);
-	pthread_cond_signal(&_private->suspend);
-	pthread_mutex_unlock(&_private->suspendMutex);
+	if (_private->suspended)
+	{
+		_private->suspended = false;
+		pthread_mutex_lock(&_private->suspendMutex);
+		pthread_cond_signal(&_private->suspend);
+		pthread_mutex_unlock(&_private->suspendMutex);
+	}
 }
 
-bool Thread::stop()
+void Thread::stop()
 {
-	if (_private->running.atomicCounterValue() == 0) return false;
-	
-	resume();
-	
-	_private->running.release();
+	if (_private->running)
+	{
+		resume();
+		_private->running = false;
+	}
+}
 
-	return true;
+void Thread::waitForTermination()
+{
+	pthread_join(_private->thread, nullptr);
 }
 
 void Thread::terminate(int result)
 {
-	if (stop())
+	if (_private->running)
 	{
 		pthread_detach(_private->thread);
 		pthread_exit(reinterpret_cast<void*>(result));
@@ -141,12 +138,12 @@ ThreadResult Thread::main()
 
 bool Thread::running() const
 {
-	return _private->running.atomicCounterValue() > 0;
+	return _private->running;
 }
 
 bool Thread::suspended() const
 {
-	return _private->suspended.atomicCounterValue() > 0;
+	return _private->suspended;
 }
 
 ThreadId Thread::id() const

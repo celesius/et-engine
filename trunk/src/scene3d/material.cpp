@@ -86,7 +86,7 @@ inline size_t keyToMaterialParameter(const std::string& k)
 }
 
 MaterialData::MaterialData() :
-	LoadableObject("default"), _rc(nullptr), _blendState(Blend_Disabled), _depthWriteEnabled(true), tag(0)
+	LoadableObject("default"),_blendState(Blend_Disabled), _depthWriteEnabled(true), tag(0)
 {
 	setVector(MaterialParameter_DiffuseColor, vec4(1.0f));
 }
@@ -288,8 +288,6 @@ void MaterialData::serializeBinary(std::ostream& stream) const
 void MaterialData::deserialize(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
 	const std::string& texturesBasePath, StorageFormat format, bool async)
 {
-	_rc = rc;
-	
 	if (format == StorageFormat_HumanReadableMaterials)
 	{
 		deserialize3FromXml(stream, rc, cache, texturesBasePath, async);
@@ -761,11 +759,12 @@ bool MaterialData::hasString(size_t param) const
 
 void MaterialData::reloadObject(LoadableObject::Pointer obj, ObjectsCache& cache)
 {
-	assert(_rc != nullptr);
+	assert(false);
+	
 	clear();
 	
 	InputStream stream(obj->origin(), StreamMode_Text);
 	
 	if (stream.valid())
-		deserialize3FromXml(stream.stream(), _rc, cache, getFilePath(obj->origin()), false);
+		deserialize3FromXml(stream.stream(), nullptr, cache, getFilePath(obj->origin()), false);
 }

@@ -163,7 +163,7 @@ Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, Render
 						m->deserialize(mStream.stream(), rc, tc, basePath, fmt, async);
 
 					result->addMaterial(m);
-					tc.manage(m, m);
+					tc.manage(m, ObjectLoader::Pointer());
 				}
 			}
 			else

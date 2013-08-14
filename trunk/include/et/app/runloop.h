@@ -19,25 +19,29 @@ namespace et
 		
 	public:
 		RunLoop();
+		virtual ~RunLoop() { }
+		
+		float time() const
+			{ return _time; }
+		
+		uint64_t timeMSec() const
+			{ return _actualTimeMSec; }
+
+		TimerPool::Pointer mainTimerPool()
+			{ return _timerPools.front(); }
 		
 		void update(uint64_t t);
 		void pause();
 		void resume();
 
-		TimerPool::Pointer mainTimerPool()
-			{ return _timerPools.front(); }
-
-		float time() const
-			{ return _time; }
-
-		uint64_t timeMSec() const
-			{ return _actualTimeMSec; }
-		
 		void attachTimerPool(TimerPool::Pointer pool);
 		void detachTimerPool(TimerPool::Pointer pool);
 		void detachAllTimerPools();
 
-		void addTask(Task* t, float delay = 0.0f);
+		virtual void addTask(Task*, float);
+		
+		bool hasTasks()
+			{ return _taskPool.hasTasks(); }
 
 	private:
 		void updateTime(uint64_t t);
