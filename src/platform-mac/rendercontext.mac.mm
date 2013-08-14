@@ -6,6 +6,7 @@
  */
 
 #include <AppKit/NSWindow.h>
+#include <AppKit/NSAlert.h>
 #include <AppKit/NSOpenGL.h>
 #include <AppKit/NSOpenGLView.h>
 #include <AppKit/NSScreen.h>
@@ -54,7 +55,7 @@ public:
 	
 	void run();
 	void resize(const NSSize&);
-	void render();
+	void performUpdateAndRender();
 	void stop();
 		
 	bool canPerformOperations()
@@ -150,9 +151,8 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 		NSOpenGLPFAAlphaSize, 8,
 		NSOpenGLPFADepthSize, 32,
 		NSOpenGLPFAAccelerated,
-		NSOpenGLPFAAcceleratedCompute,
 		NSOpenGLPFADoubleBuffer,
-		NSOpenGLPFASampleBuffers, 1,
+		NSOpenGLPFASampleBuffers, 4,
 		0, 0, 0, 0, 0, 0, // space for multisampling and context profile
 		0,
 	};
@@ -160,21 +160,69 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 	size_t lastEntry = 0;
 	while (pixelFormatAttributes[++lastEntry] != 0);
 	
-	if (params.multisamplingQuality == MultisamplingQuality_Best)
-	{
-		pixelFormatAttributes[lastEntry++] = NSOpenGLPFAMultisample;
-		pixelFormatAttributes[lastEntry++] = NSOpenGLPFASamples;
-		pixelFormatAttributes[lastEntry++] = 16;
-	}
-	
+	size_t profileEntry = 0;
 	if (params.openGLForwardContext)
 	{
 		pixelFormatAttributes[lastEntry++] = NSOpenGLPFAOpenGLProfile;
-		pixelFormatAttributes[lastEntry++] = NSOpenGLProfileVersion3_2Core;
+		
+		pixelFormatAttributes[lastEntry++] =
+			params.openGLCoreProfile ? NSOpenGLProfileVersion3_2Core : NSOpenGLProfileVersionLegacy;
+		
+		profileEntry = lastEntry - 1;
+	}
+	
+	size_t antialiasFirstEntry = 0;
+	size_t antialiasSamplesEntry = 0;
+	if (params.multisamplingQuality == MultisamplingQuality_Best)
+	{
+		antialiasFirstEntry = lastEntry;
+		pixelFormatAttributes[lastEntry++] = NSOpenGLPFAMultisample;
+		pixelFormatAttributes[lastEntry++] = NSOpenGLPFASamples;
+		pixelFormatAttributes[lastEntry++] = 16;
+		antialiasSamplesEntry = lastEntry - 1;
 	}
 	
 	pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes] autorelease];
-	assert(pixelFormat != nil);
+	if ((pixelFormat == nil) && (antialiasSamplesEntry != 0))
+	{
+		while ((pixelFormat == nil) && (pixelFormatAttributes[antialiasSamplesEntry] > 1))
+		{
+			pixelFormatAttributes[antialiasSamplesEntry] /= 2;
+			pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes] autorelease];
+		}
+		
+		if (pixelFormat == nil)
+		{
+			pixelFormatAttributes[antialiasFirstEntry++] = 0;
+			pixelFormatAttributes[antialiasFirstEntry++] = 0;
+			pixelFormatAttributes[antialiasFirstEntry++] = 0;
+			pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes] autorelease];
+		}
+		
+		if (pixelFormat == nil)
+		{
+			if (profileEntry > 0)
+			{
+				pixelFormatAttributes[profileEntry] = NSOpenGLProfileVersionLegacy;
+				pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes] autorelease];
+				
+				if (pixelFormat == nil)
+				{
+					[[NSAlert alertWithMessageText:@"Unable to init OpenGL context" defaultButton:@"Close"
+						alternateButton:nil otherButton:nil informativeTextWithFormat:
+						@"Unable to create NSOpenGLPixelFormat object, even without antialiasing and with legacy profile."] runModal];
+					exit(1);
+				}
+			}
+			else
+			{
+				[[NSAlert alertWithMessageText:@"Unable to init OpenGL context" defaultButton:@"Close"
+					alternateButton:nil otherButton:nil informativeTextWithFormat:
+					@"Unable to create NSOpenGLPixelFormat object, even without antialiasing."] runModal];
+				exit(1);
+			}
+		}
+	}
 	
 	NSUInteger windowMask = NSBorderlessWindowMask;
 	
@@ -255,8 +303,19 @@ void RenderContextPrivate::run()
 {
 	if (displayLink == nil)
 	{
-		CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
+		CVReturn result = CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
+		
+		if ((result != kCVReturnSuccess) || (displayLink == nullptr))
+		{
+			[[NSAlert alertWithMessageText:@"Something went wrong, could not create display link."
+				defaultButton:@"Ok" alternateButton:nil otherButton:nil
+				informativeTextWithFormat:@"Return code: %d, Application will now shut down.", result] runModal];
+			exit(1);
+			return;
+		}
+		
 		CVDisplayLinkSetOutputCallback(displayLink, cvDisplayLinkOutputCallback, this);
+		
 		CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(displayLink, cglObject,
 			static_cast<CGLPixelFormatObj>([pixelFormat CGLPixelFormatObj]));
 	}
@@ -271,7 +330,7 @@ void RenderContextPrivate::stop()
 	displayLink = nil;
 }
 
-void RenderContextPrivate::render()
+void RenderContextPrivate::performUpdateAndRender()
 {
 	[openGlContext makeCurrentContext];
 	CGLLockContext(cglObject);
@@ -293,7 +352,7 @@ int RenderContextPrivate::displayLinkSynchronized()
 	}
 	
 	if (application().running() && !application().suspended())
-		render();
+		performUpdateAndRender();
 
 	return kCVReturnSuccess;
 }
@@ -326,22 +385,17 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
  */
 @implementation etOpenGLView
 
-- (id)initWithFrame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat *)format
-{
-	self = [super initWithFrame:frameRect pixelFormat:format];
-	if (self)
-	{
-	}
-	return self;
-}
-
 - (PointerInputInfo)mousePointerInfo:(NSEvent*)theEvent withType:(PointerType)type;
 {
 	NSRect ownFrame = self.frame;
 	
 	NSPoint nativePoint = [theEvent locationInWindow];
-	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
-	vec2 np(2.0f * p.x / ownFrame.size.width - 1.0f, 1.0f - 2.0f * p.y / ownFrame.size.height);
+	
+	vec2 p(static_cast<float>(nativePoint.x),
+		static_cast<float>(ownFrame.size.height - nativePoint.y));
+	
+	vec2 np(2.0f * p.x / static_cast<float>(ownFrame.size.width) - 1.0f,
+		1.0f - 2.0f * p.y / static_cast<float>(ownFrame.size.height));
 
 	return PointerInputInfo(type, p, np, vec2(0.0f), [theEvent eventNumber],
 		static_cast<float>([theEvent timestamp]), PointerOrigin_Any);
@@ -387,9 +441,14 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 	NSRect ownFrame = self.frame;
 	NSPoint nativePoint = [theEvent locationInWindow];
 
-	vec2 p(nativePoint.x, ownFrame.size.height - nativePoint.y);
-	vec2 np(2.0f * p.x / ownFrame.size.width - 1.0f, 1.0f - 2.0f * p.y / ownFrame.size.height);
-	vec2 scroll([theEvent deltaX] / ownFrame.size.width, [theEvent deltaY] / ownFrame.size.height);
+	vec2 p(static_cast<float>(nativePoint.x),
+		static_cast<float>(ownFrame.size.height - nativePoint.y));
+	
+	vec2 np(2.0f * p.x / static_cast<float>(ownFrame.size.width) - 1.0f,
+		1.0f - 2.0f * p.y / static_cast<float>(ownFrame.size.height));
+	
+	vec2 scroll(static_cast<float>([theEvent deltaX] / ownFrame.size.width),
+		static_cast<float>([theEvent deltaY] / ownFrame.size.height));
 
 	PointerOrigin origin = (([theEvent momentumPhase] != NSEventPhaseNone) ||
 		([theEvent phase] != NSEventPhaseNone)) ? PointerOrigin_Trackpad : PointerOrigin_Mouse;
@@ -406,13 +465,13 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 - (void)magnifyWithEvent:(NSEvent *)event
 {
 	gestureInputSource.gesturePerformed(
-		GestureInputInfo(GestureTypeMask_Zoom, event.magnification));
+		GestureInputInfo(GestureTypeMask_Zoom, static_cast<float>(event.magnification)));
 }
 
 - (void)swipeWithEvent:(NSEvent *)event
 {
-	gestureInputSource.gesturePerformed(
-		GestureInputInfo(GestureTypeMask_Swipe, event.deltaX, event.deltaY));
+	gestureInputSource.gesturePerformed(GestureInputInfo(GestureTypeMask_Swipe,
+		static_cast<float>(event.deltaX), static_cast<float>(event.deltaY)));
 }
 
 - (void)rotateWithEvent:(NSEvent *)event
@@ -439,8 +498,9 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 - (void)drawRect:(NSRect)dirtyRect
 {
 	(void)dirtyRect;
+	
 	if (rcPrivate->canPerformOperations())
-		rcPrivate->render();
+		rcPrivate->performUpdateAndRender();
 }
 
 - (void)reshape
