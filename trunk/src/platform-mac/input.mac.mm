@@ -22,8 +22,12 @@ PointerInputInfo Input::currentPointer()
 	
 	PointerInputInfo result;
 	result.timestamp = queryTime();
-	result.pos = vec2(location.x, frame.size.height - location.y);
-	result.normalizedPos = result.pos / vec2(frame.size.width, frame.size.height);
+	
+	result.pos = vec2(static_cast<float>(location.x), static_cast<float>(frame.size.height - location.y));
+	
+	result.normalizedPos = result.pos /
+		vec2(static_cast<float>(frame.size.width), static_cast<float>(frame.size.height));
+	
 	return result;
 }
 

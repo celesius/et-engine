@@ -46,9 +46,6 @@ void OpenGLCapabilites::checkCaps()
 	glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &maxSize);
 	_maxCubemapTextureSize = static_cast<size_t>(maxSize);
 
-	log::info("[OpenGLCapabilites] Version: %s, GLSL version: %s (%s)",
-		_openGlVersion.c_str(), _glslVersionString.c_str(), _glslVersion.c_str());
-	
 #if defined(GL_ARB_draw_elements_base_vertex)
 	_drawelements_basevertex = (glDrawElementsBaseVertex != nullptr);
 #else
@@ -81,4 +78,7 @@ void OpenGLCapabilites::checkCaps()
 
 	_shaders = (glShaderSource != nullptr) && (glCreateProgram != nullptr) &&
 		(glCompileShader != nullptr) && (glLinkProgram != nullptr);
+	
+	log::info("[OpenGLCapabilites] Version: %s, GLSL version: %s (%s)", _openGlVersion.c_str(),
+		_glslVersionString.c_str(), _glslVersion.c_str());
 };
