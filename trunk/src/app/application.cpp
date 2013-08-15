@@ -161,6 +161,11 @@ void Application::resume()
 	_runLoop.resume();
 }
 
+void Application::stop()
+{
+	_running = false;
+}
+
 void Application::terminated()
 {
 	_delegate->applicationWillTerminate();

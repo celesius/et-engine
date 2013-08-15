@@ -32,6 +32,9 @@ namespace et
 		void notifyResumed()
 			{ application().resume(); }
 
+		void notifyStopped()
+			{ application().stop(); }
+	
 		void notifyTerminated()
 			{ application().terminated(); }
 		
