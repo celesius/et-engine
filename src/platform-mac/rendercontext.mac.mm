@@ -536,12 +536,11 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 
 @implementation etWindowDelegate
 
-- (BOOL)windowShouldClose:(id)sender
+- (void)windowWillClose:(NSNotification *)notification
 {
-    (void)sender;
-	applicationNotifier.notifySuspended();
+	(void)notification;
+	applicationNotifier.notifyStopped();
 	rcPrivate->stop();
-	return YES;
 }
 
 @end

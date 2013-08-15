@@ -12,7 +12,6 @@
 namespace et
 {
 	#define ET_DECLARE_POINTER(T)					typedef et::IntrusivePtr<T> Pointer; \
-													friend class et::IntrusivePtr<T>;
 	
 	typedef AtomicCounter Shared;
 

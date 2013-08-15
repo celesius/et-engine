@@ -91,6 +91,8 @@ namespace et
 		void suspend();
 		void resume();
 		
+		void stop();
+		
 		void platformInit();
 		void platformFinalize();
 		void platformActivate();
