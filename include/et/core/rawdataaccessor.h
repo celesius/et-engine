@@ -18,7 +18,7 @@ namespace et
 		static const int TypeSize = sizeof(T);
 
 		RawDataAcessor() :
-			_dataSize(0), _size(0), _stride(0), _offset(0), _data(0) { }
+			_dataSize(0), _size(0), _stride(0), _offset(0), _data(nullptr) { }
 
 		RawDataAcessor(char* data, const size_t dataSize, const size_t stride, const size_t offset) :
 			_data(data)
@@ -31,9 +31,12 @@ namespace et
 			_size = _dataSize / _stride;
 		}
 
-		T& operator[] (size_t i) 
+		T& operator [] (size_t i)
 			{ assert(i < _size); return *(reinterpret_cast<T*>(_data + i * _stride + _offset)); }
 
+		T& operator [] (int i)
+			{ return operator [] (static_cast<size_t>(i)); }
+		
 		void fill(int v)
 			{ etFillMemory(_data, v, _dataSize); }
 

@@ -70,7 +70,7 @@ void et::checkOpenGLErrorEx(const char* caller, const char* fileName, const char
 	}
 }
 
-size_t et::primitiveCount(uint32_t mode, GLsizei count)
+size_t et::primitiveCount(uint32_t mode, size_t count)
 {
 	switch (mode)
 	{
@@ -156,7 +156,7 @@ std::string et::glTexTargetToString(uint32_t target)
 	}
 }
 
-std::string et::glInternalFormatToString(uint32_t format)
+std::string et::glInternalFormatToString(int format)
 {
 	switch (format)
 	{
@@ -298,7 +298,7 @@ void et::etDrawElementsBaseVertex(uint32_t mode, GLsizei count, uint32_t type, c
 	checkOpenGLError("glDrawElementsBaseVertex(mode, count, type, indices, base)");
 
 #	if ET_ENABLE_OPENGL_COUNTERS
-	OpenGLCounters::primitiveCounter += primitiveCount(mode, count);
+	OpenGLCounters::primitiveCounter += primitiveCount(mode, static_cast<size_t>(count));
 	++OpenGLCounters::DIPCounter;
 #	endif
 }
@@ -317,7 +317,7 @@ void et::etDrawElements(uint32_t mode, GLsizei count, uint32_t type, const GLvoi
 		count, glTypeToString(type).c_str(), indices);
 
 #if ET_ENABLE_OPENGL_COUNTERS
-	OpenGLCounters::primitiveCounter += primitiveCount(mode, count);
+	OpenGLCounters::primitiveCounter += primitiveCount(mode, static_cast<size_t>(count));
 	++OpenGLCounters::DIPCounter;
 #endif
 }
@@ -389,7 +389,7 @@ void et::etBindVertexArray(uint32_t)
 }
 #endif
 
-uint32_t et::textureWrapValue(TextureWrap w)
+int32_t et::textureWrapValue(TextureWrap w)
 {
 	switch (w)
 	{
@@ -406,7 +406,7 @@ uint32_t et::textureWrapValue(TextureWrap w)
 	return 0;
 }
 
-uint32_t et::textureFiltrationValue(TextureFiltration f)
+int32_t et::textureFiltrationValue(TextureFiltration f)
 {
 	switch (f)
 	{
@@ -484,16 +484,15 @@ void et::etTexImage1D(uint32_t target, int level, int internalformat, GLsizei wi
 	
 	checkOpenGLError("glTexImage2D(%s, %d, %s, %d, %d, %s, %s, %, 0x%8X)",
 		glTexTargetToString(target).c_str(), level, glInternalFormatToString(internalformat).c_str(),
-		width, border, glInternalFormatToString(format).c_str(), glTypeToString(type).c_str(), pixels);
+		width, border, glInternalFormatToString(static_cast<int32_t>(format)).c_str(), glTypeToString(type).c_str(), pixels);
 }
 
 void et::etCompressedTexImage1D(uint32_t target, int level, uint32_t internalformat,
 	GLsizei width, int border, GLsizei imageSize, const GLvoid * data)
 {
 	glCompressedTexImage1D(target, level, internalformat, width, border, imageSize, data);
-	checkOpenGLError("glCompressedTexImage1D(%s, %d, %s, %d, %d, %d, 0x%8X)",
-		glTexTargetToString(target).c_str(), level, glInternalFormatToString(internalformat).c_str(),
-		width, border, imageSize, data);
+	checkOpenGLError("glCompressedTexImage1D(%s, %d, %s, %d, %d, %d, 0x%8X)", glTexTargetToString(target).c_str(),
+		level, glInternalFormatToString(static_cast<int32_t>(internalformat)).c_str(),width, border, imageSize, data);
 }
 
 #endif
@@ -505,7 +504,7 @@ void et::etCompressedTexImage2D(uint32_t target, int level, uint32_t internalfor
 
 #if (ET_DEBUG)
 	checkOpenGLError("glCompressedTexImage2D(%s, %d, %s, %d, %d, %d, %d, 0x%8X)",
-		glTexTargetToString(target).c_str(), level, glInternalFormatToString(internalformat).c_str(),
+		glTexTargetToString(target).c_str(), level, glInternalFormatToString(static_cast<int32_t>(internalformat)).c_str(),
 		width, height, border, imageSize, data);
 #endif
 }
@@ -520,7 +519,7 @@ void et::etTexImage2D(uint32_t target, int level, int internalformat, GLsizei wi
 #if (ET_DEBUG)
 	checkOpenGLError("glTexImage2D(%s, %d, %s, %d, %d, %d, %s, %s, %, 0x%8X)",
 		glTexTargetToString(target).c_str(), level, glInternalFormatToString(internalformat).c_str(),
-		width, height, border, glInternalFormatToString(format).c_str(), glTypeToString(type).c_str(),
+		width, height, border, glInternalFormatToString(static_cast<int32_t>(format)).c_str(), glTypeToString(type).c_str(),
 		pixels);
 #endif
 }

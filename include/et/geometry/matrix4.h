@@ -97,18 +97,30 @@ namespace et
 		const char* binary() const
 			{ return mat[0].binary(); }  
 
-		T& operator ()(int i) 
+		T& operator () (int i)
 			{ return *(mat[0].data() + i); }
 		
-		const T& operator ()(int i) const 
+		const T& operator () (int i) const
 			{ return *(mat[0].data() + i); }
 
-		vector4<T>& operator [](int i)
+		vector4<T>& operator [] (int i)
 			{ return mat[i];}
 
-		const vector4<T>& operator [](int i) const
+		const vector4<T>& operator [] (int i) const
 			{ return mat[i];}
 
+		T& operator () (size_t i)
+			{ return *(mat[0].data() + i); }
+		
+		const T& operator () (size_t i) const
+			{ return *(mat[0].data() + i); }
+		
+		vector4<T>& operator [] (size_t i)
+			{ return mat[i];}
+		
+		const vector4<T>& operator [] (size_t i) const
+			{ return mat[i];}
+		
 		vector4<T> column(int c) const
 			{ return vector4<T>( mat[0][c], mat[1][c], mat[2][c], mat[3][c]); }
 

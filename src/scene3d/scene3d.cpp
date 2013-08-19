@@ -137,7 +137,7 @@ Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, Render
 
 		if (chunkEqualTo(readChunk, HeaderMaterials))
 		{
-			size_t numMaterials = deserializeInt(stream);
+			size_t numMaterials = deserializeUInt(stream);
 
 			if (fmt == StorageFormat_Binary)
 			{
@@ -174,7 +174,7 @@ Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, Render
 		}
 		else if (chunkEqualTo(readChunk, HeaderVertexArrays))
 		{
-			size_t numVertexArrays = deserializeInt(stream);
+			size_t numVertexArrays = deserializeUInt(stream);
 			for (size_t i = 0; i < numVertexArrays; ++i)
 			{
 				VertexArray::Pointer va(new VertexArray());
@@ -323,7 +323,7 @@ bool Scene3d::performDeserialization(std::istream& stream, RenderContext* rc, Ob
 
 	_externalFactory = factory;
 
-	size_t version = deserializeInt(stream);
+	size_t version = deserializeUInt(stream);
 	if (version > static_cast<size_t>(SceneVersionLatest))
 	{
 		log::error("Unsupported version of the ETM file.");
@@ -336,19 +336,19 @@ bool Scene3d::performDeserialization(std::istream& stream, RenderContext* rc, Ob
 		deserializeChunk(stream, readChunk);
 		if (chunkEqualTo(readChunk, HeaderData))
 		{
-			size_t storageVersion = deserializeInt(stream);
+			size_t storageVersion = deserializeUInt(stream);
 			
 			size_t numStorages = 0;
 			StorageFormat format = StorageFormat_Binary;
 			
 			if (storageVersion == StorageVersion_1_0_0)
 			{
-				numStorages = deserializeInt(stream);
+				numStorages = deserializeUInt(stream);
 			}
 			else if (storageVersion == StorageVersion_1_0_1)
 			{
 				format = static_cast<StorageFormat>(deserializeInt(stream));
-				numStorages = deserializeInt(stream);
+				numStorages = deserializeUInt(stream);
 			}
 			else
 			{

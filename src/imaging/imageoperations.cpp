@@ -26,31 +26,33 @@ mat3i ImageOperations::matrixFilterSharpen = mat3i(
 	-1,  5, -1,
 	 0, -1,  0);
 
-size_t indexForCoord(const vec2i& coord, const vec2i& size);
+int indexForCoord(const vec2i& coord, const vec2i& size);
 bool grayscaleSortFunction(const vec4ub& v1, const vec4ub& v2);
 
 inline int roundf(float v, int minV, int maxV)
 	{ return clamp(static_cast<int>(v), minV, maxV); }
 
-void ImageOperations::transfer(const BinaryDataStorage& src, const vec2i& srcSize, size_t srcComponents,
-	BinaryDataStorage& dst, const vec2i& dstSize, size_t dstComponents, const vec2i& position)
+void ImageOperations::transfer(const BinaryDataStorage& src, const vec2i& srcSize, int srcComponents,
+	BinaryDataStorage& dst, const vec2i& dstSize, int dstComponents, const vec2i& position)
 {
 	int startX = clamp(position.x, 0, dstSize.x - 1);
 	int startY = clamp(position.y, 0, dstSize.y - 1);			
 	int endX = clamp(position.x + srcSize.x, 0, dstSize.x - 1);	
 	int endY = clamp(position.y + srcSize.y, 0, dstSize.y - 1);	
-	for (int y = startY, srcY = 0; y < endY; ++y, ++srcY)			
+	for (int y = startY, srcY = 0; y < endY; ++y, ++srcY)
+	{
 		for (int x = startX, srcX = 0; x < endX; ++x, ++srcX)
 		{
 			int dstIndex = dstComponents * (x + (dstSize.y - y - 1) * dstSize.x);
 			int srcIndex = srcComponents * (srcX + (srcSize.y - srcY - 1) * srcSize.x);
-			for (size_t k = 0; k < dstComponents; ++k)
-				dst[dstIndex+k] = (k < srcComponents) ? src[srcIndex + k] : 255;
+			for (int k = 0; k < dstComponents; ++k)
+				dst[dstIndex + k] = (k < srcComponents) ? src[srcIndex + k] : 255;
 		}
+	}
 }
 
-void ImageOperations::draw(const BinaryDataStorage& src, const vec2i& srcSize, size_t srcComponents,
-			BinaryDataStorage& dst, const vec2i& dstSize, size_t dstComponents, const recti& destRect,
+void ImageOperations::draw(const BinaryDataStorage& src, const vec2i& srcSize, int srcComponents,
+			BinaryDataStorage& dst, const vec2i& dstSize, int dstComponents, const recti& destRect,
 			ImageBlendType blend, ImageFilteringType)
 {
 	int startX = clamp(destRect.left, 0, dstSize.x);
@@ -81,7 +83,7 @@ void ImageOperations::draw(const BinaryDataStorage& src, const vec2i& srcSize, s
 			int indexNextUV = srcComponents * (nextU + (srcSize.y - nextV - 1) * srcSize.x);
 
 			vec4ub color(0);
-			for (size_t c = 0; c < srcComponents; ++c)
+			for (int c = 0; c < srcComponents; ++c)
 			{
 				unsigned char topInterpolation = static_cast<unsigned char>(
 					static_cast<float>(src[index0 + c]) * (1.0f - du) +  static_cast<float>(src[indexNextU + c]) * du);
@@ -95,7 +97,7 @@ void ImageOperations::draw(const BinaryDataStorage& src, const vec2i& srcSize, s
 				color.w = 255;
 
 			int dstIndex = dstComponents * (x + (dstSize.y - 1 - y) * dstSize.x);
-			for (size_t c = 0; c < dstComponents; ++c)
+			for (int c = 0; c < dstComponents; ++c)
 			{
 				if (blend == ImageBlendType_Additive)
 				{
@@ -111,7 +113,7 @@ void ImageOperations::draw(const BinaryDataStorage& src, const vec2i& srcSize, s
 	}	
 }
 
-void ImageOperations::fill(BinaryDataStorage& dst, const vec2i& dstSize, size_t dstComponents, const recti& r, const vec4ub& color)
+void ImageOperations::fill(BinaryDataStorage& dst, const vec2i& dstSize, int dstComponents, const recti& r, const vec4ub& color)
 {
 	int startX = clamp(r.left, 0, dstSize.x - 1);
 	int startY = clamp(r.top, 0, dstSize.y - 1);
@@ -123,27 +125,27 @@ void ImageOperations::fill(BinaryDataStorage& dst, const vec2i& dstSize, size_t 
 		for (int x = startX; x < endX; ++x)
 		{
 			int dstIndex = dstComponents * (x + (dstSize.y - 1 - y) * dstSize.x);
-			for (size_t k = 0; k < dstComponents; ++k)
+			for (int k = 0; k < dstComponents; ++k)
 				dst[dstIndex + k] = color[k];
 		}
 	}
 }
 
-void ImageOperations::applyPixelFilter(BinaryDataStorage& data, const vec2i& size, size_t components, PixelFilter* filter, void* context)
+void ImageOperations::applyPixelFilter(BinaryDataStorage& data, const vec2i& size, int components, PixelFilter* filter, void* context)
 {
-	size_t k = 0;
+	int k = 0;
 	for (int y = 0; y < size.y; ++y)
 	{
 		for (int x = 0; x < size.x; ++x)
 		{
 			vec4ub pixel(0);
 
-			for (size_t c = 0; c < components; ++c)
+			for (int c = 0; c < components; ++c)
 				pixel[c] = data[k + c];
 
 			filter->applyRGBA(pixel, context);
 
-			for (size_t c = 0; c < components; ++c)
+			for (int c = 0; c < components; ++c)
 				data[k + c] = pixel[c];
 
 			k += components;
@@ -151,7 +153,7 @@ void ImageOperations::applyPixelFilter(BinaryDataStorage& data, const vec2i& siz
 	}
 }
 
-void ImageOperations::blur(BinaryDataStorage& data, const vec2i& size, size_t components, vec2i direction, size_t radius, ImageBlurType type)
+void ImageOperations::blur(BinaryDataStorage& data, const vec2i& size, int components, vec2i direction, int radius, ImageBlurType type)
 {
 	type = ImageBlurType_Average;
 
@@ -160,23 +162,23 @@ void ImageOperations::blur(BinaryDataStorage& data, const vec2i& size, size_t co
 	{
 		for (int x = 0; x < size.x; ++x)
 		{
-			size_t i0 = components * indexForCoord(vec2i(x, y), size);
+			int i0 = components * indexForCoord(vec2i(x, y), size);
 
 			vec4i sum;
-			size_t scale = (type == ImageBlurType_Average) ? 1 : (radius + 1);
-			size_t totalScale = scale;
-			for (size_t c = 0; c < components; ++c)
+			int scale = (type == ImageBlurType_Average) ? 1 : (radius + 1);
+			int totalScale = scale;
+			for (int c = 0; c < components; ++c)
 				sum[c] = source[i0 + c] * scale;
 
-			for (size_t r = 1; r <= radius; ++r)
+			for (int r = 1; r <= radius; ++r)
 			{
 				vec2i vNext = vec2i(x, y) + direction * r;
 				vec2i vPrev = vec2i(x, y) - direction * r;
-				size_t iNext = components * indexForCoord(vNext, size);
-				size_t iPrev = components * indexForCoord(vPrev, size);
+				int iNext = components * indexForCoord(vNext, size);
+				int iPrev = components * indexForCoord(vPrev, size);
 				scale = (type == ImageBlurType_Average) ? 1 : (radius + 1 - r);
 				totalScale += 2 * scale;
-				for (size_t c = 0; c < components; ++c)
+				for (int c = 0; c < components; ++c)
 				{
 					sum[c] += source[iNext + c] * scale;
 					sum[c] += source[iPrev + c] * scale;
@@ -185,33 +187,33 @@ void ImageOperations::blur(BinaryDataStorage& data, const vec2i& size, size_t co
 			}
 
 			sum /= totalScale;
-			for (size_t c = 0; c < components; ++c)
+			for (int c = 0; c < components; ++c)
 				data[i0 + c] = static_cast<unsigned char>(sum[c]);
 		}
 	}
 }
 
-void ImageOperations::median(BinaryDataStorage& data, const vec2i& size, size_t components, int radius)
+void ImageOperations::median(BinaryDataStorage& data, const vec2i& size, int components, int radius)
 {
 	BinaryDataStorage source(data);
 
 	std::vector<vec4ub> matrix;
-	matrix.reserve((1 + 2 * radius) * (1 + 2 * radius));
+	matrix.reserve(static_cast<std::vector<vec4ub>::size_type>((1 + 2 * radius) * (1 + 2 * radius)));
 
 	for (int y = 0; y < size.y; ++y)
 	{
 		for (int x = 0; x < size.x; ++x)
 		{
-			size_t i0 = components * indexForCoord(vec2i(x, y), size);
+			int i0 = components * indexForCoord(vec2i(x, y), size);
 
 			matrix.clear();
 			for (int v = -radius; v <= radius; ++v)
 			{
 				for (int u = - radius; u <= radius; ++u)
 				{
-					size_t index = components * indexForCoord(vec2i(x + u, y + v), size);
+					int index = components * indexForCoord(vec2i(x + u, y + v), size);
 					vec4ub color(0);
-					for (size_t c = 0; c < components; ++c)
+					for (int c = 0; c < components; ++c)
 						color[c] = source[index+c];
 					matrix.push_back(color);
 				}
@@ -220,13 +222,13 @@ void ImageOperations::median(BinaryDataStorage& data, const vec2i& size, size_t 
 			std::sort(matrix.begin(), matrix.end(), grayscaleSortFunction);
 
 			vec4ub& middle = matrix.at(matrix.size() / 2);
-			for (size_t c = 0; c < components; ++c)
+			for (int c = 0; c < components; ++c)
 				data[i0 + c] = middle[c];
 		}
 	}
 }
 
-void ImageOperations::applyMatrixFilter(BinaryDataStorage& data, const vec2i& size, size_t components, const mat3i& m)
+void ImageOperations::applyMatrixFilter(BinaryDataStorage& data, const vec2i& size, int components, const mat3i& m)
 {
 	BinaryDataStorage source(data);
 	matrix3<unsigned char> colorMatrix[4];
@@ -239,8 +241,8 @@ void ImageOperations::applyMatrixFilter(BinaryDataStorage& data, const vec2i& si
 			{
 				for (int dx = -1; dx <= 1; ++dx)
 				{
-					size_t index = components * indexForCoord(vec2i(x + dx, y + dy), size);
-					for (size_t c = 0; c < components; ++c)
+					int index = components * indexForCoord(vec2i(x + dx, y + dy), size);
+					for (int c = 0; c < components; ++c)
 						colorMatrix[c][dy+1][dx+1] = source[index+c];
 				}
 			}
@@ -263,14 +265,14 @@ void ImageOperations::applyMatrixFilter(BinaryDataStorage& data, const vec2i& si
 			if (cSum)
 				result /= cSum;
 
-			size_t i0 = components * indexForCoord(vec2i(x, y), size);
-			for (size_t c = 0; c < components; ++c)
+			int i0 = components * indexForCoord(vec2i(x, y), size);
+			for (int c = 0; c < components; ++c)
 				data[i0 + c] = static_cast<unsigned char>(clamp(result[c], 0, 255));
 		}
 	}
 }
 
-void ImageOperations::normalMapFilter(BinaryDataStorage& data, const vec2i& size, size_t components, const vec2& scale)
+void ImageOperations::normalMapFilter(BinaryDataStorage& data, const vec2i& size, int components, const vec2& scale)
 {
 	assert(components > 2);
 
@@ -285,9 +287,9 @@ void ImageOperations::normalMapFilter(BinaryDataStorage& data, const vec2i& size
 			vec2i nextX(x + (halfX ? 1 : -1), y);
 			vec2i nextY(x, y + (halfY ? 1 : -1));
 
-			size_t c00 = components * indexForCoord(vec2i(x, y), size);
-			size_t c01 = components * indexForCoord(nextX, size);
-			size_t c10 = components * indexForCoord(nextY, size);
+			int c00 = components * indexForCoord(vec2i(x, y), size);
+			int c01 = components * indexForCoord(nextX, size);
+			int c10 = components * indexForCoord(nextY, size);
 
 			short h00 = source[c00];
 			short h01 = source[c01];
@@ -312,10 +314,10 @@ void ImageOperations::normalMapFilter(BinaryDataStorage& data, const vec2i& size
 /*
  * Internal Stuff
  */
-size_t indexForCoord(const vec2i& coord, const vec2i& size)
+int indexForCoord(const vec2i& coord, const vec2i& size)
 {
-	size_t xVal = coord.x < 0 ? 0 : (coord.x >= size.x ? size.x - 1 : coord.x);
-	size_t yVal = coord.y < 0 ? 0 : (coord.y >= size.y ? size.y - 1 : coord.y);
+	int xVal = coord.x < 0 ? 0 : (coord.x >= size.x ? size.x - 1 : coord.x);
+	int yVal = coord.y < 0 ? 0 : (coord.y >= size.y ? size.y - 1 : coord.y);
 	return yVal * size.x + xVal;
 }
 

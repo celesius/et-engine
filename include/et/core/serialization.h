@@ -14,23 +14,47 @@
 
 namespace et
 {
-	inline void serializeInt(std::ostream& stream, int value)
+	inline void serializeInt(std::ostream& stream, int32_t value)
 	{
 		assert(stream.good());
 		stream.write(reinterpret_cast<const char*>(&value), sizeof(value));
 	}
 
-	inline void serializeInt(std::ostream& stream, size_t value)
+	inline void serializeInt(std::ostream& stream, uint32_t value)
 	{
-        serializeInt(stream, static_cast<int>(value & 0xffffffff));
+		assert(stream.good());
+		stream.write(reinterpret_cast<const char*>(&value), sizeof(value));
 	}
+
+#if (!ET_PLATFORM_WIN32)
+	inline void serializeInt(std::ostream& stream, size_t value)
+		{ serializeInt(stream, static_cast<uint32_t>(value)); }
+#endif
     
-	inline int deserializeInt(std::istream& stream)
+	inline int32_t deserializeInt(std::istream& stream)
 	{
 		assert(stream.good());
 
 		int value = 0;
 		stream.read(reinterpret_cast<char*>(&value), sizeof(value)); 
+		return value;
+	}
+	
+	inline uint32_t deserializeUInt(std::istream& stream)
+	{
+		assert(stream.good());
+		
+		uint32_t value = 0;
+		stream.read(reinterpret_cast<char*>(&value), sizeof(value));
+		return value;
+	}
+	
+	inline size_t deserializeSizeT(std::istream& stream)
+	{
+		assert(stream.good());
+		
+		size_t value = 0;
+		stream.read(reinterpret_cast<char*>(&value), sizeof(uint32_t));
 		return value;
 	}
 
@@ -40,8 +64,8 @@ namespace et
 
 		serializeInt(stream, s.size());
         
-		if (s.size())
-			stream.write(s.c_str(), s.size());
+		if (s.size() > 0)
+			stream.write(s.c_str(), static_cast<std::streamsize>(s.size()));
 	}
 
 	inline std::string deserializeString(std::istream& stream)

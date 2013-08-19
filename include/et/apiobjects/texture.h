@@ -28,7 +28,7 @@ namespace et
 
 		void setMaxLod(RenderContext* rc, size_t value);
 
-		void compareRefToTexture(RenderContext* rc, bool enable, uint32_t compareFunc);
+		void compareRefToTexture(RenderContext* rc, bool enable, int32_t compareFunc);
 		void generateMipMaps(RenderContext* rc);
 
 		vec2 getTexCoord(const vec2& ivec, TextureOrigin origin = TextureOrigin_TopLeft) const;
@@ -42,7 +42,7 @@ namespace et
 		uint32_t glID() const
 			{ return _glID; }
 
-		uint32_t internalFormat() const
+		int32_t internalFormat() const
 			{ return _desc->internalformat; }
 
 		uint32_t format() const

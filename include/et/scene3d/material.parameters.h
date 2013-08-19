@@ -115,15 +115,15 @@ namespace et
 	{
 		DefaultMaterialEntry<T> values[MaterialParameter_max];
 		
-		DefaultMaterialEntry<T>& operator[] (int i)
+		DefaultMaterialEntry<T>& operator[] (size_t i)
 		{
-			assert((i >= 0) && (i < MaterialParameter_max));
+			assert(i < MaterialParameter_max);
 			return values[i];
 		}
 		
-		const DefaultMaterialEntry<T>& operator[] (int i) const
+		const DefaultMaterialEntry<T>& operator[] (size_t i) const
 		{
-			assert((i >= 0) && (i < MaterialParameter_max));
+			assert(i < MaterialParameter_max);
 			return values[i];
 		}
 		

@@ -77,7 +77,7 @@ Texture TextureFactory::loadTexture(const std::string& fileName, ObjectsCache& c
 	return texture;
 }
 
-Texture TextureFactory::genTexture(uint32_t target, uint32_t internalformat, const vec2i& size,
+Texture TextureFactory::genTexture(uint32_t target, int32_t internalformat, const vec2i& size,
 	uint32_t format, uint32_t type, const BinaryDataStorage& data, const std::string& id)
 {
 	TextureDescription::Pointer desc(new TextureDescription);
@@ -120,7 +120,7 @@ Texture TextureFactory::genTexture(uint32_t target, uint32_t internalformat, con
 	return Texture(new TextureData(renderContext(), desc, id, false));
 }
 
-Texture TextureFactory::genCubeTexture(uint32_t internalformat, GLsizei size, uint32_t format, uint32_t type,
+Texture TextureFactory::genCubeTexture(int32_t internalformat, GLsizei size, uint32_t format, uint32_t type,
 	const std::string& id)
 {
 	TextureDescription::Pointer desc(new TextureDescription);
@@ -142,19 +142,17 @@ Texture TextureFactory::genTexture(TextureDescription::Pointer desc)
 
 Texture TextureFactory::genNoiseTexture(const vec2i& size, bool norm, const std::string& id)
 {
-	const float RAND_MAXF = static_cast<float>(RAND_MAX);
-
 	DataStorage<vec4ub> randata(size.square());
 	for (size_t i = 0; i < randata.size(); ++i)
-	{ 
-		vec4 rand_f = vec4(static_cast<float>(rand()) / RAND_MAXF, static_cast<float>(rand()) / RAND_MAXF,
-						   static_cast<float>(rand()) / RAND_MAXF, static_cast<float>(rand()) / RAND_MAXF);
-		rand_f = 2.0f * rand_f - vec4(1.0f);
+	{
+		vec4 rand_f = vec4(randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f),
+			randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f));
+		
 		randata[i] = vec4f_to_4ub(norm ? vec4(rand_f.xyz().normalize(), rand_f.w) : rand_f);
 	}
 
 	TextureDescription::Pointer desc(new TextureDescription);
-	desc->data = BinaryDataStorage(size.square() * 4);
+	desc->data = BinaryDataStorage(4 * size.square());
 	desc->target = GL_TEXTURE_2D;
 	desc->format = GL_RGBA;
 	desc->internalformat = GL_RGBA;
@@ -196,7 +194,7 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 		et::loadTexture(negz)
 	};
 
-	int maxCubemapSize = openGLCapabilites().maxCubemapTextureSize();
+	int maxCubemapSize = static_cast<int>(openGLCapabilites().maxCubemapTextureSize());
 	
 	for (size_t l = 0; l < 6; ++l)
 	{

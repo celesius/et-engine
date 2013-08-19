@@ -17,7 +17,7 @@ SupportMesh::SupportMesh(const std::string& name, Element* parent) : Mesh(name, 
 }
 
 SupportMesh::SupportMesh(const std::string& name, const VertexArrayObject& ib, const Material& material,
-	size_t startIndex, size_t numIndexes, Element* parent) : Mesh(name, ib, material, startIndex, numIndexes, parent),
+	IndexType startIndex, size_t numIndexes, Element* parent) : Mesh(name, ib, material, startIndex, numIndexes, parent),
 	_data(numIndexes / 3), _cachedFinalTransformScale(0.0f), _inverseTransformValid(false)
 {
 
@@ -38,8 +38,8 @@ void SupportMesh::fillCollisionData(VertexArray::Pointer v, IndexArray::Pointer 
 	vec3 minOffset;
 	vec3 maxOffset;
 	float distance = 0.0f;
-	size_t iStart = startIndex() / 3;
-	size_t iEnd = iStart + numIndexes() / 3;
+	IndexType iStart = startIndex() / 3;
+	IndexType iEnd = iStart + static_cast<IndexType>(numIndexes()) / 3;
 	for (IndexArray::PrimitiveIterator i = ind->primitive(iStart) , e = ind->primitive(iEnd); i != e; ++i)
 	{
 		IndexArray::Primitive& p = *i;
@@ -114,7 +114,7 @@ void SupportMesh::serialize(std::ostream& stream, SceneVersion version)
 	serializeVector(stream, _size);
 	serializeVector(stream, _center);
 	serializeInt(stream, _data.size());
-	stream.write(_data.binary(), _data.dataSize());
+	stream.write(_data.binary(), static_cast<std::streamsize>(_data.dataSize()));
 	Mesh::serialize(stream, version);
 }
 
@@ -123,7 +123,7 @@ void SupportMesh::deserialize(std::istream& stream, ElementFactory* factory, Sce
 	_radius = deserializeFloat(stream);
 	_size = deserializeVector<vec3>(stream);
 	_center = deserializeVector<vec3>(stream);
-	_data.resize(deserializeInt(stream));
+	_data.resize(deserializeUInt(stream));
 
 	if (version <= SceneVersion_1_0_1)
 	{
@@ -136,7 +136,7 @@ void SupportMesh::deserialize(std::istream& stream, ElementFactory* factory, Sce
 	}
 	else 
 	{
-		stream.read(_data.binary(), _data.dataSize());
+		stream.read(_data.binary(), static_cast<std::streamsize>(_data.dataSize()));
 	}
 
 	Mesh::deserialize(stream, factory, version);

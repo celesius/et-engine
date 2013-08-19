@@ -66,12 +66,10 @@ Thread::~Thread()
 	delete _private;
 }
 
-bool Thread::run()
+void Thread::run()
 {
-	if (_private->running.atomicCounterValue() != 0) return false;
-
-	_private->thread = CreateThread(0, 0, ThreadPrivate::threadProc, this, 0, &_private->threadId);
-	return true;
+	if (_private->running.atomicCounterValue() == 0)
+		_private->thread = CreateThread(0, 0, ThreadPrivate::threadProc, this, 0, &_private->threadId);
 }
 
 void Thread::sleep(float sec)
@@ -105,14 +103,13 @@ void Thread::resume()
 	SetEvent(_private->activityEvent);
 }
 
-bool Thread::stop()
+void Thread::stop()
 {
-	if (_private->running.atomicCounterValue() == 0) return false;
-	
-	resume();
-
-	_private->running.release();
-	return true;
+	if (_private->running.atomicCounterValue() != 0)
+	{
+		resume();
+		_private->running.release();
+	}
 }
 
 void Thread::terminate(int exitCode)

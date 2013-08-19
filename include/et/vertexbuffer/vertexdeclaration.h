@@ -45,7 +45,7 @@ namespace et
 		size_t components() const
 			{ return _components; }
 
-		size_t dataType() const 
+		uint32_t dataType() const
 			{ return _dataType; }
 
 		void setStride(int s)
@@ -57,7 +57,7 @@ namespace et
 		int _stride;
 		size_t _offset;
 		size_t _components;
-		size_t _dataType;
+		uint32_t _dataType;
 	};
 
 	typedef std::vector<VertexElement> VertexElementList;

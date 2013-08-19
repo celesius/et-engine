@@ -11,21 +11,21 @@
 
 using namespace et;
 
-inline size_t getIndex(size_t u, size_t v, size_t u_sz, size_t v_sz)
-		{ return clamp<size_t>(u, 0, u_sz - 1) + clamp<size_t>(v, 0, v_sz - 1) * u_sz; }
+inline int getIndex(int u, int v, int u_sz, int v_sz)
+		{ return clamp<int>(u, 0, u_sz - 1) + clamp<int>(v, 0, v_sz - 1) * u_sz; }
 
 size_t primitives::indexCountForRegularMesh(const vec2i& meshSize, PrimitiveType geometryType)
 {
 	switch (geometryType)
 	{
 		case PrimitiveType_Points:
-			return meshSize.square();
+			return static_cast<size_t>(meshSize.square());
 
 		case PrimitiveType_Triangles:
-			return ((meshSize.x > 1) ? meshSize.x - 1 : 1) * ((meshSize.y > 1) ? meshSize.y - 1 : 1) * 6;
+			return static_cast<size_t>(((meshSize.x > 1) ? meshSize.x - 1 : 1) * ((meshSize.y > 1) ? meshSize.y - 1 : 1) * 6);
 
 		case PrimitiveType_TriangleStrips:
-			return ((meshSize.y > 1) ? meshSize.y - 1 : 1) * (2 * meshSize.x + 1) - 1;
+			return static_cast<size_t>(((meshSize.y > 1) ? meshSize.y - 1 : 1) * (2 * meshSize.x + 1) - 1);
 			
 		default:
 			assert("Unimplemented" && 0);
@@ -36,9 +36,7 @@ size_t primitives::indexCountForRegularMesh(const vec2i& meshSize, PrimitiveType
 
 void primitives::createPhotonMap(DataStorage<vec2>& buffer, const vec2i& density)
 {
-	int numPhotons = density.square();
-
-	buffer.fitToSize(numPhotons);
+	buffer.fitToSize(static_cast<size_t>(density.square()));
 
 	vec2 texel = vec2(1.0f / density.x, 1.0f / density.y);
 	vec2 dxdy = vec2(0.5f / density.x, 0.5f / density.y);
@@ -52,7 +50,7 @@ void primitives::createSphere(VertexArray::Pointer data, float radius, const vec
 	const vec3& center, const vec2& hemiSphere)
 {
 	size_t lastIndex = data->size();
-	data->increase(density.square());
+	data->increase(static_cast<size_t>(density.square()));
 
 	VertexDataChunk pos_c = data->chunk(Usage_Position);
 	VertexDataChunk norm_c = data->chunk(Usage_Normal);
@@ -101,7 +99,7 @@ void primitives::createTorus(VertexArray::Pointer data, float centralRadius, flo
 	const vec2i& density)
 {
 	size_t lastIndex = data->size();
-	data->increase(density.square());
+	data->increase(static_cast<size_t>(density.square()));
 
 	VertexDataChunk pos_c = data->chunk(Usage_Position);
 	VertexDataChunk norm_c = data->chunk(Usage_Normal);
@@ -159,7 +157,7 @@ void primitives::createCylinder(VertexArray::Pointer data, float radius, float h
 	const vec3& center)
 {
 	size_t lastIndex = data->size();
-	data->increase(density.square());
+	data->increase(static_cast<size_t>(density.square()));
 
 	VertexDataChunk pos_c = data->chunk(Usage_Position);
 	VertexDataChunk norm_c = data->chunk(Usage_Normal);
@@ -208,7 +206,7 @@ void primitives::createPlane(VertexArray::Pointer data, const vec3& normal, cons
 	const vec2i& density, const vec3& center, const vec2& texCoordScale, const vec2& texCoordOffset)
 {
 	size_t lastIndex = data->size();
-	data->increase(density.square());
+	data->increase(static_cast<size_t>(density.square()));
 
 	VertexDataChunk pos_c = data->chunk(Usage_Position);
 	VertexDataChunk norm_c = data->chunk(Usage_Normal);
@@ -265,9 +263,9 @@ void primitives::createPlane(VertexArray::Pointer data, const vec3& normal, cons
 	{
 		for (int u = 0; u < dv.x; u++)
 		{
-			size_t n00 = getIndex(u, v, dv.x, dv.y);
-			size_t n01 = 0;
-			size_t n10 = 0;
+			int n00 = getIndex(u, v, dv.x, dv.y);
+			int n01 = 0;
+			int n10 = 0;
 
 			vec3 p00 = pos[n00];
 			vec3 p01;
@@ -316,9 +314,9 @@ void primitives::createPlane(VertexArray::Pointer data, const vec3& normal, cons
 }
 
 IndexType primitives::buildTriangleStripIndexes(IndexArray& buffer, const vec2i& dim,
-	IndexType index0, size_t offset)
+	IndexType index0, IndexType offset)
 {
-	size_t k = offset;
+	IndexType k = offset;
 	IndexType rowSize = static_cast<IndexType>(dim.x);
 	IndexType colSize = static_cast<IndexType>(dim.y);
 
@@ -355,9 +353,9 @@ IndexType primitives::buildTriangleStripIndexes(IndexArray& buffer, const vec2i&
 }
 
 IndexType primitives::buildTrianglesIndexes(IndexArray& buffer, const vec2i& dim,
-	IndexType vertexOffset, size_t indexOffset)
+	IndexType vertexOffset, IndexType indexOffset)
 {
-	size_t k = indexOffset;
+	IndexType k = indexOffset;
 	IndexType rowSize = static_cast<IndexType>(dim.x);
 	IndexType colSize = static_cast<IndexType>(dim.y);
 
@@ -381,21 +379,21 @@ IndexType primitives::buildTrianglesIndexes(IndexArray& buffer, const vec2i& dim
 }
 
 IndexType primitives::buildTrianglesIndexes(IndexArray::Pointer buffer, const vec2i& dim,
-	IndexType vertexOffset, size_t indexOffset)
+	IndexType vertexOffset, IndexType indexOffset)
 {
 	assert(buffer.valid());
 	return buildTrianglesIndexes(buffer.reference(), dim, vertexOffset, indexOffset);
 }
 
 IndexType primitives::buildTriangleStripIndexes(IndexArray::Pointer buffer, const vec2i& dim,
-	IndexType vertexOffset, size_t indexOffset)
+	IndexType vertexOffset, IndexType indexOffset)
 {
 	assert(buffer.valid());
 	return buildTriangleStripIndexes(buffer.reference(), dim, vertexOffset, indexOffset);
 }
 
 void primitives::calculateNormals(VertexArray::Pointer data, const IndexArray::Pointer& buffer,
-	size_t first, size_t last)
+	IndexType first, IndexType last)
 {
 	assert(first < last);
 
@@ -440,7 +438,7 @@ void primitives::calculateNormals(VertexArray::Pointer data, const IndexArray::P
 }
 
 void primitives::calculateTangents(VertexArray::Pointer data, const IndexArray::Pointer& buffer,
-	size_t first, size_t last)
+	IndexType first, IndexType last)
 {
 	assert(first < last);
 	
@@ -514,7 +512,7 @@ void primitives::calculateTangents(VertexArray::Pointer data, const IndexArray::
 }
 
 void primitives::smoothTangents(VertexArray::Pointer data, const IndexArray::Pointer&,
-	size_t first, size_t last)
+	IndexType first, IndexType last)
 {
 	assert(first < last);
 	

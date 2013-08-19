@@ -148,8 +148,9 @@ void Renderer::drawElements(PrimitiveType primitiveType, const IndexBuffer& ib, 
 
 void Renderer::drawAllElements(const IndexBuffer& ib)
 {
-	if (ib.valid())
-		etDrawElements(ib->primitiveType(), ib->size(), ib->dataType(), 0);
+	if (ib.invalid()) return;
+	
+	etDrawElements(ib->primitiveType(), static_cast<GLsizei>(ib->size()), ib->dataType(), nullptr);
 }
 
 void Renderer::drawElementsBaseIndex(const VertexArrayObject& vao, int base, size_t first, size_t count)

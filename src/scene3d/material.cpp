@@ -68,10 +68,10 @@ const std::string materialKeys[MaterialParameter_max] =
 	std::string("transparent_color"),	//	MaterialParameter_TransparentColor,
 };
 
-const int MaterialVersion1_0_0 = 'MAT1';
-const int MaterialVersion1_0_1 = 'MAT2';
-const int MaterialVersion1_0_2 = 'MAT3';
-const int MaterialVersion1_0_3 = 'MAT4';
+const int MaterialVersion1_0_0 = ET_CHARACTER_LITERAL('M', 'A', 'T', '1');
+const int MaterialVersion1_0_1 = ET_CHARACTER_LITERAL('M', 'A', 'T', '2');
+const int MaterialVersion1_0_2 = ET_CHARACTER_LITERAL('M', 'A', 'T', '3');
+const int MaterialVersion1_0_3 = ET_CHARACTER_LITERAL('M', 'A', 'T', '4');
 const int MaterialCurrentVersion = MaterialVersion1_0_3;
 
 inline size_t keyToMaterialParameter(const std::string& k)
@@ -317,8 +317,8 @@ void MaterialData::deserialize(std::istream& stream, RenderContext* rc, ObjectsC
 void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
 	const std::string& texturesBasePath, bool async)
 {
-	size_t count = deserializeInt(stream);
-	for (size_t i = 0; i < count; ++i)
+	int count = deserializeInt(stream);
+	for (int i = 0; i < count; ++i)
 	{
 		std::string param = deserializeString(stream);
 		int value = deserializeInt(stream);
@@ -326,7 +326,7 @@ void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, Objects
 	}
 
 	count = deserializeInt(stream);
-	for (size_t i = 0; i < count; ++i)
+	for (int i = 0; i < count; ++i)
 	{
 		std::string param = deserializeString(stream);
 		float value = deserializeFloat(stream);
@@ -334,7 +334,7 @@ void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, Objects
 	}
 
 	count = deserializeInt(stream);
-	for (size_t i = 0; i < count; ++i)
+	for (int i = 0; i < count; ++i)
 	{
 		std::string param = deserializeString(stream);
 		vec4 value = deserializeVector<vec4>(stream);
@@ -342,7 +342,7 @@ void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, Objects
 	}
 
 	count = deserializeInt(stream);
-	for (size_t i = 0; i < count; ++i)
+	for (int i = 0; i < count; ++i)
 	{
 		std::string param = deserializeString(stream);
 		std::string path = deserializeString(stream);
@@ -350,7 +350,7 @@ void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, Objects
 	}
 
 	count = deserializeInt(stream);
-	for (size_t i = 0; i < count; ++i)
+	for (int i = 0; i < count; ++i)
 	{
 		std::string param = deserializeString(stream);
 		std::string value = deserializeString(stream);
@@ -361,42 +361,42 @@ void MaterialData::deserialize1(std::istream& stream, RenderContext* rc, Objects
 void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
 	const std::string& texturesBasePath, bool async)
 {
-	size_t count = deserializeInt(stream);
-	for (size_t i = 0; i < count; ++i)
+	int count = deserializeInt(stream);
+	for (int i = 0; i < count; ++i)
 	{
-		int param = deserializeInt(stream);
+		size_t param = deserializeUInt(stream);
 		int value = deserializeInt(stream);
 		setInt(param, value);
 	}
 
 	count = deserializeInt(stream);
-	for (size_t i = 0; i < count; ++i)
+	for (int i = 0; i < count; ++i)
 	{
-		int param = deserializeInt(stream);
+		size_t param = deserializeUInt(stream);
 		float value = deserializeFloat(stream);
 		setFloat(param, value);
 	}
 
 	count = deserializeInt(stream);
-	for (size_t i = 0; i < count; ++i)
+	for (int i = 0; i < count; ++i)
 	{
-		int param = deserializeInt(stream);
+		size_t param = deserializeUInt(stream);
 		vec4 value = deserializeVector<vec4>(stream);
 		setVector(param, value);
 	}
 
 	count = deserializeInt(stream);
-	for (size_t i = 0; i < count; ++i)
+	for (int i = 0; i < count; ++i)
 	{
-		int param = deserializeInt(stream);
+		size_t param = deserializeUInt(stream);
 		std::string path = deserializeString(stream);
 		setTexture(param, loadTexture(rc, path, texturesBasePath, cache, async));
 	}
 
 	count = deserializeInt(stream);
-	for (size_t i = 0; i < count; ++i)
+	for (int i = 0; i < count; ++i)
 	{
-		int param = deserializeInt(stream);
+		size_t param = deserializeUInt(stream);
 		std::string value = deserializeString(stream);
 		setString(param, value);
 	}
@@ -405,8 +405,8 @@ void MaterialData::deserialize2(std::istream& stream, RenderContext* rc, Objects
 void MaterialData::deserialize3(std::istream& stream, RenderContext* rc, ObjectsCache& cache,
 	const std::string& texturesBasePath, bool async)
 {
-	int numParameters = deserializeInt(stream);
-	for (int i = 0; i < numParameters; ++i)
+	size_t numParameters = deserializeUInt(stream);
+	for (size_t i = 0; i < numParameters; ++i)
 	{
 		int has = deserializeInt(stream);
 		int ival = deserializeInt(stream);
@@ -552,10 +552,10 @@ void MaterialData::deserialize3FromXml(std::istream& stream, RenderContext* rc, 
 {
 	size_t size = streamSize(stream) - static_cast<size_t>(stream.tellg());
 	StringDataStorage data(size + 1, 0);
-	stream.read(data.data(), size);
+	stream.read(data.data(), static_cast<std::streamsize>(size));
 
 	xmlInitParser();
-	xmlDoc* xml = xmlParseMemory(data.data(), size);
+	xmlDoc* xml = xmlParseMemory(data.data(), static_cast<int>(size));
 	if (xml == nullptr)
 	{
 		log::error("Unable to deserialize material from xml.");

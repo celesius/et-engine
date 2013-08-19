@@ -14,7 +14,7 @@ using namespace et;
 const IndexType IndexArray::MaxShortIndex = 65536;
 const IndexType IndexArray::MaxSmallIndex = 256;
 
-const int IndexArrayId_1 = 'IAV1';
+const int IndexArrayId_1 = ET_CHARACTER_LITERAL('I', 'A', 'V', '1');
 const int IndexArrayCurrentId = IndexArrayId_1;
 
 IndexArray::IndexArray(IndexArrayFormat format, size_t size, PrimitiveType content) : tag(0),
@@ -26,7 +26,7 @@ IndexArray::IndexArray(IndexArrayFormat format, size_t size, PrimitiveType conte
 
 void IndexArray::linearize()
 {
-	for (size_t i = 0; i < capacity(); ++i)
+	for (IndexType i = 0; i < capacity(); ++i)
 		setIndex(i, i);
 }
 
@@ -123,9 +123,9 @@ IndexArray::PrimitiveIterator IndexArray::end() const
 	return IndexArray::PrimitiveIterator(this, capacity());
 }
 
-IndexArray::PrimitiveIterator IndexArray::primitive(size_t index) const
+IndexArray::PrimitiveIterator IndexArray::primitive(IndexType index) const
 {
-	size_t primitiveIndex = 0;
+	IndexType primitiveIndex = 0;
 	switch (_primitiveType)
 	{
 		case PrimitiveType_Lines:
@@ -173,12 +173,13 @@ bool IndexArray::Primitive::operator != (const Primitive& p) const
 	return (p.index[0] != index[0]) || (p.index[1] != index[1]) || (p.index[2] != index[2]);
 }
 
-IndexArray::PrimitiveIterator::PrimitiveIterator(const IndexArray* ib, size_t p) : _ib(ib), _pos(p)
+IndexArray::PrimitiveIterator::PrimitiveIterator(const IndexArray* ib, IndexType p) :
+	_ib(ib), _pos(p)
 {
 	configure(_pos);
 }
 
-void IndexArray::PrimitiveIterator::configure(size_t p)
+void IndexArray::PrimitiveIterator::configure(IndexType p)
 {
 	IndexType i0 = p;
 	IndexType i1 = p + 1;
@@ -268,7 +269,7 @@ void IndexArray::serialize(std::ostream& stream)
 	serializeInt(stream, _primitiveType);
 	serializeInt(stream, static_cast<int>(_actualSize));
 	serializeInt(stream, static_cast<int>(_data.dataSize()));
-	stream.write(_data.binary(), _data.dataSize());
+	stream.write(_data.binary(), static_cast<std::streamsize>(_data.dataSize()));
 }
 
 void IndexArray::deserialize(std::istream& stream)
@@ -278,8 +279,8 @@ void IndexArray::deserialize(std::istream& stream)
 	{
 		_format = static_cast<IndexArrayFormat>(deserializeInt(stream));
 		_primitiveType = static_cast<PrimitiveType>(deserializeInt(stream));
-		_actualSize = deserializeInt(stream);
-		_data.resize(deserializeInt(stream));
-		stream.read(_data.binary(), _data.dataSize());
+		_actualSize = deserializeUInt(stream);
+		_data.resize(deserializeUInt(stream));
+		stream.read(_data.binary(), static_cast<std::streamsize>(_data.dataSize()));
 	}
 }

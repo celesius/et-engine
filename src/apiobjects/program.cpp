@@ -137,20 +137,23 @@ void Program::buildProgram(const std::string& vertex_source, const std::string& 
 	glCompileShader(VertexShader);
 	checkOpenGLError("glCompileShader<VERT> - %s", name().c_str());
 
-	int cStatus = 0;
+	int vertStatus = GL_FALSE;
+	int geomStatus = GL_FALSE;
+	int fragStatus = GL_FALSE;
+	
 	GLsizei nLogLen = 0;
-	glGetShaderiv(VertexShader, GL_COMPILE_STATUS, &cStatus);
+	glGetShaderiv(VertexShader, GL_COMPILE_STATUS, &vertStatus);
 	checkOpenGLError("glGetShaderiv<VERT> %s compile staus - %s", name().c_str());
 
 	glGetShaderiv(VertexShader, GL_INFO_LOG_LENGTH, &nLogLen);
-	if (!cStatus && (nLogLen > 1))
+	if ((vertStatus == GL_FALSE) && (nLogLen > 1))
 	{
 		DataStorage<GLchar> infoLog(nLogLen, 0);
 		glGetShaderInfoLog(VertexShader, nLogLen, &nLogLen, infoLog.data());
 		log::error("Vertex shader %s compile report:\n%s", name().c_str(), infoLog.data());
 	}
 
-	if (cStatus)
+	if (vertStatus == GL_TRUE)
 	{
 		glAttachShader(_glID, VertexShader);
 		checkOpenGLError("glAttachShader<VERT> - %s", name().c_str());
@@ -168,22 +171,22 @@ void Program::buildProgram(const std::string& vertex_source, const std::string& 
 		glShaderSource(GeometryShader, 1, &src, &nLen);
 		checkOpenGLError("glShaderSource<GEOM> - %s", name().c_str());
 
-		cStatus = 0;
 		nLogLen = 0;
 		glCompileShader(GeometryShader);
 		checkOpenGLError("glCompileShader<GEOM> - %s", name().c_str());
 
-		glGetShaderiv(GeometryShader, GL_COMPILE_STATUS, &cStatus);
+		glGetShaderiv(GeometryShader, GL_COMPILE_STATUS, &geomStatus);
 		checkOpenGLError("glGetShaderiv<GEOM> %s compile staus", name().c_str());
 		
 		glGetShaderiv(GeometryShader, GL_INFO_LOG_LENGTH, &nLogLen);
-		if (nLogLen > 1)
+		if ((geomStatus == GL_FALSE) && (nLogLen > 1))
 		{
 			DataStorage<GLchar> infoLog(nLogLen, 0);
 			glGetShaderInfoLog(GeometryShader, nLogLen, &nLogLen, infoLog.data());
 			log::error("Geometry shader %s compile report:\n%s", name().c_str(), infoLog.data());
 		}
-		if (cStatus)
+		
+		if (geomStatus == GL_TRUE)
 		{
 			glAttachShader(_glID, GeometryShader);
 			checkOpenGLError("glAttachShader<GEOM> - %s", name().c_str());
@@ -204,50 +207,53 @@ void Program::buildProgram(const std::string& vertex_source, const std::string& 
 	glCompileShader(FragmentShader);
 	checkOpenGLError("glCompileShader<FRAG> - %s", name().c_str());
 
-	cStatus = 0;
 	nLogLen = 0;
-	glGetShaderiv(FragmentShader, GL_COMPILE_STATUS, &cStatus);
+	glGetShaderiv(FragmentShader, GL_COMPILE_STATUS, &fragStatus);
 	checkOpenGLError("glGetShaderiv<FRAG> %s compile staus ", name().c_str());
 
 	glGetShaderiv(FragmentShader, GL_INFO_LOG_LENGTH, &nLogLen);
-	if (!cStatus && (nLogLen > 1))
+	if ((fragStatus == GL_FALSE) && (nLogLen > 1))
 	{
 		DataStorage<GLchar> infoLog(nLogLen, 0);
 		glGetShaderInfoLog(FragmentShader, nLogLen, &nLogLen, infoLog.data());
 		log::error("Fragment shader %s compile report:\n%s", name().c_str(), infoLog.data());
 	}
 
-	if (cStatus)
+	if (fragStatus == GL_TRUE)
 	{
 		glAttachShader(_glID, FragmentShader);
 		checkOpenGLError("glAttachShader<FRAG> - %s", name().c_str());
 
-#if (!ET_OPENGLES)
-		if (&glBindFragDataLocation)
+#if defined(GL_VERSION_3_0)
+		if (glBindFragDataLocation != nullptr)
 		{
 			glBindFragDataLocation(_glID, 0, "FragColor");
 			checkOpenGLError("glBindFragDataLocation<color0> - %s", name().c_str());
+			
 			glBindFragDataLocation(_glID, 1, "FragColor1");
 			checkOpenGLError("glBindFragDataLocation<color1> - %s", name().c_str());
+			
 			glBindFragDataLocation(_glID, 2, "FragColor2");
 			checkOpenGLError("glBindFragDataLocation<color2> - %s", name().c_str());
+			
 			glBindFragDataLocation(_glID, 3, "FragColor3");
 			checkOpenGLError("glBindFragDataLocation<color3> - %s", name().c_str());
+			
 			glBindFragDataLocation(_glID, 4, "FragColor4");
 			checkOpenGLError("glBindFragDataLocation<color4> - %s", name().c_str());
 		}
 #endif
 	} 
 
-	cStatus = link();
+	int linkStatus = link();
 
-	if (cStatus)
+	if (linkStatus == GL_TRUE)
 	{
 		int activeAttribs = 0;
 		int maxNameLength = 0;
 		glGetProgramiv(_glID, GL_ACTIVE_ATTRIBUTES, &activeAttribs);
 		glGetProgramiv(_glID, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxNameLength);
-		for (int i = 0; i < activeAttribs; ++i)
+		for (uint32_t i = 0, e = static_cast<uint32_t>(activeAttribs); i < e; ++i)
 		{ 
 			int nameLength = 0;
 			int attribSize = 0; 
@@ -264,18 +270,18 @@ void Program::buildProgram(const std::string& vertex_source, const std::string& 
 		}
 
 		for (auto& i : _attributes)
-			glBindAttribLocation(_glID, i.usage, i.name.c_str());
+			glBindAttribLocation(_glID, static_cast<GLuint>(i.usage), i.name.c_str());
 
-		cStatus = link();
+		linkStatus = link();
 		_rs.bindProgram(_glID, true);
 
-		if (cStatus)
+		if (linkStatus == GL_TRUE)
 		{
 			int activeUniforms = 0;
 			_uniforms.clear();
 			glGetProgramiv(_glID, GL_ACTIVE_UNIFORMS, &activeUniforms);
 			glGetProgramiv(_glID, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxNameLength);
-			for (int i = 0; i < activeUniforms; i++)
+			for (uint32_t i = 0, e = static_cast<uint32_t>(activeUniforms); i < e; i++)
 			{
 				int uSize = 0;
 				GLsizei uLenght = 0;
@@ -308,23 +314,38 @@ void Program::buildProgram(const std::string& vertex_source, const std::string& 
 
 	if (VertexShader != 0)
 	{
-		glDetachShader(_glID, VertexShader);
+		if (vertStatus == GL_TRUE)
+		{
+			glDetachShader(_glID, VertexShader);
+			checkOpenGLError("Detach vertex shader");
+		}
+
 		glDeleteShader(VertexShader);
-		checkOpenGLError("Deatch and delete vertex shader");
+		checkOpenGLError("Delete vertex shader");
 	}
 
 	if (GeometryShader != 0)
 	{
-		glDetachShader(_glID, GeometryShader);
+		if (geomStatus == GL_TRUE)
+		{
+			glDetachShader(_glID, GeometryShader);
+			checkOpenGLError("Detache geometry shader");
+		}
+		
 		glDeleteShader(GeometryShader);
-		checkOpenGLError("Deatch and delete geometry shader");
+		checkOpenGLError("Delete geometry shader");
 	}
 	
 	if (FragmentShader != 0)
 	{
-		glDetachShader(_glID, FragmentShader);
+		if (fragStatus == GL_TRUE)
+		{
+			glDetachShader(_glID, FragmentShader);
+			checkOpenGLError("Detach fragment shader");
+		}
+		
 		glDeleteShader(FragmentShader);
-		checkOpenGLError("Deatch and delete fragment shader");
+		checkOpenGLError("Delete fragment shader");
 	}
 
 	checkOpenGLError("Program::buildProgram -> end"); 
@@ -332,19 +353,19 @@ void Program::buildProgram(const std::string& vertex_source, const std::string& 
 
 int Program::link()
 {
-	int cStatus = 0;
+	int result = 0;
 	int nLogLen = 0;
 
 	glLinkProgram(_glID);
 	checkOpenGLError("glLinkProgram - %s", name().c_str());
 
-	glGetProgramiv(_glID, GL_LINK_STATUS, &cStatus);
+	glGetProgramiv(_glID, GL_LINK_STATUS, &result);
 	checkOpenGLError("glGetProgramiv<GL_LINK_STATUS> - %s", name().c_str());
 
 	glGetProgramiv(_glID, GL_INFO_LOG_LENGTH, &nLogLen);
 	checkOpenGLError("glGetProgramiv<GL_INFO_LOG_LENGTH> - %s", name().c_str());
 
-	if (!cStatus && (nLogLen > 1))
+	if ((result == GL_FALSE) && (nLogLen > 1))
 	{
 		StringDataStorage infoLog(nLogLen + 1, 0);
 		glGetProgramInfoLog(_glID, nLogLen, &nLogLen, infoLog.data());
@@ -352,7 +373,7 @@ int Program::link()
 		log::error("Program %s link log:\n%s", name().c_str(), infoLog.data());
 	}
 
-	return cStatus;
+	return result;
 }
 
 void Program::validate() const
@@ -363,7 +384,7 @@ void Program::validate() const
  * Uniform setters
  */
 
-void Program::setUniform(int nLoc, int, const int value)
+void Program::setUniform(int nLoc, uint32_t, const int value)
 {
 	if (nLoc == -1) return;
 	
@@ -372,25 +393,25 @@ void Program::setUniform(int nLoc, int, const int value)
 	checkOpenGLError("setUniform - int");
 }
 
-void Program::setUniform(int nLoc, int, const unsigned int value)
+void Program::setUniform(int nLoc, uint32_t, const unsigned int value)
 {
 	if (nLoc == -1) return;
 	
 	assert(loaded());
-	glUniform1i(nLoc, value);
+	glUniform1i(nLoc, static_cast<GLint>(value));
 	checkOpenGLError("setUniform - unsigned int");
 }
 
-void Program::setUniform(int nLoc, int, const unsigned long value)
+void Program::setUniform(int nLoc, uint32_t, const unsigned long value)
 {
 	if (nLoc == -1) return;
 	
 	assert(loaded());
-	glUniform1i(nLoc, value);
+	glUniform1i(nLoc, static_cast<GLint>(value));
 	checkOpenGLError("setUniform - unsigned long");
 }
 
-void Program::setUniform(int nLoc, int type, const float value)
+void Program::setUniform(int nLoc, uint32_t type, const float value)
 {
 	if (nLoc == -1) return;
 	
@@ -401,7 +422,7 @@ void Program::setUniform(int nLoc, int type, const float value)
 	checkOpenGLError("setUniform - float");
 }
 
-void Program::setUniform(int nLoc, int type, const vec2& value)
+void Program::setUniform(int nLoc, uint32_t type, const vec2& value)
 {
 	if (nLoc == -1) return;
 	
@@ -418,7 +439,7 @@ void Program::setUniform(int nLoc, int type, const vec2& value)
 	checkOpenGLError("setUniform - vec2");
 }
 
-void Program::setUniform(int nLoc, int type, const vec3& value)
+void Program::setUniform(int nLoc, uint32_t type, const vec3& value)
 {
 	if (nLoc == -1) return;
 	
@@ -435,7 +456,7 @@ void Program::setUniform(int nLoc, int type, const vec3& value)
 	checkOpenGLError("setUniform - vec3");
 }
 
-void Program::setUniform(int nLoc, int type, const vec4& value)
+void Program::setUniform(int nLoc, uint32_t type, const vec4& value)
 {
 	if (nLoc == -1) return;
 	
@@ -452,7 +473,7 @@ void Program::setUniform(int nLoc, int type, const vec4& value)
 	checkOpenGLError("setUniform - vec4");
 }
 
-void Program::setUniform(int nLoc, int type, const mat3& value)
+void Program::setUniform(int nLoc, uint32_t type, const mat3& value)
 {
 	if (nLoc == -1) return;
 	
@@ -469,7 +490,7 @@ void Program::setUniform(int nLoc, int type, const mat3& value)
 	checkOpenGLError("setUniform - mat3");
 }
 
-void Program::setUniform(int nLoc, int type, const mat4& value)
+void Program::setUniform(int nLoc, uint32_t type, const mat4& value)
 {
 	if (nLoc == -1) return;
 	

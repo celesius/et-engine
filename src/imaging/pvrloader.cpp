@@ -18,7 +18,8 @@ enum PVRFormat
 	PVRVersion3Format_PVRTC_2bpp_RGBA = 1,
 	PVRVersion3Format_PVRTC_4bpp_RGB = 2,
 	PVRVersion3Format_PVRTC_4bpp_RGBA = 3,
-	PVRVersion3Format_RGBA = 'abgr',
+	
+	PVRVersion3Format_RGBA = ET_CHARACTER_LITERAL('a', 'b', 'g', 'r'),
 	
 	PVRVersion3Format_mask = 0xffffffff,
     
@@ -43,8 +44,8 @@ namespace et
     struct PVRHeader2
     {
         unsigned int dwHeaderSize;		/* size of the structure */
-        unsigned int dwHeight;			/* height of surface to be created */
-        unsigned int dwWidth;			/* width of input surface */
+        int dwHeight;					/* height of surface to be created */
+        int dwWidth;					/* width of input surface */
         unsigned int dwMipMapCount;		/* number of MIP-map levels requested */
         unsigned int dwpfFlags;			/* pixel format flags */
         unsigned int dwDataSize;		/* Size of the compress data */
@@ -64,8 +65,8 @@ namespace et
         uint64_t pixelFormat;		
         unsigned int colourSpace;		
         unsigned int channelType;		
-        unsigned int height;		 
-        unsigned int width;		  
+        int height;
+        int width;		  
         unsigned int depth;		  
         unsigned int numSurfaces;		
         unsigned int numFaces;	   
@@ -182,13 +183,15 @@ void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescriptio
 	}
 }
 
+static const unsigned int pvrHeader2 = ET_CHARACTER_LITERAL('!', 'R', 'V', 'P');
+
 void PVRLoader::loadInfoFromStream(std::istream& stream, TextureDescription& desc)
 {
     std::istream::off_type offset = stream.tellg();
     
 	PVRHeader2 header2 = { };
 	stream.read(reinterpret_cast<char*>(&header2), sizeof(header2));
-	if (header2.dwPVR == '!RVP') 
+	if (header2.dwPVR == pvrHeader2)
     {
         PVRLoader::loadInfoFromV2Header(header2, desc);
     }
@@ -225,7 +228,7 @@ void PVRLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
 	loadInfoFromStream(stream, desc);
 
 	desc.data = BinaryDataStorage(desc.dataSizeForAllMipLevels());
-	stream.read(desc.data.binary(), desc.data.dataSize());
+	stream.read(desc.data.binary(), static_cast<std::streamsize>(desc.data.dataSize()));
 }
 
 void PVRLoader::loadFromFile(const std::string& path, TextureDescription& desc)

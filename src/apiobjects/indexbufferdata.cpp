@@ -71,7 +71,7 @@ void IndexBufferData::internal_setData(const unsigned char* data, size_t size)
 	if (size > 0)
 	{
 		_rs.bindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, drawTypeValue(_drawType));
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(size), data, drawTypeValue(_drawType));
 		checkOpenGLError("glBufferData(GL_ELEMENT_ARRAY_BUFFER, %u, 0x%08X, ..,)", size, data);
 	}
 }

@@ -315,7 +315,7 @@ void GuiRenderer::createStringVertices(GuiVertexList& vertices, const CharDescri
 	}
 }
 
-int GuiRenderer::measusevertexCountForImageDescriptor(const ImageDescriptor& desc)
+size_t GuiRenderer::measusevertexCountForImageDescriptor(const ImageDescriptor& desc)
 {
 	bool hasLeftSafe = desc.contentOffset.left > 0;
 	bool hasTopSafe = desc.contentOffset.top > 0;
@@ -326,8 +326,8 @@ int GuiRenderer::measusevertexCountForImageDescriptor(const ImageDescriptor& des
 	bool hasLeftBottomCorner = hasLeftSafe && hasBottomSafe;
 	bool hasRightBottomCorner = hasRightSafe && hasBottomSafe;
 
-	int numBorders = hasLeftSafe + hasTopSafe + hasRightSafe + hasBottomSafe;
-	int numCorners = hasLeftTopCorner + hasRightTopCorner + hasLeftBottomCorner + hasRightBottomCorner;
+	size_t numBorders = hasLeftSafe + hasTopSafe + hasRightSafe + hasBottomSafe;
+	size_t numCorners = hasLeftTopCorner + hasRightTopCorner + hasLeftBottomCorner + hasRightBottomCorner;
 
 	return 6 * (1 + numCorners + numBorders);
 }
@@ -349,8 +349,8 @@ void GuiRenderer::createImageVertices(GuiVertexList& vertices, const Texture& te
 	bool hasLeftBottomCorner = hasLeftSafe && hasBottomSafe;
 	bool hasRightBottomCorner = hasRightSafe && hasBottomSafe;
 
-	int numBorders = hasLeftSafe + hasTopSafe + hasRightSafe + hasBottomSafe;
-	int numCorners = hasLeftTopCorner + hasRightTopCorner + hasLeftBottomCorner + hasRightBottomCorner;
+	size_t numBorders = hasLeftSafe + hasTopSafe + hasRightSafe + hasBottomSafe;
+	size_t numCorners = hasLeftTopCorner + hasRightTopCorner + hasLeftBottomCorner + hasRightBottomCorner;
 
 	vertices.fitToSize(6 * (1 + numCorners + numBorders));
 
@@ -509,11 +509,8 @@ void GuiRenderer::createImageVertices(GuiVertexList& vertices, const Texture& te
 }
 
 void GuiRenderer::createColorVertices(GuiVertexList& vertices, const rect& p, const vec4& color, 
-	const mat4& transform, RenderLayer layer)
+	const mat4& transform)
 {
-	if (_saveFillRate)
-		layer = RenderLayer_Layer0;
-	
 	vec2 topLeft = p.origin();
 	vec2 topRight = topLeft + vec2(p.width, 0.0f);
 	vec2 bottomLeft = topLeft + vec2(0.0f, p.height);

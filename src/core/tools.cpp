@@ -77,7 +77,7 @@ namespace et
 		if (file.invalid()) return std::string();
 
 		StringDataStorage data(streamSize(file.stream()) + 1, 0);
-		file.stream().read(data.data(), data.size());
+		file.stream().read(data.data(), static_cast<std::streamsize>(data.size()));
 		
 		return std::string(data.data());
 	}
@@ -273,14 +273,14 @@ namespace et
 	vec4 strHexToVec4(const std::string& s)
 	{
 		vec4 result;
-		int value = 0;
+		uint32_t value = 0;
 		int l = etMin(8, static_cast<int>(s.size()));
 
-		int scale = 1;
+		uint32_t scale = 1;
 		const char* cstr = s.c_str();
 		for (int i = l - 1; i >= 0; --i)
 		{
-			value += scale * hexCharacterToInt(tolower(cstr[i]));
+			value += scale * static_cast<uint32_t>(hexCharacterToInt(tolower(cstr[i])));
 			scale *= 16;
 		}
 
@@ -300,14 +300,14 @@ namespace et
 	vec4 strHexToVec4(const std::wstring& s)
 	{
 		vec4 result;
-		int value = 0;
+		uint32_t value = 0;
 		int l = etMin(8, static_cast<int>(s.size()));
 
-		int scale = 1;
+		uint32_t scale = 1;
 		const wchar_t* cstr = s.c_str();
 		for (int i = l - 1; i >= 0; --i)
 		{
-			value += scale * hexCharacterToInt(::tolower(cstr[i]));
+			value += scale * static_cast<uint32_t>(hexCharacterToInt(::tolower(cstr[i])));
 			scale *= 16;
 		}
 		

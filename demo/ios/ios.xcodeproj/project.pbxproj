@@ -10,6 +10,9 @@
 		5C4AAC431737B7F80024763B /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4AAC411737B7F80024763B /* log.cpp */; };
 		5C4AAC441737B7F80024763B /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4AAC421737B7F80024763B /* stream.cpp */; };
 		5C4AAC461737B80B0024763B /* rendercontext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4AAC451737B80B0024763B /* rendercontext.cpp */; };
+		A516032517C2D66600972F61 /* framebuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A516032317C2D66600972F61 /* framebuffer.cpp */; };
+		A516032617C2D66600972F61 /* program.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A516032417C2D66600972F61 /* program.cpp */; };
+		A516032817C2D66D00972F61 /* backgroundthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A516032717C2D66D00972F61 /* backgroundthread.cpp */; };
 		A5271159177839AE0072ECEC /* objectscache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5271158177839AE0072ECEC /* objectscache.cpp */; };
 		A527115B177839BE0072ECEC /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A527115A177839BE0072ECEC /* libxml2.dylib */; };
 		A527115F177839DA0072ECEC /* sample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A527115D177839DA0072ECEC /* sample.cpp */; };
@@ -31,10 +34,8 @@
 		A56E14C516C43FE6006C86BF /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A56E14C216C43FE6006C86BF /* Default@2x.png */; };
 		A56E14CA16C44018006C86BF /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14C716C44018006C86BF /* main.cpp */; };
 		A56E14CB16C44018006C86BF /* maincontroller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14C816C44018006C86BF /* maincontroller.cpp */; };
-		A56E153F16C44133006C86BF /* framebufferdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14D016C44133006C86BF /* framebufferdata.cpp */; };
 		A56E154016C44133006C86BF /* framebufferfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14D116C44133006C86BF /* framebufferfactory.cpp */; };
 		A56E154116C44133006C86BF /* indexbufferdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14D216C44133006C86BF /* indexbufferdata.cpp */; };
-		A56E154216C44133006C86BF /* programdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14D316C44133006C86BF /* programdata.cpp */; };
 		A56E154316C44133006C86BF /* programfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14D416C44133006C86BF /* programfactory.cpp */; };
 		A56E154516C44133006C86BF /* texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14D616C44133006C86BF /* texture.cpp */; };
 		A56E154616C44133006C86BF /* texturefactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14D716C44133006C86BF /* texturefactory.cpp */; };
@@ -51,7 +52,6 @@
 		A56E155116C44133006C86BF /* frustum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14E416C44133006C86BF /* frustum.cpp */; };
 		A56E155216C44133006C86BF /* aabb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14E616C44133006C86BF /* aabb.cpp */; };
 		A56E155316C44133006C86BF /* collision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14E716C44133006C86BF /* collision.cpp */; };
-		A56E155416C44133006C86BF /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14E916C44133006C86BF /* debug.cpp */; };
 		A56E155516C44133006C86BF /* plist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14EA16C44133006C86BF /* plist.cpp */; };
 		A56E155616C44133006C86BF /* tools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14EB16C44133006C86BF /* tools.cpp */; };
 		A56E155716C44133006C86BF /* transformable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56E14EC16C44133006C86BF /* transformable.cpp */; };
@@ -125,6 +125,9 @@
 		5C4AAC411737B7F80024763B /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = log.cpp; sourceTree = "<group>"; };
 		5C4AAC421737B7F80024763B /* stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stream.cpp; sourceTree = "<group>"; };
 		5C4AAC451737B80B0024763B /* rendercontext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rendercontext.cpp; sourceTree = "<group>"; };
+		A516032317C2D66600972F61 /* framebuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = framebuffer.cpp; sourceTree = "<group>"; };
+		A516032417C2D66600972F61 /* program.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = program.cpp; sourceTree = "<group>"; };
+		A516032717C2D66D00972F61 /* backgroundthread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = backgroundthread.cpp; sourceTree = "<group>"; };
 		A5271158177839AE0072ECEC /* objectscache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = objectscache.cpp; sourceTree = "<group>"; };
 		A527115A177839BE0072ECEC /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		A527115D177839DA0072ECEC /* sample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample.cpp; sourceTree = "<group>"; };
@@ -162,10 +165,8 @@
 		A56E14C716C44018006C86BF /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A56E14C816C44018006C86BF /* maincontroller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maincontroller.cpp; sourceTree = "<group>"; };
 		A56E14C916C44018006C86BF /* maincontroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maincontroller.h; sourceTree = "<group>"; };
-		A56E14D016C44133006C86BF /* framebufferdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = framebufferdata.cpp; sourceTree = "<group>"; };
 		A56E14D116C44133006C86BF /* framebufferfactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = framebufferfactory.cpp; sourceTree = "<group>"; };
 		A56E14D216C44133006C86BF /* indexbufferdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = indexbufferdata.cpp; sourceTree = "<group>"; };
-		A56E14D316C44133006C86BF /* programdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = programdata.cpp; sourceTree = "<group>"; };
 		A56E14D416C44133006C86BF /* programfactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = programfactory.cpp; sourceTree = "<group>"; };
 		A56E14D616C44133006C86BF /* texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texture.cpp; sourceTree = "<group>"; };
 		A56E14D716C44133006C86BF /* texturefactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texturefactory.cpp; sourceTree = "<group>"; };
@@ -182,7 +183,6 @@
 		A56E14E416C44133006C86BF /* frustum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = frustum.cpp; sourceTree = "<group>"; };
 		A56E14E616C44133006C86BF /* aabb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = aabb.cpp; sourceTree = "<group>"; };
 		A56E14E716C44133006C86BF /* collision.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = collision.cpp; sourceTree = "<group>"; };
-		A56E14E916C44133006C86BF /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = debug.cpp; sourceTree = "<group>"; };
 		A56E14EA16C44133006C86BF /* plist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = plist.cpp; sourceTree = "<group>"; };
 		A56E14EB16C44133006C86BF /* tools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tools.cpp; sourceTree = "<group>"; };
 		A56E14EC16C44133006C86BF /* transformable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = transformable.cpp; sourceTree = "<group>"; };
@@ -244,12 +244,10 @@
 		A56E153D16C44133006C86BF /* vertexdeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vertexdeclaration.cpp; sourceTree = "<group>"; };
 		A56E159E16C441A0006C86BF /* apiobjectfactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apiobjectfactory.h; sourceTree = "<group>"; };
 		A56E159F16C441A0006C86BF /* framebuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = framebuffer.h; sourceTree = "<group>"; };
-		A56E15A016C441A0006C86BF /* framebufferdata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = framebufferdata.h; sourceTree = "<group>"; };
 		A56E15A116C441A0006C86BF /* framebufferfactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = framebufferfactory.h; sourceTree = "<group>"; };
 		A56E15A216C441A0006C86BF /* indexbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = indexbuffer.h; sourceTree = "<group>"; };
 		A56E15A316C441A0006C86BF /* indexbufferdata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = indexbufferdata.h; sourceTree = "<group>"; };
 		A56E15A416C441A0006C86BF /* program.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = program.h; sourceTree = "<group>"; };
-		A56E15A516C441A0006C86BF /* programdata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = programdata.h; sourceTree = "<group>"; };
 		A56E15A616C441A0006C86BF /* programfactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = programfactory.h; sourceTree = "<group>"; };
 		A56E15A716C441A0006C86BF /* texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = texture.h; sourceTree = "<group>"; };
 		A56E15AA16C441A0006C86BF /* texturedescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = texturedescription.h; sourceTree = "<group>"; };
@@ -554,10 +552,10 @@
 		A56E14CE16C44132006C86BF /* apiobjects */ = {
 			isa = PBXGroup;
 			children = (
-				A56E14D016C44133006C86BF /* framebufferdata.cpp */,
+				A516032317C2D66600972F61 /* framebuffer.cpp */,
+				A516032417C2D66600972F61 /* program.cpp */,
 				A56E14D116C44133006C86BF /* framebufferfactory.cpp */,
 				A56E14D216C44133006C86BF /* indexbufferdata.cpp */,
-				A56E14D316C44133006C86BF /* programdata.cpp */,
 				A56E14D416C44133006C86BF /* programfactory.cpp */,
 				A56E14D616C44133006C86BF /* texture.cpp */,
 				A56E14D716C44133006C86BF /* texturefactory.cpp */,
@@ -573,6 +571,7 @@
 		A56E14DC16C44133006C86BF /* app */ = {
 			isa = PBXGroup;
 			children = (
+				A516032717C2D66D00972F61 /* backgroundthread.cpp */,
 				A56E14DD16C44133006C86BF /* appevironment.cpp */,
 				A56E14DE16C44133006C86BF /* application.cpp */,
 				A56E14DF16C44133006C86BF /* events.cpp */,
@@ -609,7 +608,6 @@
 				A5271158177839AE0072ECEC /* objectscache.cpp */,
 				5C4AAC411737B7F80024763B /* log.cpp */,
 				5C4AAC421737B7F80024763B /* stream.cpp */,
-				A56E14E916C44133006C86BF /* debug.cpp */,
 				A56E14EA16C44133006C86BF /* plist.cpp */,
 				A56E14EB16C44133006C86BF /* tools.cpp */,
 				A56E14EC16C44133006C86BF /* transformable.cpp */,
@@ -821,12 +819,10 @@
 			children = (
 				A56E159E16C441A0006C86BF /* apiobjectfactory.h */,
 				A56E159F16C441A0006C86BF /* framebuffer.h */,
-				A56E15A016C441A0006C86BF /* framebufferdata.h */,
 				A56E15A116C441A0006C86BF /* framebufferfactory.h */,
 				A56E15A216C441A0006C86BF /* indexbuffer.h */,
 				A56E15A316C441A0006C86BF /* indexbufferdata.h */,
 				A56E15A416C441A0006C86BF /* program.h */,
-				A56E15A516C441A0006C86BF /* programdata.h */,
 				A56E15A616C441A0006C86BF /* programfactory.h */,
 				A56E15A716C441A0006C86BF /* texture.h */,
 				A56E15AA16C441A0006C86BF /* texturedescription.h */,
@@ -1147,6 +1143,11 @@
 			attributes = {
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "Sergey Reznik";
+				TargetAttributes = {
+					A56E149A16C43F53006C86BF = {
+						DevelopmentTeam = JQC2862XB5;
+					};
+				};
 			};
 			buildConfigurationList = A56E149616C43F53006C86BF /* Build configuration list for PBXProject "ios" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1186,10 +1187,8 @@
 			files = (
 				A56E14CA16C44018006C86BF /* main.cpp in Sources */,
 				A56E14CB16C44018006C86BF /* maincontroller.cpp in Sources */,
-				A56E153F16C44133006C86BF /* framebufferdata.cpp in Sources */,
 				A56E154016C44133006C86BF /* framebufferfactory.cpp in Sources */,
 				A56E154116C44133006C86BF /* indexbufferdata.cpp in Sources */,
-				A56E154216C44133006C86BF /* programdata.cpp in Sources */,
 				A56E154316C44133006C86BF /* programfactory.cpp in Sources */,
 				A56E154516C44133006C86BF /* texture.cpp in Sources */,
 				A56E154616C44133006C86BF /* texturefactory.cpp in Sources */,
@@ -1207,7 +1206,6 @@
 				A56E155116C44133006C86BF /* frustum.cpp in Sources */,
 				A56E155216C44133006C86BF /* aabb.cpp in Sources */,
 				A56E155316C44133006C86BF /* collision.cpp in Sources */,
-				A56E155416C44133006C86BF /* debug.cpp in Sources */,
 				A56E155516C44133006C86BF /* plist.cpp in Sources */,
 				A56E155616C44133006C86BF /* tools.cpp in Sources */,
 				A56E155716C44133006C86BF /* transformable.cpp in Sources */,
@@ -1235,6 +1233,7 @@
 				A56E156D16C44133006C86BF /* imageoperations.cpp in Sources */,
 				A56E156E16C44133006C86BF /* imagewriter.cpp in Sources */,
 				A56E156F16C44133006C86BF /* jpgloader.cpp in Sources */,
+				A516032517C2D66600972F61 /* framebuffer.cpp in Sources */,
 				A56E157016C44133006C86BF /* pngloader.cpp in Sources */,
 				A56E157116C44133006C86BF /* pvrloader.cpp in Sources */,
 				A56E157216C44133006C86BF /* gestures.cpp in Sources */,
@@ -1242,6 +1241,7 @@
 				A56E157416C44133006C86BF /* opengl.common.cpp in Sources */,
 				A56E157516C44133006C86BF /* openglcaps.cpp in Sources */,
 				A56E157616C44133006C86BF /* locale.apple.mm in Sources */,
+				A516032617C2D66600972F61 /* program.cpp in Sources */,
 				A56E157716C44133006C86BF /* tools.apple.mm in Sources */,
 				A56E157816C44133006C86BF /* application.ios.mm in Sources */,
 				A56E157916C44133006C86BF /* applicationdelegate.ios.mm in Sources */,
@@ -1282,6 +1282,7 @@
 				A53398F916CC3C3700A9682D /* supportmesh.cpp in Sources */,
 				5C4AAC431737B7F80024763B /* log.cpp in Sources */,
 				5C4AAC441737B7F80024763B /* stream.cpp in Sources */,
+				A516032817C2D66D00972F61 /* backgroundthread.cpp in Sources */,
 				5C4AAC461737B80B0024763B /* rendercontext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1348,6 +1349,7 @@
 		A56E14B916C43F53006C86BF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ios-Prefix.pch";
 				HEADER_SEARCH_PATHS = $PROJECT_DIR/../../include;
@@ -1365,6 +1367,7 @@
 		A56E14BA16C43F53006C86BF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ios-Prefix.pch";
 				HEADER_SEARCH_PATHS = $PROJECT_DIR/../../include;

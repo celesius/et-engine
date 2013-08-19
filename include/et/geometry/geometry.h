@@ -466,8 +466,10 @@ namespace et
 	inline T intPower(T value, size_t power)
 	{
 		T result = static_cast<T>(1);
+		
 		for (size_t i = 1; i <= power; ++i)
 			result *= value;
+		
 		return result;
 	}
 	
@@ -483,7 +485,9 @@ namespace et
 	
 	vec3 randVector(float sx = 1.0f, float sy = 1.0f, float sz = 1.0f);
 	
-	float randf(float low = -1.0f, float up = 1.0f);
+	uint32_t randomInteger(uint32_t limit = RAND_MAX);
+	float randomFloat(float low, float up);
+	
 	float signOrZero(float s);
 	float signNoZero(float s);
 	

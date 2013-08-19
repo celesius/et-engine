@@ -5,7 +5,6 @@
 *
 */
 
-#include <assert.h>
 #include <et/core/transformable.h>
 
 using namespace et;

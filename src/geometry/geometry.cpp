@@ -40,17 +40,23 @@ float et::signNoZero(float s)
 	return (s < 0.0f) ? -1.0f : 1.0f; 
 }
 
-vec3 et::randVector(float sx, float sy, float sz)
+uint32_t et::randomInteger(uint32_t limit)
 {
-	float r0 = 2.0f * static_cast<float>(rand()) / fRandMax - 1.0f;
-	float r1 = 2.0f * static_cast<float>(rand()) / fRandMax - 1.0f;
-	float r2 = 2.0f * static_cast<float>(rand()) / fRandMax - 1.0f;
-	return vec3(sx * r0, sy * r1, sz * r2);
+#if (ET_PLATFORM_APPLE)
+	return arc4random() % limit;
+#else
+	return rand() % limit;
+#endif
 }
 
-float et::randf(float low, float up)
+vec3 et::randVector(float sx, float sy, float sz)
 {
-	return low + (up - low) * static_cast<float>(rand()) / fRandMax;
+	return vec3(sx * randomFloat(-1.0f, 1.0f), sy * randomFloat(-1.0f, 1.0f), sz * randomFloat(-1.0f, 1.0f));
+}
+
+float et::randomFloat(float low, float up)
+{
+	return low + (up - low) * static_cast<float>(randomInteger()) / fRandMax;
 }
 
 quaternion et::matrixToQuaternion(const mat3& r)
@@ -130,7 +136,7 @@ vec3 et::removeMatrixScale(mat3& mat)
 			etMin(c1.x, etMin(c1.y, c1.z)),
 			etMin(c2.x, etMin(c2.y, c2.z))
 		};
-		int offset = std::min_element(minValues, minValues + 3) - minValues;
+		long offset = std::min_element(minValues, minValues + 3) - minValues;
 		lengths[offset] = -lengths[offset];
 	}
 

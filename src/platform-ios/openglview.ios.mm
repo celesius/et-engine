@@ -410,7 +410,7 @@ using namespace et;
 		   encoding:NSUTF32LittleEndianStringEncoding options:0
 				 range:NSMakeRange(0, [text length]) remainingRange:0];
 		
-		DataStorage<wchar_t> result(actualLength + 1);
+		DataStorage<wchar_t> result(static_cast<size_t>(actualLength + 1));
 		
 		[text getBytes:result.data() maxLength:result.dataSize() usedLength:0
 		   encoding:NSUTF32LittleEndianStringEncoding options:0

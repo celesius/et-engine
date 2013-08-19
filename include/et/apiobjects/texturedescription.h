@@ -74,7 +74,7 @@ namespace et
 		vec2i size;
 		
 		uint32_t target;
-		uint32_t internalformat;
+		int32_t internalformat;
 		uint32_t format;
 		uint32_t type;
 		uint32_t compressed;

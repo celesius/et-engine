@@ -88,15 +88,15 @@ namespace et
 
 		void setCameraProperties(const Camera& cam);
 
-		void setUniform(int nLoc, int, const int value);
-		void setUniform(int nLoc, int, const unsigned int value);
-		void setUniform(int nLoc, int, const unsigned long value);
-		void setUniform(int nLoc, int type, const float value);
-		void setUniform(int nLoc, int type, const vec2& value);
-		void setUniform(int nLoc, int type, const vec3& value);
-		void setUniform(int nLoc, int type, const vec4& value);
-		void setUniform(int nLoc, int type, const mat3& value);
-		void setUniform(int nLoc, int type, const mat4& value);
+		void setUniform(int nLoc, uint32_t, const int value);
+		void setUniform(int nLoc, uint32_t, const unsigned int value);
+		void setUniform(int nLoc, uint32_t, const unsigned long value);
+		void setUniform(int nLoc, uint32_t, const float value);
+		void setUniform(int nLoc, uint32_t, const vec2& value);
+		void setUniform(int nLoc, uint32_t, const vec3& value);
+		void setUniform(int nLoc, uint32_t, const vec4& value);
+		void setUniform(int nLoc, uint32_t, const mat3& value);
+		void setUniform(int nLoc, uint32_t, const mat4& value);
 		
 		template <typename T>
 		void setUniform(const std::string& name, const T& value)

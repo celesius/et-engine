@@ -29,10 +29,10 @@ bool roundDistanceFunc(const CarouselItem::Pointer& i1, const CarouselItem::Poin
 bool ribbonDistanceFunc(const CarouselItem::Pointer& i1, const CarouselItem::Pointer& i2);
 
 CarouselItem::CarouselItem(const Camera& camera, const Texture& texture,
-	const ImageDescriptor& desc, size_t aTag, Carousel* parent) : Element3D(camera, parent), 
+	const ImageDescriptor& desc, int aTag, Carousel* parent) : Element3D(camera, parent),
 	_vertices(12, 0), _texture(texture), _desc(desc), _scale(1.0f), _color(1.0f), _angle(1.0f)
 {
-	tag = aTag;
+	tag_i = aTag;
 	_scale.y *= desc.size.y / desc.size.x;
 }
 
@@ -445,7 +445,7 @@ void Carousel::alignSelectedItem(bool)
 
 	_velocity = 0.0f;
 	float f = clamp(std::floor(_selectedItem), 0.0f, static_cast<float>(_items.size() - 1));
-	int newItem = static_cast<int>(f);
+	size_t newItem = static_cast<size_t>(f);
 	newItem += (_selectedItem - f) > 0.5f ? 1 : 0;
 
 	setSelectedItem(newItem, defaultAnimationDuration);

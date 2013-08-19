@@ -138,14 +138,14 @@ void Element::deserializeGeneralParameters(std::istream& stream, SceneVersion ve
 	setName(deserializeString(stream));
 	
 	_active = deserializeInt(stream) != 0;
-	setFlags(deserializeInt(stream));
+	setFlags(deserializeUInt(stream));
 	setTranslation(deserializeVector<vec3>(stream));
 	setScale(deserializeVector<vec3>(stream));
 	setOrientation(deserializeQuaternion(stream));
 
 	if (version >= SceneVersion_1_0_1)
 	{
-		size_t numProperties = deserializeInt(stream);
+		size_t numProperties = deserializeUInt(stream);
 		for (size_t i = 0; i < numProperties; ++i)
 			_properites.insert(deserializeString(stream));
 	}
@@ -163,10 +163,10 @@ void Element::serializeChildren(std::ostream& stream, SceneVersion version)
 
 void Element::deserializeChildren(std::istream& stream, ElementFactory* factory, SceneVersion version)
 {
-	size_t numChildren = deserializeInt(stream);
+	size_t numChildren = deserializeUInt(stream);
 	for (size_t i = 0; i < numChildren; ++i)
 	{
-		size_t type = deserializeInt(stream);
+		size_t type = deserializeUInt(stream);
 		Element::Pointer child = factory->createElementOfType(type, (type == ElementType_Storage) ? 0 : this);
 		child->deserialize(stream, factory, version);
 	}

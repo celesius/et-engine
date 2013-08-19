@@ -10,7 +10,7 @@
 
 using namespace et;
 
-IApplicationDelegate* et::Application::_delegate = 0;
+IApplicationDelegate* et::Application::_delegate = nullptr;
 
 Application::Application() : _renderContext(0), _exitCode(0), _lastQueuedTimeMSec(queryTimeMSec()),
 	_fpsLimitMSec(0), _fpsLimitMSecFractPart(0)
@@ -84,7 +84,7 @@ void Application::idle()
 	else 
 	{
 		uint64_t sleepInterval = (_fpsLimitMSec - elapsedTime) +
-			(rand() % 1000 > _fpsLimitMSecFractPart ? 0 : -1);
+			(randomInteger(1000) > _fpsLimitMSecFractPart ? 0 : static_cast<uint64_t>(-1));
 		
 		Thread::sleepMSec(sleepInterval);
 	}

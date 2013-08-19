@@ -40,18 +40,30 @@ namespace et
 		const char* binary() const
 			{ return mat[0].binary(); }
 		
-		vector3<T>& operator[](int i) 
+		vector3<T>& operator [] (int i)
 			{ return mat[i]; }
 
-		const vector3<T>& operator[](int i) const
+		const vector3<T>& operator [] (int i) const
 			{ return mat[i]; }
 
-		T& operator()(int i)
+		T& operator () (int i)
 			{ return *(&mat[0].x + i); }
 
-		const T& operator()(int i) const
+		const T& operator () (int i) const
 			{ return *(&mat[0].x + i); }
 
+		vector3<T>& operator [] (size_t i)
+			{ return mat[i]; }
+		
+		const vector3<T>& operator [] (size_t i) const
+			{ return mat[i]; }
+		
+		T& operator () (size_t i)
+			{ return *(&mat[0].x + i); }
+		
+		const T& operator() (size_t i) const
+			{ return *(&mat[0].x + i); }
+		
 		T determinant()
 		{
 			T a10 = mat[1].x;

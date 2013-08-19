@@ -51,8 +51,8 @@ namespace demo
 		et::Camera _observingCamera;
 		et::Camera _projectorCamera;
 
-		et::Program _program;
-		et::Program _frustumProgram;
+		et::Program::Pointer _program;
+		et::Program::Pointer _frustumProgram;
 		et::Texture _texture;
 
 		et::InertialValue<et::vec2> _cameraAngles;

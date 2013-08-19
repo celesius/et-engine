@@ -93,7 +93,7 @@ void MainController::onZoom(float v)
 
 void MainController::onKeyPressed(size_t key)
 {
-	int upCase = ::toupper(key);
+	int upCase = ::toupper(static_cast<int>(key & 0xffffffff));
 
 	if (upCase == ET_O)
 		_sample.toggleObserving();

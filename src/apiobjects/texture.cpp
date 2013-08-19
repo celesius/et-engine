@@ -91,7 +91,7 @@ void TextureData::setFiltration(RenderContext* rc, TextureFiltration minFiltrati
 
 #if defined(GL_TEXTURE_COMPARE_MODE) && defined(GL_TEXTURE_COMPARE_FUNC)
 
-void TextureData::compareRefToTexture(RenderContext* rc, bool enable, uint32_t compareFunc)
+void TextureData::compareRefToTexture(RenderContext* rc, bool enable, int32_t compareFunc)
 {
 	rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
 	if (enable)
@@ -111,7 +111,7 @@ void TextureData::compareRefToTexture(RenderContext* rc, bool enable, uint32_t c
 
 #else
 
-void TextureData::compareRefToTexture(RenderContext*, bool, uint32_t)
+void TextureData::compareRefToTexture(RenderContext*, bool, int32_t)
 	{ assert(false && "WARNING: GL_TEXTURE_COMPARE_MODE and GL_TEXTURE_COMPARE_FUNC are not defined."); }
 
 #endif
@@ -133,8 +133,8 @@ void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
 	{
 		if (_desc->compressed && aDataSize)
 		{
-			etCompressedTexImage1D(_desc->target, 0, _desc->internalformat,
-				_desc->size.x, 0, aDataSize, aDataPtr);
+			etCompressedTexImage1D(_desc->target, 0, static_cast<uint32_t>(_desc->internalformat),
+				_desc->size.x, 0, static_cast<GLsizei>(aDataSize), aDataPtr);
 		}
 		else
 		{
@@ -149,42 +149,42 @@ void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
 		for (size_t level = 0; level < _desc->mipMapCount; ++level)
 		{
 			vec2i t_mipSize = _desc->sizeForMipLevel(level);
-			size_t t_dataSize = _desc->dataSizeForMipLevel(level);
+			GLsizei t_dataSize = static_cast<GLsizei>(_desc->dataSizeForMipLevel(level));
 			size_t t_offset = _desc->dataOffsetForMipLevel(level);
 			
 			const char* ptr = (aDataPtr && (t_offset < aDataSize)) ? &aDataPtr[t_offset] : 0;
 			if (_desc->compressed && ptr)
 			{
-				etCompressedTexImage2D(_desc->target, level, _desc->internalformat,
-					t_mipSize.x, t_mipSize.y, 0, t_dataSize, ptr);
+				etCompressedTexImage2D(_desc->target, static_cast<int>(level),
+					static_cast<uint32_t>(_desc->internalformat), t_mipSize.x, t_mipSize.y, 0, t_dataSize, ptr);
 			}
 			else
 			{
-				etTexImage2D(_desc->target, level, _desc->internalformat,
+				etTexImage2D(_desc->target, static_cast<int>(level), _desc->internalformat,
 					t_mipSize.x, t_mipSize.y, 0, _desc->format, _desc->type, ptr);
 			}
 		}
 	}
 	else if (_desc->target == GL_TEXTURE_CUBE_MAP)
 	{
-		size_t target = GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+		uint32_t target = GL_TEXTURE_CUBE_MAP_POSITIVE_X;
 		for (size_t layer = 0; layer < _desc->layersCount; ++layer, ++target)
 		{
 			for (size_t level = 0; level < _desc->mipMapCount; ++level)
 			{
 				vec2i t_mipSize = _desc->sizeForMipLevel(level);
-				size_t t_dataSize = _desc->dataSizeForMipLevel(level);
+				GLsizei t_dataSize = static_cast<GLsizei>(_desc->dataSizeForMipLevel(level));
 				size_t t_offset = _desc->dataOffsetForMipLevel(level, layer);
 				
 				const char* ptr = (aDataPtr && (t_offset < aDataSize)) ? &aDataPtr[t_offset] : 0;
 				if (_desc->compressed && ptr)
 				{
-					etCompressedTexImage2D(target, level, _desc->internalformat,
+					etCompressedTexImage2D(target, static_cast<int>(level), static_cast<uint32_t>(_desc->internalformat),
 						t_mipSize.x, t_mipSize.y, 0, t_dataSize, ptr);
 				}
 				else
 				{
-					etTexImage2D(target, level, _desc->internalformat, t_mipSize.x, t_mipSize.y,
+					etTexImage2D(target, static_cast<int>(level), _desc->internalformat, t_mipSize.x, t_mipSize.y,
 						0, _desc->format, _desc->type, ptr);
 				}
 			}
@@ -273,7 +273,7 @@ void TextureData::setMaxLod(RenderContext* rc, size_t value)
 {
 #if defined(GL_TEXTURE_MAX_LEVEL)
     rc->renderState().bindTexture(defaultBindingUnit, _glID, _desc->target);
-	glTexParameteri(_desc->target, GL_TEXTURE_MAX_LEVEL, value);
+	glTexParameteri(_desc->target, GL_TEXTURE_MAX_LEVEL, static_cast<GLint>(value));
 	checkOpenGLError("TextureData::setMaxLod - %s", name().c_str());
 #endif
 }

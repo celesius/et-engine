@@ -22,7 +22,7 @@ namespace et
 			{ etFillMemory(data, initialize, sizeof(data)); }
 		
 		StaticDataStorage(StaticDataStorage&& r)
-			{ std::swap(data, r.data); }
+			{ copyFrom(r); }
 
 		StaticDataStorage(const StaticDataStorage& r)
 			{ copyFrom(r); }

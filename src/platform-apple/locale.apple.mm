@@ -36,7 +36,7 @@ size_t Locale::currentLocale()
 	std::string mbcs = [localeId cStringUsingEncoding:NSUTF8StringEncoding];
 	lowercase(mbcs);
 	
-	size_t result = 0;
+	int32_t result = 0;
 
 	if (mbcs.size() > 0)
 		result |= mbcs[0];
@@ -49,5 +49,5 @@ size_t Locale::currentLocale()
 	else
 		result |= (result & 0xffff) << 16;
 
-	return result;
+	return static_cast<size_t>(result);
 }

@@ -397,7 +397,7 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 	vec2 np(2.0f * p.x / static_cast<float>(ownFrame.size.width) - 1.0f,
 		1.0f - 2.0f * p.y / static_cast<float>(ownFrame.size.height));
 
-	return PointerInputInfo(type, p, np, vec2(0.0f), [theEvent eventNumber],
+	return PointerInputInfo(type, p, np, vec2(0.0f), static_cast<size_t>([theEvent eventNumber]),
 		static_cast<float>([theEvent timestamp]), PointerOrigin_Any);
 }
 

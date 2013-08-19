@@ -28,10 +28,7 @@ void ObjectsCache::manage(const LoadableObject::Pointer& o, const ObjectLoader::
 		auto last = _objects.insert(std::make_pair(o->origin(), ObjectProperty(o, loader)));
 		last.first->second.identifiers[o->origin()] = getFileProperty(o->origin());
 		for (auto& s : o->distributedOrigins())
-		{
-			log::info("%s", s.c_str());
 			last.first->second.identifiers[s] = getFileProperty(s);
-		}
 	}
 }
 
@@ -99,7 +96,7 @@ void ObjectsCache::update(float t)
 	}
 }
 
-uint64_t ObjectsCache::getFileProperty(const std::string& p)
+int64_t ObjectsCache::getFileProperty(const std::string& p)
 {
 	return getFileDate(p);
 }
@@ -116,7 +113,7 @@ void ObjectsCache::performUpdate()
 			
 			for (auto i : p.second.identifiers)
 			{
-				uint64_t prop = getFileProperty(i.first);
+				int64_t prop = getFileProperty(i.first);
 				if (prop != i.second)
 				{
 					i.second = prop;

@@ -86,17 +86,14 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 		imageOrigin = 0.5f * (frameSize - vec2(contentWidth, imageSize.y));
 		textOrigin = vec2(imageOrigin.x + contentGap + imageSize.x, 0.5f * (frameSize.y - _textSize.y));
 	}
-	vec4 alphaScaleColor = vec4(1.0f, 1.0f, 1.0f, alpha());
+	vec4 alphaScale = vec4(1.0f, 1.0f, 1.0f, alpha());
 	
 	_bgVertices.setOffset(0);
 	_textVertices.setOffset(0);
 	_imageVertices.setOffset(0);
 	
 	if (_backgroundColor.w > 0.0f)
-	{
-		gr.createColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor * alphaScaleColor,
-			transform, RenderLayer_Layer0);
-	}
+		gr.createColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor * alphaScale, transform);
 
 	if (_background[_state].texture.valid())
 	{
@@ -110,7 +107,7 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 		if (aColor.w > 0.0f)
 		{
 			gr.createStringVertices(_textVertices, _font->buildString(_title, true), Alignment_Near,
-				Alignment_Near, textOrigin, aColor * alphaScaleColor, transform, RenderLayer_Layer1);
+				Alignment_Near, textOrigin, aColor * alphaScale, transform, RenderLayer_Layer1);
 		}
 	}
 
@@ -122,7 +119,7 @@ void Button::buildVertices(RenderContext*, GuiRenderer& gr)
 		if (aColor.w > 0.0f)
 		{
 			gr.createImageVertices(_imageVertices, _image.texture, _image.descriptor, 
-				rect(imageOrigin, imageSize), aColor * alphaScaleColor, transform, RenderLayer_Layer0);
+				rect(imageOrigin, imageSize), aColor * alphaScale, transform, RenderLayer_Layer0);
 		}
 	}
 }

@@ -248,7 +248,7 @@ Element* Layout::activeElement(const PointerInputInfo& p)
 		ET_ITERATE(children(), auto&, i, collectTopmostElements(i.ptr()))
 	}
 
-	Element* active = 0;
+	Element* active = nullptr;
 	for (auto i = _topmostElements.rbegin(), e = _topmostElements.rend(); i != e; ++i)
 	{
 		active = getActiveElement(p, i->ptr());

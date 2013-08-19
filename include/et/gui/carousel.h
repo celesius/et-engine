@@ -38,7 +38,7 @@ namespace et
 			friend class Carousel;
 
 			CarouselItem(const Camera& camera, const Texture& texture, const ImageDescriptor& desc, 
-				size_t tag, Carousel* parent);
+				int tag, Carousel* parent);
 
 			void addToRenderQueue(RenderContext* rc, GuiRenderer& gr);
 			void setScale(const vec2& s);

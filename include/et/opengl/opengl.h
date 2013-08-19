@@ -148,7 +148,7 @@ namespace et
 
 	std::string glErrorToString(uint32_t error);
 	std::string glTexTargetToString(uint32_t target);
-	std::string glInternalFormatToString(uint32_t format);
+	std::string glInternalFormatToString(int32_t format);
 	std::string glTypeToString(uint32_t type);
 	std::string glBlendFuncToString(uint32_t value);
 	std::string glPrimitiveTypeToString(uint32_t value);
@@ -156,7 +156,7 @@ namespace et
 	void validateExtensions();
 
 	uint32_t primitiveTypeValue(PrimitiveType);
-	size_t primitiveCount(uint32_t mode, GLsizei count);
+	size_t primitiveCount(uint32_t mode, size_t count);
 
 	void etViewport(int x, int y, GLsizei width, GLsizei height);
 	void etDrawElements(uint32_t mode, GLsizei count, uint32_t type, const GLvoid* indices);
@@ -167,20 +167,21 @@ namespace et
 	void etUseProgram(uint32_t program);
 	void etBindVertexArray(uint32_t arr);
 
-	void etCompressedTexImage1D(uint32_t target, int level, uint32_t internalformat, GLsizei width,
-		int border, GLsizei imageSize, const GLvoid * data);
-	
 	void etTexImage1D(uint32_t target, int level, int internalformat, GLsizei width, int border,
 		uint32_t format, uint32_t type, const GLvoid * pixels);
+	
+	void etTexImage2D(uint32_t target, int level, int internalformat, GLsizei width, GLsizei height,
+		int border, uint32_t format, uint32_t type, const GLvoid * pixels);
+	
+	void etCompressedTexImage1D(uint32_t target, int level, uint32_t internalformat, GLsizei width,
+		int border, GLsizei imageSize, const GLvoid * data);
 	
 	void etCompressedTexImage2D(uint32_t target, int level, uint32_t internalformat, GLsizei width,
 		GLsizei height, int border, GLsizei imageSize, const GLvoid * data);
 
-	void etTexImage2D(uint32_t target, int level, int internalformat, GLsizei width, GLsizei height,
-		int border, uint32_t format, uint32_t type, const GLvoid * pixels);
-
-	uint32_t textureWrapValue(TextureWrap);
-	uint32_t textureFiltrationValue(TextureFiltration);
+	int32_t textureWrapValue(TextureWrap);
+	int32_t textureFiltrationValue(TextureFiltration);
+	
 	uint32_t drawTypeValue(BufferDrawType);
 	uint32_t primitiveTypeValue(PrimitiveType);
 }

@@ -9,7 +9,7 @@
 using namespace et;
 using namespace et::gui;
 
-const size_t defaultTextureSize = 1024;
+const int defaultTextureSize = 1024;
 
 class et::gui::CharacterGeneratorPrivate
 {
@@ -191,8 +191,9 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& po
 void CharacterGeneratorPrivate::renderCharacter(NSAttributedString* value,
 	const vec2i& size, NSFont*, BinaryDataStorage& data)
 {
-	CGContextRef context = CGBitmapContextCreateWithData(data.data(), size.x, size.y, 8, 4 * size.x,
-		colorSpace, kCGImageAlphaPremultipliedLast, nil, nil);
+	CGContextRef context = CGBitmapContextCreateWithData(data.data(), static_cast<size_t>(size.x),
+		static_cast<size_t>(size.y), 8, 4 * static_cast<size_t>(size.x), colorSpace,
+		kCGImageAlphaPremultipliedLast, nil, nil);
 	assert(context);
 
 	NSGraphicsContext* aContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:YES];

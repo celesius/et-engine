@@ -15,7 +15,8 @@
 using namespace demo;
 using namespace et;
 
-size_t frustumLines[] = { 0,1, 0,4, 1,2, 1,5, 2,3, 2,6, 3,0, 3,7, 4,5, 5,6, 6,7, 7,4 };
+IndexType frustumLines[] = { 0,1, 0,4, 1,2, 1,5, 2,3, 2,6, 3,0, 3,7, 4,5, 5,6, 6,7, 7,4 };
+
 size_t numFrustumPoints = sizeof(frustumLines) / sizeof(frustumLines[0]);
 size_t numFrustumLines = numFrustumPoints / 2;
 
@@ -48,10 +49,10 @@ void Sample::prepare(et::RenderContext* rc)
 
 void Sample::loadPrograms(et::RenderContext* rc)
 {
-	_program = rc->programFactory().loadProgram("data/shaders/pgrid.program");
+	_program = rc->programFactory().loadProgram("data/shaders/pgrid.program", _cache);
 	_program->setUniform("cloudsTexture", 0);
 
-	_frustumProgram = rc->programFactory().loadProgram("data/shaders/lines.program");
+	_frustumProgram = rc->programFactory().loadProgram("data/shaders/lines.program", _cache);
 }
 
 void Sample::initCamera(et::RenderContext* rc)
@@ -110,7 +111,7 @@ void Sample::render(et::RenderContext* rc)
 		_program->setPrimaryLightPosition(cam.position());
 		_program->setCameraProperties(cam);
 		_program->setUniform("mInverseMVPMatrix", _projectorMatrix);
-		_program->setUniform("time", 0.016f * mainTimerPool()->actualTime());
+		_program->setUniform("time", vec2(0.016f * mainTimerPool()->actualTime()));
 
 		rc->renderState().bindTexture(0, _texture);
 		rc->renderState().bindVertexArray(_vao);
@@ -251,10 +252,11 @@ void Sample::createFrustumGeometry(et::RenderContext* rc)
 		ai.setIndex(frustumLines[2*i+1], k++);
 	}
 
+	IndexType i0 = static_cast<IndexType>(_frustumLines.size());
 	for (size_t i = 0; i < numFrustumLines; ++i)
 	{
-		ai.setIndex(_frustumLines.size() + frustumLines[2*i+0], k++);
-		ai.setIndex(_frustumLines.size() + frustumLines[2*i+1], k++);
+		ai.setIndex(i0 + frustumLines[2*i+0], k++);
+		ai.setIndex(i0 + frustumLines[2*i+1], k++);
 	}
 	
 	ai.retain();
