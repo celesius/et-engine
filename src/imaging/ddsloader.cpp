@@ -56,13 +56,13 @@ struct DDS_HEADER
 #define DDSCAPS_MIPMAP                      0x400000
 #define DDSCAPS_TEXTURE                     0x1000
 
-const uint32_t DDS_HEADER_ID = ET_CHARACTER_LITERAL(' ', 'S', 'D', 'D');
+const uint32_t DDS_HEADER_ID = ET_COMPOSE_UINT32(' ', 'S', 'D', 'D');
 
-const uint32_t FOURCC_DXT1 = ET_CHARACTER_LITERAL('1', 'T', 'X', 'D');
-const uint32_t FOURCC_DXT3 = ET_CHARACTER_LITERAL('3', 'T', 'X', 'D');
-const uint32_t FOURCC_DXT5 = ET_CHARACTER_LITERAL('5', 'T', 'X', 'D');
-const uint32_t FOURCC_ATI1 = ET_CHARACTER_LITERAL('1', 'I', 'T', 'A');
-const uint32_t FOURCC_ATI2 = ET_CHARACTER_LITERAL('1', 'I', 'T', 'A');
+const uint32_t FOURCC_DXT1 = ET_COMPOSE_UINT32('1', 'T', 'X', 'D');
+const uint32_t FOURCC_DXT3 = ET_COMPOSE_UINT32('3', 'T', 'X', 'D');
+const uint32_t FOURCC_DXT5 = ET_COMPOSE_UINT32('5', 'T', 'X', 'D');
+const uint32_t FOURCC_ATI1 = ET_COMPOSE_UINT32('1', 'I', 'T', 'A');
+const uint32_t FOURCC_ATI2 = ET_COMPOSE_UINT32('1', 'I', 'T', 'A');
 
 void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& desc)
 {

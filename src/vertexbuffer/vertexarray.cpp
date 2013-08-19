@@ -10,7 +10,7 @@
 
 using namespace et;
 
-const int VertexArrayId_1 = ET_CHARACTER_LITERAL('V', 'A', 'V', '1');
+const int VertexArrayId_1 = ET_COMPOSE_UINT32('V', 'A', 'V', '1');
 const int VertexArrayCurrentId = VertexArrayId_1;
 
 VertexArray::VertexArray() :
@@ -145,6 +145,10 @@ void VertexArray::deserialize(std::istream& stream)
 		for (size_t i = 0; i < numChunks; ++i)
 			_chunks.push_back(VertexDataChunk(stream));
 		_smoothing = VertexDataChunk(stream);
+	}
+	else
+	{
+		assert("Unrecognized vertex array version" && false);
 	}
 }
 
