@@ -68,10 +68,10 @@ const std::string materialKeys[MaterialParameter_max] =
 	std::string("transparent_color"),	//	MaterialParameter_TransparentColor,
 };
 
-const int MaterialVersion1_0_0 = ET_CHARACTER_LITERAL('M', 'A', 'T', '1');
-const int MaterialVersion1_0_1 = ET_CHARACTER_LITERAL('M', 'A', 'T', '2');
-const int MaterialVersion1_0_2 = ET_CHARACTER_LITERAL('M', 'A', 'T', '3');
-const int MaterialVersion1_0_3 = ET_CHARACTER_LITERAL('M', 'A', 'T', '4');
+const int MaterialVersion1_0_0 = ET_COMPOSE_UINT32('M', 'A', 'T', '1');
+const int MaterialVersion1_0_1 = ET_COMPOSE_UINT32('M', 'A', 'T', '2');
+const int MaterialVersion1_0_2 = ET_COMPOSE_UINT32('M', 'A', 'T', '3');
+const int MaterialVersion1_0_3 = ET_COMPOSE_UINT32('M', 'A', 'T', '4');
 const int MaterialCurrentVersion = MaterialVersion1_0_3;
 
 inline size_t keyToMaterialParameter(const std::string& k)

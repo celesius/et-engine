@@ -78,10 +78,7 @@ void Slider::buildVertices(RenderContext*, GuiRenderer& renderer)
 	float valuePoint = _value * mainRect.width;
 	
 	if (_backgroundColor.w > 0.0f)
-	{
-		renderer.createColorVertices(_backgroundVertices, mainRect, _backgroundColor,
-			transform, RenderLayer_Layer0);
-	}
+		renderer.createColorVertices(_backgroundVertices, mainRect, _backgroundColor, transform);
 
 	if (_background.texture.valid())
 	{

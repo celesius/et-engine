@@ -14,7 +14,7 @@ using namespace et;
 const IndexType IndexArray::MaxShortIndex = 65536;
 const IndexType IndexArray::MaxSmallIndex = 256;
 
-const int IndexArrayId_1 = ET_CHARACTER_LITERAL('I', 'A', 'V', '1');
+const int IndexArrayId_1 = ET_COMPOSE_UINT32('I', 'A', 'V', '1');
 const int IndexArrayCurrentId = IndexArrayId_1;
 
 IndexArray::IndexArray(IndexArrayFormat format, size_t size, PrimitiveType content) : tag(0),
@@ -282,5 +282,9 @@ void IndexArray::deserialize(std::istream& stream)
 		_actualSize = deserializeUInt(stream);
 		_data.resize(deserializeUInt(stream));
 		stream.read(_data.binary(), static_cast<std::streamsize>(_data.dataSize()));
+	}
+	else
+	{
+		assert("Unrecognized index array version" && false);
 	}
 }

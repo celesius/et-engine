@@ -19,7 +19,7 @@ enum PVRFormat
 	PVRVersion3Format_PVRTC_4bpp_RGB = 2,
 	PVRVersion3Format_PVRTC_4bpp_RGBA = 3,
 	
-	PVRVersion3Format_RGBA = ET_CHARACTER_LITERAL('a', 'b', 'g', 'r'),
+	PVRVersion3Format_RGBA = ET_COMPOSE_UINT32('a', 'b', 'g', 'r'),
 	
 	PVRVersion3Format_mask = 0xffffffff,
     
@@ -183,7 +183,7 @@ void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescriptio
 	}
 }
 
-static const unsigned int pvrHeader2 = ET_CHARACTER_LITERAL('!', 'R', 'V', 'P');
+static const unsigned int pvrHeader2 = ET_COMPOSE_UINT32('!', 'R', 'V', 'P');
 
 void PVRLoader::loadInfoFromStream(std::istream& stream, TextureDescription& desc)
 {
