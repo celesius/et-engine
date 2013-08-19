@@ -39,7 +39,7 @@ void RenderContext::updateScreenScale(const vec2i& screenSize)
 	int maxDimension = etMax(screenSize.x, screenSize.y);
 	int maxBaseSize = etMax(_params.contextBaseSize.x, _params.contextBaseSize.y);
 	
-	size_t newScale = (maxDimension - 1) / (3 * maxBaseSize / 2) + 1;
+	size_t newScale = static_cast<size_t>((maxDimension - 1) / (3 * maxBaseSize / 2) + 1);
 	if (newScale == _screenScaleFactor) return;
 	
 	_screenScaleFactor = newScale;

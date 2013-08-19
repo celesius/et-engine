@@ -29,8 +29,8 @@ namespace et
 
 		void timerExpired(NotifyTimer*)
 		{
-			_defaultLocation.latitude += 0.001f * randf();
-			_defaultLocation.longitude += 0.001f * randf();
+			_defaultLocation.latitude += randomFloat(-0.001f, 0.001f);
+			_defaultLocation.longitude += randomFloat(-0.001f, 0.001f);
 			_defaultLocation.timestamp = mainTimerPool()->actualTime();
 			_man->locationUpdated.invoke(_defaultLocation);
 		}

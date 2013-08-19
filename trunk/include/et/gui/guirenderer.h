@@ -38,7 +38,7 @@ namespace et
 			size_t addVertices(const GuiVertexList& vertices, const Texture& texture,
 				ElementRepresentation cls, RenderLayer layer);
 
-			int measusevertexCountForImageDescriptor(const ImageDescriptor& desc);
+			size_t measusevertexCountForImageDescriptor(const ImageDescriptor& desc);
 			
 			void createStringVertices(GuiVertexList& vertices, const CharDescriptorList& chars, 
 				Alignment hAlign, Alignment vAlign, const vec2& pos,
@@ -48,7 +48,7 @@ namespace et
 				const rect& p, const vec4& color, const mat4& transform, RenderLayer layer);
 
 			void createColorVertices(GuiVertexList& vertices, const rect& p, const vec4& color,
-				const mat4& transform, RenderLayer layer);
+				const mat4& transform);
 			
 			void buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, const GuiVertex& topRight,
 				const GuiVertex& bottomLeft, const GuiVertex& bottomRight);

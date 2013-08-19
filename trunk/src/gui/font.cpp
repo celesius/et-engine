@@ -48,7 +48,7 @@ void FontData::loadFromFile(RenderContext* rc, const std::string& fileName, Obje
 
 	int version = deserializeInt(fontFile.stream());
 	_face = deserializeString(fontFile.stream());
-	_size = deserializeInt(fontFile.stream());
+	_size = deserializeUInt(fontFile.stream());
 	
 	std::string textureFile = deserializeString(fontFile.stream());
 	std::string layoutFile = deserializeString(fontFile.stream());

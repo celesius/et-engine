@@ -23,7 +23,7 @@ Mesh::Mesh(const std::string& name, Element* parent) : RenderableElement(name, p
 }
 
 Mesh::Mesh(const std::string& name, const VertexArrayObject& vao, const Material& material,
-	size_t startIndex, size_t numIndexes, Element* parent) : RenderableElement(name, parent), _vao(vao), 
+	IndexType startIndex, size_t numIndexes, Element* parent) : RenderableElement(name, parent), _vao(vao),
 	_startIndex(startIndex), _numIndexes(numIndexes), _selectedLod(0)
 {
 	setMaterial(material);
@@ -94,13 +94,13 @@ void Mesh::deserialize(std::istream& stream, ElementFactory* factory, SceneVersi
 	setMaterial(factory->materialWithId(deserializeInt(stream)));
 	setVertexArrayObject(factory->vaoWithIdentifiers(vbName, ibName));
 
-	_startIndex = deserializeInt(stream);
-	_numIndexes = deserializeInt(stream);
+	_startIndex = deserializeUInt(stream);
+	_numIndexes = deserializeUInt(stream);
 
-	size_t numLods = deserializeInt(stream);
-	for (size_t i = 0; i < numLods; ++i)
+	int numLods = deserializeInt(stream);
+	for (int i = 0; i < numLods; ++i)
 	{
-		size_t level = deserializeInt(stream);
+		size_t level = deserializeUInt(stream);
 		Mesh::Pointer p = factory->createElementOfType(ElementType_Mesh, 0);
 		p->deserialize(stream, factory, version);
 		attachLod(level, p);
@@ -159,7 +159,7 @@ const IndexBuffer& Mesh::indexBuffer() const
 	return vao.valid() ? vao->indexBuffer() : _emptyIndexBuffer; 
 }
 
-size_t Mesh::startIndex() const 
+IndexType Mesh::startIndex() const 
 {
 	return currentLod()->_startIndex; 
 }
@@ -169,7 +169,7 @@ size_t Mesh::numIndexes() const
 	return currentLod()->_numIndexes; 
 }
 
-void Mesh::setStartIndex(size_t index)
+void Mesh::setStartIndex(IndexType index)
 {
 	currentLod()->_startIndex = index; 
 }

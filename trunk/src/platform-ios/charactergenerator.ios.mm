@@ -37,8 +37,8 @@ CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& fac
 	const std::string& boldFace, size_t size) : _rc(rc),
 	_private(new CharacterGeneratorPrivate(face, boldFace, size)), _face(face), _size(size)
 {
-	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(defaultTextureSize),
-		GL_RGBA, GL_UNSIGNED_BYTE, BinaryDataStorage(), face + "font");
+	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(defaultTextureSize), GL_RGBA,
+		GL_UNSIGNED_BYTE, BinaryDataStorage(4 * defaultTextureSize * defaultTextureSize, 0), face + "font");
 }
 
 CharacterGenerator::~CharacterGenerator()

@@ -51,11 +51,10 @@ void TextField::buildVertices(RenderContext*, GuiRenderer& gr)
 	_imageVertices.setOffset(0);
 	_textVertices.setOffset(0);
 	
+	vec4 alphaScale(1.0f, 1.0f, 1.0f, alpha());
+	
 	if (_backgroundColor.w > 0.0f)
-	{
-		gr.createColorVertices(_backgroundVertices, wholeRect, _backgroundColor,
-			transform, RenderLayer_Layer0);
-	}
+		gr.createColorVertices(_backgroundVertices, wholeRect, _backgroundColor * alphaScale, transform);
 	
 	if (_background.texture.valid())
 	{
@@ -63,17 +62,13 @@ void TextField::buildVertices(RenderContext*, GuiRenderer& gr)
 			wholeRect, alphaVector, transform, RenderLayer_Layer0);
 	}
 
-	_charList = _secured ?
-		CharDescriptorList(_text.length(), _font->charDescription(securedChar)) :
+	_charList = _secured ? CharDescriptorList(_text.length(), _font->charDescription(securedChar)) :
 		_font->buildString(_text);
 	
-	vec2 textSize = _charList.size() ?
-		_font->measureStringSize(_charList) : vec2(0.0f, _font->lineHeight());
+	vec2 textSize = _charList.size() ? _font->measureStringSize(_charList) : vec2(0.0f, _font->lineHeight());
 
 	if (_caretVisible)
-	{
 		_charList.push_back(_font->charDescription(caretChar));
-	}
 	
 	if (_charList.size())
 	{

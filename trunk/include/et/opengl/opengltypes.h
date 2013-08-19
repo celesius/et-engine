@@ -86,11 +86,11 @@ namespace et
 		PrimitiveType_max
 	};
 
-	enum VertexAttributeUsage
+	enum VertexAttributeUsage : uint32_t
 	{
-		Usage_Undefined = -1,
-
-		Usage_Position,
+		Usage_Undefined = static_cast<uint32_t>(-1),
+		
+		Usage_Position = 0,
 		Usage_Normal,
 		Usage_Color,
 		Usage_Tangent,
@@ -113,9 +113,9 @@ namespace et
 		IndexArrayFormat_max
 	};
 
-	typedef unsigned int IndexType;
-	typedef unsigned short ShortIndexType;
-	typedef unsigned char SmallIndexType;
+	typedef uint32_t IndexType;
+	typedef uint16_t ShortIndexType;
+	typedef uint8_t SmallIndexType;
 	
 	enum
 	{

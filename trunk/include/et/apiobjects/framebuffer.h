@@ -21,11 +21,12 @@ namespace et
 		size_t numColorRenderTargets;
 		int includeDepthRenderTarget;
 
-		uint32_t colorInternalformat;
+		int32_t colorInternalformat;
+		
 		uint32_t colorFormat;
 		uint32_t colorType;
 
-		uint32_t depthInternalformat;
+		int32_t depthInternalformat;
 		uint32_t depthFormat;
 		uint32_t depthType;
 		
@@ -61,7 +62,7 @@ namespace et
 		bool setCurrentRenderTarget(const Texture& texture, uint32_t target);
 		bool setCurrentRenderTarget(size_t index);
 		
-		bool setCurrentCubemapFace(size_t faceIndex);
+		bool setCurrentCubemapFace(uint32_t faceIndex);
 
 		bool checkStatus();
 		

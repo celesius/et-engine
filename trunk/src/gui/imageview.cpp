@@ -52,11 +52,10 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 	mat4 transform = finalTransform();
 	_vertices.setOffset(0);
 	
+	vec4 alphaScale(1.0f, 1.0f, 1.0f, alpha());
+	
 	if (_backgroundColor.w > 0.0f)
-	{
-		g.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor,
-			transform, RenderLayer_Layer1);
-	}
+		g.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor * alphaScale, transform);
 	
 	if (!_texture.valid()) return;
 
@@ -65,15 +64,15 @@ void ImageView::buildVertices(RenderContext*, GuiRenderer& g)
 		_actualImageSize = _descriptor.size;
 		_actualImageSize = vec2(0.0f);
 
-		int repeatsWidth = static_cast<int>(size().x / _descriptor.size.x);
-		int repeatsHeight = static_cast<int>(size().y / _descriptor.size.y);
+		size_t repeatsWidth = static_cast<size_t>(size().x / _descriptor.size.x);
+		size_t repeatsHeight = static_cast<size_t>(size().y / _descriptor.size.y);
 
 		_vertices.fitToSize(repeatsWidth * repeatsHeight *
 			g.measusevertexCountForImageDescriptor(_descriptor));
 
-		for (int v = 0; v < repeatsHeight; ++v)
+		for (size_t v = 0; v < repeatsHeight; ++v)
 		{
-			for (int u = 0; u < repeatsWidth; ++u)
+			for (size_t u = 0; u < repeatsWidth; ++u)
 			{
 				float fx = static_cast<float>(u * _descriptor.size.x);
 				float fy = static_cast<float>(v * _descriptor.size.y);

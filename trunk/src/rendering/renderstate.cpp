@@ -438,7 +438,7 @@ void RenderState::setVertexAttribEnabled(uint32_t attrib, bool enabled, bool for
 
 void RenderState::setVertexAttribPointer(const VertexElement& e, size_t baseIndex)
 {
-	glVertexAttribPointer(e.usage(), e.components(), e.dataType(), false, e.stride(), 
+	glVertexAttribPointer(e.usage(), static_cast<GLint>(e.components()), e.dataType(), false, e.stride(),
 		reinterpret_cast<GLvoid*>(e.offset() + baseIndex));
 
 	checkOpenGLError(keyVertexAttribPointer);
@@ -563,16 +563,16 @@ void RenderState::applyState(const RenderState::State& s)
 	setWireframeRendering(s.wireframe);
 	setCulling(s.lastCull);
 	setViewportSize(s.viewportSize);
-	bindFramebuffer(s.boundFramebuffer, GL_FRAMEBUFFER);
+	bindFramebuffer(s.boundFramebuffer, true);
 	bindProgram(s.boundProgram, true);
 	bindVertexArray(s.boundVertexArrayObject);
 	bindBuffer(GL_ELEMENT_ARRAY_BUFFER, s.boundElementArrayBuffer, true);
 	bindBuffer(GL_ARRAY_BUFFER, s.boundArrayBuffer, true);
 	
-	for (size_t i = 0; i < MaxTextureUnits; ++i)
+	for (uint32_t i = 0; i < MaxTextureUnits; ++i)
 		bindTexture(i, s.boundTextures[i], GL_TEXTURE_2D);
 	
-	for (size_t i = 0; i < Usage_max; ++i)
+	for (uint32_t i = 0; i < Usage_max; ++i)
 	{
 		bool enabled = s.enabledVertexAttributes[i] != 0;
 		setVertexAttribEnabled(i, enabled, false);
@@ -587,7 +587,7 @@ RenderState::State RenderState::currentState()
 	State s;
 
 	int value = 0;
-	for (size_t i = 0; i < Usage_max; ++i)
+	for (uint32_t i = 0; i < Usage_max; ++i)
 	{
 		int enabled = 0;
 		glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
@@ -596,42 +596,42 @@ RenderState::State RenderState::currentState()
 
 	value = 0;
 	glGetIntegerv(GL_ACTIVE_TEXTURE, &value);
-	s.activeTextureUnit = value - GL_TEXTURE0;
+	s.activeTextureUnit = static_cast<uint32_t>(value - GL_TEXTURE0);
 	
-	for (size_t i = 0; i < MaxTextureUnits; ++i)
+	for (GLenum i = 0; i < MaxTextureUnits; ++i)
 	{
 		value = 0;
 		glActiveTexture(GL_TEXTURE0 + i);
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &value);
-		s.boundTextures[i] = value;
+		s.boundTextures[i] = static_cast<uint32_t>(value);
 	}
 	glActiveTexture(GL_TEXTURE0 + s.activeTextureUnit);
 
 	value = 0;
 	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &value);
-	s.boundArrayBuffer = value;
+	s.boundArrayBuffer = static_cast<uint32_t>(value);
 
 	value = 0;
 	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &value);
-	s.boundElementArrayBuffer = value;
+	s.boundElementArrayBuffer = static_cast<uint32_t>(value);
 
 	value = 0;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &value);
-	s.boundFramebuffer = value;
+	s.boundFramebuffer = static_cast<uint32_t>(value);
 	
 	value = 0;
 	glGetIntegerv(GL_RENDERBUFFER_BINDING, &value);
-	s.boundRenderbuffer = value;
+	s.boundRenderbuffer = static_cast<uint32_t>(value);
 
 #if (ET_SUPPORT_VERTEX_ARRAY_OBJECTS)
 	value = 0;
 	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &value);
-	s.boundVertexArrayObject = value;
+	s.boundVertexArrayObject = static_cast<uint32_t>(value);
 #endif
 	
 	value = 0;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &value);
-	s.boundProgram = value;
+	s.boundProgram = static_cast<uint32_t>(value);
 
 	glGetIntegerv(GL_SCISSOR_BOX, s.clipRect.data());
 
@@ -736,8 +736,8 @@ RenderState::State RenderState::currentState()
 	else
 	{
 		log::warning("Unsupported blend combination: %s and %s",
-			glBlendFuncToString(blendSource).c_str(), glBlendFuncToString(blendDest).c_str());
-		
+			glBlendFuncToString(static_cast<uint32_t>(blendSource)).c_str(),
+			glBlendFuncToString(static_cast<uint32_t>(blendDest)).c_str());
 		assert("Unsupported blend combination" && false);
 	}
 

@@ -69,14 +69,14 @@ namespace et
 		const quaternion& orientation();
 
 	private:
-		enum Flags
+		enum Flags : size_t
 		{
 			Flag_Valid = 0x01,
 			Flag_ShouldDecompose = 0x02,
 		};
 
 		bool shouldDecompose() const
-			{ return (_flags & Flag_ShouldDecompose); }
+			{ return (_flags & Flag_ShouldDecompose) != 0; }
 
 		void buildTransform();
 

@@ -77,9 +77,9 @@ void Element::addToOverlayRenderQueue(RenderContext*, GuiRenderer&)
 {
 }
 
-void Element::startUpdates(TimerPool::Pointer timerPool)
+void Element::startUpdates(TimerPool* timerPool)
 {
-	TimedObject::startUpdates(timerPool.ptr());
+	TimedObject::startUpdates(timerPool);
 }
 
 void Element::startUpdates()

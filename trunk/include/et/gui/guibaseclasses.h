@@ -25,7 +25,7 @@ namespace et
 
 #		define ET_DECLARE_GUI_ELEMENT_CLASS(CLASS) template <> \
 			const std::string et::gui::ElementClass<et::gui::CLASS*>::className = std::string(#CLASS);\
-			template<>AtomicCounter et::gui::ElementClass<et::gui::CLASS*>::instanceConter = AtomicCounter();\
+			template<>AtomicCounter et::gui::ElementClass<et::gui::CLASS*>::instanceConter = { };\
 			template<>std::string et::gui::ElementClass<et::gui::CLASS*>::uniqueName(const std::string& inputName)\
 			{ return (inputName.empty()) ? className + intToStr(instanceConter.retain()) : inputName; }
 

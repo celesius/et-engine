@@ -100,7 +100,9 @@ bool internal_writePNGtoBuffer(BinaryDataStorage& buffer, const BinaryDataStorag
 		}
 	}
 	
-	png_set_IHDR(png_ptr, info_ptr, size.x, size.y, bitsPerComponent, colorType, 
+	png_uint_32 w = static_cast<png_uint_32>(size.x);
+	png_uint_32 h = static_cast<png_uint_32>(size.y);
+	png_set_IHDR(png_ptr, info_ptr, w, h, bitsPerComponent, colorType,
 				 PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 	
 	png_bytep* row_pointers = new png_bytep[size.y];
@@ -172,7 +174,9 @@ bool internal_writePNGtoFile(const std::string& fileName, const BinaryDataStorag
 		}
 	}
 	
-	png_set_IHDR(png_ptr, info_ptr, size.x, size.y, bitsPerComponent, colorType, 
+	png_uint_32 w = static_cast<png_uint_32>(size.x);
+	png_uint_32 h = static_cast<png_uint_32>(size.y);
+	png_set_IHDR(png_ptr, info_ptr, w, h, bitsPerComponent, colorType,
 				 PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 	
 	png_write_info(png_ptr, info_ptr);

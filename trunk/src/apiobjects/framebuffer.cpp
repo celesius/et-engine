@@ -33,7 +33,7 @@ Framebuffer::Framebuffer(RenderContext* rc, TextureFactory* tf, const Framebuffe
 	{
 		if (desc.colorIsRenderbuffer)
 		{
-			createColorRenderbuffer(desc.colorInternalformat);
+			createColorRenderbuffer(static_cast<uint32_t>(desc.colorInternalformat));
 		}
 		else 
 		{
@@ -60,7 +60,7 @@ Framebuffer::Framebuffer(RenderContext* rc, TextureFactory* tf, const Framebuffe
 	{
 		if (desc.colorIsRenderbuffer)
 		{
-			createDepthRenderbuffer(desc.depthInternalformat);
+			createDepthRenderbuffer(static_cast<uint32_t>(desc.depthInternalformat));
 		}
 		else 
 		{
@@ -162,7 +162,7 @@ bool Framebuffer::addRenderTarget(const Texture& rt)
 		}
 		else if (rt->target() == GL_TEXTURE_CUBE_MAP)
 		{
-			for (size_t i = 0; i < 6; ++i)
+			for (GLenum i = 0; i < 6; ++i)
 			{
 				glFramebufferTexture2D(GL_FRAMEBUFFER, renderbufferTargets[_numTargets], 
 					GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, rt->glID(), 0);
@@ -283,7 +283,7 @@ void Framebuffer::setDrawBuffersCount(int count)
 }
 #endif
 
-bool Framebuffer::setCurrentCubemapFace(size_t faceIndex)
+bool Framebuffer::setCurrentCubemapFace(uint32_t faceIndex)
 {
 	if (!_isCubemapBuffer) return false;
 

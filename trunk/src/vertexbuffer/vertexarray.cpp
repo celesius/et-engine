@@ -10,14 +10,11 @@
 
 using namespace et;
 
-const int VertexArrayId_1 = 'VAV1';
+const int VertexArrayId_1 = ET_CHARACTER_LITERAL('V', 'A', 'V', '1');
 const int VertexArrayCurrentId = VertexArrayId_1;
 
 VertexArray::VertexArray() :
-	tag(0), _decl(true), _size(0), _smoothing(Usage_Smoothing, Type_Int, 0)
-{
-	
-}
+	tag(0), _decl(true), _size(0), _smoothing(Usage_Smoothing, Type_Int, 0) { }
 
 VertexArray::VertexArray(const VertexDeclaration& decl, size_t size) : tag(0), _decl(decl.interleaved()),
 	_size(size), _smoothing(Usage_Smoothing, Type_Int, size)
@@ -27,6 +24,17 @@ VertexArray::VertexArray(const VertexDeclaration& decl, size_t size) : tag(0), _
 		const VertexElement& e = decl.element(i);
 		_decl.push_back(e.usage(), e.type());
 		_chunks.push_back(VertexDataChunk(e.usage(), e.type(), size));
+	}
+}
+
+VertexArray::VertexArray(const VertexDeclaration& decl, int size) : tag(0), _decl(decl.interleaved()),
+	_size(static_cast<size_t>(size)), _smoothing(Usage_Smoothing, Type_Int, _size)
+{
+	for (size_t i = 0; i < decl.numElements(); ++i)
+	{
+		const VertexElement& e = decl.element(i);
+		_decl.push_back(e.usage(), e.type());
+		_chunks.push_back(VertexDataChunk(e.usage(), e.type(), _size));
 	}
 }
 
@@ -40,7 +48,7 @@ VertexArray::Description VertexArray::generateDescription() const
 
 	for (auto& chunk : _chunks)
 	{
-		size_t t_stride = _decl.interleaved() ? static_cast<size_t>(_decl.dataSize()) : 0;
+		int t_stride = _decl.interleaved() ? static_cast<int>(_decl.dataSize()) : 0;
 		size_t t_offset = _decl.interleaved() ? offset : static_cast<size_t>(dataSize);
 		desc.declaration.push_back(VertexElement(chunk->usage(), chunk->type(), t_stride, t_offset));
 		dataSize += chunk->dataSize();
@@ -132,8 +140,8 @@ void VertexArray::deserialize(std::istream& stream)
 	if (id == VertexArrayId_1)
 	{
 		_decl.deserialize(stream);
-		_size = deserializeInt(stream);
-		size_t numChunks = deserializeInt(stream);
+		_size = deserializeSizeT(stream);
+		size_t numChunks = deserializeSizeT(stream);
 		for (size_t i = 0; i < numChunks; ++i)
 			_chunks.push_back(VertexDataChunk(stream));
 		_smoothing = VertexDataChunk(stream);

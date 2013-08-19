@@ -41,7 +41,7 @@ void VertexBufferData::setData(const void* data, size_t dataSize)
 	if (_dataSize > 0)
 	{
 		_rs.bindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-		glBufferData(GL_ARRAY_BUFFER, _dataSize, data, drawTypeValue(_drawType));
+		glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(_dataSize), data, drawTypeValue(_drawType));
 		checkOpenGLError("glBufferData(GL_ARRAY_BUFFER, %u, 0x%08X, ..,)", _dataSize, data);
 	}
 }

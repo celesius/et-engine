@@ -40,27 +40,29 @@ AtomicCounterType AtomicCounter::release()
 #endif
 }
 
+static const AtomicCounterType validMask = static_cast<AtomicCounterType>(0xfffffffc);
+
 AtomicBool::AtomicBool() :
 	_value(0) { }
 
 bool AtomicBool::operator = (bool b)
 {
-	assert((_value & 0xfffffffc) == 0);
+	assert((_value & validMask) == 0);
 	OSAtomicCompareAndSwap32Barrier(_value, AtomicCounterType(b), &_value);
 	return (_value != 0);
 }
 
 bool AtomicBool::operator == (bool b)
-	{ assert((_value & 0xfffffffc) == 0); return b == (_value != 0); }
+	{ assert((_value & validMask) == 0); return b == (_value != 0); }
 
 bool AtomicBool::operator == (const AtomicBool& r)
-	{ assert((_value & 0xfffffffc) == 0); return (r._value != 0) == (_value != 0); }
+	{ assert((_value & validMask) == 0); return (r._value != 0) == (_value != 0); }
 
 bool AtomicBool::operator != (bool b)
-	{ assert((_value & 0xfffffffc) == 0); return b != (_value != 0); }
+	{ assert((_value & validMask) == 0); return b != (_value != 0); }
 
 bool AtomicBool::operator != (const AtomicBool& r)
-	{ assert((_value & 0xfffffffc) == 0); return (r._value != 0) != (_value != 0); }
+	{ assert((_value & validMask) == 0); return (r._value != 0) != (_value != 0); }
 
 AtomicBool::operator bool() const
-	{ assert((_value & 0xfffffffc) == 0); return (_value != 0); }
+	{ assert((_value & validMask) == 0); return (_value != 0); }

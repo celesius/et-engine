@@ -12,14 +12,16 @@
 using namespace et;
 using namespace et::gui;
 
-const float popupAppearTime = 0.1f;
-const float textRevealDuration = 0.1f;
+static const float popupAppearTime = 0.1f;
+static const float textRevealDuration = 0.1f;
+
+static const size_t invalidSelectedIndex = static_cast<size_t>(-1);
 
 ET_DECLARE_GUI_ELEMENT_CLASS(ListboxPopup)
 
 ListboxPopup::ListboxPopup(Listbox* owner, const std::string& name) :
 	Element2d(owner, ET_GUI_PASS_NAME_TO_BASE_CLASS), _owner(owner), _textAlphaAnimator(0),
-	_selectedIndex(-1), _textAlpha(0.0f), _pressed(false)
+	_selectedIndex(invalidSelectedIndex), _textAlpha(0.0f), _pressed(false)
 {
 	setFlag(Flag_RenderTopmost);
 }
@@ -55,7 +57,7 @@ void ListboxPopup::buildVertices(GuiRenderer& gr)
 
 		vec2 textPos = _owner->_contentOffset + vec2(0.0f, y0);
 		
-		int index = 0;
+		size_t index = 0;
 		for (auto i = values.begin(), e = values.end(); i != e; ++i, ++index, row += 1.0f)
 		{
 			if (selectionValid && (_selectedIndex == index))
@@ -134,7 +136,7 @@ bool ListboxPopup::pointerPressed(const PointerInputInfo&)
 
 bool ListboxPopup::pointerMoved(const PointerInputInfo& p)
 {
-	_selectedIndex = static_cast<int>(p.pos.y / _owner->size().y);
+	_selectedIndex = static_cast<size_t>(p.pos.y / _owner->size().y);
 	invalidateContent();
 	return true;
 }
@@ -143,7 +145,7 @@ bool ListboxPopup::pointerReleased(const PointerInputInfo& p)
 {
 	if (_pressed)
 	{
-		_selectedIndex = static_cast<int>(p.pos.y / _owner->size().y);
+		_selectedIndex = static_cast<size_t>(p.pos.y / _owner->size().y);
 		_owner->setSelectedIndex(_selectedIndex);
 		_owner->hidePopup();
 	}
@@ -159,7 +161,7 @@ void ListboxPopup::pointerEntered(const PointerInputInfo&)
 
 void ListboxPopup::pointerLeaved(const PointerInputInfo&)
 {
-	_selectedIndex = -1;
+	_selectedIndex = invalidSelectedIndex;
 	invalidateContent();
 }
 
@@ -171,7 +173,7 @@ ET_DECLARE_GUI_ELEMENT_CLASS(Listbox)
 
 Listbox::Listbox(Font font, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _font(font), _state(ListboxState_Default),
-	_contentOffset(0.0f), _selectedIndex(-1), _direction(ListboxPopupDirection_Bottom),
+	_contentOffset(0.0f), _selectedIndex(invalidSelectedIndex), _direction(ListboxPopupDirection_Bottom),
 	_popupOpened(false), _popupOpening(false), _popupValid(false)
 {
 	_popup = ListboxPopup::Pointer(new ListboxPopup(this));
@@ -241,7 +243,7 @@ void Listbox::addToRenderQueue(RenderContext*, GuiRenderer& gr)
 
 bool Listbox::shouldDrawText()
 {
-	return !(_popupOpened || (_selectedIndex == -1));
+	return !(_popupOpened || (_selectedIndex == invalidSelectedIndex));
 }
 
 bool Listbox::containsPoint(const vec2& p, const vec2& np)
@@ -380,9 +382,9 @@ void Listbox::setState(ListboxState s)
 	}
 }
 
-void Listbox::setSelectedIndex(int value)
+void Listbox::setSelectedIndex(size_t value)
 {
-	_selectedIndex = (value >= 0) && (value < static_cast<int>(_values.size())) ? value : -1;
+	_selectedIndex = (value < _values.size()) ? value : invalidSelectedIndex;
 	invalidateContent();
 }
 

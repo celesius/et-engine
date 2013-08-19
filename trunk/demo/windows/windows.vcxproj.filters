@@ -35,16 +35,10 @@
     <ClCompile Include="..\source\ui\resourcemanager.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\framebufferdata.cpp">
-      <Filter>Engine\source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\apiobjects\framebufferfactory.cpp">
       <Filter>Engine\source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\apiobjects\indexbufferdata.cpp">
-      <Filter>Engine\source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\apiobjects\programdata.cpp">
       <Filter>Engine\source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\apiobjects\programfactory.cpp">
@@ -303,6 +297,15 @@
       <Filter>Engine\source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\core\objectscache.cpp">
+      <Filter>Engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\framebuffer.cpp">
+      <Filter>Engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\apiobjects\program.cpp">
+      <Filter>Engine\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\app\backgroundthread.cpp">
       <Filter>Engine\source</Filter>
     </ClCompile>
   </ItemGroup>

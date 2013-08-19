@@ -87,6 +87,8 @@
 																t(const t&) { }\
 																t(t&&) { }\
 																t& operator = (const t&) { return *this; }
+																	
+#define ET_CHARACTER_LITERAL(A, B, C, D)					(A | (B << 8) | (C << 16) | (D << 24))
 
 
 namespace et
@@ -99,9 +101,9 @@ namespace et
 		std::cout << variableName << " = " << valueName << ", call from " << function << std::endl;
 	}
 	
+#if (ET_DEBUG && ET_LOG_MEMORY_OPERATIONS)
 	inline void etCopyMemory(void* dest, const void* source, size_t size)
 	{
-#if (ET_DEBUG && ET_LOG_MEMORY_OPERATIONS)
 		static size_t totalMemoryCopied = 0;
 
 		if (totalMemoryCopied > 0xffffffff - size)
@@ -111,13 +113,15 @@ namespace et
 		std::cout << "[etCopyMemory] copying " << size << " bytes (" << size / 1024 << "Kb, "
 			<< size / 1024 / 1024 << "Mb). Copied so far:" << totalMemoryCopied << " bytes, "
 			<< totalMemoryCopied / 1024 << "Kb, " << totalMemoryCopied / 1024 / 1024 << "Mb." << std::endl;
-#endif
 		memcpy(dest, source, size);
 	}
+#else
+#	define etCopyMemory memcpy
+#endif
 
+#if (ET_DEBUG && ET_LOG_MEMORY_OPERATIONS)
 	inline void etFillMemory(void* dest, int value, size_t size)
 	{
-#if (ET_DEBUG && ET_LOG_MEMORY_OPERATIONS)
 		static size_t totalMemoryFilled = 0;
 		if (totalMemoryFilled > 0xffffffff - size)
 			totalMemoryFilled = 0;
@@ -125,7 +129,9 @@ namespace et
 		std::cout << "[etFillMemory] filling " << size << " bytes (" << size / 1024 << "Kb, "
 			<< size / 1024 / 1024 << "Mb). Filled so far:" << totalMemoryFilled << " bytes, "
 			<< totalMemoryFilled / 1024 << "Kb, " << totalMemoryFilled / 1024 / 1024 << "Mb." << std::endl;
-#endif
 		memset(dest, value, size);
 	}
+#else
+#	define etFillMemory memset
+#endif
 }

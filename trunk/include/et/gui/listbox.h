@@ -63,7 +63,7 @@ namespace et
 			GuiVertexList _selectionVertices;
 			GuiVertexList _textVertices;
 			FloatAnimator* _textAlphaAnimator;
-			int _selectedIndex;
+			size_t _selectedIndex;
 			float _textAlpha;
 			bool _pressed;
 		};
@@ -100,10 +100,10 @@ namespace et
 			void setValues(const StringList& v);
 			void addValue(const std::string& v);
 
-			int selectedIndex() const
+			size_t selectedIndex() const
 				{ return _selectedIndex; }
 
-			void setSelectedIndex(int value);
+			void setSelectedIndex(size_t value);
 
 			void setPrefix(const std::string& prefix);
 
@@ -141,7 +141,7 @@ namespace et
 			StringList _values;
 			ListboxState _state;
 			vec2 _contentOffset;
-			int _selectedIndex;
+			size_t _selectedIndex;
 			ListboxPopupDirection _direction;
 			bool _popupOpened;
 			bool _popupOpening;

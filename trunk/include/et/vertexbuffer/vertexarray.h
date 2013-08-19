@@ -29,6 +29,7 @@ namespace et
 	public:
 		VertexArray();
 		VertexArray(const VertexDeclaration& decl, size_t size);
+		VertexArray(const VertexDeclaration& decl, int size);
 		
 		VertexDataChunk& smoothing()
 			{ return _smoothing; }

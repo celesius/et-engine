@@ -94,18 +94,18 @@ void PNGLoader::loadFromStream(std::istream& source, TextureDescription& desc, b
 	png_read_info(pngPtr, infoPtr); 
 	parseFormat(desc, pngPtr, infoPtr, &rowBytes);
 
-	desc.data = BinaryDataStorage(desc.size.square() * desc.bitsPerPixel / 8);
+	desc.data = BinaryDataStorage(static_cast<size_t>(desc.size.square()) * desc.bitsPerPixel / 8);
 	png_bytepp rowPtrs = new png_bytep[desc.size.y]; 
 	png_bytep ptr0 = desc.data.data();
 	
 	if (flip)
 	{
-		for (int i = 0; i < desc.size.y; i++)
-			rowPtrs[i] = ptr0 + (desc.size.y - 1 - i) * rowBytes;
+		for (png_size_t i = 0, e = static_cast<png_size_t>(desc.size.y); i < e; ++i)
+			rowPtrs[i] = ptr0 + (e - 1 - i) * rowBytes;
 	}
 	else
 	{
-		for (int i = 0; i < desc.size.y; i++)
+		for (png_size_t i = 0, e = static_cast<png_size_t>(desc.size.y); i < e; ++i)
 			rowPtrs[i] = ptr0 + i * rowBytes;
 	}
 
@@ -155,8 +155,8 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 {
 	desc.mipMapCount = 1;
 	desc.layersCount = 1;
-	desc.size.x =  png_get_image_width(pngPtr, infoPtr);    
-	desc.size.x = png_get_image_height(pngPtr, infoPtr);
+	desc.size.x = static_cast<int>(png_get_image_width(pngPtr, infoPtr));
+	desc.size.y = static_cast<int>(png_get_image_height(pngPtr, infoPtr));
 	desc.channels = png_get_channels(pngPtr, infoPtr);
 	
 	int color_type = png_get_color_type(pngPtr, infoPtr); 
@@ -189,7 +189,7 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 	png_get_IHDR(pngPtr, infoPtr, (png_uint_32p)&desc.size.x, (png_uint_32p)&desc.size.y, 
 				 &bpp, &color_type, &interlace_method, &compression, &filter);
 	
-	desc.bitsPerPixel = desc.channels * bpp;
+	desc.bitsPerPixel = desc.channels * static_cast<size_t>(bpp);
 	desc.type = (bpp == 16) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_BYTE;
 	
 	if (rowBytes)
@@ -272,7 +272,8 @@ void parseFormat(TextureDescription& desc, png_structp pngPtr, png_infop infoPtr
 
 void streamReadData(png_structp pngPtr, png_bytep data, png_size_t length)
 {
-	reinterpret_cast<std::istream*>(png_get_io_ptr(pngPtr))->read((char*)data, length);
+	reinterpret_cast<std::istream*>(png_get_io_ptr(pngPtr))->read((char*)data,
+		static_cast<std::streamsize>(length));
 }
 
 void handlePngError(png_structp, png_const_charp e)

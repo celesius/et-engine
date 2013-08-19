@@ -42,15 +42,14 @@ void Label::buildVertices(RenderContext*, GuiRenderer& renderer)
 	vec2 textOffset = size() * alignment;
 	
 	_vertices.setOffset(0);
+	
+	vec4 alphaScale(1.0f, 1.0f, 1.0f, alpha());
 
 	bool hasShadow = _shadowColor.w > 0.0f;
 	vec4 shadowColor = _shadowColor;
 
 	if (_backgroundColor.w > 0.0f)
-	{
-		renderer.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor,
-		transform, RenderLayer_Layer0);
-	}
+		renderer.createColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor * alphaScale, transform);
 
 	if (_charListText.empty())
 	{

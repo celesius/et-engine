@@ -41,7 +41,7 @@ namespace et
 		vec2 windowCoordinatesToScene(const vec2i& coord);
 		vec2 windowSizeToScene(const vec2i& size);
 
-		ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(size_t, defaultTextureBindingUnit, setDefaultTextureBindingUnit)
+		ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(uint32_t, defaultTextureBindingUnit, setDefaultTextureBindingUnit)
 		
 	private:
 		Renderer& operator = (const Renderer&)

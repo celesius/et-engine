@@ -217,7 +217,7 @@ namespace et
 			Element& operator = (const Element&)
 				{ return *this; }
 
-			void startUpdates(TimerPool::Pointer timerPool);
+			void startUpdates(TimerPool* timerPool);
 
 		private:
 			ElementLayout _autoLayout;

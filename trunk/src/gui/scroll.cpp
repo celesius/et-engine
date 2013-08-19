@@ -57,7 +57,7 @@ void Scroll::buildVertices(RenderContext* rc, GuiRenderer& r)
 	if (_backgroundColor.w > 0.0f)
 	{
 		r.createColorVertices(_backgroundVertices, rect(vec2(0.0f), size()), _backgroundColor,
-			Element2d::finalTransform(), RenderLayer_Layer0);
+			Element2d::finalTransform());
 	}
 	
 	if (_scrollbarsColor.w > 0.0f)
@@ -71,7 +71,7 @@ void Scroll::buildVertices(RenderContext* rc, GuiRenderer& r)
 		adjutsedColor.w *= _scrollbarsAlpha;
 		
 		r.createColorVertices(_scrollbarsVertices, rect(origin, vec2(scaledScollbarSize, barHeight)), adjutsedColor,
-		  Element2d::finalTransform(), RenderLayer_Layer0);
+		  Element2d::finalTransform());
 	}
 	
 	setContentValid();

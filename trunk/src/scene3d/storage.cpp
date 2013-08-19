@@ -5,7 +5,6 @@
  *
  */
 
-#include <assert.h>
 #include <et/scene3d/storage.h>
 #include <et/scene3d/serialization.h>
 

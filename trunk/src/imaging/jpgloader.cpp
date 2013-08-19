@@ -19,7 +19,7 @@ void JPGLoader::loadInfoFromStream(std::istream& stream, TextureDescription& des
 	if (stream.fail()) return;
 	
 	BinaryDataStorage buffer(streamSize(stream));
-	stream.read(reinterpret_cast<char*>(buffer.data()), buffer.dataSize());
+	stream.read(reinterpret_cast<char*>(buffer.data()), static_cast<std::streamsize>(buffer.dataSize()));
 	
 	jpeg_decompress_struct cinfo = { };
 	jpeg_error_mgr jerr = { };
@@ -34,7 +34,7 @@ void JPGLoader::loadInfoFromStream(std::istream& stream, TextureDescription& des
 		return;
 	}
 
-	desc.size = vec2i(cinfo.image_width, cinfo.image_height);
+	desc.size = vec2i(static_cast<int>(cinfo.image_width), static_cast<int>(cinfo.image_height));
 	desc.target = GL_TEXTURE_2D;
 	desc.internalformat = GL_RGB;
 	desc.format = GL_RGB;
@@ -53,7 +53,7 @@ void JPGLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
 	if (stream.fail()) return;
 	
 	BinaryDataStorage buffer(streamSize(stream));
-	stream.read(reinterpret_cast<char*>(buffer.data()), buffer.dataSize());
+	stream.read(reinterpret_cast<char*>(buffer.data()), static_cast<std::streamsize>(buffer.dataSize()));
 
 	jpeg_decompress_struct cinfo = { };
 	jpeg_error_mgr jerr = { };
@@ -71,7 +71,7 @@ void JPGLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
 		return;
 	}
 	
-	desc.size = vec2i(cinfo.output_width, cinfo.output_height);
+	desc.size = vec2i(static_cast<int>(cinfo.output_width), static_cast<int>(cinfo.output_height));
 	desc.target = GL_TEXTURE_2D;
 	desc.internalformat = GL_RGB;
 	desc.format = GL_RGB;
@@ -83,14 +83,14 @@ void JPGLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
 	desc.layersCount = 1;
 	desc.data = BinaryDataStorage(desc.size.square() * cinfo.output_components);
 	
-	size_t rowSize = cinfo.output_components * cinfo.output_width;
+	size_t rowSize = static_cast<size_t>(cinfo.output_components) * cinfo.output_width;
 	unsigned char* p_line = desc.data.data();
 	
 	if (jpeg_start_decompress(&cinfo))
 	{
 		while (cinfo.output_scanline < cinfo.output_height)
 		{
-			int linesRead = jpeg_read_scanlines(&cinfo, &p_line, 1);
+			JDIMENSION linesRead = jpeg_read_scanlines(&cinfo, &p_line, 1);
 			p_line += linesRead * rowSize;
 		}
 	}

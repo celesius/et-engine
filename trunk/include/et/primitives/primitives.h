@@ -23,13 +23,13 @@ namespace et
 		 * Index array stuff
 		 */
 		IndexType buildTrianglesIndexes(IndexArray& buffer, const vec2i& dim,
-			IndexType vertexOffset, size_t indexOffset);
+			IndexType vertexOffset, IndexType indexOffset);
 		IndexType buildTriangleStripIndexes(IndexArray& buffer, const vec2i& dim,
-			IndexType vertexOffset, size_t indexOffset);
+			IndexType vertexOffset, IndexType indexOffset);
 		IndexType buildTrianglesIndexes(IndexArray::Pointer buffer, const vec2i& dim,
-			IndexType vertexOffset, size_t indexOffset);
+			IndexType vertexOffset, IndexType indexOffset);
 		IndexType buildTriangleStripIndexes(IndexArray::Pointer buffer, const vec2i& dim,
-			IndexType vertexOffset, size_t indexOffset);
+			IndexType vertexOffset, IndexType indexOffset);
 
 		void createPhotonMap(DataStorage<vec2>& buffer, const vec2i& density);
 
@@ -47,13 +47,13 @@ namespace et
 			const vec2& texCoordOffset = vec2(0.0f));
 
 		void calculateNormals(VertexArray::Pointer data, const IndexArray::Pointer& buffer,
-			size_t first, size_t last);
+			IndexType first, IndexType last);
 		
 		void calculateTangents(VertexArray::Pointer data, const IndexArray::Pointer& buffer,
-			size_t first, size_t last);
+			IndexType first, IndexType last);
 		
 		void smoothTangents(VertexArray::Pointer data, const IndexArray::Pointer& buffer,
-			size_t first, size_t last);
+			IndexType first, IndexType last);
 		
 		void createIcosahedron(VertexArray::Pointer data, float radius);
 		

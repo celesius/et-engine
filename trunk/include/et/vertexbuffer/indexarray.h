@@ -33,8 +33,8 @@ namespace et
 		size_t dataSize() const
 			{ return _data.dataSize(); }
 
-		size_t capacity() const
-			{ return _data.dataSize() / _format; }
+		IndexType capacity() const
+			{ return static_cast<IndexType>(_data.dataSize()) / _format; }
 
 		IndexArrayFormat format() const
 			{ return _format; }
@@ -70,15 +70,15 @@ namespace et
 				VertexCount_max = 3
 			};
 
-			IndexType index[VertexCount_max];
+			size_t index[VertexCount_max];
 			
 		public:
 			Primitive();
 			
-			IndexType& operator [] (size_t i)
+			size_t& operator [] (size_t i)
 				{ assert(i < VertexCount_max); return index[i]; }
 
-			const IndexType& operator [] (size_t i) const
+			const size_t& operator [] (size_t i) const
 				{ assert(i < VertexCount_max); return index[i]; }
 
 			bool operator == (const Primitive& p) const;
@@ -110,29 +110,29 @@ namespace et
 			size_t pos() const
 				{ return _pos; }
 			
-			IndexType& operator [] (size_t i)
+			size_t& operator [] (size_t i)
 				{ return _primitive[i]; }
 			
-			const IndexType& operator [] (size_t i) const
+			const size_t& operator [] (size_t i) const
 				{ return _primitive[i]; }
 
 		private:
 			friend class IndexArray;
 
-			PrimitiveIterator(const IndexArray* ib, size_t p);
-			void configure(size_t p);
+			PrimitiveIterator(const IndexArray* ib, IndexType p);
+			void configure(IndexType p);
 
 			PrimitiveIterator& operator = (const PrimitiveIterator& p);
 
 		private:
 			const IndexArray* _ib;
 			Primitive _primitive;
-			size_t _pos;
+			IndexType _pos;
 		};
 
 		PrimitiveIterator begin() const;
 		PrimitiveIterator end() const;
-		PrimitiveIterator primitive(size_t index) const;
+		PrimitiveIterator primitive(IndexType index) const;
 
 	private:
 		BinaryDataStorage _data;
