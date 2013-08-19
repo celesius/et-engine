@@ -39,6 +39,9 @@ void OpenGLCapabilites::checkCaps()
 		}
 		while (*glslv++);
 	}
+
+	if (_glslVersion.size() < 3)
+		_glslVersion.push_back('0');
 	
 	_version = strToInt(_glslVersion) < 130 ? OpenGLVersion_Old : OpenGLVersion_New;
 
