@@ -623,7 +623,7 @@ void OBJLoader::processLoadedData()
 	size_t index = 0;
 	for (GroupList::iterator gi = groups.begin(), ge = groups.end(); gi != ge; ++gi)
 	{
-		size_t startIndex = index;
+		IndexType startIndex = static_cast<IndexType>(index);
 		for (FaceList::iterator fi = (*gi)->faces.begin(), fe = (*gi)->faces.end(); fi != fe; ++fi)
 		{
 			for (VertexList::iterator vi = fi->vertices.begin(), ve = fi->vertices.end(); vi != ve; ++vi)

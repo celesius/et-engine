@@ -198,7 +198,9 @@ void Track::init(Description::Pointer data)
 			" to fit " << numSamples << " samples (" << remain << " bytes remained)." <<  std::endl;
 	}
 
-	alBufferData(_private->buffer, data->format, data->data.data(), actualDataSize, data->sampleRate);
+	alBufferData(_private->buffer, static_cast<ALenum>(data->format), data->data.data(),
+		static_cast<ALsizei>(actualDataSize), static_cast<ALsizei>(data->sampleRate));
+	
     checkOpenALError("alBufferData");
 	
 	data->data.resize(0);

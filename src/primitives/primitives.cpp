@@ -14,18 +14,18 @@ using namespace et;
 inline int getIndex(int u, int v, int u_sz, int v_sz)
 		{ return clamp<int>(u, 0, u_sz - 1) + clamp<int>(v, 0, v_sz - 1) * u_sz; }
 
-size_t primitives::indexCountForRegularMesh(const vec2i& meshSize, PrimitiveType geometryType)
+IndexType primitives::indexCountForRegularMesh(const vec2i& meshSize, PrimitiveType geometryType)
 {
 	switch (geometryType)
 	{
 		case PrimitiveType_Points:
-			return static_cast<size_t>(meshSize.square());
+			return static_cast<IndexType>(meshSize.square());
 
 		case PrimitiveType_Triangles:
-			return static_cast<size_t>(((meshSize.x > 1) ? meshSize.x - 1 : 1) * ((meshSize.y > 1) ? meshSize.y - 1 : 1) * 6);
+			return static_cast<IndexType>(((meshSize.x > 1) ? meshSize.x - 1 : 1) * ((meshSize.y > 1) ? meshSize.y - 1 : 1) * 6);
 
 		case PrimitiveType_TriangleStrips:
-			return static_cast<size_t>(((meshSize.y > 1) ? meshSize.y - 1 : 1) * (2 * meshSize.x + 1) - 1);
+			return static_cast<IndexType>(((meshSize.y > 1) ? meshSize.y - 1 : 1) * (2 * meshSize.x + 1) - 1);
 			
 		default:
 			assert("Unimplemented" && 0);

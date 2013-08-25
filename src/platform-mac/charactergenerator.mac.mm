@@ -86,9 +86,10 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 		desc.uvSize = desc.size / _texture->sizeFloat();
 	}
 
+#if (!ET_OBJC_ARC_ENABLED)
 	[attrString release];
 	[wString release];
-	
+#endif
 	_chars[value] = desc;
 	return desc;
 }
@@ -128,8 +129,10 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 		desc.uvSize = desc.size / _texture->sizeFloat();
 	}
 
+#if (!ET_OBJC_ARC_ENABLED)
 	[attrString release];
 	[wString release];
+#endif
 	
 	_boldChars[value] = desc;
 	return desc;
@@ -145,9 +148,8 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
 {
     NSString* cFace = [NSString stringWithCString:face.c_str() encoding:NSUTF8StringEncoding];
 	
-	font = [[[NSFontManager sharedFontManager] fontWithFamily:cFace
-		traits:0 weight:0 size:size] retain];
-	
+	font = [[NSFontManager sharedFontManager] fontWithFamily:cFace traits:0 weight:0 size:size];
+		
 	if (font == nil)
 	{
 		log::error("Font %s not found. Using default font (Arial)", face.c_str());
@@ -155,8 +157,8 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
 	}
 	assert(font);
 	
-	boldFont = [[[NSFontManager sharedFontManager] fontWithFamily:cFace
-		traits:NSBoldFontMask weight:0 size:size] retain];
+	boldFont = [[NSFontManager sharedFontManager] fontWithFamily:cFace traits:NSBoldFontMask
+		weight:0 size:size];
 	
 	if (boldFont == nil)
 	{
@@ -164,10 +166,15 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
 		boldFont = [[NSFontManager sharedFontManager] fontWithFamily:@"Arial" traits:0 weight:0 size:size];
 	}
 	assert(boldFont);
+
+	whiteColor = [NSColor whiteColor];
 	
-	whiteColor = [[NSColor whiteColor] retain];
-	assert(whiteColor);
-	
+#if (!ET_OBJC_ARC_ENABLED)
+	[font retain];
+	[boldFont retain];
+	[whiteColor retain];
+#endif
+		
 	colorSpace = CGColorSpaceCreateDeviceRGB();
 	assert(colorSpace);
 }
@@ -176,9 +183,11 @@ CharacterGeneratorPrivate::~CharacterGeneratorPrivate()
 {
 	CGColorSpaceRelease(colorSpace);
 
+#if (!ET_OBJC_ARC_ENABLED)
 	[whiteColor release];
     [font release];
 	[boldFont release];
+#endif
 }
 
 void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& position,
