@@ -41,13 +41,23 @@ std::string et::selectFile(const StringList&, SelectFileMode mode)
 	
 	[i getReturnValue:&pickerResult];
 
+#if (ET_OBJC_ARC_ENABLED)
+	return std::string([pickerResult UTF8String]);
+#else
 	return std::string([[pickerResult autorelease] UTF8String]);
+#endif
 }
 
 @implementation FilePicker
 
 + (FilePicker*)picker
-	{ return [[[FilePicker alloc] init] autorelease]; }
+{
+#if (ET_OBJC_ARC_ENABLED)
+	return [[FilePicker alloc] init];
+#else
+	return [[[FilePicker alloc] init] autorelease];
+#endif
+}
 
 - (NSString*)openFile
 {
@@ -58,14 +68,23 @@ std::string et::selectFile(const StringList&, SelectFileMode mode)
 	[openDlg setResolvesAliases:YES];
 	[openDlg setAllowedFileTypes:nil];
 
+#if (ET_OBJC_ARC_ENABLED)
 	return ([openDlg runModal] == NSOKButton) ?
-		[[[[openDlg URLs] objectAtIndex:0] path] retain] : [NSString new];
+		[[[openDlg URLs] objectAtIndex:0] path] : [[NSString alloc] init];
+#else
+	return ([openDlg runModal] == NSOKButton) ?
+		[[[[openDlg URLs] objectAtIndex:0] path] retain] : [[NSString alloc] init];
+#endif
 }
 
 - (NSString*)saveFile
 {
 	NSSavePanel* saveDlg = [NSSavePanel savePanel];
-	return ([saveDlg runModal] == NSOKButton) ? [[[saveDlg URL] path] retain] : [NSString new];
+#if (ET_OBJC_ARC_ENABLED)
+	return ([saveDlg runModal] == NSOKButton) ? [[saveDlg URL] path] : [[NSString alloc] init];
+#else
+	return ([saveDlg runModal] == NSOKButton) ? [[[saveDlg URL] path] retain] : [[NSString alloc] init];
+#endif
 }
 
 @end

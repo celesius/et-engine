@@ -38,18 +38,25 @@ void Application::loaded()
 	
 	_renderContext = new RenderContext(parameters, this);
 	
-	NSMenu* mainMenu = [[[NSMenu allocWithZone:[NSMenu menuZone]] init] autorelease];
-	NSMenuItem* applicationMenuItem = [[[NSMenuItem allocWithZone:[NSMenu menuZone]] init] autorelease];
+	NSMenu* mainMenu = [[NSMenu allocWithZone:[NSMenu menuZone]] init];
+	NSMenuItem* applicationMenuItem = [[NSMenuItem allocWithZone:[NSMenu menuZone]] init];
 	[mainMenu addItem:applicationMenuItem];
 	[[NSApplication sharedApplication] setMainMenu:mainMenu];
 	
 	NSString* quitTitle = [NSString stringWithFormat:@"Quit %@", [[NSProcessInfo processInfo] processName]];
-	NSMenuItem* quitItem = [[[NSMenuItem allocWithZone:[NSMenu menuZone]] initWithTitle:quitTitle
-		action:@selector(terminate:) keyEquivalent:@"q"] autorelease];
+	NSMenuItem* quitItem = [[NSMenuItem allocWithZone:[NSMenu menuZone]] initWithTitle:quitTitle
+		action:@selector(terminate:) keyEquivalent:@"q"];
 	
-	NSMenu* applicationMenu = [[[NSMenu allocWithZone:[NSMenu menuZone]] init] autorelease];
+	NSMenu* applicationMenu = [[NSMenu allocWithZone:[NSMenu menuZone]] init];
 	[applicationMenu addItem:quitItem];
 	[applicationMenuItem setSubmenu:applicationMenu];
+	
+#if (!ET_OBJC_ARC_ENABLED)
+	[mainMenu autorelease];
+	[applicationMenuItem autorelease];
+	[quitItem autorelease];
+	[applicationMenu autorelease];
+#endif
 		
 	enterRunLoop();
 }
@@ -88,8 +95,15 @@ int Application::platformRun()
 {
 	@autoreleasepool
 	{
-		[[NSApplication sharedApplication] setDelegate:[[[etApplicationDelegate alloc] init] autorelease]];
+		etApplicationDelegate* delegate = [[etApplicationDelegate alloc] init];
+		
+		[[NSApplication sharedApplication] setDelegate:delegate];
 		[[NSApplication sharedApplication] run];
+		
+#if (!ET_OBJC_ARC_ENABLED)
+		[delegate release];
+#endif
+		
 		return 0;
 	}
 }

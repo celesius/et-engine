@@ -51,11 +51,11 @@ namespace et
 		struct OBJMeshIndexBounds
 		{
 			std::string name;
-			size_t start;
+			IndexType start;
 			size_t count;
 			s3d::Material material;
 
-			OBJMeshIndexBounds(const std::string& n, size_t s, size_t c, s3d::Material m) :
+			OBJMeshIndexBounds(const std::string& n, IndexType s, size_t c, s3d::Material m) :
 				name(n), start(s), count(c), material(m) { }
 		};
 		typedef std::vector<OBJMeshIndexBounds> OBJMeshIndexBoundsList;

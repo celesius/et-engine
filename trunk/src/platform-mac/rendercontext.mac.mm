@@ -62,16 +62,16 @@ public:
 		{ return !firstSync && (displayLink != nil); }
 	
 private:
-	etWindowDelegate* windowDelegate;
-	etOpenGLView* openGlView;
-	etOpenGLWindow* mainWindow;
+	etWindowDelegate* windowDelegate = nil;
+	etOpenGLView* openGlView = nil;
+	etOpenGLWindow* mainWindow = nil;
 	
 	NSOpenGLPixelFormat* pixelFormat = nil;
 	NSOpenGLContext* openGlContext = nil;
 	CVDisplayLinkRef displayLink = nullptr;
 	CGLContextObj cglObject = nullptr;
 	
-	bool firstSync;
+	bool firstSync = true;
 };
 
 RenderContext::RenderContext(const RenderContextParameters& inParams, Application* app) : _params(inParams),
@@ -142,8 +142,7 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 	CVOptionFlags, CVOptionFlags*, void* displayLinkContext);
 
 RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParameters& params,
-	const ApplicationParameters& appParams) : mainWindow(nil), pixelFormat(nil),
-	openGlContext(nil), openGlView(nil), displayLink(nil), firstSync(true)
+	const ApplicationParameters& appParams)
 {
 	NSOpenGLPixelFormatAttribute pixelFormatAttributes[] =
 	{
@@ -182,13 +181,13 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 		antialiasSamplesEntry = lastEntry - 1;
 	}
 	
-	pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes] autorelease];
+	pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes];
 	if ((pixelFormat == nil) && (antialiasSamplesEntry != 0))
 	{
 		while ((pixelFormat == nil) && (pixelFormatAttributes[antialiasSamplesEntry] > 1))
 		{
 			pixelFormatAttributes[antialiasSamplesEntry] /= 2;
-			pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes] autorelease];
+			pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes];
 		}
 		
 		if (pixelFormat == nil)
@@ -196,7 +195,7 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 			pixelFormatAttributes[antialiasFirstEntry++] = 0;
 			pixelFormatAttributes[antialiasFirstEntry++] = 0;
 			pixelFormatAttributes[antialiasFirstEntry++] = 0;
-			pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes] autorelease];
+			pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes];
 		}
 		
 		if (pixelFormat == nil)
@@ -204,7 +203,7 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 			if (profileEntry > 0)
 			{
 				pixelFormatAttributes[profileEntry] = NSOpenGLProfileVersionLegacy;
-				pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes] autorelease];
+				pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:pixelFormatAttributes];
 				
 				if (pixelFormat == nil)
 				{
@@ -223,6 +222,10 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 			}
 		}
 	}
+	
+#if (!ET_OBJC_ARC_ENABLED)
+	[pixelFormat autorelease];
+#endif
 	
 	NSUInteger windowMask = NSBorderlessWindowMask;
 	
@@ -262,6 +265,10 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 	
 	mainWindow = [[etOpenGLWindow alloc] initWithContentRect:contentRect
 		styleMask:windowMask backing:NSBackingStoreBuffered defer:YES];
+
+#if (ET_OBJC_ARC_ENABLED)
+	CFRetain((CFTypeRef)mainWindow);
+#endif
 	
 	windowDelegate = [[etWindowDelegate alloc] init];
 	windowDelegate->rcPrivate = this;
@@ -273,9 +280,13 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 	openGlView->rcPrivate = this;
 	[openGlView setWantsBestResolutionOpenGLSurface:YES];
 	
-	openGlContext = [[openGlView openGLContext] retain];
+	openGlContext = [openGlView openGLContext];
 	[openGlContext makeCurrentContext];
-
+	
+#if (!ET_OBJC_ARC_ENABLED)
+	[openGlContext retain];
+#endif
+	
 	cglObject = static_cast<CGLContextObj>([openGlContext CGLContextObj]);
 	
 	const int swap = 1;
@@ -294,9 +305,15 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 
 RenderContextPrivate::~RenderContextPrivate()
 {
+#if (!ET_OBJC_ARC_ENABLED)
 	[openGlView release];
 	[openGlContext release];
 	[windowDelegate release];
+#endif
+	openGlView = nil;
+	openGlContext = nil;
+	mainWindow = nil;
+	windowDelegate = nil;
 }
 
 void RenderContextPrivate::run()
@@ -508,14 +525,15 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 	[super reshape];
 	
 	if (_trackingArea)
-	{
 		[self removeTrackingArea:_trackingArea];
-		[_trackingArea release];
-	}
 	
 	_trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
 		options:NSTrackingMouseMoved | NSTrackingActiveAlways owner:self userInfo:nil];
 
+#if (!ET_OBJC_ARC_ENABLED)
+	[_trackingArea autorelease];
+#endif
+	
 	[self addTrackingArea:_trackingArea];
 	
 	if (rcPrivate->canPerformOperations())

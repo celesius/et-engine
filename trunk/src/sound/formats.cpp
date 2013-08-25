@@ -171,7 +171,7 @@ Description::Pointer et::audio::loadWAVFile(const std::string& fileName)
 		}
 		else if (chunk.size > 0)
 		{
-			BinaryDataStorage data(chunk.size);
+			BinaryDataStorage data(static_cast<size_t>(chunk.size));
 			file.stream().read(data.binary(), chunk.size);
 		}
 		else 
@@ -238,7 +238,7 @@ Description::Pointer et::audio::loadAIFFile(const std::string& fileName)
 		}
 		else if (chunk.size > 0)
 		{
-			BinaryDataStorage data(chunk.size);
+			BinaryDataStorage data(static_cast<size_t>(chunk.size));
 			file.stream().read(data.binary(), chunk.size);
 		}
 		else 

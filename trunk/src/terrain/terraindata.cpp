@@ -109,7 +109,7 @@ void TerrainData::generateVertexData(const FloatDataStorage& hm)
 
 	_bounds = AABB(0.5f * (_minVertex + _maxVertex), _maxVertex - _minVertex);
 
-	size_t numTriangles = primitives::indexCountForRegularMesh(_dimension, PrimitiveType_Triangles);
+	IndexType numTriangles = primitives::indexCountForRegularMesh(_dimension, PrimitiveType_Triangles);
 	IndexArray::Pointer tempIB(new IndexArray(IndexArrayFormat_32bit, numTriangles, PrimitiveType_Triangles));
 	
 	primitives::buildTrianglesIndexes(tempIB, _dimension, 0, 0);

@@ -34,6 +34,7 @@
 #	define ET_SUPPORT_RANGE_BASED_FOR		(__has_feature(cxx_range_for) || __has_extension(cxx_range_for))
 #	define ET_SUPPORT_INITIALIZER_LIST		(__has_feature(cxx_generalized_initializers) || __has_extension(cxx_generalized_initializers))
 #	define ET_SUPPORT_VARIADIC_TEMPLATES	(__has_feature(cxx_variadic_templates) || __has_extension(cxx_variadic_templates))
+#	define ET_OBJC_ARC_ENABLED				(__has_feature(objc_arc))
 #
 #	if (ET_PLATFORM_MAC)
 #		define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED

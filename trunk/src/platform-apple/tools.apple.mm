@@ -90,8 +90,9 @@ bool et::fileExists(const std::string& name)
 	
 	BOOL isDir = NO;
     BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:fileName isDirectory:&isDir];
+#if (!ET_OBJC_ARC_ENABLED)
     [fileName release];
-	
+#endif
     return exists && !isDir;
 }
 
@@ -101,8 +102,9 @@ bool et::folderExists(const std::string& name)
 	
 	BOOL isDir = NO;
 	BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:fileName isDirectory:&isDir];
+#if (!ET_OBJC_ARC_ENABLED)
     [fileName release];
-	
+#endif
 	return exists && isDir;
 }
 
@@ -266,7 +268,12 @@ void et::openUrl(const std::string& url)
 
 std::string et::unicodeToUtf8(const std::wstring& w)
 {
-	NSString* s = [[[NSString alloc] initWithBytes:w.c_str() length:w.length() * sizeof(wchar_t) encoding:NSUTF32LittleEndianStringEncoding] autorelease];
+	NSString* s = [[NSString alloc] initWithBytes:w.c_str() length:w.length() * sizeof(wchar_t)
+		encoding:NSUTF32LittleEndianStringEncoding];
+	
+#if (!ET_OBJC_ARC_ENABLED)
+	[s autorelease];
+#endif
 	
 	if (s == nil)
 	{
