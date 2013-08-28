@@ -267,7 +267,7 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 		styleMask:windowMask backing:NSBackingStoreBuffered defer:YES];
 
 #if (ET_OBJC_ARC_ENABLED)
-	CFRetain((CFTypeRef)mainWindow);
+	CFRetain((__bridge CFTypeRef)mainWindow);
 #endif
 	
 	windowDelegate = [[etWindowDelegate alloc] init];

@@ -125,6 +125,8 @@ vec2 Renderer::windowSizeToScene(const vec2i& size)
 
 void Renderer::renderTexture(const Texture& texture, const vec2i& position, const vec2i& size)
 {
+	if (texture.invalid()) return;
+	
 	vec2i sz;
 	sz.x = (size.x == -1) ? texture->width() : size.x;
 	sz.y = (size.y == -1) ? texture->height() : size.y;

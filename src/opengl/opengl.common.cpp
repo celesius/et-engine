@@ -553,3 +553,44 @@ void et::validateExtensions()
 	ET_VALIDATE_GLFUNC_EXT(glRenderbufferStorageMultisample);
 	ET_VALIDATE_GLFUNC_EXT(glFramebufferTextureLayer);
 }
+
+size_t et::bitsPerPixelForType(uint32_t type)
+{
+	switch (type)
+	{
+		case GL_UNSIGNED_BYTE:
+		case GL_BYTE:
+			return 8;
+			
+		case GL_UNSIGNED_SHORT:
+		case GL_SHORT:
+			return 16;
+
+		case GL_UNSIGNED_INT:
+		case GL_INT:
+			return 32;
+			
+		default:
+			assert("Not yet implemented for this type." && false);
+			return 0;
+	}
+}
+
+size_t et::bitsPerPixelForTextureFormat(uint32_t internalFormat, uint32_t type)
+{
+	switch (internalFormat)
+	{
+		case GL_RGB:
+			return 3 * bitsPerPixelForType(type);
+			
+		case GL_RGBA:
+			return 4 * bitsPerPixelForType(type);
+			
+		case GL_DEPTH_COMPONENT:
+			return bitsPerPixelForType(type);
+			
+		default:
+			assert("Not yet implemented for this format." && false);
+			return 0;
+	}
+}

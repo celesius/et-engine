@@ -79,7 +79,7 @@
 #
 #endif
 
-#if !defined(glFramebufferTexture)
+#if !defined(GL_VERSION_3_2)
 #
 #	define glFramebufferTexture(target, attachment, texture, level) \
 			glFramebufferTexture2D(target, attachment, GL_TEXTURE_2D, texture, level)
@@ -184,4 +184,7 @@ namespace et
 	
 	uint32_t drawTypeValue(BufferDrawType);
 	uint32_t primitiveTypeValue(PrimitiveType);
+	
+	size_t bitsPerPixelForType(uint32_t type);
+	size_t bitsPerPixelForTextureFormat(uint32_t internalFormat, uint32_t type);
 }

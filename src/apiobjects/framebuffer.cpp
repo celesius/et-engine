@@ -47,8 +47,11 @@ Framebuffer::Framebuffer(RenderContext* rc, TextureFactory* tf, const Framebuffe
 				}
 				else 
 				{
+					BinaryDataStorage emptyData(desc.size.square() *
+						bitsPerPixelForTextureFormat(desc.colorInternalformat, desc.colorType) / 8, 0);
+					
 					c = tf->genTexture(GL_TEXTURE_2D, desc.colorInternalformat, desc.size, 
-						desc.colorFormat, desc.colorType, BinaryDataStorage(), name() + "_color_" + intToStr(i));
+						desc.colorFormat, desc.colorType, emptyData, name() + "_color_" + intToStr(i));
 				}
 				c->setWrap(rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
 				addRenderTarget(c);
@@ -72,8 +75,11 @@ Framebuffer::Framebuffer(RenderContext* rc, TextureFactory* tf, const Framebuffe
 			}
 			else 
 			{
-				d = tf->genTexture(GL_TEXTURE_2D, desc.depthInternalformat, desc.size, 
-					desc.depthFormat, desc.depthType, BinaryDataStorage(), name() + "_depth");
+				BinaryDataStorage emptyData(desc.size.square() *
+					bitsPerPixelForTextureFormat(desc.depthInternalformat, desc.depthType) / 8, 0);
+				
+				d = tf->genTexture(GL_TEXTURE_2D, desc.depthInternalformat, desc.size,
+					desc.depthFormat, desc.depthType, emptyData, name() + "_depth");
 			}
 			
 			if (d.valid())
@@ -220,8 +226,11 @@ void Framebuffer::addSameRendertarget()
 	}
 	else
 	{
-		c = _textureFactory->genTexture(prev->target() , prev->internalFormat(), 
-			prev->size(), prev->format(), prev->dataType(), BinaryDataStorage(), texName);
+		BinaryDataStorage emptyData(prev->size().square() *
+			bitsPerPixelForTextureFormat(prev->internalFormat(), prev->dataType()) / 8, 0);
+		
+		c = _textureFactory->genTexture(prev->target(), prev->internalFormat(),
+			prev->size(), prev->format(), prev->dataType(), emptyData, texName);
 	}
 	
 	c->setWrap(_rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
