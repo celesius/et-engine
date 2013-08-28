@@ -139,6 +139,7 @@ StringList ProgramFactory::loadProgramSources(const std::string& file, std::stri
 	{
 		sources.push_back(fName);
 		vertex_shader = loadTextFile(fName);
+		assert((vertex_shader.size() > 1) && "Vertex shader source should not be empty");
 	}
 	
 	if (!geometry_source.empty())
@@ -169,6 +170,7 @@ StringList ProgramFactory::loadProgramSources(const std::string& file, std::stri
 	{
 		sources.push_back(fName);
 		frag_shader = loadTextFile(fName);
+		assert((frag_shader.size() > 1) && "Fragment shader source should not be empty");
 	}
 	
 	return sources;
