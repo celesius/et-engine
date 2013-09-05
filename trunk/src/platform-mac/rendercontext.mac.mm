@@ -72,6 +72,8 @@ private:
 	CGLContextObj cglObject = nullptr;
 	
 	bool firstSync = true;
+	bool resizeScheduled = false;
+	NSSize scheduledSize = { };
 };
 
 RenderContext::RenderContext(const RenderContextParameters& inParams, Application* app) : _params(inParams),
@@ -261,14 +263,15 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 			params.contextSize.x, params.contextSize.y);
 	}
 	
-	params.contextSize = vec2i(static_cast<int>(contentRect.size.width), static_cast<int>(contentRect.size.height));
-	
 	mainWindow = [[etOpenGLWindow alloc] initWithContentRect:contentRect
 		styleMask:windowMask backing:NSBackingStoreBuffered defer:YES];
 
 #if (ET_OBJC_ARC_ENABLED)
 	CFRetain((__bridge CFTypeRef)mainWindow);
 #endif
+		
+	params.contextSize = vec2i(static_cast<int>(contentRect.size.width),
+		static_cast<int>(contentRect.size.height));
 	
 	windowDelegate = [[etWindowDelegate alloc] init];
 	windowDelegate->rcPrivate = this;
@@ -366,6 +369,9 @@ int RenderContextPrivate::displayLinkSynchronized()
 		Threading::setMainThread(currentThread);
 		Threading::setRenderingThread(currentThread);
 		firstSync = false;
+		
+		if (resizeScheduled)
+			resize(scheduledSize);
 	}
 	
 	if (application().running() && !application().suspended())
@@ -376,13 +382,20 @@ int RenderContextPrivate::displayLinkSynchronized()
 
 void RenderContextPrivate::resize(const NSSize& sz)
 {
-	[openGlContext makeCurrentContext];
-	CGLLockContext(cglObject);
-	
-	windowDelegate->applicationNotifier.notifyResize(vec2i(static_cast<int>(sz.width),
-		static_cast<int>(sz.height)));
-
-	CGLUnlockContext(cglObject);
+	if (canPerformOperations())
+	{
+		[openGlContext makeCurrentContext];
+		CGLLockContext(cglObject);
+		windowDelegate->applicationNotifier.notifyResize(vec2i(static_cast<int>(sz.width),
+			static_cast<int>(sz.height)));
+		CGLUnlockContext(cglObject);
+		resizeScheduled = false;
+	}
+	else
+	{
+		scheduledSize = sz;
+		resizeScheduled = true;
+	}
 }
 
 /*
@@ -536,8 +549,7 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 	
 	[self addTrackingArea:_trackingArea];
 	
-	if (rcPrivate->canPerformOperations())
-		rcPrivate->resize(self.bounds.size);
+	rcPrivate->resize(self.bounds.size);
 }
 
 @end
