@@ -61,5 +61,11 @@ namespace et
 			for (auto& value : r.data)
 				data[i++] = value;
 		}
+		
+		T* begin()
+			{ return data; }
+		
+		T* end()
+			{ return data + count; }
 	};
 }
