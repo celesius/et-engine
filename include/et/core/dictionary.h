@@ -90,6 +90,9 @@ namespace et
 		StringValue(const std::string& r) :
 			ValuePointer<std::string, ValueClass_String>(r) { }
 
+		StringValue(const char* r) :
+			ValuePointer<std::string, ValueClass_String>(std::string(r)) { }
+		
 		StringValue(const Value<std::string, ValueClass_String>::Pointer& p) :
 			ValuePointer<std::string, ValueClass_String>(p) { }
 		
@@ -215,27 +218,7 @@ namespace et
 		ValuePointer<T, C> valueForKeyPath(const std::vector<std::string>& key, ValuePointer<T, C> def) const
 		{
 			auto i = baseValueForKeyPath(key);
-			if (i.invalid())
-			{
-				/*
-				::printf("Value for key path {");
-				for (auto& s : key) ::printf(" %s", s.c_str());
-				::printf(" } not found.\n");
-				*/
-				return def;
-			}
-			
-			if (i->valueClass() != C)
-			{
-				/*
-				::printf("Value for key path {");
-				for (auto& s : key) ::printf(" %s", s.c_str());
-				::printf(" } found, but it contains different type.\n");
-				 */
-				return def;
-			}
-			
-			return ValuePointer<T, C>(i);
+			return (i.invalid() || (i->valueClass() != C)) ? def : ValuePointer<T, C>(i);
 		}
 		
 		template <typename T, ValueClass C>
