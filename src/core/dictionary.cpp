@@ -87,6 +87,16 @@ bool Dictionary::valueForKeyPathIsClassOf(const std::vector<std::string>& key, V
 	return v.valid() && (v->valueClass() == c);
 }
 
+bool Dictionary::hasKey(const std::string& key) const
+{
+	return reference().content.count(key) > 0;
+}
+
+ValueClass Dictionary::valueClassForKey(const std::string& key) const
+{
+	return hasKey(key) ? baseValueForKeyPath(ET_STRINGLIST(key))->valueClass() : ValueClass_Invalid;
+}
+
 /*
  * Service functions
  */
@@ -150,4 +160,3 @@ void printDictionary(Dictionary dict, const std::string& tabs)
 		}
 	}
 }
-

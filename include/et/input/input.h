@@ -21,7 +21,7 @@ namespace et
 	{
 		InputAction_KeyDown,
 		InputAction_KeyUp,
-		InputAction_Char,
+		InputAction_Characters,
 		InputAction_PointerPressed,
 		InputAction_PointerMoved,
 		InputAction_PointerReleased,
@@ -143,7 +143,7 @@ namespace et
 
 	public:
 		ET_DECLARE_EVENT1(keyPressed, size_t)  
-		ET_DECLARE_EVENT1(charEntered, size_t)
+		ET_DECLARE_EVENT1(charactersEntered, std::string)
 		ET_DECLARE_EVENT1(keyReleased, size_t)  
 
 		ET_DECLARE_EVENT1(pointerPressed, PointerInputInfo)
@@ -163,6 +163,8 @@ namespace et
 		friend class GestureInputSource;
 
 		void pushKeyboardInputAction(size_t key, InputAction action);
+		void pushKeyboardInputAction(const std::string&, InputAction action);
+		
 		void pushPointerInputAction(const PointerInputInfo& info, InputAction action);
 		void pushGestureInputAction(const GestureInputInfo&);
 
@@ -184,10 +186,10 @@ namespace et
 		void keyPressed(size_t key)
 			{ Input::instance().pushKeyboardInputAction(key, InputAction_KeyDown); }
 
-		void charEntered(size_t key)
-			{ Input::instance().pushKeyboardInputAction(key, InputAction_Char); }
+		void charactersEntered(const std::string& chars)
+			{ Input::instance().pushKeyboardInputAction(chars, InputAction_Characters); }
 
-		void keyReleased(size_t key )
+		void keyReleased(size_t key)
 			{ Input::instance().pushKeyboardInputAction(key, InputAction_KeyUp); }
 	};
 
@@ -233,7 +235,7 @@ namespace et
 		virtual void onPointerScrolled(et::PointerInputInfo) { }
 		
 		virtual void onKeyPressed(size_t) { }
-		virtual void onCharEnterer(size_t) { }
+		virtual void onCharactersEntered(std::string) { }
 		virtual void onKeyReleased(size_t) { }
 
 		virtual void onGesturePerformed(et::GestureInputInfo) { }
