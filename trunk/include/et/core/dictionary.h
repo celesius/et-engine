@@ -12,6 +12,17 @@
 
 namespace et
 {
+	enum ValueClass
+	{
+		ValueClass_Invalid = -1,
+		
+		ValueClass_Float,
+		ValueClass_Integer,
+		ValueClass_String,
+		ValueClass_Array,
+		ValueClass_Dictionary,
+	};
+	
 	class ValueBase : public Shared
 	{
 	public:
@@ -19,17 +30,7 @@ namespace et
 						   
  	public:
 		virtual ~ValueBase() { }
-		
-		virtual int valueClass() const = 0;
-	};
-	
-	enum ValueClass
-	{
-		ValueClass_Float,
-		ValueClass_Integer,
-		ValueClass_String,
-		ValueClass_Array,
-		ValueClass_Dictionary,
+		virtual ValueClass valueClass() const = 0;
 	};
 	
 	template <typename T, ValueClass C>
@@ -48,7 +49,7 @@ namespace et
 		Value(const T& r) :
 			content(r) { }
 
-		int valueClass() const
+		ValueClass valueClass() const
 			{ return C; }
 	};
 		
@@ -78,7 +79,7 @@ namespace et
 			{ return this->reference().content; }
 	};
 	
-	typedef ValuePointer<double, ValueClass_Float> FloatValue;
+	typedef ValuePointer<float, ValueClass_Float> FloatValue;
 	typedef ValuePointer<int, ValueClass_Integer> IntegerValue;
 	
 	class StringValue : public ValuePointer<std::string, ValueClass_String>
@@ -161,6 +162,9 @@ namespace et
 
 		void setIntegerForKey(const std::string& key, IntegerValue value)
 			{ setValueForKey<IntegerValue, ValueClass_Integer>(key, value); }
+
+		void setFloatForKey(const std::string& key, FloatValue value)
+			{ setValueForKey<FloatValue, ValueClass_Float>(key, value); }
 		
 		void setArrayForKey(const std::string& key, ArrayValue value)
 			{ setValueForKey<ArrayValue, ValueClass_Array>(key, value); }
@@ -169,27 +173,31 @@ namespace et
 			{ setValueForKey<Dictionary, ValueClass_Dictionary>(key, value); }
 		
 	public:
+		bool hasKey(const std::string&) const;
+		ValueClass valueClassForKey(const std::string&) const;
+		
 		IntegerValue integerForKey(const std::string& key, IntegerValue def = IntegerValue()) const
 			{ return valueForKey<IntegerValue::ValueType, ValueClass_Integer>(key, def); }
-		
 		IntegerValue integerForKeyPath(const std::vector<std::string>& key, IntegerValue def = IntegerValue()) const
 			{ return valueForKeyPath<IntegerValue::ValueType, ValueClass_Integer>(key, def); }
+
+		FloatValue floatForKey(const std::string& key, FloatValue def = FloatValue()) const
+			{ return valueForKey<FloatValue::ValueType, ValueClass_Float>(key, def); }
+		FloatValue floatForKeyPath(const std::vector<std::string>& key, FloatValue def = FloatValue()) const
+			{ return valueForKeyPath<FloatValue::ValueType, ValueClass_Float>(key, def); }
 		
 		StringValue stringForKey(const std::string& key, StringValue def = StringValue()) const
 			{ return valueForKey<StringValue::ValueType, ValueClass_String>(key, def); }
-		
 		StringValue stringForKeyPath(const std::vector<std::string>& key, StringValue def = StringValue()) const
 			{ return valueForKeyPath<StringValue::ValueType, ValueClass_String>(key, def); }
 		
 		ArrayValue arrayForKey(const std::string& key, ArrayValue def = ArrayValue()) const
 			{ return valueForKey<ArrayValue::ValueType, ValueClass_Array>(key, def); }
-		
 		ArrayValue arrayForKeyPath(const std::vector<std::string>& key, ArrayValue def = ArrayValue()) const
 			{ return valueForKeyPath<ArrayValue::ValueType, ValueClass_Array>(key, def); }
 		
 		Dictionary dictionaryForKey(const std::string& key, Dictionary def = Dictionary()) const
 			{ return Dictionary(valueForKey<Dictionary::ValueType, ValueClass_Dictionary>(key, def)); }
-		
 		Dictionary dictionaryForKeyPath(const std::vector<std::string>& key, Dictionary def = Dictionary()) const
 			{ return Dictionary(valueForKeyPath<Dictionary::ValueType, ValueClass_Dictionary>(key, def)); }
 		

@@ -13,6 +13,12 @@ Input::Input()
 {
 }
 
+void Input::pushKeyboardInputAction(const std::string& chars, InputAction action)
+{
+	assert(action == InputAction_Characters);
+	charactersEntered.invokeInMainRunLoop(chars);
+}
+
 void Input::pushKeyboardInputAction(size_t key, InputAction action)
 {
 	if (action == InputAction_KeyDown)
@@ -25,9 +31,9 @@ void Input::pushKeyboardInputAction(size_t key, InputAction action)
 		_pressedKeys.erase(key);
 		keyReleased.invokeInMainRunLoop(key);
 	}
-	else if (action == InputAction_Char)
+	else
 	{
-		charEntered.invokeInMainRunLoop(key);
+		assert(false);
 	}
 }
 
@@ -131,25 +137,29 @@ InputHandler::InputHandler(bool connect)
 InputHandler::~InputHandler()
 {
 	input().keyPressed.disconnect(this);
+	input().charactersEntered.disconnect(this);
 	input().keyReleased.disconnect(this);
-	input().charEntered.disconnect(this);
+	
 	input().pointerPressed.disconnect(this);
 	input().pointerMoved.disconnect(this);
 	input().pointerReleased.disconnect(this);
 	input().pointerCancelled.disconnect(this);
+	
 	input().pointerScrolled.disconnect(this);
 }
 
 void InputHandler::connectInputEvents()
 {
 	ET_CONNECT_EVENT(input().keyPressed, InputHandler::onKeyPressed)
+	ET_CONNECT_EVENT(input().charactersEntered, InputHandler::onCharactersEntered)
 	ET_CONNECT_EVENT(input().keyReleased, InputHandler::onKeyReleased)
-	ET_CONNECT_EVENT(input().charEntered, InputHandler::onCharEnterer)
+	
 	ET_CONNECT_EVENT(input().pointerPressed, InputHandler::onPointerPressed)
 	ET_CONNECT_EVENT(input().pointerMoved, InputHandler::onPointerMoved)
 	ET_CONNECT_EVENT(input().pointerReleased, InputHandler::onPointerReleased)
 	ET_CONNECT_EVENT(input().pointerCancelled, InputHandler::onPointerCancelled)
 	ET_CONNECT_EVENT(input().pointerScrolled, InputHandler::onPointerScrolled)
+	
 	ET_CONNECT_EVENT(input().gesturePerformed, InputHandler::onGesturePerformed)
 }
 

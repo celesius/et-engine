@@ -31,6 +31,12 @@ using namespace et;
 @end
 
 @interface etOpenGLWindow : NSWindow
+{
+	NSMutableCharacterSet* allowedCharacters;
+}
+
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag;
+
 @end
 
 @interface etOpenGLView : NSOpenGLView
@@ -487,11 +493,6 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 		scroll, [theEvent hash], static_cast<float>([theEvent timestamp]), origin));
 }
 
-- (void)beginGestureWithEvent:(NSEvent *)event
-{
-    (void)event;
-}
-
 - (void)magnifyWithEvent:(NSEvent *)event
 {
 	gestureInputSource.gesturePerformed(
@@ -508,21 +509,6 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 {
 	gestureInputSource.gesturePerformed(
 		GestureInputInfo(GestureTypeMask_Rotate, event.rotation));
-}
-
-- (void)endGestureWithEvent:(NSEvent *)event
-{
-    (void)event;
-}
-
-- (void)keyDown:(NSEvent *)event
-{
-    (void)event;
-}
-
-- (void)keyUp:(NSEvent *)event
-{
-    (void)event;
 }
 
 - (void)drawRect:(NSRect)dirtyRect
@@ -556,10 +542,38 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 
 @implementation etOpenGLWindow : NSWindow
 
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle
+	backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag
+{
+	self = [super initWithContentRect:contentRect styleMask:aStyle backing:bufferingType defer:flag];
+	if (self)
+	{
+		allowedCharacters = [NSMutableCharacterSet alphanumericCharacterSet];
+		[allowedCharacters formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
+		[allowedCharacters formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
+		[allowedCharacters formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
+		[allowedCharacters formUnionWithCharacterSet:[NSCharacterSet whitespaceCharacterSet]];
+	}
+	return self;
+}
+
 - (void)keyDown:(NSEvent*)theEvent
 {
-	unichar key = [theEvent.characters length] ? [theEvent.characters characterAtIndex:0] : 0;
-	Input::KeyboardInputSource().keyPressed(static_cast<unsigned char>(key & 0xff));
+	Input::KeyboardInputSource().keyPressed(theEvent.keyCode);
+	
+	NSString* filteredString = [theEvent.characters
+		stringByTrimmingCharactersInSet:[allowedCharacters invertedSet]];
+	
+	if ([filteredString length] > 0)
+	{
+		std::string cString([filteredString cStringUsingEncoding:NSUTF8StringEncoding]);
+		Input::KeyboardInputSource().charactersEntered(cString);
+	}
+}
+
+- (void)keyUp:(NSEvent*)theEvent
+{
+	Input::KeyboardInputSource().keyReleased(theEvent.keyCode);
 }
 
 @end
