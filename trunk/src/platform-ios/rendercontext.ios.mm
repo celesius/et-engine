@@ -131,7 +131,7 @@ bool RenderContextPrivate::initOpenGL(const RenderContextParameters& params)
 
 RenderContextPrivate::~RenderContextPrivate()
 {
-#if !defined(ET_EMBEDDED_APPLICATION)	
+#if (!defined(ET_EMBEDDED_APPLICATION)) && (!ET_OBJC_ARC_ENABLED)
 	[_viewController release];
 #endif	
 }

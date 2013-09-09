@@ -24,14 +24,13 @@ using namespace et;
 @interface etOpenGLView()
 {
     EAGLContext* _context;
+	NSMutableCharacterSet* allowedCharacters;
 	
 	et::Framebuffer::Pointer _mainFramebuffer;
 	et::Framebuffer::Pointer _multisampledFramebuffer;
 	
 	et::RenderContext* _rc;
 	et::RenderContextNotifier* _rcNotifier;
-	et::Input::PointerInputSource _pointerInputSource;
-	et::Input::KeyboardInputSource _keyboardInputSource;
 	
 	BOOL _keyboardAllowed;
 	BOOL _multisampled;
@@ -60,6 +59,16 @@ using namespace et;
 	
 	if (self)
 	{
+		allowedCharacters = [NSMutableCharacterSet alphanumericCharacterSet];
+		[allowedCharacters formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
+		[allowedCharacters formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
+		[allowedCharacters formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
+		[allowedCharacters formUnionWithCharacterSet:[NSCharacterSet whitespaceCharacterSet]];
+		
+#if (!ET_OBJC_ARC_ENABLED)
+		[allowedCharacters retain];
+#endif
+		
 		[self performInitializationWithParameters:params];
 	}
 	
@@ -68,10 +77,13 @@ using namespace et;
 
 - (void)dealloc
 {
-    [self deleteFramebuffer];    
-    [_context release];
+    [self deleteFramebuffer];
 	delete _rcNotifier;
+	
+#if (!ET_OBJC_ARC_ENABLED)
+    [_context release];
     [super dealloc];
+#endif
 }
 
 - (void)performInitializationWithParameters:(const RenderContextParameters&)params
@@ -107,8 +119,12 @@ using namespace et;
 {
     if (_context == newContext) return;
 	
+#if (ET_OBJC_ARC_ENABLED)
+	_context = newContext;
+#else
 	[_context release];
 	_context = [newContext retain];
+#endif
 	
 	[EAGLContext setCurrentContext:_context];
 	[self createFramebuffer];
@@ -286,7 +302,7 @@ using namespace et;
 		float nx = 2.0f * pt.pos.x / ownSize.width - 1.0f;
 		float ny = 1.0f - 2.0f * pt.pos.y / ownSize.height;
 		pt.normalizedPos = vec2(nx, ny);
-		_pointerInputSource.pointerPressed(pt);
+		Input::PointerInputSource().pointerPressed(pt);
 	}
 }
 
@@ -314,7 +330,7 @@ using namespace et;
 		float nx = 2.0f * pt.pos.x / ownSize.width - 1.0f;
 		float ny = 1.0f - 2.0f * pt.pos.y / ownSize.height;
 		pt.normalizedPos = vec2(nx, ny);
-		_pointerInputSource.pointerMoved(pt);
+		Input::PointerInputSource().pointerMoved(pt);
 	}
 }
 
@@ -342,7 +358,7 @@ using namespace et;
 		float nx = 2.0f * pt.pos.x / ownSize.width - 1.0f;
 		float ny = 1.0f - 2.0f * pt.pos.y / ownSize.height;
 		pt.normalizedPos = vec2(nx, ny);
-		_pointerInputSource.pointerReleased(pt);
+		Input::PointerInputSource().pointerReleased(pt);
 	}
 }
 
@@ -370,7 +386,7 @@ using namespace et;
 		float nx = 2.0f * pt.pos.x / ownSize.width - 1.0f;
 		float ny = 1.0f - 2.0f * pt.pos.y / ownSize.height;
 		pt.normalizedPos = vec2(nx, ny);
-		_pointerInputSource.pointerCancelled(pt);
+		Input::PointerInputSource().pointerCancelled(pt);
 	}
 }
 
@@ -398,37 +414,26 @@ using namespace et;
 	return YES;
 }
 
-- (void)insertText:(NSString *)text
+- (void)insertText:(NSString*)text
 {
-	size_t charValue = 0;
-	
-	if ([text canBeConvertedToEncoding:NSUTF32LittleEndianStringEncoding])
+	if ([text length] == 1)
 	{
-		NSUInteger actualLength = 0;
-		
-		[text getBytes:nil maxLength:0 usedLength:&actualLength
-		   encoding:NSUTF32LittleEndianStringEncoding options:0
-				 range:NSMakeRange(0, [text length]) remainingRange:0];
-		
-		DataStorage<wchar_t> result(static_cast<size_t>(actualLength + 1));
-		
-		[text getBytes:result.data() maxLength:result.dataSize() usedLength:0
-		   encoding:NSUTF32LittleEndianStringEncoding options:0
-				 range:NSMakeRange(0, [text length]) remainingRange:0];
-		
-		charValue = result[0];
+		unichar character = [text characterAtIndex:0];
+		if (character == ET_NEWLINE)
+			Input::KeyboardInputSource().keyPressed(ET_KEY_RETURN);
 	}
-	else
+
+	NSString* filteredString = [text stringByTrimmingCharactersInSet:[allowedCharacters invertedSet]];
+	if ([filteredString length] > 0)
 	{
-		NSLog(@"Unable to convert %@ to NSUTF32LittleEndianStringEncoding", text);
+		std::string cString([filteredString cStringUsingEncoding:NSUTF8StringEncoding]);
+		Input::KeyboardInputSource().charactersEntered(cString);
 	}
-	
-	_keyboardInputSource.charEntered(charValue);
 }
 
 - (void)deleteBackward
 {
-	_keyboardInputSource.charEntered(ET_BACKSPACE);
+	Input::KeyboardInputSource().keyPressed(ET_KEY_BACKSPACE);
 }
 
 @end

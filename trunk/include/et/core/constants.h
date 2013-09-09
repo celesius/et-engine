@@ -44,6 +44,24 @@
 #	define ET_KEY_ESCAPE				53
 #	define ET_KEY_BACKSPACE				51
 #
+#	define ET_KEY_LEFT					123
+#	define ET_KEY_RIGHT					124
+#	define ET_KEY_DOWN					125
+#	define ET_KEY_UP					126
+#
+#elif (ET_PLATFORM_IOS)
+#
+#	define ET_KEY_RETURN				1
+#	define ET_KEY_TAB					2
+#	define ET_KEY_SPACE					3
+#	define ET_KEY_ESCAPE				4
+#	define ET_KEY_BACKSPACE				5
+#
+#	define ET_KEY_LEFT					6
+#	define ET_KEY_RIGHT					7
+#	define ET_KEY_DOWN					8
+#	define ET_KEY_UP					9
+#
 #endif
 
 #define ET_DEFAULT_DELIMITER			';'

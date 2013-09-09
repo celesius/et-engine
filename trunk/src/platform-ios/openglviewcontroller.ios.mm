@@ -59,7 +59,9 @@ extern NSString* etKeyboardNotRequiredNotification;
 	
 	if (![EAGLContext setCurrentContext:_context])
 	{
+#if (!ET_OBJC_ARC_ENABLED)
 		[_context release];
+#endif
 		NSLog(@"Failed to set ES context current");
 		return NO;
 	}
@@ -84,8 +86,10 @@ extern NSString* etKeyboardNotRequiredNotification;
     if ([EAGLContext currentContext] == _context)
         [EAGLContext setCurrentContext:nil];
 	
+#if (!ET_OBJC_ARC_ENABLED)
 	[_context release];
     [super dealloc];
+#endif
 }
 
 - (void)viewDidLoad
@@ -102,7 +106,10 @@ extern NSString* etKeyboardNotRequiredNotification;
     if ([EAGLContext currentContext] == _context)
         [EAGLContext setCurrentContext:nil];
 	
+#if (!ET_OBJC_ARC_ENABLED)
 	[_context release];
+#endif
+	
 	_context = nil;	
 }
 

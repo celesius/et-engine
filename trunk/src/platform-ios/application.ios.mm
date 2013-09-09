@@ -100,7 +100,9 @@ void Application::loaded()
     enterRunLoop();
     
 #else    
-	[mainWindow setRootViewController:(etOpenGLViewController*)_renderingContextHandle];
+	
+	void* handle = reinterpret_cast<void*>(_renderingContextHandle);
+	[mainWindow setRootViewController:(__bridge etOpenGLViewController*)handle];
 	[mainWindow makeKeyAndVisible];
     
 	etApplicationDelegate* d = (etApplicationDelegate*)[[UIApplication sharedApplication] delegate];
@@ -147,8 +149,15 @@ void Application::alert(const std::string& title, const std::string& message, Al
 	NSString* nsTitle = [NSString stringWithCString:title.c_str() encoding:NSASCIIStringEncoding];
 	NSString* nsMessage = [NSString stringWithCString:message.c_str() encoding:NSASCIIStringEncoding];
 	
-	[[[[UIAlertView alloc] initWithTitle:nsTitle message:nsMessage delegate:nil
-		cancelButtonTitle:@"Close" otherButtonTitles:nil] autorelease] show];
+	UIAlertView* alert = [[UIAlertView alloc] initWithTitle:nsTitle message:nsMessage delegate:nil
+		cancelButtonTitle:@"Close" otherButtonTitles:nil];
+	
+	[alert show];
+	
+#if (!ET_OBJC_ARC_ENABLED)
+	[alert release];
+#endif
+	
 }
 
 size_t Application::memoryUsage() const
