@@ -41,18 +41,16 @@ using namespace et;
 	(void)application;
 	(void)launchOptions;
 	
-	self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+	self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	
 	_updating = NO;
 	_notifier.notifyLoaded();
+
+#if (!ET_OBJC_ARC_ENABLED)
+	[self.window release];
+#endif
 	
     return YES;
-}
-
-- (void)dealloc
-{
-    [_window release];
-    [super dealloc];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -94,9 +92,13 @@ using namespace et;
 {
 	if (_updating) return;
 	
-	_displayLink = [[CADisplayLink displayLinkWithTarget:self selector:@selector(tick)] retain];
+	_displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(tick)];
 	[_displayLink setFrameInterval:1];
 	[_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+	
+#if (!ET_OBJC_ARC_ENABLED)
+	[_displayLink retain];
+#endif
 }
 
 - (BOOL)updating
@@ -118,7 +120,9 @@ using namespace et;
 {
 	(void)application;
 	(void)window;
-	UIViewController* vc = reinterpret_cast<UIViewController*>(et::application().renderingContextHandle());
+	
+	void* handle = reinterpret_cast<void*>(et::application().renderingContextHandle());
+	UIViewController* vc = (__bridge UIViewController*)(handle);
 	return [vc supportedInterfaceOrientations];
 }
 
