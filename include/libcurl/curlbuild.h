@@ -115,18 +115,19 @@
 /* Configure process defines this to 1 when it finds out that system  */
 /* header file ws2tcpip.h must be included by the external interface. */
 /* #undef CURL_PULL_WS2TCPIP_H */
-#ifdef CURL_PULL_WS2TCPIP_H
+
+#if defined(_WIN32)
 #  ifndef WIN32_LEAN_AND_MEAN
 #    define WIN32_LEAN_AND_MEAN
 #  endif
-#  include <windows.h>
-#  include <winsock2.h>
-#  include <ws2tcpip.h>
+// #  include <winsock2.h>
+// #  include <ws2tcpip.h>
 #endif
 
 /* Configure process defines this to 1 when it finds out that system   */
 /* header file sys/types.h must be included by the external interface. */
 #define CURL_PULL_SYS_TYPES_H 1
+
 #ifdef CURL_PULL_SYS_TYPES_H
 #  include <sys/types.h>
 #endif
@@ -147,7 +148,11 @@
 
 /* Configure process defines this to 1 when it finds out that system    */
 /* header file sys/socket.h must be included by the external interface. */
-#define CURL_PULL_SYS_SOCKET_H 1
+
+#if !defined(_WIN32)
+#	define CURL_PULL_SYS_SOCKET_H 1
+#endif
+
 #ifdef CURL_PULL_SYS_SOCKET_H
 #  include <sys/socket.h>
 #endif
@@ -166,7 +171,7 @@
 #define CURL_TYPEOF_CURL_SOCKLEN_T	socklen_t
 
 /* The size of `curl_socklen_t', as computed by sizeof. */
-#define CURL_SIZEOF_CURL_SOCKLEN_T	4
+#define CURL_SIZEOF_CURL_SOCKLEN_T	(sizeof(curl_socklen_t))
 
 /* Data type definition of curl_socklen_t. */
 typedef CURL_TYPEOF_CURL_SOCKLEN_T	curl_socklen_t;

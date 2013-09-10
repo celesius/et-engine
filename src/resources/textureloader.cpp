@@ -90,7 +90,7 @@ TextureDescription::Pointer et::loadTexture(const std::string& fileName)
 	{
 		desc = new TextureDescription;
 		desc->target = GL_TEXTURE_2D;
-		JPGLoader::loadFromFile(fileName, *desc);
+		JPGLoader::loadFromFile(fileName, *desc, true);
 	}
 	
 	return TextureDescription::Pointer(desc);

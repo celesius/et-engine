@@ -8,8 +8,6 @@
 #include <Windows.h>
 #include <WinUser.h>
 
-// #include <VersionHelpers.h>
-
 #include <et/core/tools.h>
 #include <et/opengl/opengl.h>
 #include <et/opengl/openglcaps.h>
@@ -548,7 +546,8 @@ union internal_KeyInputInfo
 	WPARAM wParam;
 	struct { char code, unused1, unused2, unused3; };
 
-	internal_KeyInputInfo(WPARAM p) : wParam(p) { }
+	internal_KeyInputInfo(WPARAM p) : 
+		wParam(p) { }
 };
 
 union internal_SizeInfo
@@ -689,7 +688,8 @@ LRESULT CALLBACK mainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_CHAR:
 		{
 			internal_KeyInputInfo k(wParam);
-			handler->charEntered(k.code);
+			char chars[2] = {k.code, 0};
+			handler->charactersEntered(std::string(chars));
 			return 0;
 		}
 

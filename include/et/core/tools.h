@@ -22,9 +22,9 @@ namespace et
 	std::string applicationPackagePath();
 	std::string applicationDataFolder();
 	
-	std::string applicationLibraryBaseFolder();
-	std::string applicationTemporaryBaseFolder();
-	std::string applicationDocumentsBaseFolder();
+	std::string libraryBaseFolder();
+	std::string documentsBaseFolder();
+	std::string temporaryBaseFolder();
 	
 	std::string normalizeFilePath(std::string s);
 	
@@ -185,6 +185,9 @@ namespace et
 	inline int strToInt(const std::string& value)
 		{ return std::atoi(value.c_str()); }
 
+	inline int strToLong(const std::string& value)
+		{ return std::atol(value.c_str()); }
+	
 	inline double strToDouble(const std::string& value)
 		{ return std::atof(value.c_str()); }
 

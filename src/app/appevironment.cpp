@@ -45,7 +45,7 @@ const std::string& AppEnvironment::applicationDocumentsFolder() const
 
 void AppEnvironment::updateDocumentsFolder(const ApplicationIdentifier& i)
 {
-	_documentsFolder = addTrailingSlash(applicationLibraryBaseFolder() + i.companyName);
+	_documentsFolder = addTrailingSlash(libraryBaseFolder() + i.companyName);
 	if (!folderExists(_documentsFolder))
 		createDirectory(_documentsFolder, true);
 

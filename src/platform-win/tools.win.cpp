@@ -124,7 +124,7 @@ std::string et::applicationDataFolder()
 	return applicationPath();
 }
 
-std::string et::applicationDocumentsBaseFolder()
+std::string et::documentsBaseFolder()
 {
 	wchar_t* path = nullptr;
 
@@ -136,7 +136,7 @@ std::string et::applicationDocumentsBaseFolder()
 	return result;
 }
 
-std::string et::applicationLibraryBaseFolder()
+std::string et::libraryBaseFolder()
 {
 	wchar_t* path = nullptr;
 
