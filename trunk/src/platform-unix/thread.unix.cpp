@@ -112,8 +112,8 @@ void Thread::stop()
 {
 	if (_private->running)
 	{
-		resume();
 		_private->running = false;
+		resume();
 	}
 }
 

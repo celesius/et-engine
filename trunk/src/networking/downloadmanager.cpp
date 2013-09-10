@@ -46,7 +46,8 @@ public:
 	
 	~DownloadManagerPrivate()
 	{
-		thread->terminate();
+		thread->stop();
+		thread->waitForTermination();
 		delete thread;
 	}
 };
@@ -171,9 +172,15 @@ void DownloadThread::processRequest(DownloadRequest::Pointer request)
 	request->cleanup();
 	
 	if (result == CURLE_OK)
+	{
+		request->completed.invokeInMainRunLoop(request);
 		_owner->downloadCompleted.invokeInMainRunLoop(request);
+	}
 	else
+	{
+		request->failed.invokeInMainRunLoop(request);
 		_owner->downloadFailed.invokeInMainRunLoop(request);
+	}
 }
 
 /**
@@ -184,6 +191,11 @@ void DownloadThread::processRequest(DownloadRequest::Pointer request)
 DownloadRequest::DownloadRequest(const std::string& u, const std::string& d) :
 	_url(u), _destination(d), _destFile(0)
 {
+	std::string folder = getFilePath(_destination);
+	
+	if (!folderExists(folder))
+		createDirectory(folder, true);
+	
 	_destFile = fopen(_destination.c_str(), "wb");
 	assert(_destFile);
 }

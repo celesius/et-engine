@@ -108,7 +108,7 @@ bool et::folderExists(const std::string& name)
 	return exists && isDir;
 }
 
-std::string et::applicationLibraryBaseFolder()
+std::string et::libraryBaseFolder()
 {
     @autoreleasepool
     {
@@ -118,7 +118,7 @@ std::string et::applicationLibraryBaseFolder()
     }
 }
 
-std::string et::applicationTemporaryBaseFolder()
+std::string et::temporaryBaseFolder()
 {
     @autoreleasepool
     {
@@ -126,7 +126,7 @@ std::string et::applicationTemporaryBaseFolder()
     }
 }
 
-std::string et::applicationDocumentsBaseFolder()
+std::string et::documentsBaseFolder()
 {
     @autoreleasepool 
     {
@@ -139,47 +139,41 @@ std::string et::applicationDocumentsBaseFolder()
 bool et::createDirectory(const std::string& name, bool intermediates)
 {
 	NSError* error = nil;
+	NSString* path = [NSString stringWithUTF8String:name.c_str()];
 	
-	NSString* path = [NSString stringWithCString:name.c_str() encoding:NSUTF8StringEncoding];
-	[[NSFileManager defaultManager]	createDirectoryAtPath:path
+	BOOL result = [[NSFileManager defaultManager] createDirectoryAtPath:path
 		withIntermediateDirectories:(intermediates ? YES : NO) attributes:nil error:&error];
 	
 	if (error)
-	{
 		NSLog(@"Unable to create directory at %@, error: %@", path, error);
-	}
 	
-	return (error == nil);
+	return result;
 }
 
 bool et::removeDirectory(const std::string& name)
 {
 	NSError* error = nil;
 	
-	NSString* path = [NSString stringWithCString:name.c_str() encoding:NSUTF8StringEncoding];
-	[[NSFileManager defaultManager]	removeItemAtPath:path error:&error];
+	NSString* path = [NSString stringWithUTF8String:name.c_str()];
+	BOOL result = [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
 	
 	if (error)
-	{
 		NSLog(@"Unable to delete directory at %@, error: %@", path, error);
-	}
 	
-	return (error == nil);
+	return result;
 }
 
 bool et::removeFile(const std::string& name)
 {
 	NSError* error = nil;
 	
-	NSString* path = [NSString stringWithCString:name.c_str() encoding:NSUTF8StringEncoding];
-	[[NSFileManager defaultManager]	removeItemAtPath:path error:&error];
+	NSString* path = [NSString stringWithUTF8String:name.c_str()];
+	BOOL result = [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
 	
 	if (error)
-	{
 		NSLog(@"Unable to delete file at %@, error: %@", path, error);
-	}
 	
-	return (error == nil);
+	return result;
 }
 
 void et::getFolderContent(const std::string& folder, StringList& list)

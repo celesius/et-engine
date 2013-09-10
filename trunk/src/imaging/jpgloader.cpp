@@ -27,7 +27,7 @@ void JPGLoader::loadInfoFromStream(std::istream& stream, TextureDescription& des
 	cinfo.err = jpeg_std_error(&jerr);
 	jpeg_create_decompress(&cinfo);
 	jpeg_mem_src(&cinfo, buffer.data(), buffer.dataSize());
-	jpeg_read_header(&cinfo, true);
+	jpeg_read_header(&cinfo, TRUE);
 	if (cinfo.out_color_space == JCS_GRAYSCALE)
 	{
 		jpeg_destroy_decompress(&cinfo);
@@ -48,7 +48,7 @@ void JPGLoader::loadInfoFromStream(std::istream& stream, TextureDescription& des
 	jpeg_destroy_decompress(&cinfo);
 }
 
-void JPGLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
+void JPGLoader::loadFromStream(std::istream& stream, TextureDescription& desc, bool flipped)
 {
 	if (stream.fail()) return;
 	
@@ -62,7 +62,7 @@ void JPGLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
 	
 	jpeg_create_decompress(&cinfo);
 	jpeg_mem_src(&cinfo, buffer.data(), buffer.dataSize());
-	jpeg_read_header(&cinfo, true);
+	jpeg_read_header(&cinfo, TRUE);
 	jpeg_calc_output_dimensions(&cinfo);
 	
 	if (cinfo.out_color_space == JCS_GRAYSCALE)
@@ -70,6 +70,8 @@ void JPGLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
 		jpeg_destroy_decompress(&cinfo);
 		return;
 	}
+	
+	size_t rowSize = static_cast<size_t>(cinfo.output_components * cinfo.output_width);
 	
 	desc.size = vec2i(static_cast<int>(cinfo.output_width), static_cast<int>(cinfo.output_height));
 	desc.target = GL_TEXTURE_2D;
@@ -81,17 +83,28 @@ void JPGLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
 	desc.channels = 3;
 	desc.mipMapCount = 1;
 	desc.layersCount = 1;
-	desc.data = BinaryDataStorage(desc.size.square() * cinfo.output_components);
-	
-	size_t rowSize = static_cast<size_t>(cinfo.output_components) * cinfo.output_width;
-	unsigned char* p_line = desc.data.data();
+	desc.data = BinaryDataStorage(rowSize * cinfo.output_height);
 	
 	if (jpeg_start_decompress(&cinfo))
 	{
-		while (cinfo.output_scanline < cinfo.output_height)
+		if (flipped)
 		{
-			JDIMENSION linesRead = jpeg_read_scanlines(&cinfo, &p_line, 1);
-			p_line += linesRead * rowSize;
+			unsigned char* p_line = desc.data.data() + desc.data.size() - rowSize;
+			while (cinfo.output_scanline < cinfo.output_height)
+			{
+				JDIMENSION linesRead = jpeg_read_scanlines(&cinfo, &p_line, 1);
+				p_line -= linesRead * rowSize;
+			}
+			
+		}
+		else
+		{
+			unsigned char* p_line = desc.data.data();
+			while (cinfo.output_scanline < cinfo.output_height)
+			{
+				JDIMENSION linesRead = jpeg_read_scanlines(&cinfo, &p_line, 1);
+				p_line += linesRead * rowSize;
+			}
 		}
 	}
 	else
@@ -113,12 +126,12 @@ void JPGLoader::loadInfoFromFile(const std::string& path, TextureDescription& de
 	}
 }
 
-void JPGLoader::loadFromFile(const std::string& path, TextureDescription& desc)
+void JPGLoader::loadFromFile(const std::string& path, TextureDescription& desc, bool flipped)
 {
 	InputStream stream(path, StreamMode_Binary);
 	if (stream.valid())
 	{
 		desc.setOrigin(path);
-		loadFromStream(stream.stream(), desc);
+		loadFromStream(stream.stream(), desc, flipped);
 	}
 }

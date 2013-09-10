@@ -32,7 +32,8 @@ namespace et
 
 using namespace et;
 
-Mutex::Mutex() : _private(new MutexPrivate)
+Mutex::Mutex() : 
+	_private(new MutexPrivate)
 {
 }
 

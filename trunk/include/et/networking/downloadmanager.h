@@ -23,6 +23,8 @@ namespace et
 		typedef IntrusivePtr<DownloadRequest> Pointer;
 
 		ET_DECLARE_EVENT1(progress, DownloadRequest::Pointer)
+		ET_DECLARE_EVENT1(completed, DownloadRequest::Pointer);
+		ET_DECLARE_EVENT1(failed, DownloadRequest::Pointer);
 
 	public:
 		~DownloadRequest();

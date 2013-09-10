@@ -8,7 +8,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <windows.h>
+#include <Windows.h>
 
 #ifndef GLG_APIENTRY
 #	define GLG_APIENTRY __stdcall
