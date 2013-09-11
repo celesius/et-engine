@@ -48,14 +48,16 @@ namespace et
 		size_t windowStyle;
 		WindowSize windowSize;
 		bool shouldSuspendOnDeactivate;
+		bool keepWindowAspectOnResize;
 
 #if (ET_PLATFORM_IOS || ET_PLATFORM_ANDROID)
 		ApplicationParameters() :
-			windowStyle(WindowStyle_Borderless), windowSize(WindowSize_Predefined) { }
+			windowStyle(WindowStyle_Borderless), windowSize(WindowSize_Predefined),
 #else
 		ApplicationParameters() :
-			windowStyle(WindowStyle_Caption), windowSize(WindowSize_Predefined) { }
+			windowStyle(WindowStyle_Caption), windowSize(WindowSize_Predefined),
 #endif
+		keepWindowAspectOnResize(false) { }
 	};
 	
 	class IApplicationDelegate : virtual public EventReceiver
