@@ -48,7 +48,7 @@ namespace et
 		
 		bool verticalSync;
 		bool multipleTouch;
-        
+		
         size_t supportedInterfaceOrientations;
 
 		vec2i contextSize;

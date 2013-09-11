@@ -271,6 +271,9 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 	
 	mainWindow = [[etOpenGLWindow alloc] initWithContentRect:contentRect
 		styleMask:windowMask backing:NSBackingStoreBuffered defer:YES];
+	
+	if (appParams.keepWindowAspectOnResize)
+		[mainWindow setContentAspectRatio:contentRect.size];
 
 #if (ET_OBJC_ARC_ENABLED)
 	CFRetain((__bridge CFTypeRef)mainWindow);
