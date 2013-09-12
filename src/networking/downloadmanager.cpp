@@ -217,6 +217,7 @@ void DownloadRequest::cleanup()
 
 size_t DownloadRequest::appendData(void* ptr, size_t n, size_t size)
 {
+	assert(ptr);
 	size_t actualDataSize = n * size;
 
 	if (_destFile == nullptr)
