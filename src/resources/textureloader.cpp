@@ -5,7 +5,7 @@
  *
  */
 
-#include <et/core/tools.h>
+#include <et/core/filesystem.h>
 #include <et/opengl/opengl.h>
 #include <et/resources/textureloader.h>
 #include <et/imaging/pngloader.h>

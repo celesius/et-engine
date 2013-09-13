@@ -7,9 +7,7 @@
 
 #pragma once
 
-#include <map>
 #include <et/core/object.h>
-#include <et/core/tools.h>
 #include <et/threading/criticalsection.h>
 #include <et/timers/timedobject.h>
 
@@ -27,7 +25,8 @@ namespace et
 		void clear();
 		void flush();
 
-		LoadableObject::Pointer find(const std::string& key);
+		std::vector<LoadableObject::Pointer> findObjects(const std::string& key);
+		LoadableObject::Pointer findAnyObject(const std::string& key);
 
 		void startMonitoring();
 		void stopMonitoring();
@@ -53,7 +52,8 @@ namespace et
 			ObjectProperty(LoadableObject::Pointer o, ObjectLoader::Pointer l) :
 				object(o), loader(l) { }
 		};
-		typedef std::map<const std::string, ObjectProperty> ObjectMap;
+		typedef std::vector<ObjectProperty> ObjectPropertyList;
+		typedef std::map<const std::string, ObjectPropertyList> ObjectMap;
 
 		CriticalSection _lock;
 		ObjectMap _objects;

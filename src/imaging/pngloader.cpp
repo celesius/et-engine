@@ -281,7 +281,8 @@ void handlePngError(png_structp, png_const_charp e)
 	log::error("[PNGLoader] %s", e);
 }
 
-void handlePngWarning(png_structp, png_const_charp e)
+void handlePngWarning(png_structp, png_const_charp)
 {
-	log::warning("[PNGLoader] %s", e);
+//	supress warnings
+//	log::warning("[PNGLoader] %s", e);
 }

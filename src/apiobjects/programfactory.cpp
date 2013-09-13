@@ -6,6 +6,7 @@
  */
 
 #include <et/core/stream.h>
+#include <et/core/filesystem.h>
 #include <et/app/application.h>
 #include <et/opengl/openglcaps.h>
 #include <et/rendering/rendercontext.h>
@@ -179,7 +180,7 @@ StringList ProgramFactory::loadProgramSources(const std::string& file, std::stri
 Program::Pointer ProgramFactory::loadProgram(const std::string& file, ObjectsCache& cache,
 	const StringList& defines)
 {
-	Program::Pointer cached = cache.find(file);
+	Program::Pointer cached = cache.findAnyObject(file);
 	if (cached.valid())
 		return cached;
 	

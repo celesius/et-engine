@@ -12,8 +12,9 @@ using namespace et;
 
 IApplicationDelegate* et::Application::_delegate = nullptr;
 
-Application::Application() : _renderContext(0), _exitCode(0), _lastQueuedTimeMSec(queryTimeMSec()),
-	_fpsLimitMSec(0), _fpsLimitMSecFractPart(0)
+Application::Application() :
+	_renderContext(nullptr), _exitCode(0), _lastQueuedTimeMSec(queryTimeMSec()), _fpsLimitMSec(0),
+	_fpsLimitMSecFractPart(0)
 {
 	threading();
 	

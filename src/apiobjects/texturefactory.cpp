@@ -43,7 +43,7 @@ Texture TextureFactory::loadTexture(const std::string& fileName, ObjectsCache& c
 	std::string file = application().environment().resolveScalableFileName(fileName,
 		renderContext()->screenScaleFactor());
     
-    Texture texture = cache.find(file);
+    Texture texture = cache.findAnyObject(file);
 	if (texture.invalid())
 	{
 		TextureDescription::Pointer desc =

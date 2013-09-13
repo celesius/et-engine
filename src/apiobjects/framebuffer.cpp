@@ -5,7 +5,6 @@
  *
  */
 
-#include <et/core/tools.h>
 #include <et/apiobjects/framebuffer.h>
 #include <et/rendering/rendercontext.h>
 #include <et/opengl/openglcaps.h>

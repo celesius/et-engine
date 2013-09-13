@@ -13,7 +13,6 @@
 
 namespace et
 {
-
 	class BaseAnimator;
 	class AnimatorDelegate
 	{

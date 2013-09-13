@@ -7,6 +7,7 @@
 
 #include <queue>
 #include <libcurl/curl.h>
+#include <et/core/filesystem.h>
 #include <et/threading/thread.h>
 #include <et/networking/downloadmanager.h>
 

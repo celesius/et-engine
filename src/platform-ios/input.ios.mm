@@ -6,6 +6,7 @@
  */
 
 #include <Foundation/NSNotification.h>
+#include <et/core/tools.h>
 #include <et/input/input.h>
 
 using namespace et;

@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifndef ET_CORE_INCLUDES
+#	error This file should not be included from anywhere except et.h
+#endif
+
 #if (ET_DEBUG)
 #	define setDebugVariable(var, val) et::et_internal_setDebugVariable(var, val, #var, #val, ET_CALL_FUNCTION);
 #else
