@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifndef ET_CORE_INCLUDES
+#	error This file should not be included from anywhere except et.h
+#endif
+
 #define PI								3.1415926535897932384626433832795f
 #define DOUBLE_PI						6.283185307179586476925286766559f
 #define HALF_PI							1.5707963267948966192313216916398f

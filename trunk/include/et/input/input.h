@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <map>
-#include <et/core/tools.h>
 #include <et/core/singleton.h>
 #include <et/core/containers.h>
 #include <et/geometry/geometry.h>
@@ -243,6 +241,4 @@ namespace et
 
 	inline Input& input()
 		{ return Input::instance(); }
-
-	std::ostream& operator << (std::ostream&, const PointerInputInfo&);
 }

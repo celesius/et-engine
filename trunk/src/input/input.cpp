@@ -5,6 +5,7 @@
  *
  */
 
+
 #include <et/input/input.h>
 
 using namespace et;
@@ -163,13 +164,4 @@ void InputHandler::connectInputEvents()
 	ET_CONNECT_EVENT(input().pointerScrolled, InputHandler::onPointerScrolled)
 	
 	ET_CONNECT_EVENT(input().gesturePerformed, InputHandler::onGesturePerformed)
-}
-
-/*
- * Support functions
- */
-std::ostream& et::operator << (std::ostream& s, const PointerInputInfo& p)
-{
-	s << "Pointer {" << p.type << ", pos: " << p.pos << "}" << std::endl;
-	return s;
 }

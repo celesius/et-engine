@@ -12,8 +12,8 @@
 
 namespace et
 {
-	template <typename T>
-	class Hierarchy : public Object
+	template <typename T, typename BASE>
+	class Hierarchy : public BASE
 	{
 	public:
 		typedef IntrusivePtr<T> BasePointer;
@@ -50,24 +50,24 @@ namespace et
 		List _children;
 	};
 
-	template <typename T>
-	Hierarchy<T>::Hierarchy(T* parent) : _parent(parent)
+	template <typename T, typename BASE>
+	Hierarchy<T, BASE>::Hierarchy(T* parent) : _parent(parent)
 	{
 		if (_parent)
 			_parent->pushChild(static_cast<T*>(this));
 	}
 
-	template <typename T>
-	Hierarchy<T>::~Hierarchy()
+	template <typename T, typename BASE>
+	Hierarchy<T, BASE>::~Hierarchy()
 	{
 		for (auto& i : _children)
 			i->removeParent();
 	}
 
-	template <typename T>
-	void Hierarchy<T>::setParent(T* p)
+	template <typename T, typename BASE>
+	void Hierarchy<T, BASE>::setParent(T* p)
 	{
-		retain();
+		BASE::retain();
 
 		if (_parent)
 			_parent->removeChild(static_cast<T*>(this));
@@ -77,17 +77,15 @@ namespace et
 		if (_parent)
 			_parent->addChild(static_cast<T*>(this));
 
-		release();
+		BASE::release();
 	}
 
-	template <typename T>
-	void Hierarchy<T>::pushChild(T* c)
-	{
-		_children.push_back(typename Hierarchy<T>::BasePointer(c));
-	}
+	template <typename T, typename BASE>
+	void Hierarchy<T, BASE>::pushChild(T* c)
+		{ _children.push_back(typename Hierarchy<T, BASE>::BasePointer(c)); }
 
-	template <typename T>
-	bool Hierarchy<T>::addChild(T* c)
+	template <typename T, typename BASE>
+	bool Hierarchy<T, BASE>::addChild(T* c)
 	{
 		if (c == this) return false;
 
@@ -107,8 +105,8 @@ namespace et
 		return notFound;
 	}
 
-	template <typename T>
-	bool Hierarchy<T>::removeChild(T* c)
+	template <typename T, typename BASE>
+	bool Hierarchy<T, BASE>::removeChild(T* c)
 	{
 		bool found = false;
 		
@@ -126,68 +124,56 @@ namespace et
 		return found;
 	}
 
-	template <typename T>
-	void Hierarchy<T>::bringToFront(T* c)
+	template <typename T, typename BASE>
+	void Hierarchy<T, BASE>::bringToFront(T* c)
 	{
 		for (auto i = _children.begin(), e = _children.end(); i != e; ++i)
 		{
 			if (*i == c)
 			{
 				_children.erase(i);
-				_children.push_back(typename Hierarchy<T>::BasePointer(c));
+				_children.push_back(typename Hierarchy<T, BASE>::BasePointer(c));
 				break;
 			}
 		}
 	}
 
-	template <typename T>
-	void Hierarchy<T>::sendToBack(T* c)
+	template <typename T, typename BASE>
+	void Hierarchy<T, BASE>::sendToBack(T* c)
 	{
 		for (auto i = _children.begin(), e = _children.end(); i != e; ++i)
 		{
 			if (*i == c)
 			{
 				_children.erase(i);
-				_children.push_front(typename Hierarchy<T>::BasePointer(c));
+				_children.push_front(typename Hierarchy<T, BASE>::BasePointer(c));
 				break;
 			}
 		}
 	}
 
-	template <typename T>
-	void Hierarchy<T>::removeChildren()
-	{
-		_children.clear();
-	}
+	template <typename T, typename BASE>
+	void Hierarchy<T, BASE>::removeChildren()
+		{ _children.clear(); }
 
-	template <typename T>
-	inline T* Hierarchy<T>::parent()
-	{
-		return _parent; 
-	}
+	template <typename T, typename BASE>
+	inline T* Hierarchy<T, BASE>::parent()
+		{ return _parent; }
 
-	template <typename T>
-	inline const T* Hierarchy<T>::parent() const
-	{ 
-		return _parent; 
-	}
+	template <typename T, typename BASE>
+	inline const T* Hierarchy<T, BASE>::parent() const
+		{  return _parent; }
 
-	template <typename T>
-	inline const typename Hierarchy<T>::List& Hierarchy<T>::children() const
-	{
-		return _children; 
-	}
+	template <typename T, typename BASE>
+	inline const typename Hierarchy<T, BASE>::List& Hierarchy<T, BASE>::children() const
+		{ return _children; }
 
-	template <typename T>
-	inline typename Hierarchy<T>::List& Hierarchy<T>::children()
-	{
-		return _children; 
-	}
+	template <typename T, typename BASE>
+	inline typename Hierarchy<T, BASE>::List& Hierarchy<T, BASE>::children()
+		{ return _children; }
 
-	template <typename T>
-	void Hierarchy<T>::removeParent()
-	{
-		_parent = 0;
-	}
+	template <typename T, typename BASE>
+	void Hierarchy<T, BASE>::removeParent()
+		{ _parent = nullptr; }
 
 }

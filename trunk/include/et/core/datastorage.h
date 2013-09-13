@@ -200,6 +200,7 @@ namespace et
 		void appendData(void* ptr, size_t dataSize)
 		{
 			assert(mutableData());
+			assert(ptr);
 			
 			size_t currentSize = _size;
 			size_t numElements = dataSize / sizeof(T) + ((dataSize % sizeof(T) > 0) ? 1 : 0);

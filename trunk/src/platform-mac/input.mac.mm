@@ -7,6 +7,8 @@
 
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSWindow.h>
+
+#include <et/core/tools.h>
 #include <et/input/input.h>
 
 using namespace et;

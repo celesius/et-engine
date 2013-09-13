@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <map>
 #include <et/core/intrusiveptr.h>
 
 namespace et

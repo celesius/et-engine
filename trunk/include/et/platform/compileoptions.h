@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifndef ET_CORE_INCLUDES
+#	error This file should not be included from anywhere except et.h
+#endif
+
 #if defined(_MSC_VER)
 #
 #	pragma warning(disable:4201)

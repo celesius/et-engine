@@ -109,6 +109,11 @@ void printArray(ArrayValue arr, const std::string& tabs)
 			IntegerValue val = i;
 			log::info("%s%d", tabs.c_str(), val->content);
 		}
+		if (i->valueClass() == ValueClass_Float)
+		{
+			FloatValue val = i;
+			log::info("%s%f", tabs.c_str(), val->content);
+		}
 		else if (i->valueClass() == ValueClass_String)
 		{
 			StringValue val = i;
@@ -138,6 +143,11 @@ void printDictionary(Dictionary dict, const std::string& tabs)
 		{
 			IntegerValue val = i.second;
 			log::info("%s%s = %d", tabs.c_str(), i.first.c_str(), val->content);
+		}
+		else if (i.second->valueClass() == ValueClass_Float)
+		{
+			FloatValue val = i.second;
+			log::info("%s%s = %f", tabs.c_str(), i.first.c_str(), val->content);
 		}
 		else if (i.second->valueClass() == ValueClass_String)
 		{

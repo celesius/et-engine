@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <map>
 #include <et/core/properties.h>
 #include <et/input/input.h>
 

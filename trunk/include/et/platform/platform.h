@@ -86,7 +86,7 @@ namespace et
 		Architecture_64bit = 2,
 		
 		currentArchitecture = (sizeof(void*) == 4) ? Architecture_32bit :
-								((sizeof(void*) == 8) ? Architecture_64bit : Architecture_Unknown)
+			((sizeof(void*) == 8) ? Architecture_64bit : Architecture_Unknown)
 	};
 	
 }

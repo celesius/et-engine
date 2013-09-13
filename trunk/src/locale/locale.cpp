@@ -6,6 +6,7 @@
 */
 
 #include <et/core/tools.h>
+#include <et/core/filesystem.h>
 #include <et/core/stream.h>
 #include <et/locale/locale.h>
 
