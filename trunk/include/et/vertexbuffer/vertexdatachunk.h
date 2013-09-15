@@ -8,7 +8,6 @@
 #pragma once
 
 #include <et/core/containers.h>
-#include <et/core/intrusiveptr.h>
 #include <et/vertexbuffer/vertexdeclaration.h>
 
 namespace et

@@ -14,9 +14,9 @@
 #if (ET_PLATFORM_MAC)
 #	include <AppKit/NSWorkspace.h>
 #	include <AppKit/NSScreen.h>
-#	include <Foundation/NSFileManager.h>
-#	include <Foundation/NSPredicate.h>
-#	include <Foundation/NSURL.h>
+#elif (ET_PLATFORM_IOS)
+#	include <UIKit/UIApplication.h>
+#	include <UIKit/UIScreen.h>
 #endif
 
 static uint64_t startTime = 0;

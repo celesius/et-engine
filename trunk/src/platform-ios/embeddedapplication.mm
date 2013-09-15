@@ -34,10 +34,12 @@ static etApplication* _sharedInstance = nil;
 	return _sharedInstance;
 }
 
+#if (!ET_OBJC_ARC_ENABLED)
 - (oneway void)release { }
 - (NSUInteger)retainCount { return LONG_MAX; }
 - (id)retain { return self; }
 - (id)autorelease { return self; }
+#endif
 
 - (id)init
 {
@@ -63,7 +65,7 @@ static etApplication* _sharedInstance = nil;
 
 	application().run(0, 0);
 
-	Framebuffer defaultFrameBuffer =
+	Framebuffer::Pointer defaultFrameBuffer =
 		[self renderContext]->framebufferFactory().createFramebufferWrapper(defaultFrameBufferId);
 
 	vec2i contextSize(view.bounds.size.width, view.bounds.size.height);
@@ -89,7 +91,9 @@ static etApplication* _sharedInstance = nil;
 - (void)dealloc
 {
 	application().quit();
+#if (!ET_OBJC_ARC_ENABLED)
 	[super dealloc];
+#endif
 }
 
 - (et::RenderContext*)renderContext

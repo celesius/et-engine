@@ -5,7 +5,6 @@
  *
  */
 
-#include <Foundation/NSInvocation.h>
 #include <AppKit/NSOpenPanel.h>
 #include <et/platform/platformtools.h>
 

@@ -31,7 +31,7 @@ namespace et
 		IndexType buildTriangleStripIndexes(IndexArray::Pointer buffer, const vec2i& dim,
 			IndexType vertexOffset, IndexType indexOffset);
 
-		void createPhotonMap(DataStorage<vec2>& buffer, const vec2i& density);
+		void createPhotonMap(VertexArray::Pointer data, const vec2i& density);
 
 		void createSphere(VertexArray::Pointer data, float radius, const vec2i& density,
 			const vec3& center = vec3(0.0f), const vec2& hemiSphere = vec2(1.0f));
