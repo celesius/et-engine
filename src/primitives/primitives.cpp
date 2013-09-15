@@ -34,16 +34,22 @@ IndexType primitives::indexCountForRegularMesh(const vec2i& meshSize, PrimitiveT
 	return 0;
 }
 
-void primitives::createPhotonMap(DataStorage<vec2>& buffer, const vec2i& density)
+void primitives::createPhotonMap(VertexArray::Pointer buffer, const vec2i& density)
 {
-	buffer.fitToSize(static_cast<size_t>(density.square()));
-
+	buffer->increase(static_cast<size_t>(density.square()));
+	
+	VertexDataChunk chunk = buffer->chunk(Usage_Position);
+	assert(chunk->type() == Type_Vec2);
+	
+	RawDataAcessor<vec2> data = chunk.accessData<vec2>(0);
+	
 	vec2 texel = vec2(1.0f / density.x, 1.0f / density.y);
 	vec2 dxdy = vec2(0.5f / density.x, 0.5f / density.y);
 
+	size_t k = 0;
 	for (int i = 0; i < density.y; ++i)
 		for (int j = 0; j < density.x; ++j)
-			buffer.push_back(vec2(j * texel.x, i * texel.y) + dxdy);
+			data[k++] = vec2(vec2(j * texel.x, i * texel.y) + dxdy);
 }
 
 void primitives::createSphere(VertexArray::Pointer data, float radius, const vec2i& density,
@@ -365,13 +371,12 @@ IndexType primitives::buildTrianglesIndexes(IndexArray& buffer, const vec2i& dim
 		{
 			IndexType value = vertexOffset + j + i * rowSize;
 
-			buffer.setIndex(value, k);
-			buffer.setIndex(value + rowSize, k+1);
-			buffer.setIndex(value + 1, k+2);
-			buffer.setIndex(value + rowSize, k+3);
-			buffer.setIndex(value + rowSize + 1, k+4);
-			buffer.setIndex(value + 1, k+5);
-			k += 6;
+			buffer.setIndex(value, k++);
+			buffer.setIndex(value + rowSize, k++);
+			buffer.setIndex(value + 1, k++);
+			buffer.setIndex(value + rowSize, k++);
+			buffer.setIndex(value + rowSize + 1, k++);
+			buffer.setIndex(value + 1, k++);
 		} 
 	}
 	

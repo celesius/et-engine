@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <et/core/intrusiveptr.h>
-
 namespace et
 {
 	enum ValueClass

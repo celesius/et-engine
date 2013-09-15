@@ -7,9 +7,6 @@
 
 #pragma once
 
-#include <iosfwd>
-#include <et/core/intrusiveptr.h>
-
 namespace et
 {
 	enum StreamMode

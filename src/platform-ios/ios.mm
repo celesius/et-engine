@@ -6,7 +6,7 @@
  */
 
 #import <sys/xattr.h>
-#include <Foundation/NSURL.h>
+#import <UIKit/UIDevice.h>
 #include <et/platform-ios/ios.h>
 
 using namespace et;

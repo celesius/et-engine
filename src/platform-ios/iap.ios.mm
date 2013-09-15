@@ -101,9 +101,11 @@ static ObjCPurchasesManager* sharedInstance = nil;
 	return [SKPaymentQueue canMakePayments];
 }
 
+#if (!ET_OBJC_ARC_ENABLED)
 - (id)retain { return self; }
 - (oneway void) release { }
 - (NSUInteger)retainCount { return LONG_MAX; }
+#endif
 
 - (id)init
 {
@@ -120,7 +122,11 @@ static ObjCPurchasesManager* sharedInstance = nil;
 - (void)checkAvailableProducts:(NSSet*)products delegate:(PurchasesManagerDelegate*)delegate
 {
 	ProductRequest* req = [[ProductRequest alloc] initWithDelegate:delegate productIdentifiers:products]; 
-	[_requests addObject:[req autorelease]];
+	[_requests addObject:req];
+	
+#if (!ET_OBJC_ARC_ENABLED)
+	[req release];
+#endif
 }
 
 - (BOOL)purchaseProduct:(NSString*)product delegate:(PurchasesManagerDelegate*)delegate
@@ -140,7 +146,10 @@ static ObjCPurchasesManager* sharedInstance = nil;
 	if (validPurchase)
 	{
 		Payment* payment = [[Payment alloc] initWithDelegate:delegate product:availableProduct];
-		[_payments addObject:[payment autorelease]];
+		[_payments addObject:payment];
+#if (!ET_OBJC_ARC_ENABLED)
+		[payment release];
+#endif
 	}
 	
 	return validPurchase;
@@ -149,7 +158,11 @@ static ObjCPurchasesManager* sharedInstance = nil;
 - (void)restorePurchasesWithDelegate:(PurchasesManagerDelegate*)delegate
 {
 	Payment* p = [[Payment alloc] initWithDelegateAndRestorePurchases:delegate];
-	[_payments addObject:[p autorelease]];
+	[_payments addObject:p];
+	
+#if (!ET_OBJC_ARC_ENABLED)
+	[p release];
+#endif
 }
 
 - (void)removeRequest:(ProductRequest*)req
@@ -329,7 +342,11 @@ static ObjCPurchasesManager* sharedInstance = nil;
 	if (self)
 	{
 		_delegate = delegate;
-		_productIdentifier = [product.productIdentifier retain];
+		_productIdentifier = product.productIdentifier;
+		
+#if (!ET_OBJC_ARC_ENABLED)
+		[_productIdentifier retain];
+#endif
 		
 		SKPayment* payment = [SKMutablePayment paymentWithProduct:product];
 		
@@ -354,9 +371,12 @@ static ObjCPurchasesManager* sharedInstance = nil;
 
 - (void)dealloc
 {
-	[_productIdentifier release];
 	[[SKPaymentQueue defaultQueue] removeTransactionObserver:self];
+	
+#if (!ET_OBJC_ARC_ENABLED)
+	[_productIdentifier release];
 	[super dealloc];
+#endif
 }
 
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions

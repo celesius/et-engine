@@ -61,7 +61,7 @@ namespace et
 	inline int strToInt(const std::string& value)
 		{ return std::atoi(value.c_str()); }
 
-	inline int strToLong(const std::string& value)
+	inline long strToLong(const std::string& value)
 		{ return std::atol(value.c_str()); }
 	
 	inline double strToDouble(const std::string& value)

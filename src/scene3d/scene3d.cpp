@@ -6,7 +6,7 @@
  */
 
 #include <fstream>
-#include <et/core/tools.h>
+#include <et/core/filesystem.h>
 #include <et/core/stream.h>
 #include <et/rendering/rendercontext.h>
 #include <et/scene3d/scene3d.h>
@@ -15,11 +15,12 @@
 using namespace et;
 using namespace s3d;
 
-Scene3d::Scene3d(const std::string& name) : ElementContainer(name, 0), _externalFactory(0)
+Scene::Scene(const std::string& name) :
+	ElementContainer(name, nullptr), _externalFactory(nullptr)
 {
 }
 
-void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::string& basePath)
+void Scene::serialize(std::ostream& stream, StorageFormat fmt, const std::string& basePath)
 {
 	if (stream.fail()) return;
 
@@ -102,26 +103,26 @@ void Scene3d::serialize(std::ostream& stream, StorageFormat fmt, const std::stri
 	ElementContainer::serialize(stream, SceneVersionLatest);
 }
 
-void Scene3d::deserializeAsync(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
+void Scene::deserializeAsync(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
 				ElementFactory* factory, const std::string& basePath)
 {
 	performDeserialization(stream, rc, tc, factory, basePath, true);
 }
 
-void Scene3d::deserializeAsync(const std::string& filename, RenderContext* rc, ObjectsCache& tc, 
+void Scene::deserializeAsync(const std::string& filename, RenderContext* rc, ObjectsCache& tc, 
 	ElementFactory* factory)
 {
 	std::ifstream file(filename.c_str(), std::ios::binary | std::ios::in);
 	deserializeAsync(file, rc, tc, factory, getFilePath(filename));
 }
 
-bool Scene3d::deserialize(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
+bool Scene::deserialize(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
 	ElementFactory* factory, const std::string& basePath)
 {
 	return performDeserialization(stream, rc, tc, factory, basePath, false);
 }
 
-Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, RenderContext* rc,
+Scene3dStorage::Pointer Scene::deserializeStorage(std::istream& stream, RenderContext* rc,
 	ObjectsCache& tc, const std::string& basePath, StorageFormat fmt, bool async)
 {
 	Scene3dStorage::Pointer result(new Scene3dStorage("storage", 0));
@@ -201,7 +202,7 @@ Scene3dStorage::Pointer Scene3d::deserializeStorage(std::istream& stream, Render
 	return result;
 }
 
-void Scene3d::buildAPIObjects(Scene3dStorage::Pointer p, RenderContext* rc)
+void Scene::buildAPIObjects(Scene3dStorage::Pointer p, RenderContext* rc)
 {
 	IndexBuffer ib;
 	VertexArrayList& vertexArrays = p->vertexArrays();
@@ -227,13 +228,13 @@ void Scene3d::buildAPIObjects(Scene3dStorage::Pointer p, RenderContext* rc)
 	rc->renderState().resetBufferBindings();
 }
 
-void Scene3d::serialize(const std::string& filename, s3d::StorageFormat fmt)
+void Scene::serialize(const std::string& filename, s3d::StorageFormat fmt)
 {
 	std::ofstream file(filename.c_str(), std::ios::binary | std::ios::out);
 	serialize(file, fmt, getFilePath(filename));
 }
 
-bool Scene3d::deserialize(const std::string& filename, RenderContext* rc, ObjectsCache& tc,
+bool Scene::deserialize(const std::string& filename, RenderContext* rc, ObjectsCache& tc,
 	ElementFactory* factory)
 {
 	std::ifstream file(filename.c_str(), std::ios::binary | std::ios::in);
@@ -245,7 +246,7 @@ bool Scene3d::deserialize(const std::string& filename, RenderContext* rc, Object
 	return success;
 }
 
-Element::Pointer Scene3d::createElementOfType(size_t type, Element* parent)
+Element::Pointer Scene::createElementOfType(size_t type, Element* parent)
 {
 	switch (type)
 	{
@@ -274,7 +275,7 @@ Element::Pointer Scene3d::createElementOfType(size_t type, Element* parent)
 	}
 }
 
-Material Scene3d::materialWithId(int id)
+Material Scene::materialWithId(int id)
 {
 	Element::List storages = childrenOfType(ElementType_Storage);
 	for (auto si = storages.begin(), se = storages.end(); si != se; ++si)
@@ -290,7 +291,7 @@ Material Scene3d::materialWithId(int id)
 	return Material();
 }
 
-VertexArrayObject Scene3d::vaoWithIdentifiers(const std::string& vbid, const std::string& ibid)
+VertexArrayObject Scene::vaoWithIdentifiers(const std::string& vbid, const std::string& ibid)
 {
 	for (auto& i : _vaos)
 	{
@@ -304,7 +305,7 @@ VertexArrayObject Scene3d::vaoWithIdentifiers(const std::string& vbid, const std
 #define INVOKE_FAIL		{ if (async) { deserializationFinished.invoke(false); } return false; }
 #define INVOKE_SUCCESS	{ return true; }
 
-bool Scene3d::performDeserialization(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
+bool Scene::performDeserialization(std::istream& stream, RenderContext* rc, ObjectsCache& tc,
 		ElementFactory* factory, const std::string& basePath, bool async)
 {
 	if (stream.fail()) 

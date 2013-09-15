@@ -20,10 +20,10 @@ namespace et
 {
 	namespace s3d
 	{
-		class Scene3d : public ElementContainer, public ElementFactory
+		class Scene : public ElementContainer, public ElementFactory
 		{
 		public:
-			Scene3d(const std::string& name = "scene");
+			Scene(const std::string& name = "scene");
 
 			/*
 			 * Synchronous serializing

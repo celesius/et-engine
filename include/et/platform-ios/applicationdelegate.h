@@ -7,7 +7,7 @@
 
 #pragma once
 
-
+#import <UIKit/UIApplication.h>
 #import <et/app/events.h>
 
 namespace et

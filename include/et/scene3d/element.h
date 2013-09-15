@@ -42,7 +42,7 @@ namespace et
 		};
 
 		class ElementFactory;
-		typedef Hierarchy<Element> ElementHierarchy;
+		typedef Hierarchy<Element, LoadableObject> ElementHierarchy;
 		class Element : public ElementHierarchy, public FlagsHolder, public ComponentTransformable
 		{
 		public:
