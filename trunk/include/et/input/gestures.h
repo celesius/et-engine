@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <et/core/properties.h>
 #include <et/input/input.h>
 
 namespace et

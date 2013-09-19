@@ -26,7 +26,7 @@ namespace et
 		class Element;
 		class Layout;
 		
-		typedef Hierarchy<Element> ElementHierarchy;
+		typedef Hierarchy<Element, Object> ElementHierarchy;
 		class Element : public ElementHierarchy, public FlagsHolder, public EventReceiver,
 			public TimedObject, public AnimatorDelegate
 		{
@@ -209,7 +209,7 @@ namespace et
 			ET_DECLARE_PROPERTY_GET_REF_SET_REF(std::string, name, setName)
 
 		private:
-			friend class Hierarchy<Element>;
+			friend class Hierarchy<Element, Object>;
 
 			Element(const Element&) : 
 				ElementHierarchy(0) { }

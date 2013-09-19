@@ -8,7 +8,6 @@
 #pragma once
 
 #include <et/core/singleton.h>
-#include <et/core/intrusiveptr.h>
 #include <et/sound/formats.h>
 
 namespace et

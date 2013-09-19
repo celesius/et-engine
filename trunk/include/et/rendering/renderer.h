@@ -7,9 +7,6 @@
 
 #pragma once
 
-#include <et/core/autoptr.h>
-#include <et/core/properties.h>
-
 #include <et/rendering/renderstate.h>
 
 namespace et

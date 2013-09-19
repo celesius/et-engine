@@ -125,7 +125,11 @@ void ObjectsCache::flush()
 		}
 		
 		if (i->second.empty())
-			i = _objects.erase(i);
+		{
+			auto j = i++;
+			_objects.erase(i);
+			i = j;
+		}
 		else
 			++i;
 	}
