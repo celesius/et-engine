@@ -42,10 +42,14 @@ namespace et
 		void createTorus(VertexArray::Pointer data, float centralRadius, float sizeRadius,
 			const vec2i& density);
 		
-		void createPlane(VertexArray::Pointer data, const vec3& normal, const vec2& size,
+		void createSquarePlane(VertexArray::Pointer data, const vec3& normal, const vec2& size,
 			const vec2i& density, const vec3& center = vec3(0.0f), const vec2& texCoordScale = vec2(1.0f),
 			const vec2& texCoordOffset = vec2(0.0f));
 
+		IndexArray::Pointer createCirclePlane(VertexArray::Pointer data, const vec3& normal, float radius,
+			size_t density, const vec3& center = vec3(0.0f), const vec2& texCoordScale = vec2(1.0f),
+			const vec2& texCoordOffset = vec2(0.0f));
+		
 		void calculateNormals(VertexArray::Pointer data, const IndexArray::Pointer& buffer,
 			IndexType first, IndexType last);
 		
@@ -58,5 +62,8 @@ namespace et
 		void createIcosahedron(VertexArray::Pointer data, float radius);
 		
 		void tesselateTriangles(VertexArray::Pointer data);
+		void tesselateTriangles(VertexArray::Pointer data, IndexArray::Pointer indexArray);
+		
+		VertexArray::Pointer buildIndexArray(VertexArray::Pointer data, IndexArray::Pointer indexArray);
 	}
 }

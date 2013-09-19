@@ -208,7 +208,7 @@ void primitives::createCylinder(VertexArray::Pointer data, float radius, float h
 
 }
 
-void primitives::createPlane(VertexArray::Pointer data, const vec3& normal, const vec2& size,
+void primitives::createSquarePlane(VertexArray::Pointer data, const vec3& normal, const vec2& size,
 	const vec2i& density, const vec3& center, const vec2& texCoordScale, const vec2& texCoordOffset)
 {
 	size_t lastIndex = data->size();
@@ -317,6 +317,42 @@ void primitives::createPlane(VertexArray::Pointer data, const vec3& normal, cons
 			norm[getIndex(u, v, dv.x, dv.y)] = normalize(n);
 		}
 	}
+}
+
+IndexArray::Pointer primitives::createCirclePlane(VertexArray::Pointer data, const vec3& normal, float radius,
+	size_t density, const vec3& center, const vec2& texCoordScale, const vec2& texCoordOffset)
+{
+	IndexArray::Pointer result = IndexArray::Pointer::create(IndexArrayFormat_16bit, 3 * density, PrimitiveType_Triangles);
+	
+	data->fitToSize(1 + density);
+	auto pos = data->chunk(Usage_Position).accessData<vec3>(0);
+	auto nrm = data->chunk(Usage_Normal).accessData<vec3>(0);
+	
+	vec3 angles = toSpherical(normal);
+	angles += vec3(-HALF_PI, HALF_PI, 0.0);
+	
+	vec3 normalized = normalize(normal);
+	vec3 o2 = fromSpherical(angles.y, angles.x);
+	vec3 o1 = cross(normalized, o2);
+	o2 = cross(o1, normalized);
+	
+	pos[0] = center;
+	nrm[0] = normal;
+	
+	size_t index = 0;
+	float angle = 0.0f;
+	float da = DOUBLE_PI / (static_cast<float>(density - 1));
+	for (size_t i = 1; i < density; ++i)
+	{
+		pos[i] = center + (o1 * cos(angle) - o2 * sin(angle)) * radius;
+		nrm[i] = normal;
+		result->setIndex(0, index++);
+		result->setIndex(static_cast<IndexType>(i), index++);
+		result->setIndex((i + 1 < density) ? static_cast<IndexType>(i + 1) : 1, index++);
+		angle += da;
+	}
+		
+	return result;
 }
 
 IndexType primitives::buildTriangleStripIndexes(IndexArray& buffer, const vec2i& dim,
@@ -564,6 +600,8 @@ void primitives::createIcosahedron(VertexArray::Pointer data, float radius)
 	
 	RawDataAcessor<vec3> nrm;
 	RawDataAcessor<vec3> pos = posChunk.accessData<vec3>(offset);
+	for (size_t i = 0; i < pos.size(); ++i)
+		pos[i] = vec3(0.0f);
 	
 	if (hasNormals)
 		nrm = nrmChunk.accessData<vec3>(offset);
@@ -595,27 +633,32 @@ void primitives::createIcosahedron(VertexArray::Pointer data, float radius)
 			triangle(corners[c1], corners[c2], corners[c3]).normalizedNormal(); \
 		k += 3; } \
 
+	// top cap
 	ET_ADD_IH_TRIANGLE(0, 11, 5);
 	ET_ADD_IH_TRIANGLE(0, 5, 1);
 	ET_ADD_IH_TRIANGLE(0, 1, 7);
 	ET_ADD_IH_TRIANGLE(0, 7, 10);
 	ET_ADD_IH_TRIANGLE(0, 10, 11);
+
+	// middle
 	ET_ADD_IH_TRIANGLE(1, 5, 9);
+	ET_ADD_IH_TRIANGLE(4, 9, 5);
 	ET_ADD_IH_TRIANGLE(5, 11, 4);
+	ET_ADD_IH_TRIANGLE(2, 4, 11);
 	ET_ADD_IH_TRIANGLE(11, 10, 2);
+	ET_ADD_IH_TRIANGLE(6, 2, 10);
 	ET_ADD_IH_TRIANGLE(10, 7, 6);
+	ET_ADD_IH_TRIANGLE(8, 6, 7);
 	ET_ADD_IH_TRIANGLE(7, 1, 8);
+	ET_ADD_IH_TRIANGLE(9, 8, 1);
+
+	// bottom cap
 	ET_ADD_IH_TRIANGLE(3, 9, 4);
 	ET_ADD_IH_TRIANGLE(3, 4, 2);
 	ET_ADD_IH_TRIANGLE(3, 2, 6);
 	ET_ADD_IH_TRIANGLE(3, 6, 8);
 	ET_ADD_IH_TRIANGLE(3, 8, 9);
-	ET_ADD_IH_TRIANGLE(4, 9, 5);
-	ET_ADD_IH_TRIANGLE(2, 4, 11);
-	ET_ADD_IH_TRIANGLE(6, 2, 10);
-	ET_ADD_IH_TRIANGLE(8, 6, 7);
-	ET_ADD_IH_TRIANGLE(9, 8, 1);
-	
+
 #undef ET_ADD_IH_TRIANGLE
 }
 
@@ -677,4 +720,110 @@ void primitives::tesselateTriangles(VertexArray::Pointer data)
 			nnrm[nn++] = nw; nnrm[nn++] = nu; nnrm[nn++] = nv;
 		}
 	}
+}
+
+void primitives::tesselateTriangles(VertexArray::Pointer data, IndexArray::Pointer indexArray)
+{
+	assert(indexArray->primitiveType() == PrimitiveType_Triangles);
+		   
+	bool hasPosition = data->chunk(Usage_Position).valid() &&
+	(data->chunk(Usage_Position)->type() == Type_Vec3);
+	
+	bool hasNormals = data->chunk(Usage_Normal).valid() &&
+	(data->chunk(Usage_Normal)->type() == Type_Vec3);
+	
+	assert(hasPosition);
+	(void)hasPosition;
+	
+	VertexArray::Pointer oldData(data->duplicate());
+	
+	VertexDataChunk oldPos = oldData->chunk(Usage_Position);
+	VertexDataChunk oldNrm = oldData->chunk(Usage_Normal);
+	VertexDataChunk newPos = data->chunk(Usage_Position);
+	VertexDataChunk newNrm = data->chunk(Usage_Normal);
+	
+	size_t numTriangles = indexArray->primitivesCount();
+	
+	data->fitToSize(12 * numTriangles);
+	RawDataAcessor<vec3> opos = oldPos.accessData<vec3>(0);
+	RawDataAcessor<vec3> npos = newPos.accessData<vec3>(0);
+	RawDataAcessor<vec3> onrm = hasNormals ? oldNrm.accessData<vec3>(0) : RawDataAcessor<vec3>();
+	RawDataAcessor<vec3> nnrm = hasNormals ? newNrm.accessData<vec3>(0) : RawDataAcessor<vec3>();
+	
+	size_t np = 0;
+	size_t nn = 0;
+	for (auto i = indexArray->begin(), e = indexArray->end(); i != e; ++i)
+	{
+		const vec3& a = opos[i[0]];
+		const vec3& b = opos[i[1]];
+		const vec3& c = opos[i[2]];
+		vec3 u = 0.5f * (a + b);
+		vec3 v = 0.5f * (b + c);
+		vec3 w = 0.5f * (c + a);
+		npos[np++] = a; npos[np++] = u; npos[np++] = w;
+		npos[np++] = u; npos[np++] = b; npos[np++] = v;
+		npos[np++] = w; npos[np++] = v; npos[np++] = c;
+		npos[np++] = w; npos[np++] = u; npos[np++] = v;
+		if (hasNormals)
+		{
+			const vec3& na = onrm[i[0]];
+			const vec3& nb = onrm[i[1]];
+			const vec3& nc = onrm[i[2]];
+			vec3 nu = normalize(na + nb);
+			vec3 nv = normalize(nb + nc);
+			vec3 nw = normalize(nc + na);
+			nnrm[nn++] = na; nnrm[nn++] = nu; nnrm[nn++] = nw;
+			nnrm[nn++] = nu; nnrm[nn++] = nb; nnrm[nn++] = nv;
+			nnrm[nn++] = nw; nnrm[nn++] = nv; nnrm[nn++] = nc;
+			nnrm[nn++] = nw; nnrm[nn++] = nu; nnrm[nn++] = nv;
+		}
+	}
+}
+
+uint64_t vectorHash(const vec3& v)
+{
+	char raw[128] = { };
+	int symbols = sprintf(raw, "%.3f_%0.3f_%0.3f_%0.3f_%0.3f_%0.3f", v.x, v.y, v.z, v.x * v.y, v.x * v.z, v.y * v.z);
+	
+	uint64_t* ptr = reinterpret_cast<uint64_t*>(raw);
+	uint64_t* end = ptr + symbols / sizeof(uint64_t) + 1;
+	
+	uint64_t result = *ptr++;
+	while (ptr != end)
+		result ^= *ptr++;
+	return result;
+}
+
+VertexArray::Pointer primitives::buildIndexArray(VertexArray::Pointer data, IndexArray::Pointer indexArray)
+{
+	/*
+	 * Count unique vertices
+	 */
+	size_t dataSize = data->size();
+	std::map<uint64_t, size_t> countMap;
+	auto oldPos = data->chunk(Usage_Position).accessData<vec3>(0);
+	for (size_t i = 0; i < dataSize; ++i)
+		countMap[vectorHash(oldPos[i])] = 0;
+	
+	indexArray->resizeToFit(data->size());
+	VertexArray::Pointer result(new VertexArray(data->decl(), countMap.size()));
+	auto newPos = result->chunk(Usage_Position).accessData<vec3>(0);
+
+	std::map<uint64_t, size_t> indexMap;
+	for (size_t i = 0; i < dataSize; ++i)
+	{
+		uint64_t hash = vectorHash(oldPos[i]);
+		if (indexMap.count(hash) == 0)
+		{
+			newPos[indexMap.size()] = oldPos[i];
+			indexArray->setIndex(static_cast<IndexType>(indexMap.size()), i);
+			indexMap[hash] = indexMap.size();
+		}
+		else
+		{
+			indexArray->setIndex(static_cast<IndexType>(indexMap[hash]), i);
+		}
+	}
+	
+	return result;
 }
