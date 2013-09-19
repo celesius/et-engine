@@ -186,12 +186,12 @@ Texture TextureFactory::loadTexturesToCubemap(const std::string& posx, const std
 {
 	TextureDescription::Pointer layers[6] = 
 	{
-		et::loadTexture(posx),
-		et::loadTexture(negx),
-		et::loadTexture(negy),
-		et::loadTexture(posy),
-		et::loadTexture(posz),
-		et::loadTexture(negz)
+		et::loadTexture(application().environment().findFile(posx)),
+		et::loadTexture(application().environment().findFile(negx)),
+		et::loadTexture(application().environment().findFile(negy)),
+		et::loadTexture(application().environment().findFile(posy)),
+		et::loadTexture(application().environment().findFile(posz)),
+		et::loadTexture(application().environment().findFile(negz))
 	};
 
 	int maxCubemapSize = static_cast<int>(openGLCapabilites().maxCubemapTextureSize());
