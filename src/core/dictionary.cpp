@@ -7,7 +7,6 @@
 
 #include <typeinfo>
 #include <et/core/tools.h>
-#include <et/core/dictionary.h>
 
 using namespace et;
 
@@ -94,7 +93,7 @@ bool Dictionary::hasKey(const std::string& key) const
 
 ValueClass Dictionary::valueClassForKey(const std::string& key) const
 {
-	return hasKey(key) ? baseValueForKeyPath(ET_STRINGLIST(key))->valueClass() : ValueClass_Invalid;
+	return hasKey(key) ? baseValueForKeyPath(StringList(1, key))->valueClass() : ValueClass_Invalid;
 }
 
 /*

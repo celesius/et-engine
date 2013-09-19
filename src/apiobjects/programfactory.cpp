@@ -209,7 +209,7 @@ Program::Pointer ProgramFactory::loadProgram(const std::string& file, ObjectsCac
 
 Program::Pointer ProgramFactory::loadProgram(const std::string& file, ObjectsCache& cache, const std::string& defines)
 {
-	return loadProgram(file, cache, parseDefinesString(defines));
+	return loadProgram(application().environment().findFile(file), cache, parseDefinesString(defines));
 }
 
 Program::Pointer ProgramFactory::genProgram(const std::string& name, const std::string& vertexshader,

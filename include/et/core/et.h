@@ -36,6 +36,7 @@
 #include <et/core/properties.h>
 #include <et/core/log.h>
 #include <et/core/strings.h>
+#include <et/core/autoptr.h>
 #include <et/core/intrusiveptr.h>
 #include <et/core/dictionary.h>
 #include <et/core/conversionbase.h>
