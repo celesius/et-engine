@@ -112,6 +112,13 @@ void Program::setCameraProperties(const Camera& cam)
 void Program::buildProgram(const std::string& vertex_source, const std::string& geom_source,
 	const std::string& frag_source)
 {
+	_vec2Cache.clear();
+	_vec3Cache.clear();
+	_vec4Cache.clear();
+	_mat3Cache.clear();
+	_mat4Cache.clear();
+	_uniforms.clear();
+	
 #if (ET_OPENGLES)
 	if (geom_source.length() && (geom_source != etNoShader))
 		log::info("[Program] Geometry shader skipped in OpenGL ES");

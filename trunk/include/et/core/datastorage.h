@@ -104,10 +104,10 @@ namespace et
 			{ assert(mutableData() && (_lastElementIndex < _size)); return _mutableData[_lastElementIndex]; }
 
 		T* current_ptr()
-			{ assert(mutableData() && (_lastElementIndex < _size)); return &_mutableData[_lastElementIndex]; }
+			{ assert(mutableData() && (_lastElementIndex < _size)); return _mutableData + _lastElementIndex; }
 		
 		T* element_ptr(size_t aIndex)
-			{ assert(aIndex < _size); return &_mutableData[aIndex]; }
+			{ assert(aIndex < _size); return (_mutableData + aIndex); }
 		
 		/*
 		 * const accessors
@@ -128,10 +128,10 @@ namespace et
 			{ assert(_lastElementIndex < _size); return _immutableData[_lastElementIndex]; }
 
 		const T* current_ptr() const
-			{ assert(_lastElementIndex < _size); return &_immutableData[_lastElementIndex]; }
+			{ assert(_lastElementIndex < _size); return _immutableData + _lastElementIndex; }
 		
 		const T* element_ptr(size_t i) const
-			{ assert(i < _size); return &_immutableData[i]; }
+			{ assert(i < _size); return _immutableData + i; }
 		
 		const size_t size() const
 			{ return _size; }
