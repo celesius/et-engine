@@ -15,11 +15,14 @@ namespace et
 		T scalar;
 		vector3<T> vector;
 
-		Quaternion() : scalar(static_cast<T>(1)), vector(static_cast<T>(0)) { }
+		Quaternion() :
+			scalar(static_cast<T>(1)), vector(static_cast<T>(0)) { }
 
-		Quaternion(const vector3<T>& v) : scalar(static_cast<T>(0)), vector(v) { }
+		Quaternion(const vector3<T>& v) :
+			scalar(static_cast<T>(0)), vector(v) { }
 
-		Quaternion(T s, T x, T y, T z) : scalar(s), vector(x, y, z) { }
+		Quaternion(T s, T x, T y, T z) :
+			scalar(s), vector(x, y, z) { }
 
 		Quaternion(T angle, const vector3<T>& axis)
 		{
@@ -34,7 +37,8 @@ namespace et
 		const T& operator[](int i) const
 			{ return *(&scalar + i); }
 
-		Quaternion operator !() { return Quaternion(scalar, -vector); }
+		Quaternion operator !()
+			{ return Quaternion(scalar, -vector); }
 
 		Quaternion operator + (const Quaternion &q)
 			{ return Quaternion(scalar+q.scalar, vector+q.vector); }
