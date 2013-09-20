@@ -32,14 +32,15 @@ void IndexArray::linearize()
 
 IndexType IndexArray::getIndex(size_t pos) const
 {
-	IndexType t = *reinterpret_cast<const IndexType*>(_data.element_ptr(pos * _format));
+	static const IndexType indexTypeMask[IndexArrayFormat_max] = {
+		0x00000000, // IndexArrayFormat_Undefined = 0
+		0x000000ff, // IndexArrayFormat_8bit = 1
+		0x0000ffff, // IndexArrayFormat_16bit = 2
+		0x00000000, // skip
+		0xffffffff, // IndexArrayFormat_32bit = 4
+	};
 	
-	if (_format == IndexArrayFormat_16bit)
-		t &= 0x0000ffff;
-	else if (_format == IndexArrayFormat_8bit)
-		t &= 0x000000ff;
-
-	return t;
+	return (*reinterpret_cast<const IndexType*>(_data.element_ptr(pos * _format))) & indexTypeMask[_format];
 }
 
 void IndexArray::setIndex(IndexType value, size_t pos)
@@ -181,38 +182,38 @@ IndexArray::PrimitiveIterator::PrimitiveIterator(const IndexArray* ib, IndexType
 
 void IndexArray::PrimitiveIterator::configure(IndexType p)
 {
-	IndexType i0 = p;
-	IndexType i1 = p + 1;
-	IndexType i2 = p + 2;
-
+	IndexType cap = _ib->capacity();
 	switch (_ib->primitiveType())
 	{
 		case PrimitiveType_Points:
 		{
-			i1 = InvalidIndex;
-			i2 = InvalidIndex;
+			_primitive[0] = (p < cap) ? _ib->getIndex(p) : InvalidIndex;
+			_primitive[1] = InvalidIndex;
+			_primitive[2] = InvalidIndex;
 			break;
 		}
 			
 		case PrimitiveType_Lines:
+		case PrimitiveType_LineStrip:
 		{
-			i2 = InvalidIndex;
+			_primitive[0] = (p < cap) ? _ib->getIndex(p) : InvalidIndex; ++p;
+			_primitive[1] = (p < cap) ? _ib->getIndex(p) : InvalidIndex;
+			_primitive[2] = InvalidIndex;
 			break;
 		}
 
 		case PrimitiveType_Triangles:
 		case PrimitiveType_TriangleStrips:
+		{
+			_primitive[0] = (p < cap) ? _ib->getIndex(p) : InvalidIndex; ++p;
+			_primitive[1] = (p < cap) ? _ib->getIndex(p) : InvalidIndex; ++p;
+			_primitive[2] = (p < cap) ? _ib->getIndex(p) : InvalidIndex;
 			break;
+		}
 
 		default:
 			assert("Unsupported PrimitiveType value" && 0);
-			return;
 	}
-
-	size_t ibSize = _ib->capacity();
-	_primitive[0] = (i0 >= ibSize) ? InvalidIndex : _ib->getIndex(i0);
-	_primitive[1] = (i1 >= ibSize) ? InvalidIndex : _ib->getIndex(i1);
-	_primitive[2] = (i2 >= ibSize) ? InvalidIndex : _ib->getIndex(i2);
 }
 
 IndexArray::PrimitiveIterator& IndexArray::PrimitiveIterator::operator = (const PrimitiveIterator& p)
@@ -225,23 +226,15 @@ IndexArray::PrimitiveIterator& IndexArray::PrimitiveIterator::operator = (const 
 
 IndexArray::PrimitiveIterator& IndexArray::PrimitiveIterator::operator ++()
 {
-	switch (_ib->primitiveType())
+	static const IndexType primitiveOffset[PrimitiveType_max] =
 	{
-	case PrimitiveType_Triangles:
-		{
-			_pos += 3;
-			break;
-		}
-
-	default:
-		{
-			_pos += 1;
-			break;
-		}
-	}
-
-	configure(_pos);
-
+		1, // PrimitiveType_Points,
+		1, // PrimitiveType_Lines,
+		3, // PrimitiveType_Triangles,
+		1, // PrimitiveType_TriangleStrips,
+		1, // PrimitiveType_LineStrip,
+	};
+	configure(_pos += primitiveOffset[_ib->primitiveType()]);
 	return *this;
 }
 

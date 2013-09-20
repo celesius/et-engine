@@ -131,6 +131,7 @@ Texture TextureFactory::genCubeTexture(int32_t internalformat, GLsizei size, uin
 	desc->size = vec2i(size);
 	desc->layersCount = 6;
 	desc->mipMapCount = 1;
+	desc->data = BinaryDataStorage(desc->size.square() * bitsPerPixelForTextureFormat(internalformat, type) / 8);
 
 	return Texture(new TextureData(renderContext(), desc, id, false));
 }

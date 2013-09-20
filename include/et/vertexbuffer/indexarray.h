@@ -83,7 +83,6 @@ namespace et
 
 			bool operator == (const Primitive& p) const;
 			bool operator != (const Primitive& p) const;
-			
 		};
 
 		class PrimitiveIterator
@@ -133,12 +132,13 @@ namespace et
 		PrimitiveIterator begin() const;
 		PrimitiveIterator end() const;
 		PrimitiveIterator primitive(IndexType index) const;
-
+		
 	private:
 		BinaryDataStorage _data;
 		size_t _actualSize;
 		IndexArrayFormat _format;
 		PrimitiveType _primitiveType;
+		IndexType* _rawData;
 	};
 
 	typedef std::vector<IndexArray::Pointer> IndexArrayList;
