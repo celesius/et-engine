@@ -16,26 +16,26 @@ namespace et
 {
 	namespace intersect
 	{
+		/*
+		 * Sphere intersections
+		 */
 		bool sphereSphere(const Sphere& s1, const Sphere& s2, vec3* amount);
-		
-		bool sphereBox(const vec3& sphereCenter, float sphereRadius, const vec3& boxCenter,
-			const vec3& boxExtent);
-		
+		bool sphereBox(const vec3& sphereCenter, float sphereRadius, const vec3& boxCenter, const vec3& boxExtent);
 		bool sphereAABB(const Sphere& s, const AABB& b);
-		
 		bool sphereOBB(const Sphere& s, const OBB& b);
 		
-		bool aabbAABB(const AABB& a1, const AABB& a2);
-
+		/*
+		 * Sphere-triangles intersections
+		 */
 		bool sphereTriangle(const vec3& sphereCenter, const float sphereRadius, const triangle& t,
 			vec3& point, vec3& normal, float& penetration);
-
+		
 		bool sphereTriangle(const Sphere& s, const triangle& t, vec3& point, vec3& normal,
 			float& penetration);
-
+		
 		bool sphereTriangles(const Sphere& s, const triangle* triangles, size_t triangleCount,
 			vec3& point, vec3& normal, float& penetration);
-
+		
 		bool sphereTriangle(const Sphere& s, const vec3& sphereVelocity, const triangle& t,
 			vec3& point, vec3& normal, float& penetration, float& intersectionTime);
 		
@@ -43,21 +43,29 @@ namespace et
 			size_t triangleCount, vec3& point, vec3& normal, float& penetration,
 			float& intersectionTime);
 
-		bool rayTriangle(const ray3d& r, const triangle& t, vec3* intersection_pt);
-		
-		bool rayTriangles(const ray3d& r, const triangle* triangles, size_t triangleCount,
-			vec3* intersection_pt);
-
+		/*
+		 * Ray intersections
+		 */
 		bool raySphere(const ray3d& r, const Sphere& s, vec3* intersection_pt);
-		
 		bool rayPlane(const ray3d& r, const plane& p, vec3* intersection_pt);
-
-		bool segmentPlane(const segment3d& s, const plane& p, vec3* intersection_pt);
+		bool raySegment(const ray2d&, const segment2d&, vec2* intersectionPoint);
 		
+		/*
+		 * Ray-triangles intersections
+		 */
+		bool rayTriangle(const ray3d& r, const triangle& t, vec3* intersection_pt);
+		bool rayTriangles(const ray3d& r, const triangle* triangles, size_t triangleCount, vec3* intersection_pt);
+
+		/*
+		 * Segmenet intersections
+		 */
+		bool segmentPlane(const segment3d& s, const plane& p, vec3* intersection_pt);
 		bool segmentTriangle(const segment3d& s, const triangle& t, vec3* intersection_pt);
 		
-		bool raySegment(const ray2d&, const segment2d&, vec2* intersectionPoint);
-
+		/*
+		 * Other intersections
+		 */
+		bool aabbAABB(const AABB& a1, const AABB& a2);
 		bool triangleTriangle(const triangle& t1, const triangle& t2);
 	}
 
