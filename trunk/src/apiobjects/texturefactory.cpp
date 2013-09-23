@@ -6,6 +6,7 @@
  */
 
 #include <et/core/objectscache.h>
+#include <et/core/filesystem.h>
 #include <et/rendering/rendercontext.h>
 #include <et/opengl/openglcaps.h>
 #include <et/threading/threading.h>
@@ -42,7 +43,13 @@ Texture TextureFactory::loadTexture(const std::string& fileName, ObjectsCache& c
 	
 	std::string file = application().environment().resolveScalableFileName(fileName,
 		renderContext()->screenScaleFactor());
-    
+	
+	if (!fileExists(file))
+	{
+		log::error("Unable to find texture file: %s", file.c_str());
+		return Texture();
+	}
+	
     Texture texture = cache.findAnyObject(file);
 	if (texture.invalid())
 	{

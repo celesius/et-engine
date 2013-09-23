@@ -551,7 +551,8 @@ CVReturn cvDisplayLinkOutputCallback(CVDisplayLinkRef, const CVTimeStamp*, const
 	self = [super initWithContentRect:contentRect styleMask:aStyle backing:bufferingType defer:flag];
 	if (self)
 	{
-		allowedCharacters = [NSMutableCharacterSet alphanumericCharacterSet];
+		allowedCharacters = [[NSMutableCharacterSet alloc] init];
+		[allowedCharacters formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
 		[allowedCharacters formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
 		[allowedCharacters formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
 		[allowedCharacters formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
