@@ -114,7 +114,7 @@ void PVRLoader::loadInfoFromV2Header(const PVRHeader2& header, TextureDescriptio
 	else
 #endif	
 	{
-		log::warning("Unresolved PVR format: %zu", format);
+		log::warning("Unresolved PVR format: %lu", format);
 	}
 }
 
