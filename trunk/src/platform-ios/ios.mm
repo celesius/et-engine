@@ -7,6 +7,7 @@
 
 #import <sys/xattr.h>
 #import <UIKit/UIDevice.h>
+#include <et/platform/platformtools.h>
 #include <et/platform-ios/ios.h>
 
 using namespace et;
@@ -35,4 +36,9 @@ void et::excludeFileFromICloudBackup(const std::string& path)
 		if (result != 0)
 			NSLog(@"Failed to exclude file from iCloud backup: %s", path.c_str());
 	}
+}
+
+std::string et::selectFile(const StringList&, SelectFileMode mode)
+{
+	return std::string();
 }

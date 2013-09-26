@@ -17,30 +17,41 @@ const IndexType IndexArray::MaxSmallIndex = 256;
 const int IndexArrayId_1 = ET_COMPOSE_UINT32('I', 'A', 'V', '1');
 const int IndexArrayCurrentId = IndexArrayId_1;
 
+static const IndexType indexTypeMask[IndexArrayFormat_max] = {
+	0x00000000, // IndexArrayFormat_Undefined = 0
+	0x000000ff, // IndexArrayFormat_8bit = 1
+	0x0000ffff, // IndexArrayFormat_16bit = 2
+	0x00000000, // skip
+	0xffffffff, // IndexArrayFormat_32bit = 4
+};
+
+size_t verifyDataSize(size_t amount, IndexArrayFormat format)
+{
+	return format * ((format == IndexArrayFormat_32bit) ? amount : (1 + amount / 4) * 4);
+}
+
 IndexArray::IndexArray(IndexArrayFormat format, size_t size, PrimitiveType content) : tag(0),
-	_data(size * format), _actualSize(0), _format(format), _primitiveType(content)
+	_data(verifyDataSize(size, format)), _actualSize(0), _format(format), _primitiveType(content)
 {
 	if (content == PrimitiveType_Points)
-		linearize();
+		linearize(size);
 }
 
 void IndexArray::linearize()
 {
-	for (IndexType i = 0; i < capacity(); ++i)
+	linearize(capacity() & indexTypeMask[_format]);
+}
+
+void IndexArray::linearize(size_t size)
+{
+	for (IndexType i = 0; i < size; ++i)
 		setIndex(i, i);
 }
 
 IndexType IndexArray::getIndex(size_t pos) const
 {
-	static const IndexType indexTypeMask[IndexArrayFormat_max] = {
-		0x00000000, // IndexArrayFormat_Undefined = 0
-		0x000000ff, // IndexArrayFormat_8bit = 1
-		0x0000ffff, // IndexArrayFormat_16bit = 2
-		0x00000000, // skip
-		0xffffffff, // IndexArrayFormat_32bit = 4
-	};
-	
-	return (*reinterpret_cast<const IndexType*>(_data.element_ptr(pos * _format))) & indexTypeMask[_format];
+	assert(pos <= indexTypeMask[_format]);
+	return *reinterpret_cast<const IndexType*>(_data.element_ptr(pos * _format)) & indexTypeMask[_format];
 }
 
 void IndexArray::setIndex(IndexType value, size_t pos)
@@ -100,18 +111,18 @@ size_t IndexArray::primitivesCount() const
 void IndexArray::resize(size_t count)
 {
 	_actualSize = etMin(_actualSize, count);
-	_data.resize(count * _format);
+	_data.resize(verifyDataSize(count, _format));
 }
 
 void IndexArray::resizeToFit(size_t count)
 {
 	_actualSize = etMin(_actualSize, count);
-	_data.fitToSize(count * _format);
+	_data.fitToSize(verifyDataSize(count, _format));
 }
 
 void IndexArray::compact()
 {
-	_data.resize(_actualSize * _format);
+	_data.resize(verifyDataSize(_actualSize, _format));
 }
 
 IndexArray::PrimitiveIterator IndexArray::begin() const
@@ -182,7 +193,7 @@ IndexArray::PrimitiveIterator::PrimitiveIterator(const IndexArray* ib, IndexType
 
 void IndexArray::PrimitiveIterator::configure(IndexType p)
 {
-	IndexType cap = _ib->capacity();
+	IndexType cap = _ib->_actualSize;
 	switch (_ib->primitiveType())
 	{
 		case PrimitiveType_Points:

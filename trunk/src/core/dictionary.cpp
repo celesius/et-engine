@@ -96,6 +96,39 @@ ValueClass Dictionary::valueClassForKey(const std::string& key) const
 	return hasKey(key) ? baseValueForKeyPath(StringList(1, key))->valueClass() : ValueClass_Invalid;
 }
 
+StringList Dictionary::allKeyPaths()
+{
+	StringList result;
+	addKeyPathsFromHolder(*this, std::string(), result);
+	return result;
+}
+
+void Dictionary::addKeyPathsFromHolder(ValueBase::Pointer holder, const std::string& baseKeyPath, StringList& keyPaths) const
+{
+	std::string nextKeyPath = baseKeyPath.empty() ? std::string() : (baseKeyPath + "/");
+	if (holder->valueClass() == ValueClass_Dictionary)
+	{
+		Dictionary d(holder);
+		for (auto& v : d->content)
+		{
+			std::string keyPath = nextKeyPath + v.first;
+			keyPaths.push_back(keyPath);
+			addKeyPathsFromHolder(v.second, keyPath, keyPaths);
+		}
+	}
+	else if (holder->valueClass() == ValueClass_Array)
+	{
+		size_t index = 0;
+		ArrayValue a(holder);
+		for (auto& v : a->content)
+		{
+			std::string keyPath = nextKeyPath + intToStr(index++);
+			keyPaths.push_back(keyPath);
+			addKeyPathsFromHolder(v, keyPath, keyPaths);
+		}
+	}
+}
+
 /*
  * Service functions
  */

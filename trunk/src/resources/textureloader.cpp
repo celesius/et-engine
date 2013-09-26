@@ -67,6 +67,7 @@ TextureDescription::Pointer et::loadTexture(const std::string& fileName)
 	
 	std::string ext = getFileExt(fileName);
 	TextureDescription* desc = nullptr;
+	
 	if (ext == "png")
 	{
 		desc = new TextureDescription;
@@ -95,104 +96,3 @@ TextureDescription::Pointer et::loadTexture(const std::string& fileName)
 	
 	return TextureDescription::Pointer(desc);
 }
-
-/*
-const StringList& TextureLoader::preferredExtensions()
-{
-	static StringList extensions;
-	
-	if (extensions.empty())
-	{
-#if (ET_PLATFORM_WIN || ET_PLATFORM_MAC)
-		extensions.push_back(".dds");
-		extensions.push_back(".png");
-		extensions.push_back(".jpg");
-		extensions.push_back(".jpeg");
-#elif (ET_PLATFORM_IOS || ET_PLATFORM_ANDROID)
-		extensions.push_back(".pvr");
-		extensions.push_back(".png");
-		extensions.push_back(".jpg");
-		extensions.push_back(".jpeg");
-#else
-#
-#	error Please, define preferred extensions list for current platform.
-#
-#endif
-	}
-
-	return extensions;
-}
-
-std::string TextureLoader::resolveScalableFileName(const std::string& fileName,
-	size_t screenScale, std::string* extPtr, bool silent)
-{
-	std::string result = fileName;
-	size_t lastDotPos = fileName.find_last_of('.');
-	std::string extractedFileName = getFileName(fileName);
-
-	bool found = false;
-
-	if ((lastDotPos == std::string::npos) || (lastDotPos < fileName.size() - 5))
-	{
-		const StringList& ext = TextureLoader::preferredExtensions();
-		ET_ITERATE(ext, const auto&, i,
-		{
-			std::string name = fileName + i;
-			name = application().environment().resolveScalableFileName(name, screenScale);
-			if (fileExists(name))
-			{
-				result = name;
-				found = true;
-				break;
-			}
-		})
-        
-        if (!found && (extractedFileName != fileName))
-        {
-			ET_ITERATE(ext, const auto&, i,
-			{
-				std::string name = extractedFileName + i;
-				name = application().environment().resolveScalableFileName(name, screenScale);
-				if (fileExists(name))
-				{
-					result = name;
-					found = true;
-					break;
-				}
-			})
-		}
-	}
-	else
-	{
-		std::string name = application().environment().resolveScalableFileName(fileName, screenScale);
-		found = fileExists(name);
-		if (!found)
-        {
-            name = application().environment().resolveScalableFileName(getFileName(fileName), screenScale);
-            found = fileExists(name);
-        }
-		
-        if (!found)
-        {
-            name = resolveScalableFileName(removeFileExt(fileName), screenScale, extPtr, silent);
-            found = fileExists(name);
-        }
-        
-        if (found)
-            result = name;
-    }	
-    
-	if (found && (extPtr != nullptr))
-	{
-		*extPtr = result.substr(result.rfind('.'));
-		lowercase(*extPtr);
-	}
-
-	return result;
-}
-
-std::string TextureLoader::resolveFileName(const std::string& name, std::string* ext, bool silent)
-{
-	return TextureLoader::resolveScalableFileName(name, 1, ext, silent);
-}
-*/
