@@ -1,6 +1,4 @@
-#include <Foundation/Foundation.h>
 #include <AppKit/AppKit.h>
-
 #include <et/rendering/rendercontext.h>
 #include <et/geometry/rectplacer.h>
 #include <et/gui/charactergenerator.h>
@@ -11,7 +9,7 @@ using namespace et::gui;
 
 const int defaultTextureSize = 1024;
 
-class et::gui::CharacterGeneratorPrivate
+class et::s2d::CharacterGeneratorPrivate
 {
 public:
 	CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size);

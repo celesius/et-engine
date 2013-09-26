@@ -307,6 +307,9 @@ bool Framebuffer::setCurrentCubemapFace(uint32_t faceIndex)
 	
 	if (_depthBuffer.valid())
 	{
+		if (openGLCapabilites().version() == OpenGLVersion_Old)
+			target = GL_TEXTURE_2D;
+		
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, target, _depthBuffer->glID(), 0);
 		checkOpenGLError("setCurrentCubemapFace -> depth");
 	}

@@ -152,9 +152,6 @@ namespace et
 		Dictionary(ValueBase::Pointer p) :
 			ValuePointer<Dictionary::ValueType, ValueClass_Dictionary>(p) { }
 		
-		Dictionary& operator = (const Dictionary& r)
-			{ reference().content = r->content; return *this; }
-		
 	public:
 		void setStringForKey(const std::string& key, StringValue value)
 			{ setValueForKey<StringValue, ValueClass_String>(key, value); }
@@ -170,11 +167,11 @@ namespace et
 
 		void setDictionaryForKey(const std::string& key, Dictionary value)
 			{ setValueForKey<Dictionary, ValueClass_Dictionary>(key, value); }
-		
+
+		void setFloatForKeyPath(const StringList& keyPath, FloatValue value)
+			{ setValueForKeyPath<FloatValue, ValueClass_Float>(keyPath, value); }
+				
 	public:
-		bool hasKey(const std::string&) const;
-		ValueClass valueClassForKey(const std::string&) const;
-		
 		IntegerValue integerForKey(const std::string& key, IntegerValue def = IntegerValue()) const
 			{ return valueForKey<IntegerValue::ValueType, ValueClass_Integer>(key, def); }
 		IntegerValue integerForKeyPath(const std::vector<std::string>& key, IntegerValue def = IntegerValue()) const
@@ -200,27 +197,45 @@ namespace et
 		Dictionary dictionaryForKeyPath(const std::vector<std::string>& key, Dictionary def = Dictionary()) const
 			{ return Dictionary(valueForKeyPath<Dictionary::ValueType, ValueClass_Dictionary>(key, def)); }
 		
-		bool empty() const
-			{ return reference().content.empty(); }
-		
+	public:
 		void removeObjectForKey(const std::string& key)
 			{ reference().content.erase(key); }
 		
+		bool hasKey(const std::string&) const;
+		
+		ValueClass valueClassForKey(const std::string&) const;
+		
+		ValueBase::Pointer baseValueForKeyPath(const std::vector<std::string>& key) const;
+		
+		bool empty() const
+			{ return reference().content.empty(); }
+		
+		StringList allKeyPaths();
+				
 	public:
 		void printContent() const;
 
 	private:
 		bool valueForKeyPathIsClassOf(const std::vector<std::string>& key, ValueClass) const;
-		
-		ValueBase::Pointer baseValueForKeyPath(const std::vector<std::string>& key) const;
-		
+				
 		ValueBase::Pointer baseValueForKeyPathInHolder(const std::vector<std::string>& key,
 			ValueBase::Pointer holder) const;
+
+		void addKeyPathsFromHolder(ValueBase::Pointer holder, const std::string& baseKeyPath,
+			StringList& keyPaths) const;
 		
 		template <typename T, ValueClass C>
 		void setValueForKey(const std::string& key, const T& value)
 			{ this->reference().content[key] = value; }
-								
+
+		template <typename T, ValueClass C>
+		void setValueForKeyPath(const StringList& keyPath, const T& value)
+		{
+			auto v = baseValueForKeyPath(keyPath);
+			if (v.invalid() || (v->valueClass() != C)) return;
+			T(v)->content = value->content;
+		}
+		
 		template <typename T, ValueClass C>
 		ValuePointer<T, C> valueForKeyPath(const std::vector<std::string>& key, ValuePointer<T, C> def) const
 		{

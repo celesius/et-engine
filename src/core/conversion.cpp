@@ -176,7 +176,7 @@ ArrayValue et::vec3ToArray(const vec3& v)
 	return result;
 }
 
-ArrayValue et::vec3ToArray(const vec4& v)
+ArrayValue et::vec4ToArray(const vec4& v)
 {
 	ArrayValue result;
 	result->content.push_back(FloatValue(v.x));

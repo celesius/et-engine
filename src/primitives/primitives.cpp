@@ -742,7 +742,7 @@ void primitives::tesselateTriangles(VertexArray::Pointer data, IndexArray::Point
 	VertexDataChunk newPos = data->chunk(Usage_Position);
 	VertexDataChunk newNrm = data->chunk(Usage_Normal);
 	
-	size_t numTriangles = indexArray->primitivesCount();
+	size_t numTriangles = data->size() / 3;
 	
 	data->fitToSize(12 * numTriangles);
 	RawDataAcessor<vec3> opos = oldPos.accessData<vec3>(0);
@@ -752,7 +752,7 @@ void primitives::tesselateTriangles(VertexArray::Pointer data, IndexArray::Point
 	
 	size_t np = 0;
 	size_t nn = 0;
-	for (auto i = indexArray->begin(), e = indexArray->end(); i != e; ++i)
+	for (auto i = indexArray->begin(), e = indexArray->primitive(numTriangles); i != e; ++i)
 	{
 		const vec3& a = opos[i[0]];
 		const vec3& b = opos[i[1]];
@@ -805,7 +805,8 @@ VertexArray::Pointer primitives::buildIndexArray(VertexArray::Pointer data, Inde
 	for (size_t i = 0; i < dataSize; ++i)
 		countMap[vectorHash(oldPos[i])] = 0;
 	
-	indexArray->resizeToFit(data->size());
+	indexArray->resizeToFit(dataSize);
+	
 	VertexArray::Pointer result(new VertexArray(data->decl(), countMap.size()));
 	auto newPos = result->chunk(Usage_Position).accessData<vec3>(0);
 
