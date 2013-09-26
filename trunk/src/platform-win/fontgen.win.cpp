@@ -8,8 +8,9 @@
 #include <Windows.h>
 
 #include <fstream>
-#include <et/core/tools.h>
+#include <et/core/filesystem.h>
 #include <et/core/serialization.h>
+#include <et/core/tools.h>
 #include <et/gui/fontgen.h>
 
 using namespace et;
