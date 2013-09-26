@@ -675,22 +675,25 @@ LRESULT CALLBACK mainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 		{
 			internal_KeyInputInfo k(wParam);
-			handler->keyPressed( k.code );
+			handler->keyPressed(k.code);
 			return 0;
 		}
 
 	case WM_KEYUP:
 		{
 			internal_KeyInputInfo k(wParam);
-			handler->keyReleased( k.code );
+			handler->keyReleased(k.code);
 			return 0;
 		}
 
 	case WM_CHAR:
 		{
 			internal_KeyInputInfo k(wParam);
-			char chars[2] = {k.code, 0};
-			handler->charactersEntered(std::string(chars));
+			if (k.code >= ET_SPACE)
+			{
+				char chars[2] = {k.code, 0};
+				handler->charactersEntered(std::string(chars));
+			}
 			return 0;
 		}
 

@@ -10,15 +10,16 @@
 
 using namespace et;
 
-std::string et::selectFile(const StringList&, SelectFileMode mode)
+std::string et::selectFile(const StringList&, SelectFileMode mode, const std::string& defaultName)
 {
 	char filename[1024] = { };
+	etCopyMemory(filename, defaultName.c_str(), defaultName.length());
 
 	OPENFILENAME of = { };
 	of.lStructSize = sizeof(of);
 	of.hwndOwner = 0;
 	of.hInstance = GetModuleHandle(0);
-	of.lpstrFilter = "All supported files\0*.fbx;*.etm\0FBX files\0*.fbx\0ET models\0*.etm\0\0";
+	of.lpstrFilter = "All files\0*.*\0\0";
 	of.Flags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_NOCHANGEDIR | OFN_PATHMUSTEXIST;
 	of.lpstrFile = filename;
 	of.nMaxFile = MAX_PATH;
