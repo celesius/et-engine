@@ -26,7 +26,6 @@ namespace et
 	public:
 		IndexArray(IndexArrayFormat format, size_t size, PrimitiveType primitiveType);
 		
-		void linearize();
 		void linearize(size_t size);
 
 		const unsigned char* data() const 
