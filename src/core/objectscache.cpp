@@ -135,7 +135,7 @@ void ObjectsCache::flush()
 	}
 	
 	if (objectsErased > 0)
-		log::info("[ObjectsCache] %zu objects flushed.", objectsErased);
+		log::info("[ObjectsCache] %lu objects flushed.", objectsErased);
 }
 
 void ObjectsCache::startMonitoring()
