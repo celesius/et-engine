@@ -799,10 +799,16 @@ VertexArray::Pointer primitives::buildIndexArray(VertexArray::Pointer data, Inde
 	 */
 	size_t dataSize = data->size();
 	std::map<uint64_t, size_t> countMap;
-	auto oldPos = data->chunk(Usage_Position).accessData<vec3>(0);
+	std::vector<uint64_t> hashes;
+	hashes.reserve(data->size());
 	
+	auto oldPos = data->chunk(Usage_Position).accessData<vec3>(0);
 	for (size_t i = 0; i < dataSize; ++i)
-		countMap[vectorHash(oldPos[i])] = 0;
+	{
+		uint64_t hash = vectorHash(oldPos[i]);
+		countMap[hash] = 0;
+		hashes.push_back(hash);
+	}
 	
 	indexArray->resizeToFit(dataSize);
 	
@@ -812,7 +818,7 @@ VertexArray::Pointer primitives::buildIndexArray(VertexArray::Pointer data, Inde
 	std::map<uint64_t, size_t> indexMap;
 	for (size_t i = 0; i < dataSize; ++i)
 	{
-		uint64_t hash = vectorHash(oldPos[i]);
+		uint64_t hash = hashes[i];
 		if (indexMap.count(hash) == 0)
 		{
 			newPos[indexMap.size()] = oldPos[i];
