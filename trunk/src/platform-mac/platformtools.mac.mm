@@ -11,16 +11,22 @@
 using namespace et;
 
 @interface FilePicker : NSObject
+{
+	NSString* _defaultName;
+}
 
-+ (FilePicker*)picker;
++ (FilePicker*)pickerWithDefaultName:(NSString*)name;
+- (instancetype)initWithDefaultName:(NSString*)name;
+
 - (NSString*)openFile;
 - (NSString*)saveFile;
 
 @end
 
-std::string et::selectFile(const StringList&, SelectFileMode mode)
+std::string et::selectFile(const StringList&, SelectFileMode mode, const std::string& defaultName)
 {
 	NSString* pickerResult = nil;
+	
 	SEL selector = nil;
 
 	if (mode == SelectFileMode_Open)
@@ -32,11 +38,12 @@ std::string et::selectFile(const StringList&, SelectFileMode mode)
 
 	NSInvocation* i = [NSInvocation invocationWithMethodSignature:
 		[FilePicker instanceMethodSignatureForSelector:selector]];
-
+	
 	[i setSelector:selector];
-
+	
 	[i performSelectorOnMainThread:@selector(invokeWithTarget:)
-		withObject:[FilePicker picker] waitUntilDone:YES];
+		withObject:[FilePicker pickerWithDefaultName:[NSString stringWithUTF8String:defaultName.c_str()]]
+		waitUntilDone:YES];
 	
 	[i getReturnValue:&pickerResult];
 
@@ -49,13 +56,23 @@ std::string et::selectFile(const StringList&, SelectFileMode mode)
 
 @implementation FilePicker
 
-+ (FilePicker*)picker
++ (FilePicker*)pickerWithDefaultName:(NSString*)name
 {
 #if (ET_OBJC_ARC_ENABLED)
-	return [[FilePicker alloc] init];
+	return [[FilePicker alloc] initWithDefaultName:name];
 #else
-	return [[[FilePicker alloc] init] autorelease];
+	return [[[FilePicker alloc] initWithDefaultName:name] autorelease];
 #endif
+}
+
+- (instancetype)initWithDefaultName:(NSString*)name
+{
+	self = [super init];
+	if (self)
+	{
+		_defaultName = name;
+	}
+	return self;
 }
 
 - (NSString*)openFile
@@ -79,6 +96,8 @@ std::string et::selectFile(const StringList&, SelectFileMode mode)
 - (NSString*)saveFile
 {
 	NSSavePanel* saveDlg = [NSSavePanel savePanel];
+	[saveDlg setNameFieldStringValue:_defaultName];
+	
 #if (ET_OBJC_ARC_ENABLED)
 	return ([saveDlg runModal] == NSOKButton) ? [[saveDlg URL] path] : [[NSString alloc] init];
 #else

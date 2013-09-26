@@ -20,5 +20,5 @@ namespace et
 		SelectFileMode_Save
 	};
 
-	std::string selectFile(const StringList& types, SelectFileMode mode);
+	std::string selectFile(const StringList& types, SelectFileMode mode, const std::string& defaultName);
 }

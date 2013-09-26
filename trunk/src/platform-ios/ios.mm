@@ -38,7 +38,7 @@ void et::excludeFileFromICloudBackup(const std::string& path)
 	}
 }
 
-std::string et::selectFile(const StringList&, SelectFileMode mode)
+std::string et::selectFile(const StringList&, SelectFileMode, const std::string&)
 {
 	return std::string();
 }
