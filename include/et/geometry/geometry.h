@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <et/core/et.h>
 #include <et/geometry/vector4.h>
 #include <et/geometry/matrix3.h>
 #include <et/geometry/matrix4.h>
