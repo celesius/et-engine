@@ -37,11 +37,6 @@ IndexArray::IndexArray(IndexArrayFormat format, size_t size, PrimitiveType conte
 		linearize(size);
 }
 
-void IndexArray::linearize()
-{
-	linearize(capacity() & indexTypeMask[_format]);
-}
-
 void IndexArray::linearize(size_t size)
 {
 	for (IndexType i = 0; i < size; ++i)
@@ -193,7 +188,8 @@ IndexArray::PrimitiveIterator::PrimitiveIterator(const IndexArray* ib, IndexType
 
 void IndexArray::PrimitiveIterator::configure(IndexType p)
 {
-	IndexType cap = _ib->_actualSize;
+	IndexType cap = static_cast<IndexType>(_ib->_actualSize);
+	
 	switch (_ib->primitiveType())
 	{
 		case PrimitiveType_Points:

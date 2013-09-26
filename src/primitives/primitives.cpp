@@ -742,7 +742,7 @@ void primitives::tesselateTriangles(VertexArray::Pointer data, IndexArray::Point
 	VertexDataChunk newPos = data->chunk(Usage_Position);
 	VertexDataChunk newNrm = data->chunk(Usage_Normal);
 	
-	size_t numTriangles = data->size() / 3;
+	size_t numTriangles = indexArray->primitivesCount();
 	
 	data->fitToSize(12 * numTriangles);
 	RawDataAcessor<vec3> opos = oldPos.accessData<vec3>(0);
@@ -752,7 +752,7 @@ void primitives::tesselateTriangles(VertexArray::Pointer data, IndexArray::Point
 	
 	size_t np = 0;
 	size_t nn = 0;
-	for (auto i = indexArray->begin(), e = indexArray->primitive(numTriangles); i != e; ++i)
+	for (auto i = indexArray->begin(), e = indexArray->end(); i != e; ++i)
 	{
 		const vec3& a = opos[i[0]];
 		const vec3& b = opos[i[1]];
@@ -782,15 +782,13 @@ void primitives::tesselateTriangles(VertexArray::Pointer data, IndexArray::Point
 
 uint64_t vectorHash(const vec3& v)
 {
-	char raw[128] = { };
+	char raw[256] = { };
 	int symbols = sprintf(raw, "%.3f_%0.3f_%0.3f_%0.3f_%0.3f_%0.3f", v.x, v.y, v.z, v.x * v.y, v.x * v.z, v.y * v.z);
 	
 	uint64_t* ptr = reinterpret_cast<uint64_t*>(raw);
 	uint64_t* end = ptr + symbols / sizeof(uint64_t) + 1;
-	
 	uint64_t result = *ptr++;
-	while (ptr != end)
-		result ^= *ptr++;
+	while (ptr != end) result ^= *ptr++;
 	return result;
 }
 
@@ -802,6 +800,7 @@ VertexArray::Pointer primitives::buildIndexArray(VertexArray::Pointer data, Inde
 	size_t dataSize = data->size();
 	std::map<uint64_t, size_t> countMap;
 	auto oldPos = data->chunk(Usage_Position).accessData<vec3>(0);
+	
 	for (size_t i = 0; i < dataSize; ++i)
 		countMap[vectorHash(oldPos[i])] = 0;
 	
