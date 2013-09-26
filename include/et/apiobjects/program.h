@@ -44,7 +44,8 @@ namespace et
 		Program(RenderState& rs);
 		
 		Program(RenderState& rs, const std::string& vertexShader, const std::string& geometryShader,
-			const std::string& fragmentShader, const std::string& objName, const std::string& origin);
+			const std::string& fragmentShader, const std::string& objName, const std::string& origin,
+			const StringList& defines);
 
 		~Program();
 
@@ -111,6 +112,9 @@ namespace et
 		
 		void buildProgram(const std::string& vertex_source, const std::string& geom_source,
 			const std::string& frag_source);
+		
+		const StringList& defines() const
+			{ return _defines; }
 
 	private:
 		UniformMap::const_iterator findUniform(const std::string& name) const;
@@ -137,5 +141,7 @@ namespace et
 		std::map<int, vec4> _vec4Cache;
 		std::map<int, mat3> _mat3Cache;
 		std::map<int, mat4> _mat4Cache;
+		
+		StringList _defines;
 	};
 }

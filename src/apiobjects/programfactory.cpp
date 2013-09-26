@@ -180,9 +180,33 @@ StringList ProgramFactory::loadProgramSources(const std::string& file, std::stri
 Program::Pointer ProgramFactory::loadProgram(const std::string& file, ObjectsCache& cache,
 	const StringList& defines)
 {
-	Program::Pointer cached = cache.findAnyObject(file);
-	if (cached.valid())
-		return cached;
+	auto cachedPrograms = cache.findObjects(file);
+	for (Program::Pointer cached : cachedPrograms)
+	{
+		if (cached.valid())
+		{
+			if (cached->defines().size() == defines.size())
+			{
+				bool same = true;
+				for (auto& inDefine : defines)
+				{
+					for (auto& cDefine : cached->defines())
+					{
+						if (inDefine != cDefine)
+						{
+							same = false;
+							break;
+						}
+						
+						if (!same)
+							break;
+					}
+				}
+				if (same)
+					return cached;
+			}
+		}
+	}
 	
 	std::string vertex_shader;
 	std::string geom_shader;
@@ -198,7 +222,7 @@ Program::Pointer ProgramFactory::loadProgram(const std::string& file, ObjectsCac
 	parseSourceCode(ShaderType_Fragment, frag_shader, defines, workFolder);
 	
 	Program::Pointer program(new Program(renderContext()->renderState(), vertex_shader, geom_shader,
-		frag_shader, getFileName(file), file));
+		frag_shader, getFileName(file), file, defines));
 	
 	for (auto& s : sourceFiles)
 		program->addOrigin(s);
@@ -224,7 +248,7 @@ Program::Pointer ProgramFactory::genProgram(const std::string& name, const std::
 	parseSourceCode(ShaderType_Geometry, gs, defines, workFolder);
 	parseSourceCode(ShaderType_Fragment, fs, defines, workFolder);
 	
-	return Program::Pointer::create(renderContext()->renderState(), vs, gs, fs, name, name);
+	return Program::Pointer::create(renderContext()->renderState(), vs, gs, fs, name, name, defines);
 }
 
 Program ::Pointer ProgramFactory::genProgram(const std::string& name, const std::string& vertexshader,
@@ -236,7 +260,7 @@ Program ::Pointer ProgramFactory::genProgram(const std::string& name, const std:
 	parseSourceCode(ShaderType_Vertex, vs, defines, workFolder);
 	parseSourceCode(ShaderType_Fragment, fs, defines, workFolder);
 	
-	return Program::Pointer::create(renderContext()->renderState(), vs, std::string(), fs, name, name);
+	return Program::Pointer::create(renderContext()->renderState(), vs, std::string(), fs, name, name, defines);
 }
 
 void ProgramFactory::parseSourceCode(ShaderType type, std::string& source, const StringList& defines,

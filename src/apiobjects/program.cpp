@@ -21,10 +21,10 @@ Program::Program(RenderState& rs) : _glID(0), _rs(rs),
 }
 
 Program::Program(RenderState& rs, const std::string& vertexShader, const std::string& geometryShader,
-	const std::string& fragmentShader, const std::string& objName, const std::string& origin) :
-	LoadableObject(objName, origin), _glID(0), _rs(rs), _mModelViewLocation(-1),
+	const std::string& fragmentShader, const std::string& objName, const std::string& origin,
+	const StringList& defines) : LoadableObject(objName, origin), _glID(0), _rs(rs), _mModelViewLocation(-1),
 	_mModelViewProjectionLocation(-1), _vCameraLocation(-1), _vPrimaryLightLocation(-1),
-	_mLightProjectionMatrixLocation(-1), _mTransformLocation(-1)
+	_mLightProjectionMatrixLocation(-1), _mTransformLocation(-1), _defines(defines)
 {
 	buildProgram(vertexShader, geometryShader, fragmentShader);
 }
