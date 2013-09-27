@@ -17,6 +17,7 @@
 
 #include <et/app/application.h>
 #include <et/app/applicationnotifier.h>
+#include <et/threading/threading.h>
 #include <et/platform-ios/applicationdelegate.h>
 #include <et/platform-ios/openglviewcontroller.h>
 
@@ -27,7 +28,7 @@ using namespace et;
 	et::ApplicationNotifier _notifier;
 	UIWindow* _window;
 	CADisplayLink* _displayLink;
-	BOOL _updating;
+	AtomicBool _updating;
 }
 
 @end
@@ -88,30 +89,31 @@ using namespace et;
 	_notifier.notifyIdle();
 }
 
+- (BOOL)updating
+{
+	return _updating;
+}
+
 - (void)beginUpdates
 {
 	if (_updating) return;
 	
 	_displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(tick)];
-	[_displayLink setFrameInterval:1];
-	[_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+	[_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 	
 #if (!ET_OBJC_ARC_ENABLED)
 	[_displayLink retain];
 #endif
 }
 
-- (BOOL)updating
-{
-	return _updating;
-}
-
 - (void)endUpdates
 {
-	if (!_updating) return;
-	
-	[_displayLink invalidate];
-	_displayLink = nil;	
+	if (_updating)
+	{
+		[_displayLink invalidate];
+		_displayLink = nil;
+		_updating = false;
+	}
 }
 
 #if defined(__IPHONE_6_0)
