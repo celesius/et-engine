@@ -10,13 +10,6 @@
 
 using namespace et;
 
-OpenGLCapabilites::OpenGLCapabilites() : _version(OpenGLVersion_unknown),
-	_mipmap_generation(false), _shaders(false), _vertex_arrays(false),
-	_vertex_attrib_arrays(false), _vertex_buffers(false), _drawelements_basevertex(false)
-{
-}
-
-
 void OpenGLCapabilites::checkCaps()
 {
 	const char* glv = reinterpret_cast<const char*>(glGetString(GL_VERSION));
@@ -50,37 +43,27 @@ void OpenGLCapabilites::checkCaps()
 	_maxCubemapTextureSize = static_cast<size_t>(maxSize);
 
 #if defined(GL_ARB_draw_elements_base_vertex)
-	_drawelements_basevertex = (glDrawElementsBaseVertex != nullptr);
-#else
-	_drawelements_basevertex = false;
+	setFlag(OpenGLFeature_DrawElementsBaseVertex);
 #endif
 	
-	_mipmap_generation = glGenerateMipmap != nullptr;
+	if (glGenerateMipmap != nullptr)
+		setFlag(OpenGLFeature_MipMapGeneration);
 	
 #if (ET_SUPPORT_VERTEX_ARRAY_OBJECTS)
-	_vertex_arrays = (glGenVertexArrays != nullptr) && (glDeleteVertexArrays != nullptr)
+	bool stillSupport = (glGenVertexArrays != nullptr) && (glDeleteVertexArrays != nullptr)
 		&& (glBindVertexArray != nullptr) && (glIsVertexArray != nullptr);
 	
-	if (_vertex_arrays)
+	if (stillSupport)
 	{
 		uint32_t testArray = 0;
 		glGenVertexArrays(1, &testArray);
 		if ((glGetError() == GL_NO_ERROR) && (testArray != 0))
+		{
 			glDeleteVertexArrays(1, &testArray);
-		else
-			_vertex_arrays = false;
+			setFlag(OpenGLFeature_VertexArrayObjects);
+		}
 	}
-#else
-	_vertex_arrays = false;
 #endif
-
-	_vertex_attrib_arrays = glVertexAttribPointer != nullptr;
-
-	_vertex_buffers = (glGenBuffers != nullptr) && (glBindBuffer != nullptr) &&
-		(glBufferData != nullptr);
-
-	_shaders = (glShaderSource != nullptr) && (glCreateProgram != nullptr) &&
-		(glCompileShader != nullptr) && (glLinkProgram != nullptr);
 	
 	log::info("[OpenGLCapabilites] Version: %s, GLSL version: %s (%s)", _openGlVersion.c_str(),
 		_glslVersionString.c_str(), _glslVersion.c_str());

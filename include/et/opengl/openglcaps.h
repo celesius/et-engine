@@ -9,10 +9,10 @@
 
 #include <et/core/singleton.h>
 #include <et/opengl/opengl.h>
+#include <et/core/flags.h>
 
 namespace et
 {
-	
 	enum OpenGLVersion
 	{
 		OpenGLVersion_unknown,
@@ -21,29 +21,22 @@ namespace et
 		OpenGLVersion_max
 	};
 	
-	class OpenGLCapabilites : public Singleton<OpenGLCapabilites>
+	enum OpenGLFeature
+	{
+		OpenGLFeature_MipMapGeneration = 0x00000001,
+		OpenGLFeature_VertexAttribArrays = 0x00000002,
+		OpenGLFeature_VertexBufferObjects = 0x00000004,
+		OpenGLFeature_DrawElementsBaseVertex = 0x00000008,
+		OpenGLFeature_VertexArrayObjects = 0x00000010,
+		OpenGLFeature_VertexTextureFetch = 0x00000020,
+	};
+	
+	class OpenGLCapabilites : public Singleton<OpenGLCapabilites>, private FlagsHolder
 	{ 
 	public:
-		OpenGLCapabilites();
-		
-		bool supportMipMapGeneration() const
-			{ return _mipmap_generation; }
-		
-		bool supportShaders() const 
-			{ return _shaders; }
-		
-		bool supportVertexAttribArrays() const 
-			{ return _vertex_attrib_arrays; }
-		
-		bool supportVertexBuffers() const 
-			{ return _vertex_buffers; }
-		
-		bool supportDrawElemensBaseVertex() const 
-			{ return _drawelements_basevertex; }
-		
-		bool supportVertexArrays() const
-			{ return _vertex_arrays; }
-		
+		bool hasFeature(OpenGLFeature value)
+			{ return hasFlag(value); }
+	
 		OpenGLVersion version() const
 			{ return _version; }
 
@@ -55,7 +48,7 @@ namespace et
 
 		size_t maxCubemapTextureSize() const
 			{ return _maxCubemapTextureSize;}
-
+		
 		void checkCaps();
 
 	private:
@@ -63,15 +56,9 @@ namespace et
 		std::string _glslVersionString;
 		std::string _glslVersion;
 
-		size_t _maxCubemapTextureSize;
+		size_t _maxCubemapTextureSize = 0;
 
-		OpenGLVersion _version;
-		bool _mipmap_generation;
-		bool _shaders;
-		bool _vertex_arrays;
-		bool _vertex_attrib_arrays;
-		bool _vertex_buffers;
-		bool _drawelements_basevertex;
+		OpenGLVersion _version = OpenGLVersion_unknown;
 	};
 	
 	inline OpenGLCapabilites& openGLCapabilites()
