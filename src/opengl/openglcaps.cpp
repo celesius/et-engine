@@ -41,6 +41,12 @@ void OpenGLCapabilites::checkCaps()
 	int maxSize = 0;
 	glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &maxSize);
 	_maxCubemapTextureSize = static_cast<size_t>(maxSize);
+	
+	int maxUnits = 0;
+	glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &maxUnits);
+	
+	if (maxUnits > 0)
+		setFlag(OpenGLFeature_VertexTextureFetch);
 
 #if defined(GL_ARB_draw_elements_base_vertex)
 	setFlag(OpenGLFeature_DrawElementsBaseVertex);
