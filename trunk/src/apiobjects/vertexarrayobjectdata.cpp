@@ -26,7 +26,7 @@ VertexArrayObjectData::VertexArrayObjectData(RenderState& rs, const std::string&
 VertexArrayObjectData::~VertexArrayObjectData()
 {
 #if (ET_SUPPORT_VERTEX_ARRAY_OBJECTS)
-	if (openGLCapabilites().supportVertexArrays())
+	if (openGLCapabilites().hasFeature(OpenGLFeature_VertexArrayObjects))
 	{
 		if (_vao && glIsVertexArray(_vao))
 			glDeleteVertexArrays(1, &_vao);
@@ -38,7 +38,7 @@ VertexArrayObjectData::~VertexArrayObjectData()
 void VertexArrayObjectData::init()
 {
 #if (ET_SUPPORT_VERTEX_ARRAY_OBJECTS)
-	if (openGLCapabilites().supportVertexArrays())
+	if (openGLCapabilites().hasFeature(OpenGLFeature_VertexArrayObjects))
 	{
 		glGenVertexArrays(1, &_vao);
 		checkOpenGLError("glGenVertexArrays in %s", name().c_str());

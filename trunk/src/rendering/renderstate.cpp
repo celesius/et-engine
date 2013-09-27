@@ -178,8 +178,8 @@ void RenderState::bindBuffers(const VertexBuffer& vb, const IndexBuffer& ib, boo
 
 void RenderState::bindVertexArray(uint32_t buffer)
 {
-	if ((_currentState.boundVertexArrayObject != buffer) && openGLCapabilites().supportVertexArrays())
-	{ 
+	if ((_currentState.boundVertexArrayObject != buffer) && openGLCapabilites().hasFeature(OpenGLFeature_VertexArrayObjects))
+	{
 		_currentState.boundVertexArrayObject = buffer;
 		etBindVertexArray(buffer);
 	}
