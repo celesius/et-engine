@@ -139,24 +139,21 @@ using namespace et;
 - (void)endRender
 {
 	checkOpenGLError("endRender");
-	_rc->renderState().bindDefaultFramebuffer();
+	
+	const GLenum discards[]  = { GL_DEPTH_ATTACHMENT, GL_COLOR_ATTACHMENT0};
 	
 	if (_multisampled)
 	{
+		_rc->renderState().bindFramebuffer(_multisampledFramebuffer);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER_APPLE, _mainFramebuffer->glID());
 		glBindFramebuffer(GL_READ_FRAMEBUFFER_APPLE, _multisampledFramebuffer->glID());
 		glResolveMultisampleFramebufferAPPLE();
-		
-		const GLenum discards[]  = { GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT };
-		glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 2, discards);
-	}
-	else
-	{
-		GLenum discards[] = { GL_DEPTH_ATTACHMENT };
-		glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, discards);
 	}
 	
+	_rc->renderState().bindFramebuffer(_mainFramebuffer);
 	_rc->renderState().bindRenderbuffer(_mainFramebuffer->colorRenderbuffer());
+	
+	glDiscardFramebufferEXT(GL_FRAMEBUFFER, (_multisampled ? 2 : 1), discards);
 	
 	[_context presentRenderbuffer:GL_RENDERBUFFER];
 	checkOpenGLError("[_context presentRenderbuffer:GL_RENDERBUFFER]");
@@ -234,7 +231,6 @@ using namespace et;
 	
 	_mainFramebuffer->checkStatus();
 	_mainFramebuffer->forceSize(size);
-	_rcNotifier->resized(size, _rc);
 	
 	if (_multisampled)
 	{
@@ -258,8 +254,11 @@ using namespace et;
 			_multisampledFramebuffer->depthRenderbuffer());
 		checkOpenGLError("Multisampled depth buffer");
 		
+		_multisampledFramebuffer->forceSize(size);
 		_multisampledFramebuffer->checkStatus();
 	}
+	
+	_rcNotifier->resized(size, _rc);
 }
 
 - (void)deleteFramebuffer
@@ -395,11 +394,11 @@ using namespace et;
 	if ([notification.name isEqualToString:etKeyboardRequiredNotification])
 	{
 		_keyboardAllowed = YES;
-		[self becomeFirstResponder];
+		[self performSelectorOnMainThread:@selector(becomeFirstResponder) withObject:nil waitUntilDone:NO];
 	}
 	else if ([notification.name isEqualToString:etKeyboardNotRequiredNotification])
 	{
-		[self resignFirstResponder];
+		[self performSelectorOnMainThread:@selector(resignFirstResponder) withObject:nil waitUntilDone:NO];
 		_keyboardAllowed = NO;
 	}
 }

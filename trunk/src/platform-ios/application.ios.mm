@@ -105,11 +105,11 @@ void Application::loaded()
 	[mainWindow setRootViewController:(__bridge etOpenGLViewController*)handle];
 	[mainWindow makeKeyAndVisible];
     
-	etApplicationDelegate* d = (etApplicationDelegate*)[[UIApplication sharedApplication] delegate];
-	[d beginUpdates];
-	
 	enterRunLoop();
-#endif	
+	
+	etApplicationDelegate* appDelegate = (etApplicationDelegate*)[[UIApplication sharedApplication] delegate];
+	[appDelegate beginUpdates];
+#endif
 }
 
 void Application::enterRunLoop()

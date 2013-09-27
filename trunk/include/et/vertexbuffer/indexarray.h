@@ -28,7 +28,10 @@ namespace et
 		
 		void linearize(size_t size);
 
-		const unsigned char* data() const 
+		char* binary()
+			{ return _data.binary(); }
+		
+		const unsigned char* data() const
 			{ return _data.data(); }
 
 		size_t dataSize() const
