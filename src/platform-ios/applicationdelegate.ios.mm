@@ -99,6 +99,7 @@ using namespace et;
 	if (_updating) return;
 	
 	_displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(tick)];
+	[_displayLink setFrameInterval:2];
 	[_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 	
 #if (!ET_OBJC_ARC_ENABLED)
