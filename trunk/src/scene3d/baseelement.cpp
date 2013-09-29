@@ -10,8 +10,8 @@
 using namespace et;
 using namespace et::s3d;
 
-Element::Element(const std::string& name, Element* parent) : ElementHierarchy(parent), 
-	tag(0), _active(true)
+Element::Element(const std::string& name, Element* parent) :
+	ElementHierarchy(parent),  tag(0), _active(true)
 {
 	setName(name);
 }
@@ -174,7 +174,8 @@ void Element::deserializeChildren(std::istream& stream, ElementFactory* factory,
 
 void Element::duplicateChildrenToObject(Element* object)
 {
-	ET_ITERATE(children(), Element::Pointer, i, i->duplicate()->setParent(object))
+	for (auto& c : children())
+		c->duplicate()->setParent(object);
 }
 
 void Element::duplicateBasePropertiesToObject(Element* object)
