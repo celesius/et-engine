@@ -18,6 +18,12 @@ namespace et
 		TextureOrigin_TopLeft,
 		TextureOrigin_BottomLeft
 	};
+	
+	enum TextureDataLayout
+	{
+		TextureDataLayout_FacesFirst,
+		TextureDataLayout_MipsFirst
+	};
 
 	class TextureDescription : public LoadableObject
 	{  
@@ -33,7 +39,7 @@ namespace et
 		{
 			size_t actualSize = static_cast<size_t>(sizeForMipLevel(level).square()) * bitsPerPixel / 8;
 			size_t minimumSize = static_cast<size_t>(minimalSizeForCompressedFormat.square()) * bitsPerPixel / 8;
-			return compressed ? etMax(minimumSize, actualSize) : actualSize;
+			return compressed ? etMax(minimalDataSize, etMax(minimumSize, actualSize)) : actualSize;
 		}
 
 		size_t dataSizeForAllMipLevels()
@@ -44,16 +50,41 @@ namespace et
 			return result;
 		}
 
-		size_t dataOffsetForLayer(size_t layer)
+		size_t dataOffsetForLayer(size_t layer, size_t level)
 		{
-			return dataSizeForAllMipLevels() * ((layer < layersCount) ? layer : (layersCount > 0 ? layersCount - 1 : 0));
+			if (dataLayout == TextureDataLayout_FacesFirst)
+			{
+				return dataSizeForAllMipLevels() * ((layer < layersCount) ?
+					layer : (layersCount > 0 ? layersCount - 1 : 0));
+			}
+			else
+			{
+				return dataSizeForMipLevel(level) * ((layer < layersCount) ?
+					layer : (layersCount > 0 ? layersCount - 1 : 0));
+
+			}
 		}
 
-		size_t dataOffsetForMipLevel(size_t level, size_t layer = 0)
+		size_t dataOffsetForMipLevel(size_t level, size_t layer)
 		{
-			size_t result = dataOffsetForLayer(layer);
-			for (size_t i = 0; i < level; ++i)
-				result += dataSizeForMipLevel(i);
+			size_t result = 0;
+			if (dataLayout == TextureDataLayout_FacesFirst)
+			{
+				result = dataOffsetForLayer(layer, 0);
+				for (size_t i = 0; i < level; ++i)
+					result += dataSizeForMipLevel(i);
+			}
+			else if (dataLayout == TextureDataLayout_MipsFirst)
+			{
+				result = dataOffsetForLayer(layer, level);
+				for (size_t l = 0; l < level; ++l)
+					result += layersCount * dataSizeForMipLevel(l);
+			}
+			else
+			{
+				assert("Invalid data layout" && false);
+			}
+			
 			return result;
 		}
 		
@@ -76,7 +107,9 @@ namespace et
 		size_t channels = 0;
 		size_t mipMapCount = 0;
 		size_t layersCount = 0;
-
+		size_t minimalDataSize = 0;
+		
+		TextureDataLayout dataLayout = TextureDataLayout_FacesFirst;
 	};
 
 }

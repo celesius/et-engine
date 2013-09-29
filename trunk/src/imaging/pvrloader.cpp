@@ -72,7 +72,14 @@ namespace et
         unsigned int numFaces;	   
         unsigned int numMipmaps;	 
         unsigned int metaDataSize;   
-    };	
+    };
+	
+	struct PVRHeader3Meta
+	{
+		char fourCC[4];
+		uint32_t key;
+		uint32_t dataSize;
+	};
 }
 
 const unsigned int PVRFormatMask = 0xff;
@@ -118,11 +125,16 @@ void PVRLoader::loadInfoFromV2Header(const PVRHeader2& header, TextureDescriptio
 	}
 }
 
-void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescription& desc)
+void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, const BinaryDataStorage&, TextureDescription& desc)
 {
+	desc.layersCount = header.numFaces;
+	assert((desc.layersCount == 1) || (desc.layersCount == 6));
+
 	desc.size = vec2i(header.width, header.height);
 	desc.mipMapCount = header.numMipmaps ? header.numMipmaps : 1;
-	desc.layersCount = 1;
+	
+	if (desc.layersCount == 6)
+		desc.target = GL_TEXTURE_CUBE_MAP;
 
     if ((header.channelType == PVRChannelType_UnsignedByte) || (header.channelType == PVRChannelType_UnsignedByteNorm))
         desc.type = GL_UNSIGNED_BYTE;
@@ -134,6 +146,7 @@ void PVRLoader::loadInfoFromV3Header(const PVRHeader3& header, TextureDescriptio
         log::error("Unsupported PVR channel type: %u", header.channelType);
 	
 	size_t pixelFormat = header.pixelFormat & PVRVersion3Format_mask;
+	
 #if defined(GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG)	
     if (pixelFormat == PVRVersion3Format_PVRTC_2bpp_RGB)
 	{
@@ -188,6 +201,9 @@ static const unsigned int pvrHeader2 = ET_COMPOSE_UINT32('!', 'R', 'V', 'P');
 void PVRLoader::loadInfoFromStream(std::istream& stream, TextureDescription& desc)
 {
     std::istream::off_type offset = stream.tellg();
+	
+	desc.minimalDataSize = 32;
+	desc.dataLayout = TextureDataLayout_MipsFirst;
     
 	PVRHeader2 header2 = { };
 	stream.read(reinterpret_cast<char*>(&header2), sizeof(header2));
@@ -199,12 +215,18 @@ void PVRLoader::loadInfoFromStream(std::istream& stream, TextureDescription& des
     {
         stream.seekg(offset, std::ios_base::beg);
         PVRHeader3 header3 = { };
+		BinaryDataStorage meta;
         stream.read(reinterpret_cast<char*>(&header3), sizeof(header3));
         
         if (header3.version == PVRHeaderV3Version)
         {
-            PVRLoader::loadInfoFromV3Header(header3, desc);
-            stream.seekg(header3.metaDataSize, std::ios_base::cur);
+			if (header3.metaDataSize > 0)
+			{
+				meta.resize(header3.metaDataSize);
+				stream.read(meta.binary(), header3.metaDataSize);
+			}
+			
+            PVRLoader::loadInfoFromV3Header(header3, meta, desc);
         }
         else
 		{
@@ -226,8 +248,8 @@ void PVRLoader::loadInfoFromFile(const std::string& path, TextureDescription& de
 void PVRLoader::loadFromStream(std::istream& stream, TextureDescription& desc)
 {
 	loadInfoFromStream(stream, desc);
-
-	desc.data = BinaryDataStorage(desc.dataSizeForAllMipLevels());
+	
+	desc.data.resize(desc.layersCount * desc.dataSizeForAllMipLevels());
 	stream.read(desc.data.binary(), static_cast<std::streamsize>(desc.data.dataSize()));
 }
 

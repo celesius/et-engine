@@ -24,8 +24,8 @@ namespace et
 		static void loadFromFile(const std::string& path, TextureDescription& desc);
         
     private:
-        static void loadInfoFromV2Header(const PVRHeader2& header, TextureDescription& desc);
-        static void loadInfoFromV3Header(const PVRHeader3& header, TextureDescription& desc);
+        static void loadInfoFromV2Header(const PVRHeader2&, TextureDescription&);
+        static void loadInfoFromV3Header(const PVRHeader3&, const BinaryDataStorage&, TextureDescription&);
 	};
 
 }

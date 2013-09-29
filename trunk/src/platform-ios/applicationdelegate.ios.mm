@@ -98,8 +98,13 @@ using namespace et;
 {
 	if (_updating) return;
 	
+	auto& rcp = _notifier.accessRenderContext()->parameters();
+	
 	_displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(tick)];
-	[_displayLink setFrameInterval:2];
+	
+	if (rcp.swapInterval > 0)
+		[_displayLink setFrameInterval:rcp.swapInterval];
+	
 	[_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 	
 #if (!ET_OBJC_ARC_ENABLED)
