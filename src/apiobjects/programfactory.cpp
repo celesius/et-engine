@@ -37,38 +37,46 @@ ProgramFactory::ProgramFactory(RenderContext* rc) : APIObjectFactory(rc)
 	if (openGLCapabilites().version() == OpenGLVersion_Old)
 	{
 		_fragShaderHeader = 
-			"#define etTexture2D	texture2D\n"
-			"#define etTextureCube	textureCube\n"
-			"#define etShadow2D		shadow2D\n"
-			"#define etFragmentIn	varying\n"
-			"#define etFragmentOut	gl_FragColor\n"
+			"#define etTexture2D		texture2D\n"
+			"#define etShadow2D			shadow2D\n"
+			"#define etTexture2DProj	texture2D\n"
+			"#define etShadow2DProj		shadow2D\n"
+			"#define etTextureCube		textureCube\n"
+			"#define etFragmentIn		varying\n"
+			"#define etFragmentOut		gl_FragColor\n"
 			;
 
 		_vertShaderHeader =
-			"#define etTexture2D	texture2D\n"
-			"#define etTextureCube	textureCube\n"
-			"#define etShadow2D		shadow2D\n"
-			"#define etVertexIn		attribute\n"
-			"#define etVertexOut	varying\n"
+			"#define etTexture2D		texture2D\n"
+			"#define etShadow2D			shadow2D\n"
+			"#define etTexture2DProj	texture2DProj\n"
+			"#define etShadow2DProj		shadow2DProj\n"
+			"#define etTextureCube		textureCube\n"
+			"#define etVertexIn			attribute\n"
+			"#define etVertexOut		varying\n"
 			;
 	}
 	else
 	{
 		_fragShaderHeader = 
-			"#define etTexture2D	texture\n"
-			"#define etTextureCube	texture\n"
-			"#define etShadow2D		texture\n"
-			"#define etFragmentIn	in\n"
-			"#define etFragmentOut	FragColor\n"
+			"#define etTexture2D		texture\n"
+			"#define etShadow2D			texture\n"
+			"#define etTexture2DProj	textureProj\n"
+			"#define etShadow2DProj		textureProj\n"
+			"#define etTextureCube		texture\n"
+			"#define etFragmentIn		in\n"
+			"#define etFragmentOut		FragColor\n"
 			"out vec4 FragColor;\n"
 			;
 
 		_vertShaderHeader = 
-			"#define etTexture2D	texture\n"
-			"#define etTextureCube	texture\n"
-			"#define etShadow2D		texture\n"
-			"#define etVertexIn		in\n"
-			"#define etVertexOut	out\n"
+			"#define etTexture2D		texture\n"
+			"#define etShadow2D			texture\n"
+			"#define etTexture2DProj	textureProj\n"
+			"#define etShadow2DProj		textureProj\n"
+			"#define etTextureCube		texture\n"
+			"#define etVertexIn			in\n"
+			"#define etVertexOut		out\n"
 			;
 	}
 }
