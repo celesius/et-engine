@@ -117,12 +117,16 @@ void et::findFiles(const std::string& folder, const std::string& mask, bool recu
 
 std::string et::applicationPackagePath()
 {
-	return applicationPath();
+	char buffer[MAX_PATH] = { };
+	GetCurrentDirectory(MAX_PATH, buffer);
+	return addTrailingSlash(std::string(buffer));
 }
 
 std::string et::applicationDataFolder()
 {
-	return applicationPath();
+	char buffer[MAX_PATH] = { };
+	GetCurrentDirectory(MAX_PATH, buffer);
+	return addTrailingSlash(std::string(buffer));
 }
 
 std::string et::documentsBaseFolder()
