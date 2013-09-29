@@ -222,6 +222,7 @@ void DDSLoader::loadInfoFromStream(std::istream& source, TextureDescription& des
 
 	desc.size = vec2i(static_cast<int>(header.dwWidth), static_cast<int>(header.dwHeight));
 	desc.mipMapCount = etMax(1ul, header.dwMipMapCount);
+	desc.minimalSizeForCompressedFormat = vec2i(4);
 
 	if (header.dwCaps2 & DDSCAPS2_CUBEMAP)
 	{

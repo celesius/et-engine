@@ -32,7 +32,8 @@ namespace et
 		size_t dataSizeForMipLevel(size_t level)
 		{
 			size_t actualSize = static_cast<size_t>(sizeForMipLevel(level).square()) * bitsPerPixel / 8;
-			return compressed ? etMax(minimalSizeForCompressedFormat, actualSize) : actualSize;
+			size_t minimumSize = static_cast<size_t>(minimalSizeForCompressedFormat.square()) * bitsPerPixel / 8;
+			return compressed ? etMax(minimumSize, actualSize) : actualSize;
 		}
 
 		size_t dataSizeForAllMipLevels()
@@ -61,7 +62,9 @@ namespace et
 
 	public:
 		BinaryDataStorage data;
+
 		vec2i size;
+		vec2i minimalSizeForCompressedFormat;
 		
 		uint32_t target = 0;
 		int32_t internalformat = 0;
@@ -73,7 +76,7 @@ namespace et
 		size_t channels = 0;
 		size_t mipMapCount = 0;
 		size_t layersCount = 0;
-		size_t minimalSizeForCompressedFormat = 0;
+
 	};
 
 }
