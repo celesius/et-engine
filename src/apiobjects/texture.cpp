@@ -150,7 +150,7 @@ void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
 		{
 			vec2i t_mipSize = _desc->sizeForMipLevel(level);
 			GLsizei t_dataSize = static_cast<GLsizei>(_desc->dataSizeForMipLevel(level));
-			size_t t_offset = _desc->dataOffsetForMipLevel(level);
+			size_t t_offset = _desc->dataOffsetForMipLevel(level, 0);
 			
 			const char* ptr = (aDataPtr && (t_offset < aDataSize)) ? &aDataPtr[t_offset] : 0;
 			if (_desc->compressed && ptr)
@@ -168,19 +168,19 @@ void TextureData::buildData(const char* aDataPtr, size_t aDataSize)
 	else if (_desc->target == GL_TEXTURE_CUBE_MAP)
 	{
 		uint32_t target = GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+		
 		for (size_t layer = 0; layer < _desc->layersCount; ++layer, ++target)
 		{
 			for (size_t level = 0; level < _desc->mipMapCount; ++level)
 			{
 				vec2i t_mipSize = _desc->sizeForMipLevel(level);
-				GLsizei t_dataSize = static_cast<GLsizei>(_desc->dataSizeForMipLevel(level));
 				size_t t_offset = _desc->dataOffsetForMipLevel(level, layer);
 				
-				const char* ptr = (aDataPtr && (t_offset < aDataSize)) ? &aDataPtr[t_offset] : 0;
-				if (_desc->compressed && ptr)
+				const char* ptr = (aDataPtr && (t_offset < aDataSize)) ? &aDataPtr[t_offset] : nullptr;
+				if (_desc->compressed && (ptr != nullptr))
 				{
 					etCompressedTexImage2D(target, static_cast<int>(level), static_cast<uint32_t>(_desc->internalformat),
-						t_mipSize.x, t_mipSize.y, 0, t_dataSize, ptr);
+						t_mipSize.x, t_mipSize.y, 0, static_cast<GLsizei>(_desc->dataSizeForMipLevel(level)), ptr);
 				}
 				else
 				{

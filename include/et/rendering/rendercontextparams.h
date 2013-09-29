@@ -11,6 +11,7 @@
 
 namespace et
 {
+	vec2i nativeScreenSize();
 	
 	enum MultisamplingQuality
 	{
@@ -40,50 +41,30 @@ namespace et
 	{
 		vec2i openGLTargetVersion;
 
-		MultisamplingQuality multisamplingQuality;
+		MultisamplingQuality multisamplingQuality = MultisamplingQuality_Best;
 
-		bool openGLForwardContext;
-		bool openGLCoreProfile;
-		bool openGLCompatibilityProfile;
+		bool openGLForwardContext = true;
+		bool openGLCoreProfile = true;
+		bool openGLCompatibilityProfile = false;
 		
-		bool verticalSync;
-		bool multipleTouch;
+		bool multipleTouch = true;
 		
-        size_t supportedInterfaceOrientations;
+		size_t swapInterval = 1;
+        size_t supportedInterfaceOrientations = InterfaceOrientation_Any;
 
 		vec2i contextSize;
 		vec2i contextBaseSize;
 
-		RenderContextParameters(
+		RenderContextParameters()
+		{
 #if defined(ET_PLATFORM_IOS)
-								MultisamplingQuality ms = MultisamplingQuality_None,
-								const vec2i& windowSize = vec2i(480, 320),
-								const vec2i& openGLMaxVer = vec2i(2, 0), 
-								const vec2i& baseScrSize = vec2i(480, 320),
-								bool forwardContext = false, 
-								bool coreProfile = false,
-								bool compatibilityProfile = false,
-								bool vSync = true,
-								bool mTouch = true,
-                                size_t orientationFlags = InterfaceOrientation_AnyLandscape
-#else 
-								MultisamplingQuality ms = MultisamplingQuality_Best,
-								const vec2i& windowSize = vec2i(800, 600),
-								const vec2i& openGLMaxVer = vec2i(4, 2),
-								const vec2i& baseScrSize = vec2i(512, 512),
-								bool forwardContext = true, 
-								bool coreProfile = true,
-								bool compatibilityProfile = false,
-								bool vSync = false,
-								bool mTouch = false,
-                                size_t orientationFlags = InterfaceOrientation_Any
-#endif								
-								) :
-		multisamplingQuality(ms), openGLForwardContext(forwardContext),
-		openGLCoreProfile(coreProfile), openGLCompatibilityProfile(compatibilityProfile),
-		contextSize(windowSize), openGLTargetVersion(openGLMaxVer),
-		contextBaseSize(baseScrSize), verticalSync(vSync), multipleTouch(mTouch),
-		supportedInterfaceOrientations(orientationFlags) { }
+			contextSize = nativeScreenSize();
+			contextBaseSize = nativeScreenSize();
+#else
+			openGLTargetVersion = vec2i(4, 3);
+			contextSize = vec2i(800, 600);
+			contextBaseSize = vec2i(800, 600);
+#endif
+		}
 	};
-	
 }
