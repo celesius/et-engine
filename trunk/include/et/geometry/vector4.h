@@ -133,6 +133,9 @@ namespace et
 		const vector3<T>& xyz() const
 			{ return *(reinterpret_cast<const vector3<T>*>(c)); }
 
+		const vector2<T>& zw() const
+			{ return *(reinterpret_cast<vector2<T>*>(c+2)); }
+		
 		T dot(const vector4<T>& vector) const
 			{ return x*vector.x + y*vector.y + z*vector.z + w*vector.w; }
 
