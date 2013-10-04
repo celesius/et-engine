@@ -188,8 +188,6 @@ void GuiRenderer::beginRender(RenderContext* rc)
 	_blendEnabled = rc->renderState().blendEnabled();
 	_blendState = rc->renderState().blendState();
 	_depthMask = rc->renderState().depthMask();
-	_clipEnabled =  rc->renderState().clipEnabled();
-	_clipRect = rc->renderState().clipRect();
 	
 	rc->renderState().setBlend(true, Blend_Default);
 	rc->renderState().bindProgram(_guiProgram);
@@ -200,7 +198,7 @@ void GuiRenderer::endRender(RenderContext* rc)
 	rc->renderState().setDepthTest(_depthTestEnabled);
 	rc->renderState().setBlend(_blendEnabled, static_cast<BlendState>(_blendState));
 	rc->renderState().setDepthMask(_depthMask);
-	rc->renderState().setClip(_clipEnabled, _clipRect);
+	rc->renderState().setClip(false, recti());
 }
 
 void GuiRenderer::render(RenderContext* rc)

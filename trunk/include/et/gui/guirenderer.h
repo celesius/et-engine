@@ -85,7 +85,6 @@ namespace et
 			Camera _guiCamera;
 
 			std::stack<recti> _clip;
-			recti _clipRect;
 			vec2 _customOffset;
 			recti _customWindowOffset;
 			float _customAlpha;
@@ -95,7 +94,6 @@ namespace et
 			bool _depthTestEnabled;
 			bool _depthMask;
 			bool _blendEnabled;
-			bool _clipEnabled;
 		};
 	}
 }
