@@ -5,6 +5,7 @@
 *
 */
 
+#include <Foundation/NSDateFormatter.h>
 #include <et/core/tools.h>
 #include <et/core/containers.h>
 #include <et/locale/locale.h>
