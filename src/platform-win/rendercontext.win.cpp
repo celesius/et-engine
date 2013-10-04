@@ -437,7 +437,7 @@ bool RenderContextPrivate::initOpenGL(const RenderContextParameters& params)
 
 	if (wglSwapIntervalEXT) 
 	{
-		wglSwapIntervalEXT(params.verticalSync ? 1 : 0);
+		wglSwapIntervalEXT(params.swapInterval);
 		checkOpenGLError("RenderContextPrivate::initOpenGL -> wglSwapIntervalEXT");
 	}
 

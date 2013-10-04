@@ -108,7 +108,7 @@ void GuiRenderer::alloc(size_t count)
 		size_t newSize = currentSize + BlockSize * (1 + count / BlockSize);
 		_renderingElement->_vertexList.resize(newSize);
 		_renderingElement->_indexArray->resize(newSize);
-		_renderingElement->_indexArray->linearize();
+		_renderingElement->_indexArray->linearize(newSize);
 	}
 }
 

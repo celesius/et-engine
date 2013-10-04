@@ -9,7 +9,7 @@ using namespace et::gui;
 
 const int defaultTextureSize = 1024;
 
-class et::s2d::CharacterGeneratorPrivate
+class et::gui::CharacterGeneratorPrivate
 {
 public:
 	CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size);

@@ -198,7 +198,7 @@ void ImagePickerPrivate::pick(ImagePickerSource s)
 		size_t bytesPerRow = CGImageGetBytesPerRow(cgImage);
 		
 		CFDataRef data = CGDataProviderCopyData(CGImageGetDataProvider(cgImage));
-		result->data = BinaryDataStorage(CFDataGetLength(data));
+		result->data = BinaryDataStorage(static_cast<size_t>(CFDataGetLength(data)));
 		
 		const UInt8* sourcePtr = CFDataGetBytePtr(data) + result->data.dataSize() - bytesPerRow;
 		char* destPtr = result->data.binary();

@@ -8,7 +8,8 @@
 #include <sstream>
 #include <iostream>
 
-#include <et/core/tools.h>
+#include <et/core/conversion.h>
+#include <et/core/filesystem.h>
 #include <et/models/objloader.h>
 #include <et/apiobjects/vertexbuffer.h>
 #include <et/primitives/primitives.h>
@@ -610,7 +611,7 @@ void OBJLoader::processLoadedData()
 		fmt = IndexArrayFormat_32bit;
 		
 	_indices = IndexArray::Pointer(new IndexArray(fmt, totalVertices, PrimitiveType_Triangles));
-	_indices->linearize();
+	_indices->linearize(totalVertices);
 
 	_vertexData.reset(new VertexArray(decl, totalVertices));
 	VertexDataChunk pos_c = _vertexData->chunk(Usage_Position);
