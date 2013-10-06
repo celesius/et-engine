@@ -15,8 +15,8 @@ extern std::string FramebufferStatusToString(uint32_t status);
 extern const uint32_t renderbufferTargets[Framebuffer::MaxRenderTargets];
 
 Framebuffer::Framebuffer(RenderContext* rc, TextureFactory* tf, const FramebufferDescription& desc,
-	const std::string& aName) : Object(aName), _isCubemapBuffer(desc.isCubemap != 0), _id(0),
-	_size(desc.size), _numTargets(0), _colorRenderbuffer(0), _depthRenderbuffer(0), _rc(rc), _textureFactory(tf)
+	const std::string& aName) : Object(aName), _rc(rc), _textureFactory(tf), _description(desc),
+	_id(0), _size(desc.size), _numTargets(0), _colorRenderbuffer(0), _depthRenderbuffer(0)
 {
 	checkOpenGLError("Framebuffer::Framebuffer %s", name().c_str());
 
@@ -26,20 +26,20 @@ Framebuffer::Framebuffer(RenderContext* rc, TextureFactory* tf, const Framebuffe
 	_rc->renderState().bindFramebuffer(_id);
 
 	bool hasColor = (desc.colorInternalformat != 0) && (desc.numColorRenderTargets > 0);
-	bool hasDepth = (desc.depthInternalformat != 0) && desc.includeDepthRenderTarget;
+	bool hasDepth = (desc.depthInternalformat != 0) && (desc.depthFormat != 0) && (desc.depthType != 0);
 	
 	if (hasColor)
 	{
 		if (desc.colorIsRenderbuffer)
 		{
-			createColorRenderbuffer(static_cast<uint32_t>(desc.colorInternalformat));
+			createColorRenderbuffer();
 		}
 		else 
 		{
 			for (size_t i = 0; i < desc.numColorRenderTargets; ++i)
 			{ 
 				Texture c;
-				if (_isCubemapBuffer)
+				if (_description.isCubemap)
 				{
 					c = tf->genCubeTexture(desc.colorInternalformat, desc.size.x, desc.colorFormat, 
 						desc.colorType, name() + "_color_" + intToStr(i));
@@ -62,12 +62,12 @@ Framebuffer::Framebuffer(RenderContext* rc, TextureFactory* tf, const Framebuffe
 	{
 		if (desc.colorIsRenderbuffer)
 		{
-			createDepthRenderbuffer(static_cast<uint32_t>(desc.depthInternalformat));
+			createDepthRenderbuffer();
 		}
 		else 
 		{
 			Texture d;
-			if (_isCubemapBuffer && (openGLCapabilites().version() == OpenGLVersion_New))
+			if (_description.isCubemap && (openGLCapabilites().version() == OpenGLVersion_New))
 			{
 				d = tf->genCubeTexture(desc.depthInternalformat, desc.size.x, desc.depthFormat, 
 					desc.depthType, name() + "_depth");
@@ -101,33 +101,36 @@ Framebuffer::Framebuffer(RenderContext* rc, TextureFactory* tf, const Framebuffe
 		checkStatus();
 }
 
-Framebuffer::Framebuffer(RenderContext* rc, TextureFactory* tf, uint32_t fboId,
-	const std::string& aName) : Object(aName), _isCubemapBuffer(false), _id(fboId), _numTargets(0),
-	_colorRenderbuffer(0), _depthRenderbuffer(0), _rc(rc), _textureFactory(tf)
+Framebuffer::Framebuffer(RenderContext* rc, TextureFactory* tf, uint32_t fboId, const std::string& aName) :
+	Object(aName), _rc(rc), _textureFactory(tf), _id(fboId), _numTargets(0), _colorRenderbuffer(0),
+	_depthRenderbuffer(0)
 {
-	if (!glIsFramebuffer(fboId)) return;
-	
-	rc->renderState().bindFramebuffer(fboId);
-	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &_size.x);
-	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &_size.y);
+	if (glIsFramebuffer(fboId))
+	{
+		rc->renderState().bindFramebuffer(fboId);
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &_size.x);
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &_size.y);
+	}
 }
 
 Framebuffer::~Framebuffer()
 {
+	checkOpenGLError("");
+	
 	if (_colorRenderbuffer && glIsRenderbuffer(_colorRenderbuffer))
 	{
 		glDeleteRenderbuffers(1, &_colorRenderbuffer);
-		checkOpenGLError("Framebuffer::~Framebuffer() -> glDeleteRenderbuffers -> color");
+		checkOpenGLError("glDeleteRenderbuffers");
 	}
 	
 	if (_depthRenderbuffer && glIsRenderbuffer(_depthRenderbuffer))
 	{
 		glDeleteRenderbuffers(1, &_depthRenderbuffer);
-		checkOpenGLError("Framebuffer::~Framebuffer() -> glDeleteRenderbuffers -> depth");
+		checkOpenGLError("glDeleteRenderbuffers");
 	}
 	
 	glDeleteFramebuffers(1, &_id);
-	checkOpenGLError("Framebuffer::~Framebuffer -> glDeleteFramebuffers");
+	checkOpenGLError("glDeleteFramebuffers");
 	
 	_rc->renderState().frameBufferDeleted(_id);
 }
@@ -218,7 +221,7 @@ void Framebuffer::addSameRendertarget()
 	std::string texName = name() + "_color_" + intToStr(_numTargets);
 	
 	Texture c;
-	if (_isCubemapBuffer)
+	if (_description.isCubemap)
 	{
 		c = _textureFactory->genCubeTexture(prev->internalFormat(), prev->width(), 
 			prev->format(), prev->dataType(), texName);
@@ -277,11 +280,14 @@ bool Framebuffer::setCurrentRenderTarget(size_t index)
 }
 
 #if (ET_OPENGLES)
+
 void Framebuffer::setDrawBuffersCount(int)
 {
 	assert(false && "glDrawBuffers is not supported in OpenGL ES");
 }
+
 #else
+
 void Framebuffer::setDrawBuffersCount(int count)
 {
 	_rc->renderState().bindFramebuffer(_id);
@@ -289,12 +295,13 @@ void Framebuffer::setDrawBuffersCount(int count)
 	checkOpenGLError("Framebuffer::setDrawBuffersCount -> glDrawBuffers - %s", name().c_str());
 	checkStatus();
 }
+
 #endif
 
 bool Framebuffer::setCurrentCubemapFace(uint32_t faceIndex)
 {
-	if (!_isCubemapBuffer) return false;
-
+	assert(_description.isCubemap);
+	
 	_rc->renderState().bindFramebuffer(_id);
 
 	uint32_t target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex;
@@ -317,35 +324,68 @@ bool Framebuffer::setCurrentCubemapFace(uint32_t faceIndex)
 	return checkStatus();
 }
 
-void Framebuffer::createColorRenderbuffer(uint32_t internalFormat)
+void Framebuffer::createColorRenderbuffer()
 {
 	glGenRenderbuffers(1, &_colorRenderbuffer);
-	checkOpenGLError("glGenRenderbuffers -> color");
+	checkOpenGLError("glGenRenderbuffers");
 	
 	_rc->renderState().bindRenderbuffer(_colorRenderbuffer);
 	
-	glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, _size.x, _size.y);
-	checkOpenGLError("glRenderbufferStorage -> color");
+	if (_description.numSamples > 1)
+	{
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, _description.numSamples, _description.colorInternalformat, _size.x, _size.y);
+		checkOpenGLError("glRenderbufferStorageMultisample");
+	}
+	else
+	{
+		glRenderbufferStorage(GL_RENDERBUFFER, _description.colorInternalformat, _size.x, _size.y);
+		checkOpenGLError("glRenderbufferStorage");
+	}
+	
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _colorRenderbuffer);
-	checkOpenGLError("glFramebufferRenderbuffer -> color");
+	checkOpenGLError("glFramebufferRenderbuffer");
 }
 
-void Framebuffer::createDepthRenderbuffer(uint32_t internalFormat)
+void Framebuffer::createDepthRenderbuffer()
 {
 	glGenRenderbuffers(1, &_depthRenderbuffer);
-	checkOpenGLError("glGenRenderbuffers -> depth");
+	checkOpenGLError("glGenRenderbuffers");
 	
 	_rc->renderState().bindRenderbuffer(_depthRenderbuffer);
 	
-	glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, _size.x, _size.y);
-	checkOpenGLError("glRenderbufferStorage -> depth");
+	if (_description.numSamples > 1)
+	{
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, _description.numSamples, _description.depthInternalformat, _size.x, _size.y);
+		checkOpenGLError("glRenderbufferStorageMultisample");
+	}
+	else
+	{
+		glRenderbufferStorage(GL_RENDERBUFFER, _description.depthInternalformat, _size.x, _size.y);
+		checkOpenGLError("glRenderbufferStorage");
+	}
+	
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderbuffer);
-	checkOpenGLError("glFramebufferRenderbuffer -> depth");
+	checkOpenGLError("glFramebufferRenderbuffer");
 }
 
 void Framebuffer::forceSize(const vec2i& sz)
 {
 	_size = sz;
+}
+
+void Framebuffer::resolveMultisampledTo(Framebuffer::Pointer framebuffer)
+{
+	_rc->renderState().bindFramebuffer(_id);
+	
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, _id);
+	checkOpenGLError("glBindFramebuffer");
+	
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer->glID());
+	checkOpenGLError("glBindFramebuffer");
+
+	glBlitFramebuffer(0, 0, _size.x, _size.y, 0, 0, framebuffer->size().x, framebuffer->size().y,
+		GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	checkOpenGLError("glBlitFramebuffer");
 }
 
 /*

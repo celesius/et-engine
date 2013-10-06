@@ -26,17 +26,18 @@ namespace et
 		void flush();
 
 		std::vector<LoadableObject::Pointer> findObjects(const std::string& key);
-		LoadableObject::Pointer findAnyObject(const std::string& key);
+		LoadableObject::Pointer findAnyObject(const std::string& key, uint64_t* property = nullptr);
 
 		void startMonitoring();
 		void stopMonitoring();
-		
 		void report();
+		
+		int64_t getFileProperty(const std::string& p);
+		uint64_t getObjectProperty(LoadableObject::Pointer);
 
 	private:
 		ET_DENY_COPY(ObjectsCache)
 
-		int64_t getFileProperty(const std::string& p);
 		void performUpdate();
 		void update(float t);
 

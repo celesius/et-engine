@@ -11,7 +11,7 @@ using namespace et;
 
 Framebuffer::Pointer FramebufferFactory::createFramebuffer(const vec2i& size, const std::string& id,
 	int32_t colorInternalformat, uint32_t colorFormat, uint32_t colorType, int32_t depthInternalformat,
-	uint32_t depthFormat, uint32_t depthType, bool useRenderbuffers)
+	uint32_t depthFormat, uint32_t depthType, bool useRenderbuffers, int32_t samples)
 {
 	FramebufferDescription desc;
 	desc.colorFormat = colorFormat;
@@ -21,10 +21,12 @@ Framebuffer::Pointer FramebufferFactory::createFramebuffer(const vec2i& size, co
 	desc.depthFormat = depthFormat;
 	desc.depthInternalformat = depthInternalformat;
 	desc.depthType = depthType;
-	desc.includeDepthRenderTarget = true;
 	desc.numColorRenderTargets = 1;
-	desc.colorIsRenderbuffer = useRenderbuffers;
-	desc.depthIsRenderbuffer = useRenderbuffers;
+	
+	desc.numSamples = samples;
+	desc.colorIsRenderbuffer = (samples > 1) || useRenderbuffers;
+	desc.depthIsRenderbuffer = (samples > 1) || useRenderbuffers;
+	
 	return Framebuffer::Pointer(new Framebuffer(renderContext(), _tf, desc, id));
 }
 
@@ -40,7 +42,6 @@ Framebuffer::Pointer FramebufferFactory::createCubemapFramebuffer(size_t size, c
 	desc.depthFormat = depthFormat;
 	desc.depthInternalformat = depthInternalformat;
 	desc.depthType = depthType;
-	desc.includeDepthRenderTarget = true;
 	desc.isCubemap = true;
 	desc.numColorRenderTargets = 1;
 	return Framebuffer::Pointer(new Framebuffer(renderContext(), _tf, desc, id));

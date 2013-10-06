@@ -38,20 +38,24 @@ ProgramFactory::ProgramFactory(RenderContext* rc) : APIObjectFactory(rc)
 	{
 		_fragShaderHeader = 
 			"#define etTexture2D		texture2D\n"
+			"#define etTexture2DLod		textureLod\n"
 			"#define etShadow2D			shadow2D\n"
 			"#define etTexture2DProj	texture2DProj\n"
 			"#define etShadow2DProj		shadow2DProj\n"
 			"#define etTextureCube		textureCube\n"
+			"#define etTextureCubeLod	textureCubeLod\n"
 			"#define etFragmentIn		varying\n"
 			"#define etFragmentOut		gl_FragColor\n"
 			;
 
 		_vertShaderHeader =
 			"#define etTexture2D		texture2D\n"
+			"#define etTexture2DLod		texture2DLod\n"
 			"#define etShadow2D			shadow2D\n"
 			"#define etTexture2DProj	texture2DProj\n"
 			"#define etShadow2DProj		shadow2DProj\n"
 			"#define etTextureCube		textureCube\n"
+			"#define etTextureCubeLod	textureCubeLod\n"
 			"#define etVertexIn			attribute\n"
 			"#define etVertexOut		varying\n"
 			;
@@ -60,10 +64,12 @@ ProgramFactory::ProgramFactory(RenderContext* rc) : APIObjectFactory(rc)
 	{
 		_fragShaderHeader = 
 			"#define etTexture2D		texture\n"
+			"#define etTexture2DLod		textureLod\n"
 			"#define etShadow2D			texture\n"
 			"#define etTexture2DProj	textureProj\n"
 			"#define etShadow2DProj		textureProj\n"
 			"#define etTextureCube		texture\n"
+			"#define etTextureCubeLod	textureLod\n"
 			"#define etFragmentIn		in\n"
 			"#define etFragmentOut		FragColor\n"
 			"out vec4 FragColor;\n"
@@ -71,10 +77,12 @@ ProgramFactory::ProgramFactory(RenderContext* rc) : APIObjectFactory(rc)
 
 		_vertShaderHeader = 
 			"#define etTexture2D		texture\n"
+			"#define etTexture2DLod		textureLod\n"
 			"#define etShadow2D			texture\n"
 			"#define etTexture2DProj	textureProj\n"
 			"#define etShadow2DProj		textureProj\n"
 			"#define etTextureCube		texture\n"
+			"#define etTextureCubeLod	textureLod\n"
 			"#define etVertexIn			in\n"
 			"#define etVertexOut		out\n"
 			;

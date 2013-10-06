@@ -153,7 +153,7 @@ vec3 et::closestPointOnTriangle(const vec3& sourcePosition, const triangle& tria
 bool et::pointInsideTriangle(const vec3& p, const triangle& t)
 {
 	vec2 b = barycentricCoordinates(p, t);
-	return (b.x >= 0) && (b.y >= 0) && (b.x + b.y <= 1.0f);
+	return (b.x > 0.0f) && (b.x < 1.0) && (b.y > 0.0f) && (b.y < 1.0f);
 }
 
 bool et::pointInsideTriangle(const vec3& p, const triangle& t, const vec3& n)
@@ -204,9 +204,13 @@ bool et::intersect::rayPlane(const ray3d& r, const plane& p, vec3* intersection_
 
 bool et::intersect::rayTriangle(const ray3d& r, const triangle& t, vec3* intersection_pt)
 {
-	vec3 ip;
-	if (!rayPlane(r, plane(t), &ip)) return false;
-
+	float d = dot(r.direction, t.normalizedNormal());
+	if (d >= 0.0f) return false;
+	
+	float a = dot(t.normalizedNormal(), (t.normalizedNormal() * dot(t.normalizedNormal(), t.v1())) - r.origin) / d;
+	if (a <= 0.0) return false;
+	
+	vec3 ip = r.origin + a * r.direction;
 	if (pointInsideTriangle(ip, t))
 	{
 		if (intersection_pt)

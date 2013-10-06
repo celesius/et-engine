@@ -19,10 +19,9 @@ namespace et
 		vec2i size;
 
 		size_t numColorRenderTargets;
-		int includeDepthRenderTarget;
+		int32_t numSamples;
 
 		int32_t colorInternalformat;
-		
 		uint32_t colorFormat;
 		uint32_t colorType;
 
@@ -34,9 +33,10 @@ namespace et
 		bool depthIsRenderbuffer;
 		bool isCubemap;
 
-		FramebufferDescription() : numColorRenderTargets(0), includeDepthRenderTarget(0), colorInternalformat(0), 
-			colorFormat(0), colorType(0), depthInternalformat(0), depthFormat(0), depthType(0),
-			colorIsRenderbuffer(false), depthIsRenderbuffer(false), isCubemap(false) { }
+		FramebufferDescription() :
+			numColorRenderTargets(0), numSamples(0), colorInternalformat(0), colorFormat(0),
+			colorType(0), depthInternalformat(0), depthFormat(0), depthType(0), colorIsRenderbuffer(false),
+			depthIsRenderbuffer(false), isCubemap(false) { }
 	};
 
 	class Framebuffer : public Object
@@ -99,6 +99,8 @@ namespace et
 			{ _depthRenderbuffer = r; }
 		
 		void forceSize(const vec2i&);
+		
+		void resolveMultisampledTo(Framebuffer::Pointer);
 
 	private:
 		friend class FramebufferFactory;
@@ -109,12 +111,13 @@ namespace et
 		Framebuffer(RenderContext* rc, TextureFactory* tf,
 			uint32_t fboId, const std::string& name);
 
-		void createColorRenderbuffer(uint32_t internalFormat);
-		void createDepthRenderbuffer(uint32_t internalFormat);
+		void createColorRenderbuffer();
+		void createDepthRenderbuffer();
 
 	private:
 		RenderContext* _rc;
 		TextureFactory* _textureFactory;
+		FramebufferDescription _description;
 		
 		Texture _currentRendertarget;
 		Texture _renderTargets[MaxRenderTargets];
@@ -126,8 +129,6 @@ namespace et
 		uint32_t _id;
 		uint32_t _colorRenderbuffer;
 		uint32_t _depthRenderbuffer;
-
-		bool _isCubemapBuffer;
 	};
 
 }
