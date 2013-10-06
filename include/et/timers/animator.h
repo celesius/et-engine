@@ -81,6 +81,9 @@ namespace et
 			_startTime = actualTime();
 		};
 		
+		ET_DECLARE_EVENT0(updated);
+		ET_DECLARE_EVENT0(finished);
+		
 	private:
 		void update(float t)
 		{
@@ -91,11 +94,13 @@ namespace et
 				
 				if (delegate())
 					delegate()->animatorUpdated(this);
-
+				updated.invoke();
+				
 				cancelUpdates();
 				
 				if (delegate())
 					delegate()->animatorFinished(this);
+				finished.invoke();
 			}
 			else 
 			{
@@ -103,6 +108,7 @@ namespace et
 				
 				if (delegate())
 					delegate()->animatorUpdated(this);
+				updated.invoke();
 			}
 		}
 

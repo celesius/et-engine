@@ -127,9 +127,6 @@ namespace et
 		ArrayValue(ValueBase::Pointer p) :
 			ValuePointer<ArrayValue::ValueType, ValueClass_Array>(p) { }
 		
-		ArrayValue& operator = (const ArrayValue& r)
-			{ reference().content = r->content; return *this; }
-		
 	public:
 		void printContent() const;
 	};

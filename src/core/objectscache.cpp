@@ -66,11 +66,25 @@ std::vector<LoadableObject::Pointer> ObjectsCache::findObjects(const std::string
 	return result;
 }
 
-LoadableObject::Pointer ObjectsCache::findAnyObject(const std::string& key)
+LoadableObject::Pointer ObjectsCache::findAnyObject(const std::string& key, uint64_t* property)
 {
 	CriticalSectionScope lock(_lock);
+	
 	auto i = _objects.find(key);
-	return (i == _objects.end()) ? LoadableObject::Pointer() : i->second.front().object;
+	if (i == _objects.end())
+	{
+		if (property)
+			*property = 0;
+		
+		return  LoadableObject::Pointer();
+	}
+	else
+	{
+		if (property)
+			*property = i->second.front().identifiers[key];
+		
+		return i->second.front().object;
+	}
 }
 
 
@@ -167,6 +181,22 @@ void ObjectsCache::update(float t)
 int64_t ObjectsCache::getFileProperty(const std::string& p)
 {
 	return getFileDate(p);
+}
+
+uint64_t ObjectsCache::getObjectProperty(LoadableObject::Pointer ptr)
+{
+	CriticalSectionScope lock(_lock);
+	
+	for (auto& entry : _objects)
+	{
+		for (auto& p : entry.second)
+		{
+			if (p.object == ptr)
+				return p.identifiers[ptr->origin()];
+		}
+	}
+	
+	return 0;
 }
 
 void ObjectsCache::performUpdate()

@@ -50,7 +50,8 @@ Texture TextureFactory::loadTexture(const std::string& fileName, ObjectsCache& c
 		return Texture();
 	}
 	
-    Texture texture = cache.findAnyObject(file);
+	uint64_t cachedFileProperty = 0;
+    Texture texture = cache.findAnyObject(file, &cachedFileProperty);
 	if (texture.invalid())
 	{
 		TextureDescription::Pointer desc =
@@ -60,7 +61,7 @@ Texture TextureFactory::loadTexture(const std::string& fileName, ObjectsCache& c
 		{
 			bool calledFromAnotherThread = Threading::currentThread() != threading().renderingThread();
 			
-			texture = Texture(new TextureData(renderContext(), desc, desc->origin(), calledFromAnotherThread));
+			texture = Texture(new TextureData(renderContext(), desc, desc->origin(), async || calledFromAnotherThread));
 			cache.manage(texture, ObjectLoader::Pointer(this));
 			
 			if (async)
@@ -70,15 +71,20 @@ Texture TextureFactory::loadTexture(const std::string& fileName, ObjectsCache& c
 		}
 		
 	}
-	else if (async && (delegate != nullptr))
+	else
 	{
-		Invocation1 i;
-
-		i.setTarget(delegate, &TextureLoaderDelegate::textureDidStartLoading, texture);
-		i.invokeInMainRunLoop();
-
-		i.setTarget(delegate, &TextureLoaderDelegate::textureDidLoad, texture);
-		i.invokeInMainRunLoop();
+		auto newProperty = cache.getFileProperty(file);
+		if (cachedFileProperty != newProperty)
+			reloadObject(texture, cache);
+	
+		if (async && (delegate != nullptr))
+		{
+			Invocation1 i;
+			i.setTarget(delegate, &TextureLoaderDelegate::textureDidStartLoading, texture);
+			i.invokeInMainRunLoop();
+			i.setTarget(delegate, &TextureLoaderDelegate::textureDidLoad, texture);
+			i.invokeInMainRunLoop();
+		}
 	}
    
 	return texture;
