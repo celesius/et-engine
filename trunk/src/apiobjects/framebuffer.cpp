@@ -383,9 +383,14 @@ void Framebuffer::resolveMultisampledTo(Framebuffer::Pointer framebuffer)
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer->glID());
 	checkOpenGLError("glBindFramebuffer");
 
+#if (ET_PLATFORM_IOS)
+	glResolveMultisampleFramebufferAPPLE();
+	checkOpenGLError("glResolveMultisampleFramebufferAPPLE");
+#else
 	glBlitFramebuffer(0, 0, _size.x, _size.y, 0, 0, framebuffer->size().x, framebuffer->size().y,
 		GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	checkOpenGLError("glBlitFramebuffer");
+#endif
 }
 
 /*

@@ -145,8 +145,8 @@ using namespace et;
 	if (_multisampled)
 	{
 		_rc->renderState().bindFramebuffer(_multisampledFramebuffer);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER_APPLE, _mainFramebuffer->glID());
-		glBindFramebuffer(GL_READ_FRAMEBUFFER_APPLE, _multisampledFramebuffer->glID());
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _mainFramebuffer->glID());
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, _multisampledFramebuffer->glID());
 		glResolveMultisampleFramebufferAPPLE();
 	}
 	
@@ -240,7 +240,7 @@ using namespace et;
 		 * Create color buffer
 		 */
 		_rc->renderState().bindRenderbuffer(_multisampledFramebuffer->colorRenderbuffer());
-		glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, 4, GL_RGBA8_OES, size.x, size.y);
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8_OES, size.x, size.y);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
 			_multisampledFramebuffer->colorRenderbuffer());
 		checkOpenGLError("Multisampled color buffer");
@@ -249,7 +249,7 @@ using namespace et;
 		 * Create depth buffer
 		 */
 		_rc->renderState().bindRenderbuffer(_multisampledFramebuffer->depthRenderbuffer());
-		glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT16, size.x, size.y);
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT16, size.x, size.y);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
 			_multisampledFramebuffer->depthRenderbuffer());
 		checkOpenGLError("Multisampled depth buffer");
