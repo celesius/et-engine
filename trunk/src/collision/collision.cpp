@@ -153,7 +153,7 @@ vec3 et::closestPointOnTriangle(const vec3& sourcePosition, const triangle& tria
 bool et::pointInsideTriangle(const vec3& p, const triangle& t)
 {
 	vec2 b = barycentricCoordinates(p, t);
-	return (b.x > 0.0f) && (b.x < 1.0) && (b.y > 0.0f) && (b.y < 1.0f);
+	return (b.x >= 0.0f) && (b.x <= 1.0) && (b.y >= 0.0f) && (b.y <= 1.0f) && (b.x + b.y < 1.0f);
 }
 
 bool et::pointInsideTriangle(const vec3& p, const triangle& t, const vec3& n)

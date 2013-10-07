@@ -7,9 +7,10 @@
 
 #pragma once
 
-#include <et/core/et.h>
-
 #if (ET_PLATFORM_MAC || ET_PLATFORM_IOS)
 #	include <OpenAL/al.h>
 #	include <OpenAL/alc.h>
+#elif (ET_PLATFORM_WIN)
+#	include <oal\al.h>
+#	include <oal\alc.h>
 #endif

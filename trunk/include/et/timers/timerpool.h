@@ -46,9 +46,13 @@ namespace et
 
 		struct QueueEntry
 		{
+		public:
 			TimedObject* object;
 			QueueAction action;
-			QueueEntry(TimedObject* o, QueueAction a) : object(o), action(a) { }
+
+		public:
+			QueueEntry(TimedObject* o, QueueAction a) : 
+					object(o), action(a) { }
 
 			bool operator == (const QueueEntry& e)
 				{ return (e.object == object) && (e.action == action); }

@@ -64,7 +64,7 @@ void TimerPool::update(float t)
 {
 	CriticalSectionScope lock(_lock);
 
-	if (_queue.size())
+	if (_queue.size() > 0)
 	{
 		for (auto& i : _queue)
 		{
@@ -79,27 +79,16 @@ void TimerPool::update(float t)
 
 	_updating = true;
 
-	auto i = _timedObjects.begin();
-	while (i != _timedObjects.end())
+	for (auto i = _timedObjects.begin(); i != _timedObjects.end(); )
 	{
-		const QueueEntry& obj = *i;
+		if (i->action == QueueAction_Update)
+			i->object->update(t);
 
-		if (obj.action == QueueAction_Update)
-		{
-			if (obj.object->running())
-				obj.object->update(t);
-
-			i = obj.object->running() ? ++i : _timedObjects.erase(i);
-		}
-		else if (obj.action == QueueAction_Remove)
-		{
+		if ((i->action == QueueAction_Remove) || !i->object->running())
 			i = _timedObjects.erase(i);
-		}
-		else
-		{
-			assert(false && "Unresolved state for TimerPool QueueEntry");
-		}
-	} 
+		else 
+			++i;
+	}
 
 	_updating = false;
 }
