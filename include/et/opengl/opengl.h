@@ -56,9 +56,22 @@
 #	define glIsVertexArray							glIsVertexArrayOES
 #	define glDeleteVertexArrays						glDeleteVertexArraysOES
 #	define glClearDepth								glClearDepthf
+#	define glRenderbufferStorageMultisample			glRenderbufferStorageMultisampleAPPLE
 #
 #	define GL_TEXTURE_MAX_LEVEL						GL_TEXTURE_MAX_LEVEL_APPLE
 #	define GL_VERTEX_ARRAY_BINDING					GL_VERTEX_ARRAY_BINDING_OES
+#
+#	if !defined(GL_MAX_SAMPLES)
+#		define GL_MAX_SAMPLES						GL_MAX_SAMPLES_APPLE
+#	endif
+#
+#	if !defined(GL_READ_FRAMEBUFFER)
+#		define GL_READ_FRAMEBUFFER					GL_READ_FRAMEBUFFER_APPLE
+#	endif
+#
+#	if !defined(GL_DRAW_FRAMEBUFFER)
+#		define GL_DRAW_FRAMEBUFFER					GL_DRAW_FRAMEBUFFER_APPLE
+#	endif
 #
 #elif (ET_PLATFORM_ANDROID)
 #
