@@ -62,7 +62,8 @@ bool et::fileExists(const std::string& name)
 
 bool et::folderExists(const std::string& folder)
 {
-	return (GetFileAttributes(folder.c_str()) & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY;
+	auto fa = GetFileAttributes(folder.c_str());
+	return (fa != INVALID_FILE_ATTRIBUTES) && ((fa & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY);
 }
 
 void et::findFiles(const std::string& folder, const std::string& mask, bool recursive, StringList& list)
@@ -153,9 +154,32 @@ std::string et::libraryBaseFolder()
 	return result;
 }
 
-bool et::createDirectory(const std::string& name, bool /* recursive */)
+bool et::createDirectory(const std::string& name, bool recursive)
 {
-	return CreateDirectory(name.c_str(), nullptr) != 0;
+	if (recursive)
+	{
+		char delim[] = {pathDelimiter, 0};
+		bool gotError = false;
+		StringList components = split(name, std::string(delim));
+		std::string path;
+		for (auto& dir : components)
+		{
+			path += dir + "\\";
+			if (!folderExists(path))
+				gotError |= ::CreateDirectory(path.c_str(), nullptr) == 0;
+		}
+
+		return !gotError;
+	}
+	else
+	{
+		return ::CreateDirectory(name.c_str(), nullptr) == 0;
+	}
+}
+
+bool et::removeFile(const std::string& path)
+{
+	return DeleteFile(path.c_str());
 }
 
 void et::findSubfolders(const std::string& folder, bool recursive, StringList& list)

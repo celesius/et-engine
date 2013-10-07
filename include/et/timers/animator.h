@@ -96,11 +96,11 @@ namespace et
 					delegate()->animatorUpdated(this);
 				updated.invoke();
 				
-				cancelUpdates();
-				
 				if (delegate())
 					delegate()->animatorFinished(this);
 				finished.invoke();
+
+				cancelUpdates();
 			}
 			else 
 			{

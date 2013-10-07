@@ -24,13 +24,8 @@ void RunLoop::update(uint64_t t)
 	if (_active) 
 	{
 		_taskPool.update(_time);
-		
-		auto i = _timerPools.begin();
-		while (i != _timerPools.end())
-		{
-			(*i)->update(_time);
-			++i;
-		}
+		for (auto& tp : _timerPools)
+			tp->update(_time);
 	}
 }
 
