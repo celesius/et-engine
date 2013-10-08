@@ -14,4 +14,8 @@
 namespace et
 {
 	void excludeFileFromICloudBackup(const std::string&);
+	
+	void saveImageToPhotos(const std::string&, void(*callback)(bool));
+	
+	void shareFile(const std::string& path, const std::string& scheme);
 }
