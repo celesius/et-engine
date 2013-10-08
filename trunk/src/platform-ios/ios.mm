@@ -5,12 +5,21 @@
  *
  */
 
-#import <sys/xattr.h>
+#import <AssetsLibrary/AssetsLibrary.h>
+
 #import <UIKit/UIDevice.h>
+#import <UIKit/UIView.h>
+#import <UIKit/UIViewController.h>
+#import <UIKit/UIDocumentInteractionController.h>
+
+#include <sys/xattr.h>
+#include <et/app/application.h>
 #include <et/platform/platformtools.h>
 #include <et/platform-ios/ios.h>
 
 using namespace et;
+
+static UIDocumentInteractionController* sharedInteractionController = nil;
 
 void et::excludeFileFromICloudBackup(const std::string& path)
 {
@@ -36,6 +45,36 @@ void et::excludeFileFromICloudBackup(const std::string& path)
 		if (result != 0)
 			NSLog(@"Failed to exclude file from iCloud backup: %s", path.c_str());
 	}
+}
+
+void et::saveImageToPhotos(const std::string& path, void(*callback)(bool))
+{
+	ALAssetsLibrary* library = [[ALAssetsLibrary alloc] init];
+	
+	[library writeImageDataToSavedPhotosAlbum:[NSData dataWithContentsOfFile:[NSString stringWithUTF8String:path.c_str()]]
+		metadata:nil completionBlock:^(NSURL *assetURL, NSError *error)
+	{
+		callback(error == nil);
+		if (error != nil)
+		{
+			NSLog(@"Unable to save image %s to Saved Photos Album:\n%@", path.c_str(), error);
+		}
+	}];
+	
+#if (!ET_OBJC_ARC_ENABLED)
+	[library release];
+#endif
+}
+
+void et::shareFile(const std::string& path, const std::string& scheme)
+{
+	if (sharedInteractionController == nil)
+		sharedInteractionController = [[UIDocumentInteractionController alloc] init];
+	
+	UIViewController* handle = (__bridge UIViewController*)(application().renderingContextHandle());
+	sharedInteractionController.UTI = [NSString stringWithUTF8String:scheme.c_str()];
+	sharedInteractionController.URL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:path.c_str()]];
+	[sharedInteractionController presentOptionsMenuFromRect:handle.view.bounds inView:handle.view animated:YES];
 }
 
 std::string et::selectFile(const StringList&, SelectFileMode, const std::string&)
