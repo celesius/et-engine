@@ -42,7 +42,12 @@ void GesturesRecognizer::handlePointersMovement()
 			float currentDistance = (currentPositions[0] - currentPositions[1]).length();
 			float previousDistance = (previousPositions[0] - previousPositions[1]).length();
 			float zoomValue = currentDistance / previousDistance;
-			zoomAroundPoint.invoke(zoomValue, 0.5f * (currentPositions[0] + currentPositions[1]));
+			
+			vec2 center = 0.5f * (previousPositions[0] + previousPositions[1]);
+			float angle1 = outerProduct(dir1, previousPositions[0] - center);
+			float angle2 = outerProduct(dir2, previousPositions[1] - center);
+			rotate.invoke(0.5f * (angle1 + angle2));
+			zoomAroundPoint.invoke(zoomValue, center);
 			zoom.invoke(zoomValue);
 		}
 		else if (direction > 0.5f) // handle swipe gesture
@@ -99,9 +104,15 @@ void GesturesRecognizer::onPointerMoved(et::PointerInputInfo pi)
 		const PointerInputInfo& pPrev = _pointers[pi.id].previous; 
 		const PointerInputInfo& pCurr = _pointers[pi.id].current; 
 
+		vec2 offset = pCurr.normalizedPos - pPrev.normalizedPos;
+		vec2 speed = offset / etMax(0.01f, pCurr.timestamp - pPrev.timestamp);
+		
 		moved.invoke(pi.normalizedPos, pi.type);
-		drag.invoke((pCurr.normalizedPos - pPrev.normalizedPos) /
-			etMax(0.01f, pCurr.timestamp - pPrev.timestamp), pi.type);
+		
+		if (pCurr.type == PointerType_General)
+			dragWithGeneralPointer.invokeInMainRunLoop(speed, offset);
+		
+		drag.invoke(speed, pi.type);
 	}
 	else
 	{
@@ -191,4 +202,7 @@ void GesturesRecognizer::onGesturePerformed(GestureInputInfo i)
 
 	if (i.mask & GestureTypeMask_Swipe)
 		drag.invoke(i.values.xy(), PointerType_None);
+	
+	if (i.mask & GestureTypeMask_Rotate)
+		rotate.invokeInMainRunLoop(i.values.w);
 }

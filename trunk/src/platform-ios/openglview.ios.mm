@@ -240,7 +240,7 @@ using namespace et;
 		 * Create color buffer
 		 */
 		_rc->renderState().bindRenderbuffer(_multisampledFramebuffer->colorRenderbuffer());
-		glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8_OES, size.x, size.y);
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, size.x, size.y);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
 			_multisampledFramebuffer->colorRenderbuffer());
 		checkOpenGLError("Multisampled color buffer");

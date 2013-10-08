@@ -48,8 +48,17 @@
 #
 #	define ET_OPENGLES								1
 #
-#	define GL_DEPTH_COMPONENT24						GL_DEPTH_COMPONENT24_OES
-#	define GL_HALF_FLOAT							GL_HALF_FLOAT_OES
+#	if !defined(GL_DEPTH_COMPONENT24)
+#		define GL_DEPTH_COMPONENT24					GL_DEPTH_COMPONENT24_OES
+#	endif
+#
+#	if !defined(GL_HALF_FLOAT)
+#		define GL_HALF_FLOAT						GL_HALF_FLOAT_OES
+#	endif
+#
+#	if !defined(GL_RGBA8)
+#		define GL_RGBA8								GL_RGBA8_OES
+#	endif
 #
 #	define glGenVertexArrays						glGenVertexArraysOES
 #	define glBindVertexArray						glBindVertexArrayOES
@@ -58,8 +67,13 @@
 #	define glClearDepth								glClearDepthf
 #	define glRenderbufferStorageMultisample			glRenderbufferStorageMultisampleAPPLE
 #
-#	define GL_TEXTURE_MAX_LEVEL						GL_TEXTURE_MAX_LEVEL_APPLE
-#	define GL_VERTEX_ARRAY_BINDING					GL_VERTEX_ARRAY_BINDING_OES
+#	if !defined(GL_TEXTURE_MAX_LEVEL)
+#		define GL_TEXTURE_MAX_LEVEL					GL_TEXTURE_MAX_LEVEL_APPLE
+#	endif
+#
+#	if !defined(GL_VERTEX_ARRAY_BINDING)
+#		define GL_VERTEX_ARRAY_BINDING				GL_VERTEX_ARRAY_BINDING_OES
+#	endif
 #
 #	if !defined(GL_MAX_SAMPLES)
 #		define GL_MAX_SAMPLES						GL_MAX_SAMPLES_APPLE
