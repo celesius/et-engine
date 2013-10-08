@@ -72,9 +72,16 @@ void et::shareFile(const std::string& path, const std::string& scheme)
 		sharedInteractionController = [[UIDocumentInteractionController alloc] init];
 	
 	UIViewController* handle = (__bridge UIViewController*)(application().renderingContextHandle());
+	
+	CGRect presentRect = handle.view.bounds;
+	presentRect.origin.x = 0.5f * presentRect.size.width - 1.0f;
+	presentRect.origin.y = presentRect.size.height - 1.0f;
+	presentRect.size.height = 1.0f;
+	presentRect.size.width = 2.0f;
+	
 	sharedInteractionController.UTI = [NSString stringWithUTF8String:scheme.c_str()];
 	sharedInteractionController.URL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:path.c_str()]];
-	[sharedInteractionController presentOptionsMenuFromRect:handle.view.bounds inView:handle.view animated:YES];
+	[sharedInteractionController presentOptionsMenuFromRect:presentRect inView:handle.view animated:YES];
 }
 
 std::string et::selectFile(const StringList&, SelectFileMode, const std::string&)
