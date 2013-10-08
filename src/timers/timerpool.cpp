@@ -81,9 +81,9 @@ void TimerPool::update(float t)
 
 	for (auto i = _timedObjects.begin(); i != _timedObjects.end(); )
 	{
-		if (i->action == QueueAction_Update)
+		if ((i->action == QueueAction_Update) && i->object->running())
 			i->object->update(t);
-
+		
 		if ((i->action == QueueAction_Remove) || !i->object->running())
 			i = _timedObjects.erase(i);
 		else 
