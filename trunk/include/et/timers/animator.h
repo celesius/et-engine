@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <et/app/events.h>
 #include <et/timers/timedobject.h>
 #include <et/timers/timerpool.h>
 

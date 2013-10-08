@@ -38,6 +38,9 @@ void TimedObject::startUpdates(TimerPool* timerPool)
 void TimedObject::cancelUpdates()
 {
 	_running = false;
+	
+	if (_owner)
+		_owner->detachTimedObject(this);
 }
 
 void TimedObject::destroy()
