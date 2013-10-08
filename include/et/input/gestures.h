@@ -25,6 +25,8 @@ namespace et
 		ET_DECLARE_PROPERTY_GET_COPY_SET_COPY(float, holdThreshold, setHoldThreshold)
 
 	public:
+		ET_DECLARE_EVENT1(rotate, float)
+		
 		ET_DECLARE_EVENT1(zoom, float)
 		ET_DECLARE_EVENT2(zoomAroundPoint, float, vec2)
 		
@@ -42,6 +44,13 @@ namespace et
 		 * first parameter - velocity
 		 */
 		ET_DECLARE_EVENT2(drag, vec2, PointerType)
+		
+		/*
+		 * Drag gesture
+		 * first parameter - velocity
+		 * second parameter - offset
+		 */
+		ET_DECLARE_EVENT2(dragWithGeneralPointer, vec2, vec2)
 		
 		ET_DECLARE_EVENT2(pressed, vec2, PointerType)
 		ET_DECLARE_EVENT2(moved, vec2, PointerType)
