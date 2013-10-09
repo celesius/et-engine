@@ -79,12 +79,12 @@ namespace et
 		int transformMatrixLocation() const
 			{ return _mTransformLocation; }
 
-		void setModelViewMatrix(const mat4 &m);
-		void setMVPMatrix(const mat4 &m);
-		void setCameraPosition(const vec3& p);
-		void setPrimaryLightPosition(const vec3& p);
-		void setLightProjectionMatrix(const mat4 &m);
-		void setTransformMatrix(const mat4 &m);
+		void setModelViewMatrix(const mat4 &m, bool force = false);
+		void setMVPMatrix(const mat4 &m, bool force = false);
+		void setCameraPosition(const vec3& p, bool force = false);
+		void setPrimaryLightPosition(const vec3& p, bool force = false);
+		void setLightProjectionMatrix(const mat4 &m, bool force = false);
+		void setTransformMatrix(const mat4 &m, bool force = false);
 
 		void setCameraProperties(const Camera& cam);
 
@@ -92,11 +92,11 @@ namespace et
 		void setUniform(int nLoc, uint32_t, const unsigned int value);
 		void setUniform(int nLoc, uint32_t, const unsigned long value);
 		void setUniform(int nLoc, uint32_t, const float value);
-		void setUniform(int nLoc, uint32_t, const vec2& value);
-		void setUniform(int nLoc, uint32_t, const vec3& value);
-		void setUniform(int nLoc, uint32_t, const vec4& value);
-		void setUniform(int nLoc, uint32_t, const mat3& value);
-		void setUniform(int nLoc, uint32_t, const mat4& value);
+		void setUniform(int nLoc, uint32_t, const vec2& value, bool force = false);
+		void setUniform(int nLoc, uint32_t, const vec3& value, bool force = false);
+		void setUniform(int nLoc, uint32_t, const vec4& value, bool force = false);
+		void setUniform(int nLoc, uint32_t, const mat3& value, bool force = false);
+		void setUniform(int nLoc, uint32_t, const mat4& value, bool force = false);
 		
 		template <typename T>
 		void setUniform(const std::string& name, const T& value)
