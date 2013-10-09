@@ -140,18 +140,20 @@ using namespace et;
 {
 	checkOpenGLError("endRender");
 	
+	const GLenum discards[]  = { GL_DEPTH_ATTACHMENT, GL_COLOR_ATTACHMENT0 };
+	
 	if (_multisampled)
 	{
-		_rc->renderState().bindFramebuffer(_multisampledFramebuffer);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _mainFramebuffer->glID());
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, _multisampledFramebuffer->glID());
 		glResolveMultisampleFramebufferAPPLE();
+		checkOpenGLError("glResolveMultisampleFramebufferAPPLE");
 	}
+	
+	glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER, (_multisampled ? 2 : 1), discards);
+	checkOpenGLError("glDiscardFramebufferEXT");
+	
 	_rc->renderState().bindFramebuffer(_mainFramebuffer);
-	
-	const GLenum discards[]  = { GL_DEPTH_ATTACHMENT, GL_COLOR_ATTACHMENT0};
-	glDiscardFramebufferEXT(GL_FRAMEBUFFER, (_multisampled ? 2 : 1), discards);
-	
 	_rc->renderState().bindRenderbuffer(_mainFramebuffer->colorRenderbuffer());
 	[_context presentRenderbuffer:GL_RENDERBUFFER];
 	checkOpenGLError("[_context presentRenderbuffer:GL_RENDERBUFFER]");
