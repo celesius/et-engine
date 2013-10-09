@@ -140,8 +140,6 @@ using namespace et;
 {
 	checkOpenGLError("endRender");
 	
-	const GLenum discards[]  = { GL_DEPTH_ATTACHMENT, GL_COLOR_ATTACHMENT0};
-	
 	if (_multisampled)
 	{
 		_rc->renderState().bindFramebuffer(_multisampledFramebuffer);
@@ -149,12 +147,12 @@ using namespace et;
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, _multisampledFramebuffer->glID());
 		glResolveMultisampleFramebufferAPPLE();
 	}
-	
 	_rc->renderState().bindFramebuffer(_mainFramebuffer);
-	_rc->renderState().bindRenderbuffer(_mainFramebuffer->colorRenderbuffer());
 	
+	const GLenum discards[]  = { GL_DEPTH_ATTACHMENT, GL_COLOR_ATTACHMENT0};
 	glDiscardFramebufferEXT(GL_FRAMEBUFFER, (_multisampled ? 2 : 1), discards);
 	
+	_rc->renderState().bindRenderbuffer(_mainFramebuffer->colorRenderbuffer());
 	[_context presentRenderbuffer:GL_RENDERBUFFER];
 	checkOpenGLError("[_context presentRenderbuffer:GL_RENDERBUFFER]");
 }
