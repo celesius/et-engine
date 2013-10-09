@@ -13,8 +13,8 @@ using namespace et;
 IApplicationDelegate* et::Application::_delegate = nullptr;
 
 Application::Application() :
-	_renderContext(nullptr), _exitCode(0), _lastQueuedTimeMSec(queryTimeMSec()), _fpsLimitMSec(0),
-	_fpsLimitMSecFractPart(0)
+	_renderContext(nullptr), _exitCode(0), _lastQueuedTimeMSec(queryContiniousTimeInMilliSeconds()),
+	_fpsLimitMSec(0), _fpsLimitMSecFractPart(0)
 {
 	threading();
 	
@@ -68,7 +68,7 @@ void Application::idle()
 {
 	assert(_running);
 
-	uint64_t currentTime = queryTimeMSec();
+	uint64_t currentTime = queryContiniousTimeInMilliSeconds();
 	uint64_t elapsedTime = currentTime - _lastQueuedTimeMSec;
 
 	if (elapsedTime >= _fpsLimitMSec)
@@ -80,7 +80,7 @@ void Application::idle()
 			performRendering();
 		}
 		
-		_lastQueuedTimeMSec = queryTimeMSec();
+		_lastQueuedTimeMSec = queryContiniousTimeInMilliSeconds();
 	}
 	else 
 	{
@@ -157,7 +157,7 @@ void Application::resume()
 
 	platformResume();
 
-	_lastQueuedTimeMSec = queryTimeMSec();
+	_lastQueuedTimeMSec = queryContiniousTimeInMilliSeconds();
 	_runLoop.update(_lastQueuedTimeMSec);
 	_runLoop.resume();
 }

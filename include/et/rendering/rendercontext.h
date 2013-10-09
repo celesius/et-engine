@@ -31,7 +31,11 @@ namespace et
 		size_t averageFramePerSecond;
 		size_t averageDIPPerSecond;
 		size_t averagePolygonsPerSecond;
-		RenderingInfo() : averageFramePerSecond(0), averageDIPPerSecond(0), averagePolygonsPerSecond(0) { }
+		
+		uint64_t averageFrameTimeInMicroseconds;
+		
+		RenderingInfo() :
+			averageFramePerSecond(0), averageDIPPerSecond(0), averagePolygonsPerSecond(0) { }
 	};
 
 	class RenderContextPrivate;

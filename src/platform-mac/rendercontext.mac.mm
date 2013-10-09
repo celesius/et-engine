@@ -76,10 +76,13 @@ private:
 	NSOpenGLContext* openGlContext = nil;
 	CVDisplayLinkRef displayLink = nullptr;
 	CGLContextObj cglObject = nullptr;
+	NSSize scheduledSize = { };
 	
 	bool firstSync = true;
 	bool resizeScheduled = false;
-	NSSize scheduledSize = { };
+	
+public:
+	uint64_t frameDuration = 0;
 };
 
 RenderContext::RenderContext(const RenderContextParameters& inParams, Application* app) : _params(inParams),
@@ -129,6 +132,8 @@ void RenderContext::beginRender()
 	checkOpenGLError("RenderContext::beginRender");
 	
 	OpenGLCounters::reset();
+	
+	_private->frameDuration = queryCurrentTimeInMicroSeconds();
 	_renderState.bindDefaultFramebuffer();
 }
 
@@ -137,8 +142,10 @@ void RenderContext::endRender()
 	checkOpenGLError("RenderContext::endRender");
 
 	++_info.averageFramePerSecond;
+	
 	_info.averageDIPPerSecond += OpenGLCounters::DIPCounter;
 	_info.averagePolygonsPerSecond += OpenGLCounters::primitiveCounter;
+	_info.averageFrameTimeInMicroseconds += queryCurrentTimeInMicroSeconds() - _private->frameDuration;
 }
 
 /*
@@ -301,7 +308,7 @@ RenderContextPrivate::RenderContextPrivate(RenderContext*, RenderContextParamete
 	
 	cglObject = static_cast<CGLContextObj>([openGlContext CGLContextObj]);
 	
-	const int swap = 1;
+	const int swap = static_cast<int>(params.swapInterval);
 	CGLSetParameter(cglObject, kCGLCPSwapInterval, &swap);
 	
 	if (appParams.windowSize == WindowSize_Fullscreen)
@@ -342,7 +349,7 @@ void RenderContextPrivate::run()
 			exit(1);
 			return;
 		}
-		
+
 		CVDisplayLinkSetOutputCallback(displayLink, cvDisplayLinkOutputCallback, this);
 		
 		CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(displayLink, cglObject,

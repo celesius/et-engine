@@ -20,7 +20,7 @@ bool Input::canGetCurrentPointerInfo()
 PointerInputInfo Input::currentPointer()
 {
 	return PointerInputInfo(PointerType_None, vec2(0.0f), vec2(0.0f),
-		vec2(0.0f), 0, queryTime(), PointerOrigin_Touchscreen);
+		vec2(0.0f), 0, queryContiniousTimeInSeconds(), PointerOrigin_Touchscreen);
 }
 
 void Input::activateSoftwareKeyboard()

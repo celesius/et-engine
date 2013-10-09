@@ -28,7 +28,7 @@ using namespace et;
  */
 void Application::loaded()
 {
-	_lastQueuedTimeMSec = queryTimeMSec();
+	_lastQueuedTimeMSec = queryContiniousTimeInMilliSeconds();
 	_runLoop.update(_lastQueuedTimeMSec);
 	
 	delegate()->setApplicationParameters(_parameters);

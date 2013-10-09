@@ -16,6 +16,7 @@ void RenderContext::onFPSTimerExpired(NotifyTimer*)
 	{
 		_info.averageDIPPerSecond /= _info.averageFramePerSecond;
 		_info.averagePolygonsPerSecond /= _info.averageFramePerSecond;
+		_info.averageFrameTimeInMicroseconds /= _info.averageFramePerSecond;
 	}
 	
 	renderingInfoUpdated.invoke(_info);
@@ -23,6 +24,7 @@ void RenderContext::onFPSTimerExpired(NotifyTimer*)
 	_info.averageFramePerSecond = 0;
 	_info.averageDIPPerSecond = 0;
 	_info.averagePolygonsPerSecond = 0;
+	_info.averageFrameTimeInMicroseconds = 0;
 }
 
 void RenderContext::resized(const vec2i& sz)

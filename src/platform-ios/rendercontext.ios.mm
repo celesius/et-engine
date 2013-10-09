@@ -24,11 +24,12 @@ public:
 	
 public:
 #if !defined(ET_EMBEDDED_APPLICATION)	
-	etOpenGLViewController* _viewController;
+	etOpenGLViewController* _viewController = nil;
 #endif	
-	RenderContext* _rc;
-	bool failed;
 	
+	RenderContext* _rc = nullptr;
+	bool failed = false;
+	uint64_t frameDuration = 0;
 };
 
 RenderContext::RenderContext(const RenderContextParameters& params, Application* app) : _params(params),
@@ -91,6 +92,7 @@ size_t RenderContext::renderingContextHandle()
 void RenderContext::beginRender()
 {
 	OpenGLCounters::reset();
+	_private->frameDuration = queryCurrentTimeInMicroSeconds();
 	
 #if !defined(ET_EMBEDDED_APPLICATION)	
 	[_private->_viewController beginRender];
@@ -107,7 +109,9 @@ void RenderContext::endRender()
 	
 	_info.averageDIPPerSecond += OpenGLCounters::DIPCounter;
 	_info.averagePolygonsPerSecond += OpenGLCounters::primitiveCounter;
-	_info.averageFramePerSecond++;
+	
+	++_info.averageFramePerSecond;
+	_info.averageFrameTimeInMicroseconds += queryCurrentTimeInMicroSeconds() - _private->frameDuration;
 }
 
 /*

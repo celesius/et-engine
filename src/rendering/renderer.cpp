@@ -186,7 +186,7 @@ const std::string fullscreen_vertex_shader =
 	"etVertexIn vec2 Vertex;"
 	"etVertexOut vec2 TexCoord;"
 	"void main() {"
-	"	TexCoord = vec2(0.5) + 0.5 * Vertex;"
+	"	TexCoord = 0.5 * Vertex + vec2(0.5);"
 	"	gl_Position = vec4(Vertex, 0.0, 1.0);"
 	"}";
 
@@ -195,7 +195,7 @@ const std::string fullscreen_scaled_vertex_shader =
 	"etVertexIn vec2 Vertex;"
 	"etVertexOut vec2 TexCoord;"
 	"void main() {"
-	"	TexCoord = vec2(0.5) + 0.5 * Vertex;"
+	"	TexCoord = 0.5 * Vertex + vec2(0.5);"
 	"	gl_Position = vec4(vScale * Vertex, 0.0, 1.0);"
 	"}";
 
@@ -204,7 +204,7 @@ const std::string scaled_copy_vertex_shader =
 	"etVertexIn vec2 Vertex;"
 	"etVertexOut vec2 TexCoord;"
 	"void main() {"
-	"	TexCoord = vec2(0.5) + 0.5 * Vertex;"
+	"	TexCoord = 0.5 * Vertex + vec2(0.5);"
 	"	gl_Position = vec4(PositionScale.xy + TexCoord * PositionScale.zw, 0.0, 1.0);"
 	"}";
 

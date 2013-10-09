@@ -19,20 +19,20 @@ namespace et
 
 		void run() 
 		{ 
-			_runTimeMSec = queryTimeMSec();
+			_runTimeMSec = queryContiniousTimeInMilliSeconds();
 			_startTimeMSec = _runTimeMSec;
 		}
 
 		float lap()
 		{
-			_endTimeMSec = queryTimeMSec();
+			_endTimeMSec = queryContiniousTimeInMilliSeconds();
 			uint64_t dt = _endTimeMSec - _startTimeMSec;
 			_startTimeMSec = _endTimeMSec;
 			return static_cast<float>(dt) / 1000.0f;
 		}
 
 		float duration()
-			{ return static_cast<float>(queryTimeMSec() - _runTimeMSec) / 1000.0f; }
+			{ return static_cast<float>(queryContiniousTimeInMilliSeconds() - _runTimeMSec) / 1000.0f; }
 
 	private:
 		uint64_t _runTimeMSec;
