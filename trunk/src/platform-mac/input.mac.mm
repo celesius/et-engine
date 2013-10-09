@@ -23,10 +23,9 @@ PointerInputInfo Input::currentPointer()
 	NSPoint location = [keyWindow convertScreenToBase:[NSEvent mouseLocation]];
 	
 	PointerInputInfo result;
-	result.timestamp = queryTime();
 	
+	result.timestamp = queryContiniousTimeInSeconds();
 	result.pos = vec2(static_cast<float>(location.x), static_cast<float>(frame.size.height - location.y));
-	
 	result.normalizedPos = result.pos /
 		vec2(static_cast<float>(frame.size.width), static_cast<float>(frame.size.height));
 	

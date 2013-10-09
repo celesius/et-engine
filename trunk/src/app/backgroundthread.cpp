@@ -32,7 +32,7 @@ ThreadResult BackgroundThread::main()
 	while (running())
 	{
 		if (_runLoop.hasTasks())
-			_runLoop.update(queryTimeMSec());
+			_runLoop.update(queryContiniousTimeInMilliSeconds());
 		else
 			suspend();
 	}

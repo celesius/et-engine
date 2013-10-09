@@ -27,12 +27,12 @@ char et::invalidPathDelimiter = '\\';
 
 uint64_t queryActualTime();
 
-float et::queryTime()
+float et::queryContiniousTimeInSeconds()
 {
-	return static_cast<float>(queryTimeMSec()) / 1000.0f;
+	return static_cast<float>(queryContiniousTimeInMilliSeconds()) / 1000.0f;
 }
 
-uint64_t et::queryTimeMSec()
+uint64_t et::queryContiniousTimeInMilliSeconds()
 {
 	if (!startTimeInitialized)
 	{
@@ -41,6 +41,13 @@ uint64_t et::queryTimeMSec()
 	};
 	
 	return queryActualTime() - startTime;
+}
+
+uint64_t et::queryCurrentTimeInMicroSeconds()
+{
+	timeval tv = { };
+	gettimeofday(&tv, 0);
+	return static_cast<uint64_t>(tv.tv_sec) * 1000000 + static_cast<uint64_t>(tv.tv_usec);
 }
 
 uint64_t queryActualTime()

@@ -11,8 +11,11 @@
 
 namespace et
 {
-	float queryTime();
-	uint64_t queryTimeMSec();
+	float queryContiniousTimeInSeconds();
+	
+	uint64_t queryContiniousTimeInMilliSeconds();
+	
+	uint64_t queryCurrentTimeInMicroSeconds();
 
 	/**
 	 * Returns device's screen size in native units.
