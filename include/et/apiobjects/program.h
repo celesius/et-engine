@@ -91,7 +91,8 @@ namespace et
 		void setUniform(int nLoc, uint32_t, const int value);
 		void setUniform(int nLoc, uint32_t, const unsigned int value);
 		void setUniform(int nLoc, uint32_t, const unsigned long value);
-		void setUniform(int nLoc, uint32_t, const float value);
+		
+		void setUniform(int nLoc, uint32_t, const float value, bool force = false);
 		void setUniform(int nLoc, uint32_t, const vec2& value, bool force = false);
 		void setUniform(int nLoc, uint32_t, const vec3& value, bool force = false);
 		void setUniform(int nLoc, uint32_t, const vec4& value, bool force = false);
@@ -136,6 +137,7 @@ namespace et
 		int _mLightProjectionMatrixLocation;
 		int _mTransformLocation;
 
+		std::map<int, float> _floatCache;
 		std::map<int, vec2> _vec2Cache;
 		std::map<int, vec3> _vec3Cache;
 		std::map<int, vec4> _vec4Cache;
