@@ -112,6 +112,7 @@ void Program::setCameraProperties(const Camera& cam)
 void Program::buildProgram(const std::string& vertex_source, const std::string& geom_source,
 	const std::string& frag_source)
 {
+	_floatCache.clear();
 	_vec2Cache.clear();
 	_vec3Cache.clear();
 	_vec4Cache.clear();
@@ -418,15 +419,20 @@ void Program::setUniform(int nLoc, uint32_t, const unsigned long value)
 	checkOpenGLError("setUniform - unsigned long");
 }
 
-void Program::setUniform(int nLoc, uint32_t type, const float value)
+void Program::setUniform(int nLoc, uint32_t type, const float value, bool forced)
 {
 	if (nLoc == -1) return;
 	
 	(void)type;
 	assert(type == GL_FLOAT);
 	assert(loaded());
-	glUniform1f(nLoc, value);
-	checkOpenGLError("setUniform - float");
+	
+	if (forced || ((_floatCache.count(nLoc) == 0) || (_floatCache[nLoc] != value)))
+	{
+		_floatCache[nLoc] = value;
+		glUniform1f(nLoc, value);
+		checkOpenGLError("setUniform - float");
+	}
 }
 
 void Program::setUniform(int nLoc, uint32_t type, const vec2& value, bool forced)
