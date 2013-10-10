@@ -27,7 +27,7 @@ Framebuffer::Pointer FramebufferFactory::createFramebuffer(const vec2i& size, co
 	desc.colorIsRenderbuffer = (samples > 1) || useRenderbuffers;
 	desc.depthIsRenderbuffer = (samples > 1) || useRenderbuffers;
 	
-	return Framebuffer::Pointer(new Framebuffer(renderContext(), _tf, desc, id));
+	return Framebuffer::Pointer(new Framebuffer(renderContext(), desc, id));
 }
 
 Framebuffer::Pointer FramebufferFactory::createCubemapFramebuffer(size_t size, const std::string& id,
@@ -44,10 +44,10 @@ Framebuffer::Pointer FramebufferFactory::createCubemapFramebuffer(size_t size, c
 	desc.depthType = depthType;
 	desc.isCubemap = true;
 	desc.numColorRenderTargets = 1;
-	return Framebuffer::Pointer(new Framebuffer(renderContext(), _tf, desc, id));
+	return Framebuffer::Pointer(new Framebuffer(renderContext(), desc, id));
 }
 
 Framebuffer::Pointer FramebufferFactory::createFramebufferWrapper(uint32_t fbo, const std::string& id)
 {
-	return Framebuffer::Pointer(new Framebuffer(renderContext(), _tf, fbo, id));
+	return Framebuffer::Pointer(new Framebuffer(renderContext(), fbo, id));
 }

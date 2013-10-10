@@ -18,8 +18,8 @@ namespace et
 	class FramebufferFactory : public APIObjectFactory
 	{
 	public:
-		FramebufferFactory(RenderContext* rc, TextureFactory* tf) : 
-			APIObjectFactory(rc), _tf(tf) { }
+		FramebufferFactory(RenderContext* rc) :
+			APIObjectFactory(rc) { }
 
 		Framebuffer::Pointer createFramebuffer(const vec2i& size, const std::string& objectId = std::string(),
 			int32_t colorInternalformat = GL_RGBA, uint32_t colorFormat = GL_RGBA,
@@ -36,9 +36,6 @@ namespace et
 
 	private:
 		ET_DENY_COPY(FramebufferFactory)
-
-	private:
-		TextureFactory* _tf;
 	};
 
 }
