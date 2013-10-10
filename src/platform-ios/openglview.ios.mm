@@ -161,67 +161,71 @@ using namespace et;
 
 - (void)createFramebuffer
 {
-	[EAGLContext setCurrentContext:_context];
-	self.contentScaleFactor = [[UIScreen mainScreen] scale];
-	
-	CAEAGLLayer* glLayer = (CAEAGLLayer*)self.layer;
-	glLayer.opaque = YES;
-	glLayer.contentsScale = self.contentScaleFactor;
-	
-	vec2i size(static_cast<int>(glLayer.bounds.size.width * glLayer.contentsScale),
-		static_cast<int>(glLayer.bounds.size.height * glLayer.contentsScale));
-	
-	if (_mainFramebuffer.invalid())
+	@synchronized(_context)
 	{
-		_mainFramebuffer = _rc->framebufferFactory().createFramebuffer(size, "et-main-fbo", 0, 0,
-			0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, true, false);
+		[EAGLContext setCurrentContext:_context];
+		self.contentScaleFactor = [[UIScreen mainScreen] scale];
 		
-		GLuint colorRenderbuffer = 0;
-		glGenRenderbuffers(1, &colorRenderbuffer);
-		_rc->renderState().bindRenderbuffer(colorRenderbuffer);
-		if (![_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:glLayer])
-		{
-			log::error("Unable to create render buffer.");
-			assert(false);
-		}
-		_mainFramebuffer->setColorRenderbuffer(colorRenderbuffer);
-	}
-	else
-	{
-		_rc->renderState().bindRenderbuffer(_mainFramebuffer->colorRenderbuffer());
-		if (![_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:glLayer])
-		{
-			log::error("Unable to create render buffer.");
-			assert(false);
-		}
-		_mainFramebuffer->resize(size);
-	}
-	
-	if (_multisampled)
-	{
-		int maxSamples = 0;
-		glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+		CAEAGLLayer* glLayer = (CAEAGLLayer*)self.layer;
+		glLayer.opaque = YES;
+		glLayer.contentsScale = self.contentScaleFactor;
 		
-		if (_multisampledFramebuffer.invalid())
+		vec2i size(static_cast<int>(glLayer.bounds.size.width * glLayer.contentsScale),
+			static_cast<int>(glLayer.bounds.size.height * glLayer.contentsScale));
+		
+		if (_mainFramebuffer.invalid())
 		{
-			_multisampledFramebuffer = _rc->framebufferFactory().createFramebuffer(size,
-				"et-multisampled-framebuffer", GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE,
-				GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, true, maxSamples);
+			_mainFramebuffer = _rc->framebufferFactory().createFramebuffer(size, "et-main-fbo", 0, 0,
+				0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, true, false);
+			
+			GLuint colorRenderbuffer = 0;
+			glGenRenderbuffers(1, &colorRenderbuffer);
+			_rc->renderState().bindRenderbuffer(colorRenderbuffer);
+			if (![_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:glLayer])
+			{
+				log::error("Unable to create render buffer.");
+				assert(false);
+			}
+			_mainFramebuffer->setColorRenderbuffer(colorRenderbuffer);
 		}
 		else
 		{
-			_multisampledFramebuffer->resize(size);
+			_rc->renderState().bindRenderbuffer(_mainFramebuffer->colorRenderbuffer());
+			if (![_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:glLayer])
+			{
+				log::error("Unable to create render buffer.");
+				assert(false);
+			}
+			_mainFramebuffer->resize(size);
 		}
+		
+		if (_multisampled)
+		{
+			int maxSamples = 0;
+			glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+			
+			if (_multisampledFramebuffer.invalid())
+			{
+				_multisampledFramebuffer = _rc->framebufferFactory().createFramebuffer(size,
+					"et-multisampled-framebuffer", GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE,
+					GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, true, maxSamples);
+			}
+			else
+			{
+				_multisampledFramebuffer->resize(size);
+			}
+		}
+		
+		auto& defaultFramebuffer = [self defaultFramebuffer];
+		
+		_rc->renderState().setDefaultFramebuffer(defaultFramebuffer);
+		_rc->renderState().bindDefaultFramebuffer();
+		_rc->renderState().bindRenderbuffer(defaultFramebuffer->colorRenderbuffer());
+		
+		[self beginRender];
+		_rcNotifier->resized(size, _rc);
+		[self endRender];
 	}
-	
-	auto& defaultFramebuffer = [self defaultFramebuffer];
-	
-	_rc->renderState().setDefaultFramebuffer(defaultFramebuffer);
-	_rc->renderState().bindDefaultFramebuffer();
-	_rc->renderState().bindRenderbuffer(defaultFramebuffer->colorRenderbuffer());
-	
-	_rcNotifier->resized(size, _rc);
-	[EAGLContext setCurrentContext:nil];
 }
 
 - (void)deleteFramebuffer
@@ -232,10 +236,7 @@ using namespace et;
 
 - (void)layoutSubviews
 {
-	@synchronized(_context)
-	{
-		[self createFramebuffer];
-	}
+	[self createFramebuffer];
 }
 
 - (const Framebuffer::Pointer&)defaultFramebuffer
