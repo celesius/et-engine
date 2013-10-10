@@ -179,7 +179,7 @@ bool et::createDirectory(const std::string& name, bool recursive)
 
 bool et::removeFile(const std::string& path)
 {
-	return DeleteFile(path.c_str());
+	return DeleteFile(path.c_str()) != 0;
 }
 
 void et::findSubfolders(const std::string& folder, bool recursive, StringList& list)
