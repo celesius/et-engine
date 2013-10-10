@@ -16,7 +16,6 @@ extern NSString* etKeyboardNotRequiredNotification;
 
 @interface etOpenGLViewController()
 {
-	EAGLContext* _context;
 	etOpenGLView* _glView;
 	et::RenderContextParameters _params;
 	et::ApplicationNotifier _notifier;
@@ -29,6 +28,8 @@ extern NSString* etKeyboardNotRequiredNotification;
 
 @implementation etOpenGLViewController
 
+@synthesize context = _context;
+
 - (id)initWithParameters:(RenderContextParameters)params
 {
 	self = [super init];
@@ -38,6 +39,7 @@ extern NSString* etKeyboardNotRequiredNotification;
 		_params = params;
 		
 		BOOL initialized = [self performInitialization];
+		
 		assert(initialized);
 		(void)initialized;
 		

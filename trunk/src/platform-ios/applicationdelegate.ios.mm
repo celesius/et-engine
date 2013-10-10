@@ -26,30 +26,35 @@ using namespace et;
 @interface etApplicationDelegate()
 {
 	et::ApplicationNotifier _notifier;
+	AtomicBool _updating;
+	
 	UIWindow* _window;
 	CADisplayLink* _displayLink;
-	AtomicBool _updating;
+	NSThread* _renderThread;
 }
 
 @end
+
+extern etOpenGLViewController* sharedOpenGLViewController;
 
 @implementation etApplicationDelegate
 
 @synthesize window = _window;
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+- (BOOL)application:(UIApplication*)anApplication didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 	(void)application;
 	(void)launchOptions;
-	
-	self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-	
-	_updating = NO;
-	_notifier.notifyLoaded();
 
-#if (!ET_OBJC_ARC_ENABLED)
-	[self.window release];
-#endif
+	@synchronized(self)
+	{
+		_window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+		
+		_notifier.notifyLoaded();
+		
+		[_window setRootViewController:sharedOpenGLViewController];
+		[_window makeKeyAndVisible];
+	}
 	
     return YES;
 }
@@ -84,42 +89,65 @@ using namespace et;
 	_notifier.notifyResumed();
 }
 
-- (void)tick
-{
-	_notifier.notifyIdle();
-}
-
 - (BOOL)updating
 {
 	return _updating;
 }
 
+- (void)tick
+{
+	if (_updating)
+	{
+		@synchronized(sharedOpenGLViewController.context)
+		{
+			[sharedOpenGLViewController beginRender];
+			_notifier.notifyIdle();
+			[sharedOpenGLViewController endRender];
+		}
+	}
+	else
+	{
+		CFRunLoopStop([[NSRunLoop currentRunLoop] getCFRunLoop]);
+	}
+}
+
+- (void)renderThread
+{
+	@synchronized(self)
+	{
+		Threading::setMainThread(Threading::currentThread());
+		Threading::setRenderingThread(Threading::currentThread());
+		
+		_displayLink = [[UIScreen mainScreen] displayLinkWithTarget:self selector:@selector(tick)];
+		
+		const auto& renderContextParameters = _notifier.accessRenderContext()->parameters();
+		if (renderContextParameters.swapInterval > 0)
+			[_displayLink setFrameInterval:renderContextParameters.swapInterval];
+		
+		_updating = true;
+		[_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+		
+		CFRunLoopRun();
+		
+		[_displayLink invalidate];
+		_displayLink = nil;
+		
+		[_renderThread release];
+		_renderThread = nil;
+	}
+}
+
 - (void)beginUpdates
 {
-	if (_updating) return;
+	if (_updating || (_renderThread != nil)) return;
 	
-	auto& rcp = _notifier.accessRenderContext()->parameters();
-	
-	_displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(tick)];
-	
-	if (rcp.swapInterval > 0)
-		[_displayLink setFrameInterval:rcp.swapInterval];
-	
-	[_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-	
-#if (!ET_OBJC_ARC_ENABLED)
-	[_displayLink retain];
-#endif
+	_renderThread = [[NSThread alloc] initWithTarget:self selector:@selector(renderThread) object:nil];
+	[_renderThread start];
 }
 
 - (void)endUpdates
 {
-	if (_updating)
-	{
-		[_displayLink invalidate];
-		_displayLink = nil;
-		_updating = false;
-	}
+	_updating = false;
 }
 
 #if defined(__IPHONE_6_0)

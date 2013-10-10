@@ -14,38 +14,24 @@
 
 using namespace et;
 
+etOpenGLViewController* sharedOpenGLViewController = nil;
+
 class et::RenderContextPrivate
 {
 public:
-	RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params);
-	~RenderContextPrivate();
+	RenderContextPrivate(const RenderContextParameters& params);
 	
-	bool initOpenGL(const RenderContextParameters& params);
-	
-public:
-#if !defined(ET_EMBEDDED_APPLICATION)	
-	etOpenGLViewController* _viewController = nil;
-#endif	
-	
-	RenderContext* _rc = nullptr;
-	bool failed = false;
+	RenderContext* owner = nullptr;
 	uint64_t frameDuration = 0;
 };
 
-RenderContext::RenderContext(const RenderContextParameters& params, Application* app) : _params(params),
-	_app(app), _programFactory(0), _textureFactory(0), _framebufferFactory(0), _vertexBufferFactory(0),
-	_renderer(0)
+RenderContext::RenderContext(const RenderContextParameters& params, Application* app) :
+	_params(params), _app(app), _programFactory(nullptr), _textureFactory(nullptr), _framebufferFactory(nullptr),
+	_vertexBufferFactory(nullptr), _renderer(nullptr), _private(new RenderContextPrivate(params))
 {
-	_private = new RenderContextPrivate(this, params);
-	if (_private->failed)
-	{
-		delete _private;
-		_private = 0;
-		application().quit(1);
-		return;
-	}
-    
-    openGLCapabilites().checkCaps();
+	assert(sharedOpenGLViewController != nil);
+	
+     openGLCapabilites().checkCaps();
 
 	_renderState.setRenderContext(this);
 	_programFactory = new ProgramFactory(this);
@@ -66,6 +52,7 @@ RenderContext::RenderContext(const RenderContextParameters& params, Application*
 RenderContext::~RenderContext()
 {
 	delete _private;
+	_private = nullptr;
 }
 
 void RenderContext::init()
@@ -73,7 +60,7 @@ void RenderContext::init()
 	_renderer = new Renderer(this);
 	
 #if !defined(ET_EMBEDDED_APPLICATION)	
-	[_private->_viewController setRenderContext:this];
+	[sharedOpenGLViewController setRenderContext:this];
 #endif
 	
 	_fpsTimer.expired.connect(this, &RenderContext::onFPSTimerExpired);
@@ -85,7 +72,7 @@ size_t RenderContext::renderingContextHandle()
 #if defined(ET_EMBEDDED_APPLICATION)	
 	return 0;
 #else	
-	return reinterpret_cast<size_t>(_private->_viewController);
+	return reinterpret_cast<size_t>(sharedOpenGLViewController);
 #endif	
 }
 
@@ -93,20 +80,10 @@ void RenderContext::beginRender()
 {
 	OpenGLCounters::reset();
 	_private->frameDuration = queryCurrentTimeInMicroSeconds();
-	
-#if !defined(ET_EMBEDDED_APPLICATION)	
-	[_private->_viewController beginRender];
-	checkOpenGLError("RenderContext::beginRender");
-#endif	
 }
 
 void RenderContext::endRender()
 {
-#if !defined(ET_EMBEDDED_APPLICATION)	
-	[_private->_viewController endRender];
-	checkOpenGLError("RenderContext::endRender");
-#endif
-	
 	_info.averageDIPPerSecond += OpenGLCounters::DIPCounter;
 	_info.averagePolygonsPerSecond += OpenGLCounters::primitiveCounter;
 	
@@ -117,25 +94,7 @@ void RenderContext::endRender()
 /*
  * RenderContextPrivate
  */
-RenderContextPrivate::RenderContextPrivate(RenderContext* rc, const RenderContextParameters& params) :
-	_rc(rc), failed(false)
+RenderContextPrivate::RenderContextPrivate(const RenderContextParameters& params)
 {
-	failed = !initOpenGL(params);
-}
-
-bool RenderContextPrivate::initOpenGL(const RenderContextParameters& params)
-{
-#if defined(ET_EMBEDDED_APPLICATION)	
-	return true;
-#else
-	_viewController = [[etOpenGLViewController alloc] initWithParameters:params];
-	return (_viewController != nil);
-#endif	
-}
-
-RenderContextPrivate::~RenderContextPrivate()
-{
-#if (!defined(ET_EMBEDDED_APPLICATION)) && (!ET_OBJC_ARC_ENABLED)
-	[_viewController release];
-#endif	
+	sharedOpenGLViewController = [[etOpenGLViewController alloc] initWithParameters:params];
 }

@@ -15,9 +15,12 @@
 @interface etOpenGLViewController : UIViewController
 
 - (id)initWithParameters:(et::RenderContextParameters)params;
+
 - (void)setRenderContext:(et::RenderContext*)rc;
 
 - (void)beginRender;
 - (void)endRender;
+
+@property (atomic, readonly) EAGLContext* context;
 
 @end

@@ -63,10 +63,10 @@ void Application::loaded()
 
 void Application::enterRunLoop()
 {
-	_active = true;
 	_running = true;
 	
 	delegate()->applicationDidLoad(_renderContext);
+	setActive(true);
 	
 	_renderContext->init();
 }
