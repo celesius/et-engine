@@ -103,18 +103,14 @@ namespace et
 	private:
 		friend class FramebufferFactory;
 		
-		Framebuffer(RenderContext* rc, TextureFactory* tf,
-			const FramebufferDescription& desc, const std::string& name);
-		
-		Framebuffer(RenderContext* rc, TextureFactory* tf,
-			uint32_t fboId, const std::string& name);
+		Framebuffer(RenderContext* rc, const FramebufferDescription& desc, const std::string& name);
+		Framebuffer(RenderContext* rc, uint32_t fboId, const std::string& name);
 
 		void createOrUpdateColorRenderbuffer();
 		void createOrUpdateDepthRenderbuffer();
 
 	private:
 		RenderContext* _rc;
-		TextureFactory* _textureFactory;
 		FramebufferDescription _description;
 		
 		Texture _currentRendertarget;

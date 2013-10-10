@@ -164,11 +164,11 @@ using namespace et;
 	@synchronized(_context)
 	{
 		[EAGLContext setCurrentContext:_context];
-		self.contentScaleFactor = [[UIScreen mainScreen] scale];
 		
 		CAEAGLLayer* glLayer = (CAEAGLLayer*)self.layer;
 		glLayer.opaque = YES;
-		glLayer.contentsScale = self.contentScaleFactor;
+		glLayer.contentsScale = [[UIScreen mainScreen] scale];
+		self.contentScaleFactor = glLayer.contentsScale;
 		
 		vec2i size(static_cast<int>(glLayer.bounds.size.width * glLayer.contentsScale),
 			static_cast<int>(glLayer.bounds.size.height * glLayer.contentsScale));
@@ -199,6 +199,14 @@ using namespace et;
 			_mainFramebuffer->resize(size);
 		}
 		
+		int colorFormat = GL_RGBA8;
+		_rc->renderState().bindRenderbuffer(_mainFramebuffer->colorRenderbuffer());
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_INTERNAL_FORMAT, &colorFormat);
+		
+		int depthFormat = GL_DEPTH_COMPONENT16;
+		_rc->renderState().bindRenderbuffer(_mainFramebuffer->depthRenderbuffer());
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_INTERNAL_FORMAT, &depthFormat);
+		
 		if (_multisampled)
 		{
 			int maxSamples = 0;
@@ -207,8 +215,8 @@ using namespace et;
 			if (_multisampledFramebuffer.invalid())
 			{
 				_multisampledFramebuffer = _rc->framebufferFactory().createFramebuffer(size,
-					"et-multisampled-framebuffer", GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE,
-					GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, true, maxSamples);
+					"et-multisampled-framebuffer", colorFormat, GL_RGBA, GL_UNSIGNED_BYTE,
+					depthFormat, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, true, maxSamples);
 			}
 			else
 			{
@@ -216,12 +224,7 @@ using namespace et;
 			}
 		}
 		
-		auto& defaultFramebuffer = [self defaultFramebuffer];
-		
-		_rc->renderState().setDefaultFramebuffer(defaultFramebuffer);
-		_rc->renderState().bindDefaultFramebuffer();
-		_rc->renderState().bindRenderbuffer(defaultFramebuffer->colorRenderbuffer());
-		
+		_rc->renderState().setDefaultFramebuffer([self defaultFramebuffer]);
 		[self beginRender];
 		_rcNotifier->resized(size, _rc);
 		[self endRender];
