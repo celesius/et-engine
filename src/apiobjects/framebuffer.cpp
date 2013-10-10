@@ -293,7 +293,7 @@ void Framebuffer::setDrawBuffersCount(int)
 void Framebuffer::setDrawBuffersCount(int count)
 {
 	_rc->renderState().bindFramebuffer(_id);
-	glDrawBuffers(count, renderbufferTargets);
+	glDrawBuffers(count, colorAttachments);
 	checkOpenGLError("Framebuffer::setDrawBuffersCount -> glDrawBuffers - %s", name().c_str());
 	checkStatus();
 }
@@ -450,7 +450,7 @@ void Framebuffer::resolveMultisampledTo(Framebuffer::Pointer framebuffer)
 	
 #else
 	
-	glBlitFramebuffer(0, 0, __description.size.x, _description.size.y, 0, 0, framebuffer->size().x,
+	glBlitFramebuffer(0, 0, _description.size.x, _description.size.y, 0, 0, framebuffer->size().x,
 		framebuffer->size().y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	checkOpenGLError("glBlitFramebuffer");
 	

@@ -97,7 +97,7 @@ RenderContext::RenderContext(const RenderContextParameters& inParams, Applicatio
 	_renderState.setMainViewportSize(_params.contextSize);
 	
 	_textureFactory = new TextureFactory(this);
-	_framebufferFactory = new FramebufferFactory(this, _textureFactory.ptr());
+	_framebufferFactory = new FramebufferFactory(this);
 	_programFactory = new ProgramFactory(this);
 	_vertexBufferFactory = new VertexBufferFactory(_renderState);
 
