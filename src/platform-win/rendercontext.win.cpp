@@ -88,7 +88,7 @@ RenderContext::RenderContext(const RenderContextParameters& inParams, Applicatio
 		_renderState.setRenderContext(this);
 		_programFactory = new ProgramFactory(this);
 		_textureFactory = new TextureFactory(this);
-		_framebufferFactory = new FramebufferFactory(this, _textureFactory.ptr());
+		_framebufferFactory = new FramebufferFactory(this);
 		_vertexBufferFactory = new VertexBufferFactory(_renderState);
 		
 		updateScreenScale(_params.contextSize);
@@ -460,13 +460,16 @@ int RenderContextPrivate::chooseMSAAPixelFormat(HDC aDC, PIXELFORMATDESCRIPTOR*)
 		0, 0
 	};
 
+	int maxSamples = 0;
+	glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+
 	int returnedPixelFormat = 0;
 	UINT numFormats = 0;
 	BOOL bStatus = FALSE;
 
-	for (int samples = 32; samples > 0; samples /= 2)
+	for (; maxSamples > 0; maxSamples /= 2)
 	{
-		attributes[17] = samples;
+		attributes[17] = maxSamples;
 		bStatus = wglChoosePixelFormatARB(aDC, attributes, 0, 1, &returnedPixelFormat, &numFormats);
 		if (bStatus && numFormats) break;
 	}

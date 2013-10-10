@@ -59,7 +59,7 @@ int Application::platformRun()
 	{
 		_active = true;
 
-		_lastQueuedTimeMSec = queryTimeMSec();
+		_lastQueuedTimeMSec = queryContiniousTimeInMilliSeconds();
 		_runLoop.update(_lastQueuedTimeMSec);
 
 		_renderingContextHandle = _renderContext->renderingContextHandle();
@@ -68,7 +68,7 @@ int Application::platformRun()
 		_delegate->applicationDidLoad(_renderContext);
 		_delegate->applicationWillResizeContext(_renderContext->sizei());
 
-		_lastQueuedTimeMSec = queryTimeMSec();
+		_lastQueuedTimeMSec = queryContiniousTimeInMilliSeconds();
 
 		enterRunLoop(); 
 		terminated();

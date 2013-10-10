@@ -29,7 +29,7 @@ void initTime()
 	performanceFrequency = f.QuadPart;
 }
 
-uint64_t et::queryTimeMSec()
+uint64_t et::queryContiniousTimeInMilliSeconds()
 {
 	if (shouldInitializeTime)
 		initTime();
@@ -40,9 +40,9 @@ uint64_t et::queryTimeMSec()
 	return 1000 * (c.QuadPart - initialCounter) / performanceFrequency;
 }
 
-float et::queryTime()
+float et::queryContiniousTimeInSeconds()
 {
-	return static_cast<float>(queryTimeMSec()) / 1000.0f;
+	return static_cast<float>(queryContiniousTimeInMilliSeconds()) / 1000.0f;
 } 
 
 char et::pathDelimiter = '\\';
