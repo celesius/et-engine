@@ -125,9 +125,6 @@ using namespace et;
 	[_context release];
 	_context = [newContext retain];
 #endif
-	
-//	[EAGLContext setCurrentContext:_context];
-//	[self createFramebuffer];
 }
 
 - (void)beginRender
@@ -140,16 +137,17 @@ using namespace et;
 {
 	checkOpenGLError("endRender");
 	
-	const GLenum discards[]  = { GL_DEPTH_ATTACHMENT, GL_COLOR_ATTACHMENT0 };
+	_rc->renderState().bindFramebuffer([self defaultFramebuffer]);
 	
 	if (_multisampled)
 	{
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _mainFramebuffer->glID());
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, _multisampledFramebuffer->glID());
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _mainFramebuffer->glID());
 		glResolveMultisampleFramebufferAPPLE();
 		checkOpenGLError("glResolveMultisampleFramebufferAPPLE");
 	}
 	
+	const GLenum discards[]  = { GL_DEPTH_ATTACHMENT, GL_COLOR_ATTACHMENT0 };
 	glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER, (_multisampled ? 2 : 1), discards);
 	checkOpenGLError("glDiscardFramebufferEXT");
 	
@@ -167,6 +165,7 @@ using namespace et;
 	self.contentScaleFactor = [[UIScreen mainScreen] scale];
 	
 	CAEAGLLayer* glLayer = (CAEAGLLayer*)self.layer;
+	glLayer.opaque = YES;
 	glLayer.contentsScale = self.contentScaleFactor;
 	
 	vec2i size(static_cast<int>(glLayer.bounds.size.width * glLayer.contentsScale),
@@ -174,44 +173,29 @@ using namespace et;
 	
 	if (_mainFramebuffer.invalid())
 	{
-		_mainFramebuffer = _rc->framebufferFactory().createFramebuffer(size,
-			"et-framebuffer", 0, 0, 0, 0, 0, 0, true);
-	}
-	
-	if (_mainFramebuffer->colorRenderbuffer() == 0)
-	{
-		GLuint buf = 0;
-		glGenRenderbuffers(1, &buf);
-		_mainFramebuffer->setColorRenderbuffer(buf);
-	}
-	
-	if (_mainFramebuffer->depthRenderbuffer() == 0)
-	{
-		GLuint buf = 0;
-		glGenRenderbuffers(1, &buf);
-		_mainFramebuffer->setDepthRenderbuffer(buf);
-	}
-	
-	_rc->renderState().bindFramebuffer(_mainFramebuffer);
-	_rc->renderState().bindRenderbuffer(_mainFramebuffer->colorRenderbuffer());
-	if ([_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:glLayer])
-	{
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
-			_mainFramebuffer->colorRenderbuffer());
-		checkOpenGLError("glFramebufferRenderbuffer(...");
+		_mainFramebuffer = _rc->framebufferFactory().createFramebuffer(size, "et-main-fbo", 0, 0,
+			0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, true, false);
 		
-		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &size.x);
-		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &size.y);
+		GLuint colorRenderbuffer = 0;
+		glGenRenderbuffers(1, &colorRenderbuffer);
+		_rc->renderState().bindRenderbuffer(colorRenderbuffer);
+		if (![_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:glLayer])
+		{
+			log::error("Unable to create render buffer.");
+			assert(false);
+		}
+		_mainFramebuffer->setColorRenderbuffer(colorRenderbuffer);
 	}
-	
-	_rc->renderState().bindRenderbuffer(_mainFramebuffer->depthRenderbuffer());
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, size.x, size.y);
-	checkOpenGLError("glRenderbufferStorage -> depth");
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
-		_mainFramebuffer->depthRenderbuffer());
-	
-	_mainFramebuffer->checkStatus();
-	_mainFramebuffer->forceSize(size);
+	else
+	{
+		_rc->renderState().bindRenderbuffer(_mainFramebuffer->colorRenderbuffer());
+		if (![_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:glLayer])
+		{
+			log::error("Unable to create render buffer.");
+			assert(false);
+		}
+		_mainFramebuffer->resize(size);
+	}
 	
 	if (_multisampled)
 	{
@@ -226,19 +210,16 @@ using namespace et;
 		}
 		else
 		{
-			_rc->renderState().bindFramebuffer(_multisampledFramebuffer);
-			_rc->renderState().bindRenderbuffer(_multisampledFramebuffer->colorRenderbuffer());
-			glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, size.x, size.y);
-			checkOpenGLError("glRenderbufferStorageMultisample");
-			_rc->renderState().bindRenderbuffer(_multisampledFramebuffer->depthRenderbuffer());
-			glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT16, size.x, size.y);
-			checkOpenGLError("glRenderbufferStorageMultisample");
-			_multisampledFramebuffer->forceSize(size);
-			_multisampledFramebuffer->checkStatus();
+			_multisampledFramebuffer->resize(size);
 		}
 	}
 	
-	_rc->renderState().setDefaultFramebuffer([self defaultFramebuffer]);
+	auto& defaultFramebuffer = [self defaultFramebuffer];
+	
+	_rc->renderState().setDefaultFramebuffer(defaultFramebuffer);
+	_rc->renderState().bindDefaultFramebuffer();
+	_rc->renderState().bindRenderbuffer(defaultFramebuffer->colorRenderbuffer());
+	
 	_rcNotifier->resized(size, _rc);
 	[EAGLContext setCurrentContext:nil];
 }

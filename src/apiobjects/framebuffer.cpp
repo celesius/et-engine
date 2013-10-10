@@ -16,7 +16,7 @@ extern const uint32_t renderbufferTargets[Framebuffer::MaxRenderTargets];
 
 Framebuffer::Framebuffer(RenderContext* rc, TextureFactory* tf, const FramebufferDescription& desc,
 	const std::string& aName) : Object(aName), _rc(rc), _textureFactory(tf), _description(desc),
-	_id(0), _size(desc.size), _numTargets(0), _colorRenderbuffer(0), _depthRenderbuffer(0)
+	_id(0), _numTargets(0), _colorRenderbuffer(0), _depthRenderbuffer(0)
 {
 	checkOpenGLError("Framebuffer::Framebuffer %s", name().c_str());
 
@@ -25,32 +25,36 @@ Framebuffer::Framebuffer(RenderContext* rc, TextureFactory* tf, const Framebuffe
 
 	_rc->renderState().bindFramebuffer(_id);
 
-	bool hasColor = (desc.colorInternalformat != 0) && (desc.numColorRenderTargets > 0);
-	bool hasDepth = (desc.depthInternalformat != 0) && (desc.depthFormat != 0) && (desc.depthType != 0);
+	bool hasColor = (_description.colorFormat != 0) && (_description.colorInternalformat != 0) &&
+		(_description.colorType != 0) && (_description.numColorRenderTargets > 0);
+	
+	bool hasDepth = (_description.depthFormat != 0) && (_description.depthInternalformat != 0) &&
+		(_description.depthType != 0);
 	
 	if (hasColor)
 	{
-		if (desc.colorIsRenderbuffer)
+		if (_description.colorIsRenderbuffer)
 		{
-			createColorRenderbuffer();
+			createOrUpdateColorRenderbuffer();
 		}
 		else 
 		{
-			for (size_t i = 0; i < desc.numColorRenderTargets; ++i)
+			for (size_t i = 0; i < _description.numColorRenderTargets; ++i)
 			{ 
 				Texture c;
 				if (_description.isCubemap)
 				{
-					c = tf->genCubeTexture(desc.colorInternalformat, desc.size.x, desc.colorFormat, 
-						desc.colorType, name() + "_color_" + intToStr(i));
+					c = tf->genCubeTexture(_description.colorInternalformat, _description.size.x,
+						_description.colorFormat, _description.colorType, name() + "_color_" + intToStr(i));
 				}
 				else 
 				{
-					BinaryDataStorage emptyData(desc.size.square() *
-						bitsPerPixelForTextureFormat(desc.colorInternalformat, desc.colorType) / 8, 0);
+					size_t dataSize = _description.size.square() *
+						bitsPerPixelForTextureFormat(_description.colorInternalformat, _description.colorType) / 8;
 					
-					c = tf->genTexture(GL_TEXTURE_2D, desc.colorInternalformat, desc.size, 
-						desc.colorFormat, desc.colorType, emptyData, name() + "_color_" + intToStr(i));
+					c = tf->genTexture(GL_TEXTURE_2D, _description.colorInternalformat, _description.size,
+						_description.colorFormat, _description.colorType, BinaryDataStorage(dataSize, 0),
+						name() + "_color_" + intToStr(i));
 				}
 				c->setWrap(rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
 				addRenderTarget(c);
@@ -60,25 +64,25 @@ Framebuffer::Framebuffer(RenderContext* rc, TextureFactory* tf, const Framebuffe
 
 	if (hasDepth)
 	{
-		if (desc.colorIsRenderbuffer)
+		if (_description.colorIsRenderbuffer)
 		{
-			createDepthRenderbuffer();
+			createOrUpdateDepthRenderbuffer();
 		}
 		else 
 		{
 			Texture d;
 			if (_description.isCubemap && (openGLCapabilites().version() == OpenGLVersion_New))
 			{
-				d = tf->genCubeTexture(desc.depthInternalformat, desc.size.x, desc.depthFormat, 
-					desc.depthType, name() + "_depth");
+				d = tf->genCubeTexture(_description.depthInternalformat, _description.size.x,
+					_description.depthFormat, _description.depthType, name() + "_depth");
 			}
 			else 
 			{
-				BinaryDataStorage emptyData(desc.size.square() *
-					bitsPerPixelForTextureFormat(desc.depthInternalformat, desc.depthType) / 8, 0);
+				size_t dataSize = _description.size.square() *
+					bitsPerPixelForTextureFormat(_description.depthInternalformat, _description.depthType) / 8;
 				
-				d = tf->genTexture(GL_TEXTURE_2D, desc.depthInternalformat, desc.size,
-					desc.depthFormat, desc.depthType, emptyData, name() + "_depth");
+				d = tf->genTexture(GL_TEXTURE_2D, _description.depthInternalformat, _description.size,
+					_description.depthFormat, _description.depthType, BinaryDataStorage(dataSize, 0), name() + "_depth");
 			}
 			
 			if (d.valid())
@@ -108,8 +112,8 @@ Framebuffer::Framebuffer(RenderContext* rc, TextureFactory* tf, uint32_t fboId, 
 	if (glIsFramebuffer(fboId))
 	{
 		rc->renderState().bindFramebuffer(fboId);
-		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &_size.x);
-		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &_size.y);
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &_description.size.x);
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &_description.size.y);
 	}
 }
 
@@ -137,21 +141,20 @@ Framebuffer::~Framebuffer()
 
 bool Framebuffer::checkStatus()
 {
-	checkOpenGLError("Framebuffer::checkStatus");
-
+#if (ET_DEBUG)
 	_rc->renderState().bindFramebuffer(_id);
 	uint32_t status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	bool complete = status == GL_FRAMEBUFFER_COMPLETE;
-
-	if (!complete)
+	if (status != GL_FRAMEBUFFER_COMPLETE)
 		log::error("%s for %s", FramebufferStatusToString(status).c_str(), name().c_str());
-
-	return complete;
+	return status == GL_FRAMEBUFFER_COMPLETE;
+#else
+	return true;
+#endif
 }
 
 bool Framebuffer::addRenderTarget(const Texture& rt)
 {
-	if (!rt.valid() || (rt->size() != _size)) return false;
+	if (!rt.valid() || (rt->size() != _description.size)) return false;
 	assert(glIsTexture(rt->glID()));
 
 	_rc->renderState().bindFramebuffer(_id);
@@ -186,7 +189,7 @@ bool Framebuffer::addRenderTarget(const Texture& rt)
 
 bool Framebuffer::setDepthTarget(const Texture& rt)
 {
-	if (!rt.valid() || (rt->size() != _size)) return false;
+	if (!rt.valid() || (rt->size() != _description.size)) return false;
 
 	_rc->renderState().bindFramebuffer(_id);
 
@@ -203,7 +206,7 @@ bool Framebuffer::setDepthTarget(const Texture& rt)
 
 bool Framebuffer::setDepthTarget(const Texture& texture, uint32_t target)
 {
-	if (!texture.valid() || (texture->width() != _size.x) || (texture->height() != _size.y)) return false;
+	if (!texture.valid() || (texture->size() != _description.size)) return false;
 
 	_rc->renderState().bindFramebuffer(_id);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, target, texture->glID(), 0);
@@ -324,53 +327,107 @@ bool Framebuffer::setCurrentCubemapFace(uint32_t faceIndex)
 	return checkStatus();
 }
 
-void Framebuffer::createColorRenderbuffer()
+void Framebuffer::createOrUpdateColorRenderbuffer()
 {
-	glGenRenderbuffers(1, &_colorRenderbuffer);
-	checkOpenGLError("glGenRenderbuffers");
+	if (!glIsRenderbuffer(_colorRenderbuffer))
+	{
+		glGenRenderbuffers(1, &_colorRenderbuffer);
+		checkOpenGLError("glGenRenderbuffers");
+	}
 	
 	_rc->renderState().bindRenderbuffer(_colorRenderbuffer);
 	
 	if (_description.numSamples > 1)
 	{
-		glRenderbufferStorageMultisample(GL_RENDERBUFFER, _description.numSamples, _description.colorInternalformat, _size.x, _size.y);
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, _description.numSamples,
+			_description.colorInternalformat, _description.size.x, _description.size.y);
 		checkOpenGLError("glRenderbufferStorageMultisample");
 	}
 	else
 	{
-		glRenderbufferStorage(GL_RENDERBUFFER, _description.colorInternalformat, _size.x, _size.y);
+		glRenderbufferStorage(GL_RENDERBUFFER, _description.colorInternalformat,
+			_description.size.x, _description.size.y);
 		checkOpenGLError("glRenderbufferStorage");
 	}
 	
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _colorRenderbuffer);
-	checkOpenGLError("glFramebufferRenderbuffer");
+	setColorRenderbuffer(_colorRenderbuffer);
 }
 
-void Framebuffer::createDepthRenderbuffer()
+void Framebuffer::createOrUpdateDepthRenderbuffer()
 {
-	glGenRenderbuffers(1, &_depthRenderbuffer);
-	checkOpenGLError("glGenRenderbuffers");
+	if (!glIsRenderbuffer(_depthRenderbuffer))
+	{
+		glGenRenderbuffers(1, &_depthRenderbuffer);
+		checkOpenGLError("glGenRenderbuffers");
+	}
 	
 	_rc->renderState().bindRenderbuffer(_depthRenderbuffer);
 	
 	if (_description.numSamples > 1)
 	{
-		glRenderbufferStorageMultisample(GL_RENDERBUFFER, _description.numSamples, _description.depthInternalformat, _size.x, _size.y);
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, _description.numSamples,
+			_description.depthInternalformat, _description.size.x, _description.size.y);
 		checkOpenGLError("glRenderbufferStorageMultisample");
 	}
 	else
 	{
-		glRenderbufferStorage(GL_RENDERBUFFER, _description.depthInternalformat, _size.x, _size.y);
+		glRenderbufferStorage(GL_RENDERBUFFER, _description.depthInternalformat,
+			_description.size.x, _description.size.y);
 		checkOpenGLError("glRenderbufferStorage");
 	}
 	
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderbuffer);
-	checkOpenGLError("glFramebufferRenderbuffer");
+	setDepthRenderbuffer(_depthRenderbuffer);
+}
+
+void Framebuffer::resize(const vec2i& sz)
+{
+	_description.size = sz;
+	
+	bool hasColor = (_description.colorFormat != 0) && (_description.colorInternalformat != 0) &&
+		(_description.colorType != 0) && (_description.numColorRenderTargets > 0);
+	bool hasDepth = (_description.depthFormat != 0) && (_description.depthInternalformat != 0) &&
+		(_description.depthType != 0);
+
+	if (hasColor)
+	{
+		if (_description.colorIsRenderbuffer)
+		{
+			createOrUpdateColorRenderbuffer();
+		}
+		else
+		{
+			for (size_t i = 0; i < _numTargets; ++i)
+			{
+				TextureDescription::Pointer desc = _renderTargets[i]->description();
+				desc->size = sz;
+				desc->data.resize(desc->dataSizeForAllMipLevels());
+				_renderTargets[i]->updateData(_rc, desc);
+			}
+		}
+	}
+	
+	if (hasDepth)
+	{
+		if (_description.depthIsRenderbuffer)
+		{
+			createOrUpdateDepthRenderbuffer();
+		}
+		else if (_depthBuffer.valid())
+		{
+			auto desc = _depthBuffer->description();
+			desc->size = sz;
+			desc->data.resize(desc->dataSizeForAllMipLevels());
+			_depthBuffer->updateData(_rc, desc);
+		}
+	}
+	
+	if (hasColor || hasDepth)
+		checkStatus();
 }
 
 void Framebuffer::forceSize(const vec2i& sz)
 {
-	_size = sz;
+	_description.size = sz;
 }
 
 void Framebuffer::resolveMultisampledTo(Framebuffer::Pointer framebuffer)
@@ -384,13 +441,31 @@ void Framebuffer::resolveMultisampledTo(Framebuffer::Pointer framebuffer)
 	checkOpenGLError("glBindFramebuffer");
 
 #if (ET_PLATFORM_IOS)
+	
 	glResolveMultisampleFramebufferAPPLE();
 	checkOpenGLError("glResolveMultisampleFramebufferAPPLE");
+	
 #else
-	glBlitFramebuffer(0, 0, _size.x, _size.y, 0, 0, framebuffer->size().x, framebuffer->size().y,
-		GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	
+	glBlitFramebuffer(0, 0, __description.size.x, _description.size.y, 0, 0, framebuffer->size().x,
+		framebuffer->size().y, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	checkOpenGLError("glBlitFramebuffer");
+	
 #endif
+}
+
+void Framebuffer::setColorRenderbuffer(uint32_t r)
+{
+	_colorRenderbuffer = r;
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _colorRenderbuffer);
+	checkOpenGLError("glFramebufferRenderbuffer");
+}
+
+void Framebuffer::setDepthRenderbuffer(uint32_t r)
+{
+	_depthRenderbuffer = r;
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderbuffer);
+	checkOpenGLError("glFramebufferRenderbuffer");
 }
 
 /*
@@ -415,6 +490,11 @@ std::string FramebufferStatusToString(uint32_t status)
 #if defined(GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS)
 		case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
 			return "GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS";
+#endif
+
+#if defined(GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_APPLE)
+		case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_APPLE:
+			return "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_APPLE";
 #endif
 			
 #if defined(GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER)

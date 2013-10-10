@@ -68,6 +68,9 @@ namespace et
 
 		const vec2& texel() const
 			{ return _texel; }
+		
+		const TextureDescription::Pointer description() const
+			{ return _desc; }
 
 	private:
 		friend class TextureFactory;
