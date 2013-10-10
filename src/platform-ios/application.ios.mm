@@ -35,18 +35,26 @@ void Application::platformFinalize()
 
 void Application::platformActivate()
 {
+	etApplicationDelegate* appDelegate = [[UIApplication sharedApplication] delegate];
+	[appDelegate beginUpdates];
 }
 
 void Application::platformDeactivate()
 {
+	etApplicationDelegate* appDelegate = [[UIApplication sharedApplication] delegate];
+	[appDelegate endUpdates];
 }
 
 void Application::platformSuspend()
 {
+	etApplicationDelegate* appDelegate = [[UIApplication sharedApplication] delegate];
+	[appDelegate endUpdates];
 }
 
 void Application::platformResume()
 {
+	etApplicationDelegate* appDelegate = [[UIApplication sharedApplication] delegate];
+	[appDelegate beginUpdates];
 }
 
 int Application::platformRun()
@@ -79,47 +87,30 @@ int Application::platformRun()
 
 void Application::loaded()
 {
-	UIWindow* mainWindow = [[[UIApplication sharedApplication] delegate] window];
-	float scaleFactor = [[UIScreen mainScreen] scale];
+	application().delegate()->setApplicationParameters(_parameters);
 	
-	RenderContextParameters params;
-	params.contextSize = vec2i(static_cast<int>(mainWindow.frame.size.width * scaleFactor),
-		static_cast<int>(mainWindow.frame.size.height * scaleFactor));
-
-	delegate()->setRenderContextParameters(params);
+	float scale = [[UIScreen mainScreen] scale];
+	CGRect winBounds = [[UIScreen mainScreen] bounds];
 	
-	_renderContext = new RenderContext(params, this);
+	RenderContextParameters renderContextParams;
+	renderContextParams.contextSize.x = static_cast<int>(winBounds.size.width * scale);
+	renderContextParams.contextSize.y = static_cast<int>(winBounds.size.height * scale);
+	delegate()->setRenderContextParameters(renderContextParams);
+	
+	_renderContext = new RenderContext(renderContextParams, this);
 	_renderingContextHandle = _renderContext->renderingContextHandle();
-	
 	_runLoop.update(_lastQueuedTimeMSec);
-	
 	_renderContext->init();
     
-#if defined(ET_EMBEDDED_APPLICATION)
-    
     enterRunLoop();
-    
-#else    
-	
-	void* handle = reinterpret_cast<void*>(_renderingContextHandle);
-	[mainWindow setRootViewController:(__bridge etOpenGLViewController*)handle];
-	[mainWindow makeKeyAndVisible];
-    
-	enterRunLoop();
-	
-	etApplicationDelegate* appDelegate = (etApplicationDelegate*)[[UIApplication sharedApplication] delegate];
-	[appDelegate beginUpdates];
-#endif
 }
 
 void Application::enterRunLoop()
 {
-#if defined(ET_EMBEDDED_APPLICATION)
-	_active = true;
-#endif
-	
 	_running = true;
+	
 	delegate()->applicationDidLoad(_renderContext);
+	setActive(true);
 }
 
 void Application::quit(int exitCode)
@@ -128,7 +119,7 @@ void Application::quit(int exitCode)
 	
 #if defined(ET_EMBEDDED_APPLICATION)
 	
-	_active = false;
+	setActive(false);
 	terminated();
 	
 	delete _delegate;
@@ -157,7 +148,6 @@ void Application::alert(const std::string& title, const std::string& message, Al
 #if (!ET_OBJC_ARC_ENABLED)
 	[alert release];
 #endif
-	
 }
 
 size_t Application::memoryUsage() const
@@ -170,4 +160,5 @@ size_t Application::memoryUsage() const
 
 void Application::setTitle(const std::string&)
 {
+	
 }
