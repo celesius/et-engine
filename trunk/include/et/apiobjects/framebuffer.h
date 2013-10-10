@@ -75,7 +75,7 @@ namespace et
 			{ return _id; }
 
 		vec2i size() const
-			{ return _size; }
+			{ return _description.size; }
 	
 		uint32_t colorRenderbuffer() const
 			{ return _colorRenderbuffer; }
@@ -92,12 +92,10 @@ namespace et
 		Texture currentRendertarget() const
 			{ return _currentRendertarget; }
 		
-		void setColorRenderbuffer(uint32_t r)
-			{ _colorRenderbuffer = r; }
+		void setColorRenderbuffer(uint32_t);
+		void setDepthRenderbuffer(uint32_t);
 		
-		void setDepthRenderbuffer(uint32_t r) 
-			{ _depthRenderbuffer = r; }
-		
+		void resize(const vec2i&);
 		void forceSize(const vec2i&);
 		
 		void resolveMultisampledTo(Framebuffer::Pointer);
@@ -111,8 +109,8 @@ namespace et
 		Framebuffer(RenderContext* rc, TextureFactory* tf,
 			uint32_t fboId, const std::string& name);
 
-		void createColorRenderbuffer();
-		void createDepthRenderbuffer();
+		void createOrUpdateColorRenderbuffer();
+		void createOrUpdateDepthRenderbuffer();
 
 	private:
 		RenderContext* _rc;
@@ -123,7 +121,6 @@ namespace et
 		Texture _renderTargets[MaxRenderTargets];
 		Texture _depthBuffer;
 
-		vec2i _size;
 		size_t _numTargets;
 		
 		uint32_t _id;

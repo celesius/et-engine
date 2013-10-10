@@ -102,34 +102,8 @@ Texture TextureFactory::genTexture(uint32_t target, int32_t internalformat, cons
 	desc->size = size;
 	desc->mipMapCount = 1;
 	desc->layersCount = 1;
+	desc->bitsPerPixel = bitsPerPixelForTextureFormat(internalformat, type);
 	
-	if (format == GL_RGBA)
-	{
-		desc->bitsPerPixel = 32;
-	}
-	else if (format == GL_RGB)
-	{
-		desc->bitsPerPixel = 24;
-	}
-	else if (format == GL_DEPTH_COMPONENT)
-	{
-		desc->bitsPerPixel = 16;
-	}
-	else if (format == GL_ALPHA)
-	{
-		desc->bitsPerPixel = 8;
-	}
-#if defined(GL_BGRA)
-	else if (format == GL_BGRA)
-	{
-		desc->bitsPerPixel = 32;
-	}
-#endif
-	else
-	{
-		assert(false && "Unsupported format for TextureFactory::genTexture method.");
-	}
-
 	return Texture(new TextureData(renderContext(), desc, id, false));
 }
 
