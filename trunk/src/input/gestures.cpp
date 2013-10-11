@@ -153,6 +153,7 @@ void GesturesRecognizer::onPointerCancelled(et::PointerInputInfo pi)
 
 void GesturesRecognizer::onPointerScrolled(et::PointerInputInfo i)
 {
+	pointerScrolled.invoke(i);
 	scroll.invoke(i.scroll, i.origin);
 }
 

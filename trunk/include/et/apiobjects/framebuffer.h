@@ -55,14 +55,14 @@ namespace et
 		bool addRenderTarget(const Texture& texture);
 		void addSameRendertarget();
 
-		bool setDepthTarget(const Texture& texture);
-		bool setDepthTarget(const Texture& texture, uint32_t target);
+		void setDepthTarget(const Texture& texture);
+		void setDepthTarget(const Texture& texture, uint32_t target);
 
-		bool setCurrentRenderTarget(const Texture& texture);
-		bool setCurrentRenderTarget(const Texture& texture, uint32_t target);
-		bool setCurrentRenderTarget(size_t index);
+		void setCurrentRenderTarget(const Texture& texture);
+		void setCurrentRenderTarget(const Texture& texture, uint32_t target);
+		void setCurrentRenderTarget(size_t index);
 		
-		bool setCurrentCubemapFace(uint32_t faceIndex);
+		void setCurrentCubemapFace(uint32_t faceIndex);
 
 		bool checkStatus();
 		
@@ -88,10 +88,7 @@ namespace et
 		
 		Texture depthBuffer() const
 			{ return _depthBuffer; }
-		
-		Texture currentRendertarget() const
-			{ return _currentRendertarget; }
-		
+				
 		void setColorRenderbuffer(uint32_t);
 		void setDepthRenderbuffer(uint32_t);
 		
@@ -113,7 +110,6 @@ namespace et
 		RenderContext* _rc;
 		FramebufferDescription _description;
 		
-		Texture _currentRendertarget;
 		Texture _renderTargets[MaxRenderTargets];
 		Texture _depthBuffer;
 
