@@ -35,7 +35,8 @@ namespace et
 		uint64_t averageFrameTimeInMicroseconds;
 		
 		RenderingInfo() :
-			averageFramePerSecond(0), averageDIPPerSecond(0), averagePolygonsPerSecond(0) { }
+			averageFramePerSecond(0), averageDIPPerSecond(0), averagePolygonsPerSecond(0),
+			averageFrameTimeInMicroseconds(0) { }
 	};
 
 	class RenderContextPrivate;
