@@ -436,6 +436,7 @@ void Framebuffer::forceSize(const vec2i& sz)
 void Framebuffer::resolveMultisampledTo(Framebuffer::Pointer framebuffer)
 {
 	_rc->renderState().bindFramebuffer(_id);
+	
 	_rc->renderState().bindReadFramebuffer(_id);
 	_rc->renderState().bindDrawFramebuffer(framebuffer->glID());
 
