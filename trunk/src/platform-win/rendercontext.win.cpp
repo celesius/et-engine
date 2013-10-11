@@ -90,6 +90,8 @@ RenderContext::RenderContext(const RenderContextParameters& inParams, Applicatio
 		_textureFactory = new TextureFactory(this);
 		_framebufferFactory = new FramebufferFactory(this);
 		_vertexBufferFactory = new VertexBufferFactory(_renderState);
+
+		_renderState.setDefaultFramebuffer(_framebufferFactory->createFramebufferWrapper(0, "default-fbo"));
 		
 		updateScreenScale(_params.contextSize);
 	}
@@ -97,6 +99,7 @@ RenderContext::RenderContext(const RenderContextParameters& inParams, Applicatio
 
 RenderContext::~RenderContext()
 {
+	checkOpenGLError("");
 	delete _private;
 }
 
@@ -125,7 +128,7 @@ size_t RenderContext::renderingContextHandle()
 void RenderContext::beginRender()
 {
 	OpenGLCounters::reset();
-
+	_renderState.bindDefaultFramebuffer();
 	checkOpenGLError("RenderContext::beginRender");
 }
 
