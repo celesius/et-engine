@@ -114,6 +114,10 @@ Framebuffer::Framebuffer(RenderContext* rc, uint32_t fboId, const std::string& a
 		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &_description.size.x);
 		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &_description.size.y);
 	}
+	else if (fboId == 0)
+	{
+		_description.size = rc->sizei();
+	}
 }
 
 Framebuffer::~Framebuffer()

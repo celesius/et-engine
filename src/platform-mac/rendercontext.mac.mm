@@ -94,6 +94,7 @@ RenderContext::RenderContext(const RenderContextParameters& inParams, Applicatio
 	openGLCapabilites().checkCaps();
 	updateScreenScale(_params.contextSize);
 	
+	_renderState.setRenderContext(this);
 	_renderState.setMainViewportSize(_params.contextSize);
 	
 	_textureFactory = new TextureFactory(this);
@@ -101,6 +102,8 @@ RenderContext::RenderContext(const RenderContextParameters& inParams, Applicatio
 	_programFactory = new ProgramFactory(this);
 	_vertexBufferFactory = new VertexBufferFactory(_renderState);
 
+	_renderState.setDefaultFramebuffer(_framebufferFactory->createFramebufferWrapper(0));
+	
 	_renderer = new Renderer(this);
 	
 	ET_CONNECT_EVENT(_fpsTimer.expired, RenderContext::onFPSTimerExpired)
@@ -402,8 +405,13 @@ void RenderContextPrivate::resize(const NSSize& sz)
 	{
 		[openGlContext makeCurrentContext];
 		CGLLockContext(cglObject);
-		windowDelegate->applicationNotifier.notifyResize(vec2i(static_cast<int>(sz.width),
-			static_cast<int>(sz.height)));
+		
+		vec2i newSize(static_cast<int>(sz.width), static_cast<int>(sz.height));
+		
+		auto& notifier = windowDelegate->applicationNotifier;
+		notifier.accessRenderContext()->renderState().defaultFramebuffer()->resize(newSize);
+		notifier.notifyResize(newSize);
+		
 		CGLUnlockContext(cglObject);
 		resizeScheduled = false;
 	}
