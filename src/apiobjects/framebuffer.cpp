@@ -435,13 +435,8 @@ void Framebuffer::forceSize(const vec2i& sz)
 
 void Framebuffer::resolveMultisampledTo(Framebuffer::Pointer framebuffer)
 {
-	_rc->renderState().bindFramebuffer(_id);
-	
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, _id);
-	checkOpenGLError("glBindFramebuffer");
-	
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer->glID());
-	checkOpenGLError("glBindFramebuffer");
+	_rc->renderState().bindReadFramebuffer(_id);
+	_rc->renderState().bindDrawFramebuffer(framebuffer->glID());
 
 #if (ET_PLATFORM_IOS)
 	
@@ -495,8 +490,8 @@ std::string FramebufferStatusToString(uint32_t status)
 			return "GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS";
 #endif
 
-#if defined(GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_APPLE)
-		case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_APPLE:
+#if defined(GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE)
+		case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
 			return "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_APPLE";
 #endif
 			

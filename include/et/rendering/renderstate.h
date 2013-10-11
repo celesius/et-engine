@@ -30,6 +30,8 @@ namespace et
 			uint32_t activeTextureUnit;
 			
 			uint32_t boundFramebuffer;
+			uint32_t boundReadFramebuffer;
+			uint32_t boundDrawFramebuffer;
 			uint32_t boundRenderbuffer;
 			
 			uint32_t boundArrayBuffer;
@@ -97,6 +99,10 @@ namespace et
 		void setDefaultFramebuffer(const Framebuffer::Pointer& framebuffer);
 		
 		void bindDefaultFramebuffer(bool force = false);
+		
+		void bindReadFramebuffer(uint32_t framebuffer, bool force = false);
+		void bindDrawFramebuffer(uint32_t framebuffer, bool force = false);
+		
 		void bindFramebuffer(uint32_t framebuffer, bool force = false);
 		void bindFramebuffer(const Framebuffer::Pointer& fbo, bool force = false);
 		
