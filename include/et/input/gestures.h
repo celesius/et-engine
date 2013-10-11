@@ -66,6 +66,7 @@ namespace et
 		ET_DECLARE_EVENT1(pointerMoved, PointerInputInfo)
 		ET_DECLARE_EVENT1(pointerReleased, PointerInputInfo)
 		ET_DECLARE_EVENT1(pointerCancelled, PointerInputInfo)
+		ET_DECLARE_EVENT1(pointerScrolled, PointerInputInfo)
 
 	public:
 		void onPointerPressed(PointerInputInfo);

@@ -186,32 +186,33 @@ bool Framebuffer::addRenderTarget(const Texture& rt)
 	return checkStatus();
 }
 
-bool Framebuffer::setDepthTarget(const Texture& rt)
+void Framebuffer::setDepthTarget(const Texture& rt)
 {
-	if (!rt.valid() || (rt->size() != _description.size)) return false;
+	if (!rt.valid() || (rt->size() != _description.size)) return;
 
+	_depthBuffer = rt;
 	_rc->renderState().bindFramebuffer(_id);
 
 	if (openGLCapabilites().version() == OpenGLVersion_New)
+	{
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, rt->glID(), 0);
+		checkOpenGLError("glFramebufferTexture");
+	}
 	else
+	{
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, rt->glID(), 0);
+		checkOpenGLError("glFramebufferTexture2D");
+	}
 
-	checkOpenGLError("glFramebufferTexture(...) - %s", name().c_str());
-
-	_depthBuffer = rt;
-	return checkStatus();
 }
 
-bool Framebuffer::setDepthTarget(const Texture& texture, uint32_t target)
+void Framebuffer::setDepthTarget(const Texture& texture, uint32_t target)
 {
-	if (!texture.valid() || (texture->size() != _description.size)) return false;
-
+	if (!texture.valid() || (texture->size() != _description.size)) return;
+	
 	_rc->renderState().bindFramebuffer(_id);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, target, texture->glID(), 0);
 	checkOpenGLError("glFramebufferTexture2D(...) - %s", name().c_str());
-
-	return checkStatus();
 }
 
 void Framebuffer::addSameRendertarget()
@@ -241,44 +242,45 @@ void Framebuffer::addSameRendertarget()
 	addRenderTarget(c);
 }
 
-bool Framebuffer::setCurrentRenderTarget(const Texture& texture)
+void Framebuffer::setCurrentRenderTarget(const Texture& texture)
 {
 	assert(texture.valid());
 	
-	if (texture == _currentRendertarget) return true;
-	
-	_currentRendertarget = texture;
 	_rc->renderState().bindFramebuffer(_id);
-
 	if (openGLCapabilites().version() == OpenGLVersion_New)
+	{
 		glFramebufferTexture(GL_FRAMEBUFFER, colorAttachments[0], texture->glID(), 0);
+		checkOpenGLError("glFramebufferTexture");
+	}
 	else
+	{
 		glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachments[0], texture->target(), texture->glID(), 0);
-	
-	checkOpenGLError("Framebuffer::setCurrentRenderTarget");
-	return checkStatus();
+		checkOpenGLError("glFramebufferTexture2D");
+	}
 }
 
-bool Framebuffer::setCurrentRenderTarget(const Texture& texture, uint32_t target)
+void Framebuffer::setCurrentRenderTarget(const Texture& texture, uint32_t target)
 {
 	assert(texture.valid());
 	_rc->renderState().bindFramebuffer(_id);
 
 	if (openGLCapabilites().version() == OpenGLVersion_New)
+	{
 		glFramebufferTexture(GL_FRAMEBUFFER, colorAttachments[0], texture->glID(), 0);
+		checkOpenGLError("glFramebufferTexture");
+	}
 	else
+	{
 		glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachments[0], target, texture->glID(), 0);
-
-	checkOpenGLError("Framebuffer::setCurrentRenderTarget");
-	return checkStatus();
+		checkOpenGLError("glFramebufferTexture2D");
+	}
 }
 
-bool Framebuffer::setCurrentRenderTarget(size_t index)
+void Framebuffer::setCurrentRenderTarget(size_t index)
 {
 	assert(index < _numTargets);
 	assert(_renderTargets[index].valid());
-
-	return setCurrentRenderTarget(_renderTargets[index]);
+	setCurrentRenderTarget(_renderTargets[index]);
 }
 
 #if (ET_OPENGLES)
@@ -300,7 +302,7 @@ void Framebuffer::setDrawBuffersCount(int count)
 
 #endif
 
-bool Framebuffer::setCurrentCubemapFace(uint32_t faceIndex)
+void Framebuffer::setCurrentCubemapFace(uint32_t faceIndex)
 {
 	assert(_description.isCubemap);
 	
@@ -322,8 +324,6 @@ bool Framebuffer::setCurrentCubemapFace(uint32_t faceIndex)
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, target, _depthBuffer->glID(), 0);
 		checkOpenGLError("setCurrentCubemapFace -> depth");
 	}
-
-	return checkStatus();
 }
 
 void Framebuffer::createOrUpdateColorRenderbuffer()
@@ -395,7 +395,7 @@ void Framebuffer::resize(const vec2i& sz)
 		{
 			createOrUpdateColorRenderbuffer();
 		}
-		else
+		else if (_numTargets > 0)
 		{
 			for (size_t i = 0; i < _numTargets; ++i)
 			{
