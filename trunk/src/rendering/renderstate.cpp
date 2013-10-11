@@ -18,12 +18,12 @@ static const char* keyEnableVertexAttribArray = "glEnableVertexAttribArray(...)"
 static const char* keyDisableVertexAttribArray = "glDisableVertexAttribArray(...)";
 static const char* keyVertexAttribPointer = "glVertexAttribPointer(...)";
 
-RenderState::State::State() : activeTextureUnit(0), boundFramebuffer(0), boundRenderbuffer(0),
-	boundArrayBuffer(0), boundElementArrayBuffer(0), boundVertexArrayObject(0), boundProgram(0),
-	clearColor(0.0f), colorMask(ColorMask_RGBA), clearDepth(1.0f), polygonOffsetFactor(0.0f),
-	polygonOffsetUnits(0.0f), blendEnabled(false), depthTestEnabled(false), depthMask(true),
-	polygonOffsetFillEnabled(false), wireframe(false), lastBlend(Blend_Disabled), lastCull(CullState_None),
-	lastDepthFunc(DepthFunc_Less)
+RenderState::State::State() : activeTextureUnit(0), boundFramebuffer(0), boundReadFramebuffer(0),
+	boundDrawFramebuffer(0), boundRenderbuffer(0), boundArrayBuffer(0), boundElementArrayBuffer(0),
+	boundVertexArrayObject(0), boundProgram(0), clearColor(0.0f), colorMask(ColorMask_RGBA),
+	clearDepth(1.0f), polygonOffsetFactor(0.0f), polygonOffsetUnits(0.0f), blendEnabled(false),
+	depthTestEnabled(false), depthMask(true), polygonOffsetFillEnabled(false), wireframe(false),
+	lastBlend(Blend_Disabled), lastCull(CullState_None), lastDepthFunc(DepthFunc_Less)
 {
 	(void)keyCurrentStateBegin;
 	(void)keyCurrentStateEnd;
@@ -216,6 +216,24 @@ void RenderState::bindFramebuffer(uint32_t framebuffer, uint32_t target, bool fo
 	{
 		_currentState.boundFramebuffer = framebuffer;
 		etBindFramebuffer(target, framebuffer);
+	}
+}
+
+void RenderState::bindReadFramebuffer(uint32_t framebuffer, bool force)
+{
+	if (force || (_currentState.boundReadFramebuffer != framebuffer))
+	{
+		_currentState.boundReadFramebuffer = framebuffer;
+		etBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+	}
+}
+
+void RenderState::bindDrawFramebuffer(uint32_t framebuffer, bool force)
+{
+	if (force || (_currentState.boundDrawFramebuffer != framebuffer))
+	{
+		_currentState.boundDrawFramebuffer = framebuffer;
+		etBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
 	}
 }
 
@@ -618,6 +636,14 @@ RenderState::State RenderState::currentState()
 	value = 0;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &value);
 	s.boundFramebuffer = static_cast<uint32_t>(value);
+
+	value = 0;
+	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &value);
+	s.boundReadFramebuffer = static_cast<uint32_t>(value);
+
+	value = 0;
+	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &value);
+	s.boundDrawFramebuffer = static_cast<uint32_t>(value);
 	
 	value = 0;
 	glGetIntegerv(GL_RENDERBUFFER_BINDING, &value);

@@ -141,8 +141,8 @@ using namespace et;
 	
 	if (_multisampled)
 	{
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _mainFramebuffer->glID());
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, _multisampledFramebuffer->glID());
+		_rc->renderState().bindReadFramebuffer(_multisampledFramebuffer->glID());
+		_rc->renderState().bindDrawFramebuffer(_mainFramebuffer->glID());
 		glResolveMultisampleFramebufferAPPLE();
 		checkOpenGLError("glResolveMultisampleFramebufferAPPLE");
 	}
