@@ -12,12 +12,6 @@
 
 using namespace et;
 
-static const char* keyCurrentStateBegin = "RenderState::currentState() - begin";
-static const char* keyCurrentStateEnd = "RenderState::currentState() - end";
-static const char* keyEnableVertexAttribArray = "glEnableVertexAttribArray(...)";
-static const char* keyDisableVertexAttribArray = "glDisableVertexAttribArray(...)";
-static const char* keyVertexAttribPointer = "glVertexAttribPointer(...)";
-
 RenderState::State::State() : activeTextureUnit(0), boundFramebuffer(0), boundReadFramebuffer(0),
 	boundDrawFramebuffer(0), boundRenderbuffer(0), boundArrayBuffer(0), boundElementArrayBuffer(0),
 	boundVertexArrayObject(0), boundProgram(0), clearColor(0.0f), colorMask(ColorMask_RGBA),
@@ -25,12 +19,6 @@ RenderState::State::State() : activeTextureUnit(0), boundFramebuffer(0), boundRe
 	depthTestEnabled(false), depthMask(true), polygonOffsetFillEnabled(false), wireframe(false),
 	lastBlend(Blend_Disabled), lastCull(CullState_None), lastDepthFunc(DepthFunc_Less)
 {
-	(void)keyCurrentStateBegin;
-	(void)keyCurrentStateEnd;
-	(void)keyEnableVertexAttribArray;
-	(void)keyDisableVertexAttribArray;
-	(void)keyVertexAttribPointer;
-	
 	boundTextures.fill(0);
 	enabledVertexAttributes.fill(0);
 }
@@ -451,12 +439,12 @@ void RenderState::setVertexAttribEnabled(uint32_t attrib, bool enabled, bool for
 	if (enabled && (!wasEnabled || force))
 	{
 		glEnableVertexAttribArray(attrib);
-		checkOpenGLError(keyEnableVertexAttribArray);
+		checkOpenGLError("glEnableVertexAttribArray");
 	}
 	else if (!enabled && (wasEnabled || force))
 	{
 		glDisableVertexAttribArray(attrib);
-		checkOpenGLError(keyDisableVertexAttribArray);
+		checkOpenGLError("glDisableVertexAttribArray");
 	}
 	
 	_currentState.enabledVertexAttributes[attrib] = enabled;
@@ -467,7 +455,7 @@ void RenderState::setVertexAttribPointer(const VertexElement& e, size_t baseInde
 	glVertexAttribPointer(e.usage(), static_cast<GLint>(e.components()), e.dataType(), false, e.stride(),
 		reinterpret_cast<GLvoid*>(e.offset() + baseIndex));
 
-	checkOpenGLError(keyVertexAttribPointer);
+	checkOpenGLError("glVertexAttribPointer");
 }
 
 void RenderState::setCulling(CullState cull)
@@ -609,20 +597,14 @@ void RenderState::applyState(const RenderState::State& s)
 
 RenderState::State RenderState::currentState()
 {
-	checkOpenGLError(keyCurrentStateBegin);
 	State s;
 
-	int value = 0;
-	for (uint32_t i = 0; i < Usage_max; ++i)
-	{
-		int enabled = 0;
-		glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
-		s.enabledVertexAttributes[i] = (enabled > 0);
-	}
+	checkOpenGLError("");
 
-	value = 0;
+	int value = 0;
 	glGetIntegerv(GL_ACTIVE_TEXTURE, &value);
 	s.activeTextureUnit = static_cast<uint32_t>(value - GL_TEXTURE0);
+	checkOpenGLError("");
 	
 	for (GLenum i = 0; i < MaxTextureUnits; ++i)
 	{
@@ -632,60 +614,85 @@ RenderState::State RenderState::currentState()
 		s.boundTextures[i] = static_cast<uint32_t>(value);
 	}
 	glActiveTexture(GL_TEXTURE0 + s.activeTextureUnit);
+	checkOpenGLError("");
 
 	value = 0;
 	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &value);
 	s.boundArrayBuffer = static_cast<uint32_t>(value);
-
+	checkOpenGLError("");
+	
 	value = 0;
 	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &value);
 	s.boundElementArrayBuffer = static_cast<uint32_t>(value);
-
+	checkOpenGLError("");
+	
 	value = 0;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &value);
 	s.boundFramebuffer = static_cast<uint32_t>(value);
-
+	checkOpenGLError("");
+	
 	value = 0;
 	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &value);
 	s.boundReadFramebuffer = static_cast<uint32_t>(value);
-
+	checkOpenGLError("");
+	
 	value = 0;
 	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &value);
 	s.boundDrawFramebuffer = static_cast<uint32_t>(value);
+	checkOpenGLError("");
 	
 	value = 0;
 	glGetIntegerv(GL_RENDERBUFFER_BINDING, &value);
 	s.boundRenderbuffer = static_cast<uint32_t>(value);
-
+	checkOpenGLError("");
+	
 #if (ET_SUPPORT_VERTEX_ARRAY_OBJECTS)
 	value = 0;
 	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &value);
 	s.boundVertexArrayObject = static_cast<uint32_t>(value);
+	checkOpenGLError("");
+	
+	value = 0;
+	for (uint32_t i = 0; (i < Usage_max) && (s.boundVertexArrayObject != 0); ++i)
+	{
+		int enabled = 0;
+		glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+		s.enabledVertexAttributes[i] = (enabled > 0);
+	}
+	checkOpenGLError("");
 #endif
 	
 	value = 0;
 	glGetIntegerv(GL_CURRENT_PROGRAM, &value);
 	s.boundProgram = static_cast<uint32_t>(value);
-
+	checkOpenGLError("");
+	
 	glGetIntegerv(GL_SCISSOR_BOX, s.clipRect.data());
+	checkOpenGLError("");
 
 	s.depthTestEnabled = glIsEnabled(GL_DEPTH_TEST) != 0;
 	s.polygonOffsetFillEnabled = glIsEnabled(GL_POLYGON_OFFSET_FILL) != 0;
 	
 	glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &s.polygonOffsetFactor);
+	checkOpenGLError("");
+	
 	glGetFloatv(GL_POLYGON_OFFSET_UNITS, &s.polygonOffsetUnits);
+	checkOpenGLError("");
 	
 	GLboolean bValue = 0;
 	glGetBooleanv(GL_DEPTH_WRITEMASK, &bValue);
 	s.depthMask = bValue != 0;
+	checkOpenGLError("");
 
 	GLboolean cValue[4] = { };
 	glGetBooleanv(GL_COLOR_WRITEMASK, cValue);
 	s.colorMask = (cValue[0] * ColorMask_Red) | (cValue[1] * ColorMask_Green) |
 		(cValue[2] * ColorMask_Blue) | (cValue[3] * ColorMask_Alpha);
+	checkOpenGLError("");
 
 	glGetBooleanv(GL_SCISSOR_TEST, &bValue);
 	s.clipEnabled = bValue > 0;
+	checkOpenGLError("");
 
 	value = 0;
 	glGetIntegerv(GL_CULL_FACE_MODE, &value);
@@ -694,11 +701,13 @@ RenderState::State RenderState::currentState()
 		s.lastCull = CullState_Front;
 	else if (value == GL_BACK)
 		s.lastCull = CullState_Back;
+	checkOpenGLError("");
 
 	bValue = 0;
 	glGetBooleanv(GL_CULL_FACE, &bValue);
 	if (!bValue)
 		s.lastCull = CullState_None;
+	checkOpenGLError("");
 
 	vec4i vp;
 	glGetIntegerv(GL_VIEWPORT, vp.data());
@@ -706,9 +715,11 @@ RenderState::State RenderState::currentState()
 	s.viewportSizeFloat = vec2(static_cast<float>(s.viewportSize.x), static_cast<float>(s.viewportSize.y));
 	s.mainViewportSize = s.viewportSize;
 	s.mainViewportSizeFloat = s.viewportSizeFloat;
+	checkOpenGLError("");
 	
 	value = 0;
 	glGetIntegerv(GL_DEPTH_FUNC, &value);
+	checkOpenGLError("");
 	
 	if (value == GL_NEVER)
 		s.lastDepthFunc = DepthFunc_Never;
@@ -728,7 +739,10 @@ RenderState::State RenderState::currentState()
 		assert("Unknown GL_DEPTH_FUNC value" && false);
 
 	glGetFloatv(GL_COLOR_CLEAR_VALUE, s.clearColor.data());
+	checkOpenGLError("");
+	
 	glGetFloatv(GL_DEPTH_CLEAR_VALUE, &s.clearDepth);
+	checkOpenGLError("");
 
 	// TODO: get this from state, too lazy now.
 	s.wireframe = false;
@@ -736,12 +750,15 @@ RenderState::State RenderState::currentState()
 	value = 0;
 	glGetIntegerv(GL_BLEND, &value);
 	s.blendEnabled = value != 0;
+	checkOpenGLError("");
 	
 	int blendDest = 0;
 	glGetIntegerv(GL_BLEND_DST_RGB, &blendDest);
+	checkOpenGLError("");
 	
 	int blendSource = 0;
 	glGetIntegerv(GL_BLEND_SRC_RGB, &blendSource);
+	checkOpenGLError("");
 
 	if ((blendSource == GL_SRC_ALPHA) && (blendDest == GL_ONE_MINUS_SRC_ALPHA))
 	{
@@ -774,8 +791,6 @@ RenderState::State RenderState::currentState()
 			glBlendFuncToString(static_cast<uint32_t>(blendDest)).c_str());
 		assert("Unsupported blend combination" && false);
 	}
-
-	checkOpenGLError(keyCurrentStateEnd);
 	
 	return s;
 }
