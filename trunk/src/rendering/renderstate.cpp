@@ -223,7 +223,10 @@ void RenderState::bindFramebuffer(uint32_t framebuffer, uint32_t target, bool fo
 
 void RenderState::bindReadFramebuffer(uint32_t framebuffer, bool force)
 {
-	if (force || (_currentState.boundReadFramebuffer != framebuffer))
+	bool alreadyBound = (_currentState.boundReadFramebuffer == framebuffer) ||
+		(_currentState.boundFramebuffer == framebuffer);
+	
+	if (force || !alreadyBound)
 	{
 		_currentState.boundReadFramebuffer = framebuffer;
 		etBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
@@ -232,7 +235,10 @@ void RenderState::bindReadFramebuffer(uint32_t framebuffer, bool force)
 
 void RenderState::bindDrawFramebuffer(uint32_t framebuffer, bool force)
 {
-	if (force || (_currentState.boundDrawFramebuffer != framebuffer))
+	bool alreadyBound = (_currentState.boundDrawFramebuffer == framebuffer) ||
+		(_currentState.boundFramebuffer == framebuffer);
+	
+	if (force || !alreadyBound)
 	{
 		_currentState.boundDrawFramebuffer = framebuffer;
 		etBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
