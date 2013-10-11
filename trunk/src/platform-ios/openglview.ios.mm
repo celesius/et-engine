@@ -137,12 +137,13 @@ using namespace et;
 {
 	checkOpenGLError("endRender");
 	
-	_rc->renderState().bindFramebuffer([self defaultFramebuffer]);
+	_rc->renderState().bindDefaultFramebuffer();
 	
 	if (_multisampled)
 	{
-		_rc->renderState().bindReadFramebuffer(_multisampledFramebuffer->glID());
-		_rc->renderState().bindDrawFramebuffer(_mainFramebuffer->glID());
+		_rc->renderState().bindReadFramebuffer(_multisampledFramebuffer->glID(), true);
+		_rc->renderState().bindDrawFramebuffer(_mainFramebuffer->glID(), true);
+		
 		glResolveMultisampleFramebufferAPPLE();
 		checkOpenGLError("glResolveMultisampleFramebufferAPPLE");
 	}
@@ -190,6 +191,7 @@ using namespace et;
 		}
 		else
 		{
+			_rc->renderState().bindFramebuffer(_mainFramebuffer);
 			_rc->renderState().bindRenderbuffer(_mainFramebuffer->colorRenderbuffer());
 			if (![_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:glLayer])
 			{
