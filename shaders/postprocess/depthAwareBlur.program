@@ -1,2 +1,0 @@
-fs: depthAwareBlur.fragmentshader
-vs: ..\common\fullscreen.vertexshader

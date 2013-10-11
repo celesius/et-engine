@@ -1,2 +1,0 @@
-VS:..\common\fullscreen_scaled_tex.vertexshader
-FS:gradSubtraction.fragmentshader
